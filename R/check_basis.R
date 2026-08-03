@@ -38,6 +38,16 @@ NULL
 #' a basis whose own method is quadrature is still compared with something
 #' independent.
 #'
+#' The derivative and integral checks allow for the accuracy of their own
+#' reference. A central difference assumes derivatives the function may not
+#' have: at a knot a spline's third derivative jumps, and a stencil straddling
+#' it returns the jump rather than the truncation error, which would read as a
+#' failure of the basis. Each reference is therefore computed twice, at a step
+#' and at half of it, and the gap between them bounds its uncertainty; the
+#' comparison is allowed that much slack, point by point. A deliberate error of
+#' five per cent is still caught by four orders of magnitude, which is the
+#' check that the allowance has not blunted anything.
+#'
 #' @param basis An object inheriting from class \code{basis}.
 #' @param n The number of points at which to test.
 #' @param orders The derivative orders to check.
@@ -87,23 +97,24 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
     ok <- TRUE
     for (d in orders) {
       ana <- basis_deriv(basis, x, order = d)
-      ref <- numerical_deriv_matrix(
+      ref <- fd_reference(
         function(z) basis_deriv(basis, z, order = d - 1L),
-        x, 1L, basis@lower, basis@upper
+        x, basis@lower, basis@upper
       )
-      ok <- ok && rel_close(ana, ref, tol)
+      ok <- ok && rel_close(ana, ref$value, tol, ref$uncertainty)
     }
     res[["deriv"]] <- ok
   }
 
   ## 3. the integral: differentiates back, and is zero at the lower endpoint
   if (!num[["basis_int"]]) {
-    back <- numerical_deriv_matrix(
-      function(z) basis_int(basis, z), x, 1L, basis@lower, basis@upper
+    ref <- fd_reference(
+      function(z) basis_int(basis, z), x, basis@lower, basis@upper
     )
     at_lower <- basis_int(basis, basis@lower)
-    res[["integral"]] <- rel_close(back, basis_eval(basis, x), tol) &&
-      all(at_lower == 0)
+    res[["integral"]] <-
+      rel_close(basis_eval(basis, x), ref$value, tol, ref$uncertainty) &&
+        all(at_lower == 0)
   }
 
   ## 4. partition of unity, where the family has it
@@ -160,9 +171,19 @@ basis_partitions_unity <- function(basis) {
 #' @details
 #' Flooring the denominator at one would flatten a disagreement between two
 #' small numbers into apparent agreement, which is exactly the region a basis
-#' spends most of its time in: a B-spline is zero on most of its interval.
-#' Values whose scale is at the level of rounding error are excluded instead of
-#' being compared, since neither side carries information there.
+#' spends most of its time in: a B-spline is zero on most of its interval. The
+#' denominator is therefore the values themselves.
+#'
+#' It is floored, but at a millionth of the scale of the column it belongs to
+#' rather than at one. A basis function's derivative crosses zero, and at the
+#' crossing the pointwise value vanishes while the numerical reference carries
+#' its usual rounding error; dividing that error by nothing reports a failure
+#' of the reference as a failure of the basis. Tying the floor to the curve's
+#' own magnitude keeps a proportional error detectable wherever the curve is
+#' large, which is where a wrong formula shows itself.
+#'
+#' Columns whose whole scale is at the level of rounding error are skipped,
+#' since neither side carries information there.
 #'
 #' @param a,b Numeric matrices of the same shape.
 #' @param tol The relative tolerance.
@@ -170,11 +191,62 @@ basis_partitions_unity <- function(basis) {
 #' @return \code{TRUE} or \code{FALSE}.
 #'
 #' @keywords internal
-rel_close <- function(a, b, tol) {
+rel_close <- function(a, b, tol, slack = NULL) {
   scale <- pmax(abs(a), abs(b))
-  big <- scale > 1e-8 * max(scale, na.rm = TRUE)
-  if (!any(big)) return(TRUE)
-  max(abs(a[big] - b[big]) / scale[big]) < tol
+  colscale <- apply(scale, 2L, max, na.rm = TRUE)
+  informative <- rep(colscale > 1e-8 * max(colscale, na.rm = TRUE),
+    each = nrow(scale)
+  )
+  if (!any(informative)) return(TRUE)
+  den <- pmax(scale, rep(colscale, each = nrow(scale)) * 1e-6)
+
+  allowed <- tol * den
+  if (!is.null(slack)) allowed <- pmax(allowed, slack)
+  all(abs(a[informative] - b[informative]) <= allowed[informative])
+}
+
+
+#' A Finite-Difference Reference, and Where It Can Be Trusted
+#'
+#' @description
+#' Differentiates \code{f} numerically, and reports at which points the result
+#' is worth comparing anything against.
+#'
+#' @details
+#' A central difference is only valid where the function has the derivatives
+#' the stencil assumes. A spline does not: at a knot its third derivative
+#' jumps, so a stencil that straddles the knot returns a number of the order of
+#' the jump rather than of the truncation error, and comparing an exact
+#' analytical value against it reports a failure of the \emph{reference}.
+#'
+#' Recomputing with the step halved says how much of the reference is error.
+#' For a smooth point the two differ by about three quarters of the truncation,
+#' so the gap between them bounds the reference's own uncertainty; at a knot it
+#' is large, and says so. Nothing is discarded: the gap becomes the slack the
+#' comparison is allowed, so a point tells the check as much as it honestly
+#' can and no more. This is the same device used elsewhere in the toolkit for a
+#' parameter that is not differentiable, and it needs the same care: the two
+#' estimates are compared with each other, not against a denominator floored at
+#' one, since near a kink both are small and still differ by a factor.
+#'
+#' @param f A function of a numeric vector returning a matrix.
+#' @param x A numeric vector of evaluation points.
+#' @param lower,upper The endpoints of the interval.
+#'
+#' @return A list with the reference \code{value} and the matrix
+#'   \code{uncertainty} bounding its error at each entry.
+#'
+#' @keywords internal
+fd_reference <- function(f, x, lower, upper) {
+  full <- numerical_deriv_matrix(f, x, 1L, lower, upper)
+  half <- numerical_deriv_matrix(f, x, 1L, lower, upper, step_scale = 0.5)
+  gap <- abs(full - half)
+  gap[is.na(gap)] <- Inf
+  # Four times the gap, because halving the step of a second-order stencil
+  # divides its truncation by four: the gap is three quarters of the error, so
+  # the error is four thirds of it, and the factor is rounded up rather than
+  # tuned.
+  list(value = full, uncertainty = 4 * gap)
 }
 
 

@@ -85,15 +85,17 @@ fd_offsets <- function(order) {
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
 #' @param lower,upper The endpoints of the interval \code{f} is defined on.
+#' @param step_scale A factor applied to the step. Halving it is how
+#'   \code{\link{fd_reference}} measures its own uncertainty.
 #'
 #' @return A numeric matrix with \code{length(x)} rows.
 #'
 #' @keywords internal
-numerical_deriv_matrix <- function(f, x, order, lower, upper) {
+numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
   off <- fd_offsets(order)
   reach <- off$reach
 
-  h <- .Machine$double.eps^(1 / (order + 2)) * pmax(1, abs(x))
+  h <- .Machine$double.eps^(1 / (order + 2)) * pmax(1, abs(x)) * step_scale
   h <- pmin(h, 0.4 * (upper - lower) / (2 * reach))
 
   # Which stencil each point can afford: symmetric when both sides have room,
@@ -275,7 +277,8 @@ S7::method(basis_int, basis) <- function(basis, x, nodes = 12L, ...) {
 #' @return A symmetric numeric matrix with \code{basis@dimension} rows and
 #'   columns.
 #' @keywords internal
-S7::method(basis_gram, basis) <- function(basis, order = 0L, panels = 50L,
+S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
+                                          weight = NULL, panels = 50L,
                                           nodes = 12L, ...) {
   numerical_gram(basis, order, panels, nodes)
 }
@@ -357,6 +360,13 @@ is_base_basis_class <- function(cls) {
 #'
 #' @export
 basis_is_numerical <- function(basis) {
+  # A transformed basis registers all three methods, but each of them delegates
+  # to the parent and multiplies, so what is numerical about it is whatever was
+  # numerical about the parent. Reporting its own methods would say a value was
+  # exact when it was a finite difference wearing a matrix.
+  if (S7::S7_inherits(basis, TransformedBasis)) {
+    return(basis_is_numerical(basis@parent_basis))
+  }
   cls <- S7::S7_class(basis)
   gens <- list(
     basis_deriv = basis_deriv,

@@ -74,7 +74,11 @@ test_that("an integral of the wrong function is caught", {
 
 
 test_that("a wrong Gram matrix is caught", {
-  b <- broken(basis_gram, function(basis, order = 0L, ...) {
+  # The signature mirrors the generic's, including the measure arguments the
+  # generic handles before dispatch: S7 requires a method's formals to contain
+  # every named argument of the generic it is registered on.
+  b <- broken(basis_gram, function(basis, order = 0L, at = NULL, weight = NULL,
+                                   ...) {
     1.05 * basis7:::numerical_gram(basis, order, panels = 60L, nodes = 10L)
   })
   r <- check_basis(b, verbose = FALSE)
@@ -83,7 +87,8 @@ test_that("a wrong Gram matrix is caught", {
 
 
 test_that("a non-symmetric Gram matrix is caught", {
-  b <- broken(basis_gram, function(basis, order = 0L, ...) {
+  b <- broken(basis_gram, function(basis, order = 0L, at = NULL, weight = NULL,
+                                   ...) {
     g <- basis7:::numerical_gram(basis, order, panels = 60L, nodes = 10L)
     g[1L, 2L] <- g[1L, 2L] + 1
     g
@@ -149,4 +154,64 @@ test_that("the comparison is relative to the values themselves", {
     cbind(c(1, 1e-14)), cbind(c(1, 5e-14)), 1e-6
   ))
   expect_true(basis7:::rel_close(matrix(1e-9), matrix(1e-9), 1e-6))
+})
+
+
+test_that("the reference reports its own uncertainty, and it is used", {
+  # A central difference assumes derivatives the function may not have. At a
+  # knot a cubic spline's third derivative jumps, so the stencil returns the
+  # jump; the guard has to notice that the reference, not the basis, is what
+  # failed there.
+  b <- bspline_basis(dimension = 5, degree = 3)
+  knot <- b@basis_params$knots[1L]
+  x <- c(knot, knot + 0.2)
+
+  ref <- basis7:::fd_reference(
+    function(z) basis_deriv(b, z, order = 1L), x, b@lower, b@upper
+  )
+  # much more uncertain at the knot than away from it
+  expect_gt(max(ref$uncertainty[1L, ]), 1e3 * max(ref$uncertainty[2L, ]))
+})
+
+
+test_that("the uncertainty allowance does not blunt the check", {
+  # Paired with the test above: the allowance must excuse the reference and
+  # nothing else. A five per cent error has to fail at every size, including
+  # the dense bases where the reference is at its worst.
+  for (k in c(5L, 8L, 20L, 30L)) {
+    b <- broken(
+      basis_deriv,
+      function(basis, x, order = 1L, ...) {
+        1.05 * basis7:::bspline_design(basis, x, derivs = order)
+      }
+    )
+    b <- S7::set_props(b,
+      dimension = k,
+      basis_params = bspline_basis(dimension = k)@basis_params
+    )
+    r <- check_basis(b, verbose = FALSE)
+    expect_false(r[["deriv"]], label = paste("dimension", k))
+  }
+})
+
+
+test_that("every family and size passes the derivative and integral checks", {
+  # A tolerance that works for one basis is a tolerance chosen on one basis.
+  cases <- c(
+    lapply(c(5L, 12L, 30L), function(k) bspline_basis(dimension = k)),
+    lapply(0:3, function(d) bspline_basis(dimension = d + 5L, degree = d)),
+    lapply(c(3L, 15L, 31L), function(k) fourier_basis(dimension = k)),
+    lapply(c(3L, 8L, 12L), function(k) poly_basis(dimension = k)),
+    list(
+      bspline_basis(-3, 7, dimension = 9),
+      orthonorm_basis(bspline_basis(dimension = 8)),
+      orthonorm_basis(poly_basis(dimension = 8)),
+      constrain_basis(bspline_basis(dimension = 8), rep(1, 8))
+    )
+  )
+  for (b in cases) {
+    r <- check_basis(b, verbose = FALSE)
+    expect_false(isFALSE(r[["deriv"]]), label = b@basis_name)
+    expect_false(isFALSE(r[["integral"]]), label = b@basis_name)
+  }
 })

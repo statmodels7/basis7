@@ -144,9 +144,28 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' whenever the order-\eqn{d} derivatives are linearly dependent, which for
 #' \eqn{d \ge 1} they always are: constants differentiate to zero.
 #'
+#' The inner product is taken against a measure, and which measure matters.
+#' The default is Lebesgue on the basis interval, which is what a roughness
+#' penalty integrates. Supplying \code{at} takes the empirical measure of those
+#' points instead, \eqn{B^\top B / n}, which is the matrix a design matrix
+#' actually produces and the one a basis is diagonalised against when the
+#' construction is meant to depend on where the data lie. Supplying
+#' \code{weight} takes a weighted Lebesgue measure.
+#'
+#' Both alternatives are handled in the body of the generic, before dispatch,
+#' so a method never sees them and never has to implement them; it always
+#' returns the plain Lebesgue matrix. A method must still name the arguments in
+#' its signature, because S7 requires a method's formals to contain the
+#' generic's.
+#'
 #' @param basis An object inheriting from class \code{basis}.
 #' @param order The derivative order, a non-negative integer. Zero, the
 #'   default, gives the inner products of the basis functions themselves.
+#' @param at An optional numeric vector of points. When given, the inner
+#'   products are taken against the empirical measure of those points rather
+#'   than against Lebesgue measure.
+#' @param weight An optional function of one numeric vector, a density to
+#'   weight the integral by.
 #' @param ... Passed to methods.
 #'
 #' @return A symmetric numeric matrix with \code{basis@dimension} rows and
@@ -159,14 +178,94 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' round(basis_gram(b), 6) # diagonal, by orthogonality
 #' round(basis_gram(b, order = 1), 4)
 #'
+#' # against the empirical measure of a sample instead
+#' set.seed(1)
+#' round(basis_gram(b, at = runif(2000)), 3)
+#'
 #' @export
 basis_gram <- S7::new_generic(
   "basis_gram", "basis",
-  function(basis, order = 0L, ...) {
+  function(basis, order = 0L, at = NULL, weight = NULL, ...) {
     order <- check_order(order)
+    if (!is.null(at) && !is.null(weight)) {
+      stop("Give at most one of 'at' and 'weight'.", call. = FALSE)
+    }
+    if (!is.null(at)) return(empirical_gram(basis, order, at))
+    if (!is.null(weight)) return(weighted_gram(basis, order, weight, ...))
     S7::S7_dispatch()
   }
 )
+
+
+#' Gram Matrix Against the Empirical Measure
+#'
+#' @description
+#' \eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner products a
+#' design matrix produces, rather than those of the functions on their
+#' interval.
+#'
+#' @param basis An object inheriting from class \code{basis}.
+#' @param order The derivative order.
+#' @param at A numeric vector of points.
+#'
+#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#'   columns.
+#'
+#' @keywords internal
+empirical_gram <- function(basis, order, at) {
+  if (!is.numeric(at)) stop("'at' must be numeric.", call. = FALSE)
+  # Dropped before evaluating rather than after: a basis is entitled to refuse
+  # a vector that is entirely missing, and the refusal would name the wrong
+  # thing here.
+  at <- at[!is.na(at)]
+  if (!length(at)) stop("'at' has no usable points.", call. = FALSE)
+  b <- basis_deriv(basis, at, order = order)
+  g <- crossprod(b) / nrow(b)
+  g <- (g + t(g)) / 2
+  nm <- basis_colnames(basis)
+  dimnames(g) <- list(nm, nm)
+  g
+}
+
+
+#' Gram Matrix Against a Weighted Lebesgue Measure
+#'
+#' @description
+#' \eqn{\int B^{(d)} B^{(d)\top} w(t)\, \mathrm{d}t}, by composite
+#' Gauss-Legendre. A weight is an arbitrary function, so no family has a closed
+#' form for it and the quadrature is always used.
+#'
+#' @param basis An object inheriting from class \code{basis}.
+#' @param order The derivative order.
+#' @param weight A function of one numeric vector.
+#' @param panels The number of subintervals.
+#' @param nodes The number of quadrature nodes per subinterval.
+#' @param ... Unused.
+#'
+#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#'   columns.
+#'
+#' @keywords internal
+weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) {
+  if (!is.function(weight)) {
+    stop("'weight' must be a function of one numeric vector.", call. = FALSE)
+  }
+  breaks <- seq(basis@lower, basis@upper, length.out = panels + 1L)
+  r <- quad_rule(breaks, nodes)
+  w <- weight(r$nodes)
+  if (length(w) != length(r$nodes) || anyNA(w) || any(w < 0)) {
+    stop(
+      "'weight' must return one non-negative value per point.",
+      call. = FALSE
+    )
+  }
+  b <- basis_deriv(basis, r$nodes, order = order)
+  g <- crossprod(sqrt(r$weights * w) * b)
+  g <- (g + t(g)) / 2
+  nm <- basis_colnames(basis)
+  dimnames(g) <- list(nm, nm)
+  g
+}
 
 
 #' Column Names of a Basis Matrix

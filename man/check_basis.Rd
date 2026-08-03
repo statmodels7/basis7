@@ -55,6 +55,16 @@ was not.
 The Gram check is run against a rule the basis does not itself use, so that
 a basis whose own method is quadrature is still compared with something
 independent.
+
+The derivative and integral checks allow for the accuracy of their own
+reference. A central difference assumes derivatives the function may not
+have: at a knot a spline's third derivative jumps, and a stencil straddling
+it returns the jump rather than the truncation error, which would read as a
+failure of the basis. Each reference is therefore computed twice, at a step
+and at half of it, and the gap between them bounds its uncertainty; the
+comparison is allowed that much slack, point by point. A deliberate error of
+five per cent is still caught by four orders of magnitude, which is the
+check that the allowance has not blunted anything.
 }
 \examples{
 invisible(check_basis(bspline_basis(dimension = 6)))

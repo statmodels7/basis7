@@ -8,7 +8,7 @@ template:
 
 navbar:
   structure:
-    left: [reference, news]
+    left: [reference, articles, news]
     right: [search, github]
 
 reference:
@@ -19,6 +19,18 @@ reference:
   contents:
   - bspline_basis
   - fourier_basis
+  - poly_basis
+
+- title: Transforming a basis
+  desc: >
+    Orthonormalisation, identifiability constraints and the Demmler-Reinsch
+    construction are the same operation with different matrices, so they share
+    one class.
+  contents:
+  - orthonorm_basis
+  - constrain_basis
+  - dr_basis
+  - TransformedBasis
 
 - title: The interface
   desc: >
@@ -36,6 +48,7 @@ reference:
   contents:
   - BsplineBasis
   - FourierBasis
+  - PolyBasis
 
 - title: Validation
   contents:
@@ -62,6 +75,12 @@ reference:
   - quad_rule
   - bspline_design
   - fourier_trig
+  - legendre_table
+  - legendre_deriv
+  - new_transformed
+  - empirical_gram
+  - weighted_gram
+  - fd_reference
   - check_basis_args
   - check_eval_points
   - check_order

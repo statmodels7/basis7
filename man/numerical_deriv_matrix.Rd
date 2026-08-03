@@ -4,7 +4,7 @@
 \alias{numerical_deriv_matrix}
 \title{Numerically Differentiate a Matrix-Valued Function}
 \usage{
-numerical_deriv_matrix(f, x, order, lower, upper)
+numerical_deriv_matrix(f, x, order, lower, upper, step_scale = 1)
 }
 \arguments{
 \item{f}{A function of a numeric vector returning a matrix with one row per
@@ -15,6 +15,9 @@ element.}
 \item{order}{The derivative order.}
 
 \item{lower, upper}{The endpoints of the interval \code{f} is defined on.}
+
+\item{step_scale}{A factor applied to the step. Halving it is how
+\code{\link{fd_reference}} measures its own uncertainty.}
 }
 \value{
 A numeric matrix with \code{length(x)} rows.

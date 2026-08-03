@@ -217,7 +217,8 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #' @return A symmetric numeric matrix with \code{basis@dimension} rows and
 #'   columns.
 #' @keywords internal
-S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, ...) {
+S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
+                                                 weight = NULL, ...) {
   p <- basis@basis_params
   if (!p$full_period) {
     return(numerical_gram(basis, order, ...))

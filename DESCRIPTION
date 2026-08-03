@@ -1,6 +1,6 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.1.0
+Version: 0.2.0
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Implements basis expansions using the S7 object-oriented system.
@@ -27,6 +27,7 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
+VignetteBuilder: knitr
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3
@@ -39,4 +40,6 @@ Collate:
     'check_basis.R'
     'fourier_basis.R'
     'methods.R'
+    'poly_basis.R'
+    'transformed_basis.R'
     'zzz.R'
