@@ -205,9 +205,35 @@ quad_rule <- function(breaks, n) {
 #'   \code{basis@dimension} columns.
 #' @keywords internal
 S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
+  d <- basis_nvar(basis)
+  if (d == 1L) {
+    out <- numerical_deriv_matrix(
+      function(z) basis_eval(basis, z),
+      x, order, basis@lower, basis@upper
+    )
+    return(name_columns(out, basis))
+  }
+
+  # For several variables the stencil differentiates along one coordinate at a
+  # time. A mixed partial needs a stencil in the plane, whose error is the
+  # product of two, and no basis in the package needs one: a tensor product
+  # computes its own exactly. Refused rather than approximated badly.
+  active <- which(order > 0L)
+  if (length(active) > 1L) {
+    stop(
+      "The numerical fallback differentiates one variable at a time; a mixed ",
+      "partial derivative has to be supplied by the basis.",
+      call. = FALSE
+    )
+  }
+  j <- active[1L]
   out <- numerical_deriv_matrix(
-    function(z) basis_eval(basis, z),
-    x, order, basis@lower, basis@upper
+    function(z) {
+      xj <- x
+      xj[, j] <- z
+      basis_eval(basis, xj)
+    },
+    x[, j], order[j], basis@lower[j], basis@upper[j]
   )
   name_columns(out, basis)
 }
@@ -233,6 +259,13 @@ S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
 #'   \code{basis@dimension} columns.
 #' @keywords internal
 S7::method(basis_int, basis) <- function(basis, x, nodes = 12L, ...) {
+  if (basis_nvar(basis) > 1L) {
+    stop(
+      "The numerical fallback integrates one variable; a multiple integral ",
+      "over a box has to be supplied by the basis, as a tensor product does.",
+      call. = FALSE
+    )
+  }
   k <- basis@dimension
   out <- matrix(NA_real_, length(x), k)
   ok <- !is.na(x)
@@ -301,10 +334,28 @@ S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
 #'
 #' @keywords internal
 numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
-  breaks <- seq(basis@lower, basis@upper, length.out = panels + 1L)
-  r <- quad_rule(breaks, nodes)
-  b <- basis_deriv(basis, r$nodes, order = order)
-  g <- crossprod(sqrt(r$weights) * b)
+  d <- basis_nvar(basis)
+  order <- check_order(order, d)
+
+  if (d == 1L) {
+    r <- quad_rule(seq(basis@lower, basis@upper, length.out = panels + 1L), nodes)
+    pts <- r$nodes
+    w <- r$weights
+  } else {
+    # A product rule over the box: the nodes are the lattice of the marginal
+    # rules and the weights their products. Kept coarse per coordinate, since
+    # the count grows as the power of the number of variables.
+    per <- max(2L, as.integer(ceiling(panels^(1 / d))))
+    rules <- lapply(seq_len(d), function(j) {
+      quad_rule(seq(basis@lower[j], basis@upper[j], length.out = per + 1L), nodes)
+    })
+    grid <- expand.grid(lapply(rules, function(r) seq_along(r$nodes)))
+    pts <- vapply(seq_len(d), function(j) rules[[j]]$nodes[grid[[j]]], numeric(nrow(grid)))
+    w <- Reduce(`*`, lapply(seq_len(d), function(j) rules[[j]]$weights[grid[[j]]]))
+  }
+
+  b <- basis_deriv(basis, pts, order = order)
+  g <- crossprod(sqrt(w) * b)
   g <- (g + t(g)) / 2
   nm <- basis_colnames(basis)
   dimnames(g) <- list(nm, nm)
@@ -366,6 +417,13 @@ basis_is_numerical <- function(basis) {
   # exact when it was a finite difference wearing a matrix.
   if (S7::S7_inherits(basis, TransformedBasis)) {
     return(basis_is_numerical(basis@parent_basis))
+  }
+  # A tensor product is exact exactly when its marginals are: every one of its
+  # methods is a product of theirs.
+  if (S7::S7_inherits(basis, TensorBasis)) {
+    flags <- vapply(basis@marginals, basis_is_numerical, logical(3L))
+    return(apply(matrix(flags, nrow = 3L), 1L, any) |>
+      stats::setNames(c("basis_deriv", "basis_int", "basis_gram")))
   }
   cls <- S7::S7_class(basis)
   gens <- list(

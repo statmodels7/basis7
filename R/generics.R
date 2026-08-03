@@ -84,8 +84,8 @@ basis_deriv <- S7::new_generic(
   "basis_deriv", "basis",
   function(basis, x, order = 1L, ...) {
     x <- check_eval_points(basis, x)
-    order <- check_order(order)
-    if (order == 0L) {
+    order <- check_order(order, basis_nvar(basis))
+    if (all(order == 0L)) {
       return(basis_eval(basis, x, ...))
     }
     S7::S7_dispatch()
@@ -186,7 +186,7 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 basis_gram <- S7::new_generic(
   "basis_gram", "basis",
   function(basis, order = 0L, at = NULL, weight = NULL, ...) {
-    order <- check_order(order)
+    order <- check_order(order, basis_nvar(basis))
     if (!is.null(at) && !is.null(weight)) {
       stop("Give at most one of 'at' and 'weight'.", call. = FALSE)
     }
@@ -217,8 +217,14 @@ empirical_gram <- function(basis, order, at) {
   # Dropped before evaluating rather than after: a basis is entitled to refuse
   # a vector that is entirely missing, and the refusal would name the wrong
   # thing here.
-  at <- at[!is.na(at)]
-  if (!length(at)) stop("'at' has no usable points.", call. = FALSE)
+  if (basis_nvar(basis) > 1L) {
+    at <- as.matrix(at)
+    at <- at[stats::complete.cases(at), , drop = FALSE]
+    if (!nrow(at)) stop("'at' has no usable points.", call. = FALSE)
+  } else {
+    at <- at[!is.na(at)]
+    if (!length(at)) stop("'at' has no usable points.", call. = FALSE)
+  }
   b <- basis_deriv(basis, at, order = order)
   g <- crossprod(b) / nrow(b)
   g <- (g + t(g)) / 2
@@ -249,6 +255,11 @@ empirical_gram <- function(basis, order, at) {
 weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) {
   if (!is.function(weight)) {
     stop("'weight' must be a function of one numeric vector.", call. = FALSE)
+  }
+  if (basis_nvar(basis) > 1L) {
+    stop("'weight' is not supported for a basis of several variables.",
+      call. = FALSE
+    )
   }
   breaks <- seq(basis@lower, basis@upper, length.out = panels + 1L)
   r <- quad_rule(breaks, nodes)
@@ -305,15 +316,41 @@ S7::method(basis_colnames, basis) <- function(basis, ...) {
 
 #' Validate a Derivative Order
 #'
-#' @param order The value supplied by the caller.
+#' @description
+#' A single non-negative integer for a basis of one variable, and one per
+#' variable for a basis of several.
 #'
-#' @return \code{order}, as an integer.
+#' @details
+#' A multi-index is required rather than recycled from a scalar, because a
+#' scalar has two plausible readings for a product basis -- that order in every
+#' coordinate, or that total order -- and guessing between them would be a
+#' silent choice. The single exception is zero, which means no derivative under
+#' either reading.
+#'
+#' @param order The value supplied by the caller.
+#' @param nvar The number of variables the basis takes.
+#'
+#' @return \code{order}, as an integer vector of length \code{nvar}.
 #'
 #' @keywords internal
-check_order <- function(order) {
-  if (!is.numeric(order) || length(order) != 1L || !is.finite(order) ||
-    order < 0 || order != round(order)) {
-    stop("'order' must be a single non-negative integer.", call. = FALSE)
+check_order <- function(order, nvar = 1L) {
+  ok <- is.numeric(order) && length(order) >= 1L && all(is.finite(order)) &&
+    all(order >= 0) && all(order == round(order))
+  if (!ok) {
+    stop("'order' must be a non-negative integer.", call. = FALSE)
   }
-  as.integer(order)
+  order <- as.integer(order)
+
+  if (length(order) == nvar) return(order)
+  if (length(order) == 1L && (nvar == 1L || order == 0L)) {
+    return(rep(order, nvar))
+  }
+  stop(sprintf(
+    paste0(
+      "'order' must have one entry per variable (%d), or be 0. A single ",
+      "non-zero order is ambiguous for a basis of several variables: it ",
+      "could mean that order in each coordinate, or that total order."
+    ),
+    nvar
+  ), call. = FALSE)
 }

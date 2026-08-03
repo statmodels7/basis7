@@ -4,15 +4,25 @@
 \alias{check_order}
 \title{Validate a Derivative Order}
 \usage{
-check_order(order)
+check_order(order, nvar = 1L)
 }
 \arguments{
 \item{order}{The value supplied by the caller.}
+
+\item{nvar}{The number of variables the basis takes.}
 }
 \value{
-\code{order}, as an integer.
+\code{order}, as an integer vector of length \code{nvar}.
 }
 \description{
-Validate a Derivative Order
+A single non-negative integer for a basis of one variable, and one per
+variable for a basis of several.
+}
+\details{
+A multi-index is required rather than recycled from a scalar, because a
+scalar has two plausible readings for a product basis -- that order in every
+coordinate, or that total order -- and guessing between them would be a
+silent choice. The single exception is zero, which means no derivative under
+either reading.
 }
 \keyword{internal}

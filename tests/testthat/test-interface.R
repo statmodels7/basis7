@@ -87,8 +87,10 @@ test_that("an invalid order is refused", {
   b <- bspline_basis(dimension = 5)
   expect_error(basis_deriv(b, 0.5, order = -1), "non-negative integer")
   expect_error(basis_deriv(b, 0.5, order = 1.5), "non-negative integer")
-  expect_error(basis_deriv(b, 0.5, order = c(1, 2)), "non-negative integer")
   expect_error(basis_gram(b, order = -1), "non-negative integer")
+  # a basis of one variable takes one order, so two is a mistake about the
+  # basis rather than about the number
+  expect_error(basis_deriv(b, 0.5, order = c(1, 2)), "one entry per variable")
 })
 
 

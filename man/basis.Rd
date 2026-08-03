@@ -17,7 +17,8 @@ basis(
 
 \item{dimension}{The number of functions in the basis, a positive integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on.}
+\item{lower, upper}{The endpoints of the interval the basis lives on, or one
+endpoint per variable for a basis of several.}
 
 \item{basis_params}{A named list of whatever else the subclass needs.}
 }
@@ -42,6 +43,12 @@ Bases are complete: a B-spline basis carries all its functions and its rows
 sum to one. Restricting a basis, whether for identifiability or to separate
 a linear from a nonlinear part, is a linear transformation of it and belongs
 to the layer that owns that decision.
+
+A basis lives on an interval, or, when it is a product of several, on a box:
+\code{lower} and \code{upper} then have one entry per variable and
+\code{\link{basis_nvar}} reports how many. Everything else is unchanged, and
+a univariate basis is the case of one variable rather than a separate kind
+of object.
 }
 \examples{
 # `basis` is abstract; construct a concrete subclass

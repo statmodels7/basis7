@@ -17,8 +17,14 @@ NULL
 #' fourier_basis(dimension = 5)
 S7::method(print, basis) <- function(x, ...) {
   cat("Basis: ", x@basis_name, "\n", sep = "")
-  cat("Functions: ", x@dimension,
-    "   Interval: [", format(x@lower), ", ", format(x@upper), "]\n",
+  cat("Functions: ", x@dimension, "   Variables: ", basis_nvar(x), "\n",
+    sep = ""
+  )
+  cat("Domain: ",
+    paste(sprintf("[%s, %s]", format(x@lower), format(x@upper)),
+      collapse = " x "
+    ),
+    "\n",
     sep = ""
   )
 
@@ -67,6 +73,13 @@ S7::method(print, basis) <- function(x, ...) {
 #' plot(b, order = 1)
 #' plot(b, order = -1)
 S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
+  if (basis_nvar(x) > 1L) {
+    stop(
+      "plot() draws a basis of one variable. A product of several has no ",
+      "single picture: draw its marginals, or a surface of one function.",
+      call. = FALSE
+    )
+  }
   if (!is.numeric(order) || length(order) != 1L || order < -1 ||
     order != round(order)) {
     stop(

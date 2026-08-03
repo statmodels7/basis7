@@ -17,7 +17,8 @@ PolyBasis(
 
 \item{dimension}{The number of functions in the basis, a positive integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on.}
+\item{lower, upper}{The endpoints of the interval the basis lives on, or one
+endpoint per variable for a basis of several.}
 
 \item{basis_params}{A named list of whatever else the subclass needs.}
 }

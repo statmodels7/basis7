@@ -47,7 +47,8 @@ pak::pak("statmodels7/basis7")
 b <- bspline_basis(lower = 0, upper = 1, dimension = 6, degree = 3)
 b
 #> Basis: bspline
-#> Functions: 6   Interval: [0, 1]
+#> Functions: 6   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   degree          3
 #>   knots           0.3333, 0.6667
@@ -179,6 +180,49 @@ c(
 #>          3.108624e-14          7.571721e-14
 ```
 
+## Several variables, without building the product
+
+`tensor_basis()` multiplies bases, one per variable. The product
+separates, so the Gram matrix is the Kronecker product of the marginal
+ones and stays exact however many variables there are:
+
+``` r
+t2 <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
+t2
+#> Basis: tensor(bspline, fourier)
+#> Functions: 12   Variables: 2
+#> Domain: [0, 1] x [0, 1]
+#> Parameters:
+#>   marginal_dimensions  4, 3
+#> Numerical: none
+
+max(abs(basis_gram(t2) - kronecker(
+  basis_gram(bspline_basis(dimension = 4)),
+  basis_gram(fourier_basis(dimension = 3))
+)))
+#> [1] 0
+```
+
+The design matrix, on the other hand, grows as the product of the
+marginal dimensions, and that is what makes interactions expensive.
+`basis_contract()` computes the values the coefficients describe from
+the marginal evaluations alone. Given the coefficients as factor
+matrices, the cost is linear in the number of variables rather than
+exponential in it:
+
+``` r
+big <- tensor_basis(rep(list(bspline_basis(dimension = 10)), 6))
+big@dimension # the design matrix would have this many columns
+#> [1] 1000000
+
+set.seed(2)
+x <- matrix(runif(1000 * 6), 1000, 6)
+gamma <- replicate(6, matrix(rnorm(10 * 4), 10, 4), simplify = FALSE)
+
+head(basis_contract(big, x, gamma), 3)
+#> [1] 0.001117661 0.066648067 0.003906074
+```
+
 ## A user-defined basis needs only its evaluation
 
 Everything else has a numerical method registered on the base class, so
@@ -245,6 +289,7 @@ invisible(check_basis(bumps))
 |  |  |
 |----|----|
 | families | `bspline_basis()`, `fourier_basis()`, `poly_basis()` |
+| several variables | `tensor_basis()`, `basis_contract()`, `basis_nvar()` |
 | generics | `basis_eval()`, `basis_deriv()`, `basis_int()`, `basis_gram()`, `basis_colnames()` |
 | transforms | `orthonorm_basis()`, `constrain_basis()`, `dr_basis()` |
 | tools | `check_basis()`, `basis_is_numerical()`, `print()`, `plot()` |

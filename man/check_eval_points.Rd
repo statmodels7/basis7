@@ -9,10 +9,12 @@ check_eval_points(basis, x)
 \arguments{
 \item{basis}{An object inheriting from class \code{basis}.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points, or a matrix with one column
+per variable.}
 }
 \value{
-\code{x}, with near-endpoint values clamped onto the endpoints.
+\code{x}, with near-endpoint values clamped onto the endpoints: a
+vector for a basis of one variable and a matrix otherwise.
 }
 \description{
 Checks that \code{x} is numeric and lies inside the basis interval, and
@@ -28,5 +30,9 @@ silent answer here would take that decision away from it.
 The comparison uses a tolerance relative to the width of the interval, so
 that a point which is an endpoint up to rounding is accepted and then
 clamped onto the endpoint exactly.
+
+For a basis of several variables the points are a matrix with one column per
+variable, and each column is checked against its own endpoints. A basis of
+one variable keeps taking, and returning, a plain vector.
 }
 \keyword{internal}

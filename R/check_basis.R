@@ -70,14 +70,32 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
   num <- basis_is_numerical(basis)
   k <- basis@dimension
   nm <- basis_colnames(basis)
+  # The shape checks compare against dim(), which is always integer, so a
+  # count given as a double would fail a check about the basis for a reason
+  # about the argument.
+  n <- as.integer(n)
 
-  # Points strictly inside the interval: the numerical reference differences
+  nvar <- basis_nvar(basis)
+
+  # Points strictly inside the domain: the numerical reference differences
   # through neighbouring points, and at an endpoint it would have to switch to
   # a one-sided stencil, whose error is larger and would be read as a failure
   # of the basis rather than of the reference. The endpoints are covered by
   # the shape and integral checks, which need no reference.
   pad <- 0.05 * (basis@upper - basis@lower)
-  x <- seq(basis@lower + pad, basis@upper - pad, length.out = n)
+  x <- if (nvar == 1L) {
+    seq(basis@lower + pad, basis@upper - pad, length.out = n)
+  } else {
+    # A shifted lattice rather than a product grid: a product grid of n points
+    # per coordinate would cost n^D evaluations to learn nothing more.
+    vapply(seq_len(nvar), function(j) {
+      seq(basis@lower[j] + pad[j], basis@upper[j] - pad[j], length.out = n)[
+        1L + (seq_len(n) + j - 2L) %% n
+      ]
+    }, numeric(n))
+  }
+  first <- if (nvar == 1L) x[1L] else x[1L, , drop = FALSE]
+  low_corner <- if (nvar == 1L) basis@lower else matrix(basis@lower, 1L)
 
   res <- c(
     shape = NA, deriv = NA, integral = NA, partition = NA,
@@ -88,33 +106,48 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
   b <- basis_eval(basis, x)
   res[["shape"]] <- is.matrix(b) && nrow(b) == n && ncol(b) == k &&
     identical(colnames(b), nm) &&
-    identical(dim(basis_eval(basis, x[1])), c(1L, k)) &&
-    identical(dim(basis_int(basis, x)), c(n, k)) &&
-    identical(dim(basis_deriv(basis, x, order = 1L)), c(n, k))
+    identical(dim(basis_eval(basis, first)), c(1L, k)) &&
+    identical(dim(basis_deriv(basis, x, order = rep(1L, nvar))), c(n, k))
 
-  ## 2. derivatives: order k against one differentiation of order k - 1
+  ## 2. derivatives: order k against one differentiation of order k - 1.
+  ## For several variables this is done one coordinate at a time, since a
+  ## mixed stencil would carry the product of two errors.
   if (!num[["basis_deriv"]]) {
     ok <- TRUE
-    for (d in orders) {
-      ana <- basis_deriv(basis, x, order = d)
-      ref <- fd_reference(
-        function(z) basis_deriv(basis, z, order = d - 1L),
-        x, basis@lower, basis@upper
-      )
-      ok <- ok && rel_close(ana, ref$value, tol, ref$uncertainty)
+    for (j in seq_len(nvar)) {
+      for (d in orders) {
+        e <- rep(0L, nvar)
+        e[j] <- d
+        ana <- basis_deriv(basis, x, order = e)
+        below <- e
+        below[j] <- d - 1L
+        ref <- fd_reference(
+          function(z) basis_deriv(basis, replace_coord(x, j, z), order = below),
+          coord(x, j), basis@lower[j], basis@upper[j]
+        )
+        ok <- ok && rel_close(ana, ref$value, tol, ref$uncertainty)
+      }
     }
     res[["deriv"]] <- ok
   }
 
-  ## 3. the integral: differentiates back, and is zero at the lower endpoint
+  ## 3. the integral: differentiates back, and is zero at the lower corner.
+  ## Differentiating back is a one-variable statement; for several the mixed
+  ## derivative would need the stencil the fallback refuses, so only the
+  ## anchor is checked there, which is the part the convention fixes.
   if (!num[["basis_int"]]) {
-    ref <- fd_reference(
-      function(z) basis_int(basis, z), x, basis@lower, basis@upper
-    )
-    at_lower <- basis_int(basis, basis@lower)
-    res[["integral"]] <-
-      rel_close(basis_eval(basis, x), ref$value, tol, ref$uncertainty) &&
-        all(at_lower == 0)
+    at_lower <- basis_int(basis, low_corner)
+    if (nvar == 1L) {
+      ref <- fd_reference(
+        function(z) basis_int(basis, z), x, basis@lower, basis@upper
+      )
+      res[["integral"]] <-
+        rel_close(basis_eval(basis, x), ref$value, tol, ref$uncertainty) &&
+          all(at_lower == 0)
+    } else {
+      res[["integral"]] <- all(at_lower == 0) &&
+        identical(dim(basis_int(basis, x)), c(n, k))
+    }
   }
 
   ## 4. partition of unity, where the family has it
@@ -136,7 +169,11 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
   }
 
   ## 6. missing values travel through
-  xm <- c(x[1:3], NA_real_)
+  xm <- if (nvar == 1L) {
+    c(x[1:3], NA_real_)
+  } else {
+    rbind(x[1:3, , drop = FALSE], NA_real_)
+  }
   bm <- basis_eval(basis, xm)
   res[["missing"]] <- all(is.na(bm[4L, ])) && !anyNA(bm[1:3, ])
 
@@ -158,7 +195,40 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
 #'
 #' @keywords internal
 basis_partitions_unity <- function(basis) {
+  # A product of partitions of unity is one: the row sums of a Kronecker
+  # product are the product of the row sums.
+  if (S7::S7_inherits(basis, TensorBasis)) {
+    return(all(vapply(basis@marginals, basis_partitions_unity, logical(1))))
+  }
   S7::S7_inherits(basis, BsplineBasis)
+}
+
+
+#' One Coordinate of the Evaluation Points
+#'
+#' @description
+#' The \code{j}th variable of the points, and the points with that variable
+#' replaced. A basis of one variable has a vector of points and no coordinate
+#' to pick, so both are the identity there.
+#'
+#' @param x A numeric vector or matrix of evaluation points.
+#' @param j The coordinate.
+#' @param z The replacement values.
+#'
+#' @return A numeric vector for \code{coord}, and points of the same shape as
+#'   \code{x} for \code{replace_coord}.
+#'
+#' @keywords internal
+coord <- function(x, j) {
+  if (is.matrix(x)) x[, j] else x
+}
+
+#' @rdname coord
+#' @keywords internal
+replace_coord <- function(x, j, z) {
+  if (!is.matrix(x)) return(z)
+  x[, j] <- z
+  x
 }
 
 

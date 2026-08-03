@@ -32,6 +32,16 @@ reference:
   - dr_basis
   - TransformedBasis
 
+- title: Several variables
+  desc: >
+    A product of bases, and the contraction that computes what a fit needs
+    from the marginal evaluations without forming the product.
+  contents:
+  - tensor_basis
+  - basis_contract
+  - TensorBasis
+  - basis_nvar
+
 - title: The interface
   desc: >
     What every basis answers. A subclass must implement only the first;
@@ -81,6 +91,12 @@ reference:
   - empirical_gram
   - weighted_gram
   - fd_reference
+  - tensor_design
+  - marginal_designs
+  - khatri_rao
+  - contract_cp
+  - clamp_to_range
+  - coord
   - check_basis_args
   - check_eval_points
   - check_order

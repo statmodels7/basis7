@@ -19,9 +19,16 @@
 #' a linear from a nonlinear part, is a linear transformation of it and belongs
 #' to the layer that owns that decision.
 #'
+#' A basis lives on an interval, or, when it is a product of several, on a box:
+#' \code{lower} and \code{upper} then have one entry per variable and
+#' \code{\link{basis_nvar}} reports how many. Everything else is unchanged, and
+#' a univariate basis is the case of one variable rather than a separate kind
+#' of object.
+#'
 #' @param basis_name A short name for the family, used when printing.
 #' @param dimension The number of functions in the basis, a positive integer.
-#' @param lower,upper The endpoints of the interval the basis lives on.
+#' @param lower,upper The endpoints of the interval the basis lives on, or one
+#'   endpoint per variable for a basis of several.
 #' @param basis_params A named list of whatever else the subclass needs.
 #'
 #' @return An object inheriting from class \code{basis}.
@@ -54,16 +61,41 @@ basis <- S7::new_class(
       self@dimension < 1L) {
       return("@dimension must be a single positive integer")
     }
-    if (length(self@lower) != 1L || length(self@upper) != 1L ||
-      !is.finite(self@lower) || !is.finite(self@upper)) {
-      return("@lower and @upper must be single finite numbers")
+    if (length(self@lower) < 1L || length(self@lower) != length(self@upper) ||
+      !all(is.finite(self@lower)) || !all(is.finite(self@upper))) {
+      return("@lower and @upper must be finite and of the same length")
     }
-    if (self@lower >= self@upper) {
-      return("@lower must be strictly less than @upper")
+    if (any(self@lower >= self@upper)) {
+      return("every @lower must be strictly less than its @upper")
     }
     NULL
   }
 )
+
+
+#' How Many Variables a Basis Takes
+#'
+#' @description
+#' One for an ordinary basis, and the number of marginals for a product of
+#' several.
+#'
+#' @details
+#' The number is read off the endpoints, which carry one entry per variable, so
+#' a basis declares its input dimension by construction rather than by saying
+#' so separately and possibly disagreeing.
+#'
+#' @param basis An object inheriting from class \code{basis}.
+#'
+#' @return A positive integer.
+#'
+#' @examples
+#' basis_nvar(bspline_basis(dimension = 5))
+#' basis_nvar(tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3)))
+#'
+#' @export
+basis_nvar <- function(basis) {
+  length(basis@lower)
+}
 
 
 #' Validate the Arguments Every Basis Constructor Takes
@@ -111,30 +143,71 @@ check_basis_args <- function(lower, upper, dimension) {
 #' that a point which is an endpoint up to rounding is accepted and then
 #' clamped onto the endpoint exactly.
 #'
-#' @param basis An object inheriting from class \code{basis}.
-#' @param x A numeric vector of evaluation points.
+#' For a basis of several variables the points are a matrix with one column per
+#' variable, and each column is checked against its own endpoints. A basis of
+#' one variable keeps taking, and returning, a plain vector.
 #'
-#' @return \code{x}, with near-endpoint values clamped onto the endpoints.
+#' @param basis An object inheriting from class \code{basis}.
+#' @param x A numeric vector of evaluation points, or a matrix with one column
+#'   per variable.
+#'
+#' @return \code{x}, with near-endpoint values clamped onto the endpoints: a
+#'   vector for a basis of one variable and a matrix otherwise.
 #'
 #' @keywords internal
 check_eval_points <- function(basis, x) {
   if (!is.numeric(x)) {
     stop("'x' must be numeric.", call. = FALSE)
   }
-  lo <- basis@lower
-  hi <- basis@upper
-  tol <- 1e-8 * (hi - lo)
+  d <- basis_nvar(basis)
 
-  bad <- !is.na(x) & (x < lo - tol | x > hi + tol)
-  if (any(bad)) {
+  if (d == 1L) {
+    if (is.matrix(x)) {
+      if (ncol(x) != 1L) {
+        stop("'x' must be a vector for a basis of one variable.", call. = FALSE)
+      }
+      x <- as.numeric(x)
+    }
+    return(clamp_to_range(x, basis@lower, basis@upper, "the basis interval"))
+  }
+
+  if (!is.matrix(x)) x <- matrix(x, ncol = d, byrow = TRUE)
+  if (ncol(x) != d) {
     stop(sprintf(
-      "%d of %d evaluation points fall outside the basis interval [%s, %s].",
-      sum(bad), length(x), format(lo), format(hi)
+      "'x' must have %d columns, one per variable of the basis.", d
     ), call. = FALSE)
   }
-  x[!is.na(x) & x < lo] <- lo
-  x[!is.na(x) & x > hi] <- hi
+  for (j in seq_len(d)) {
+    x[, j] <- clamp_to_range(
+      x[, j], basis@lower[j], basis@upper[j],
+      sprintf("the range of variable %d", j)
+    )
+  }
   x
+}
+
+
+#' Refuse Points Outside a Range, and Clamp Those On Its Edge
+#'
+#' @param z A numeric vector.
+#' @param lo,hi The endpoints.
+#' @param what A phrase naming the range, used in the error message.
+#'
+#' @return \code{z}, clamped.
+#'
+#' @keywords internal
+clamp_to_range <- function(z, lo, hi, what) {
+  tol <- 1e-8 * (hi - lo)
+  bad <- !is.na(z) & (z < lo - tol | z > hi + tol)
+  if (any(bad)) {
+    stop(sprintf(
+      "%d of %d evaluation points fall outside %s [%s, %s].",
+      sum(bad), length(z), what, format(lo), format(hi)
+    ), call. = FALSE)
+  }
+  z[!is.na(z) & z < lo] <- lo
+  z[!is.na(z) & z > hi] <- hi
+  z
 }
 
 
