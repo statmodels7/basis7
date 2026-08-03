@@ -37,7 +37,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="basis7-031">basis7 0.3.1<a class="anchor" aria-label="anchor" href="#basis7-031"></a></h2>
-<ul><li>The numerical derivative no longer labels the rows of its result after the finite-difference stencil each point uses. The stencil is chosen per point and recorded in a character vector, whose names travelled through the evaluation points and came back as row names for any basis whose method propagates the names of <code>x</code>.</li>
+<ul><li><p>The numerical derivative no longer labels the rows of its result after the finite-difference stencil each point uses. The stencil is chosen per point and recorded in a character vector, whose names travelled through the evaluation points and came back as row names for any basis whose method propagates the names of <code>x</code>.</p></li>
+<li><p>Whether a Gram matrix or a penalty is positive definite is now decided from its eigenvalues rather than from whether <code><a href="https://rdrr.io/r/base/chol.html" class="external-link">chol()</a></code> raises. On a matrix with an exactly zero eigenvalue the pivot that should be zero comes out positive or negative according to rounding, so <code><a href="../reference/orthonorm_basis.html">orthonorm_basis()</a></code> and <code><a href="../reference/dr_basis.html">dr_basis()</a></code> gave different answers on different machines about the same matrix.</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="basis7-030">basis7 0.3.0<a class="anchor" aria-label="anchor" href="#basis7-030"></a></h2>

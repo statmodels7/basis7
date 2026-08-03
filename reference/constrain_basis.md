@@ -58,5 +58,5 @@ cs <- constrain_basis(b, colSums(basis_eval(b, x)))
 cs@dimension
 #> [1] 5
 max(abs(colSums(basis_eval(cs, x))))
-#> [1] 2.034527e-14
+#> [1] 1.915655e-14
 ```

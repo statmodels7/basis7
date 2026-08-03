@@ -301,7 +301,7 @@ c(
   orthogonal_to_1_and_x = max(abs(crossprod(cbind(1, xd), z)))
 )
 #>          off_diagonal orthogonal_to_1_and_x 
-#>          7.815970e-14          1.501022e-13
+#>          1.125910e-13          7.593925e-14
 ```
 
 Transforms compose by multiplication rather than by nesting, so a chain

@@ -8,6 +8,16 @@
   through the evaluation points and came back as row names for any basis
   whose method propagates the names of `x`.
 
+- Whether a Gram matrix or a penalty is positive definite is now decided
+  from its eigenvalues rather than from whether
+  [`chol()`](https://rdrr.io/r/base/chol.html) raises. On a matrix with
+  an exactly zero eigenvalue the pivot that should be zero comes out
+  positive or negative according to rounding, so
+  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
+  and
+  [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
+  gave different answers on different machines about the same matrix.
+
 ## basis7 0.3.0
 
 - [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),

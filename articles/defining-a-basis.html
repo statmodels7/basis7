@@ -325,7 +325,7 @@ It works on any basis, this one included:</p>
 <span>  orthogonal_to_1_and_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xd</span><span class="op">)</span>, <span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;          off_diagonal orthogonal_to_1_and_x </span></span>
-<span><span class="co">#&gt;          7.815970e-14          1.501022e-13</span></span></code></pre></div>
+<span><span class="co">#&gt;          1.125910e-13          7.593925e-14</span></span></code></pre></div>
 <p>Transforms compose by multiplication rather than by nesting, so a
 chain of them costs one matrix product per evaluation however long it
 is:</p>
