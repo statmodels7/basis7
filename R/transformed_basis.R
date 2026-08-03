@@ -185,6 +185,37 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 }
 
 
+#' Cholesky Factorisation, With the Rank Decided Before It
+#'
+#' @description
+#' The Cholesky factor of a symmetric matrix, or \code{NULL} when the matrix is
+#' not positive definite to the given relative tolerance.
+#'
+#' @details
+#' The verdict comes from the eigenvalues rather than from whether
+#' \code{\link[base]{chol}} raises. On a matrix with an exactly zero eigenvalue
+#' the pivot that should be zero comes out positive or negative according to
+#' rounding, so \code{chol()} succeeds on some platforms and fails on others,
+#' and a construction that asks it whether a penalty is usable gets a different
+#' answer on different machines. Comparing the smallest eigenvalue with the
+#' largest is a statement about the matrix, and gives the same answer
+#' everywhere.
+#'
+#' @param m A symmetric numeric matrix.
+#' @param tol The relative tolerance below which the smallest eigenvalue counts
+#'   as zero.
+#'
+#' @return The upper triangular Cholesky factor, or \code{NULL}.
+#'
+#' @keywords internal
+chol_pd <- function(m, tol = 1e-12) {
+  ev <- eigen(m, symmetric = TRUE, only.values = TRUE)$values
+  if (!length(ev) || anyNA(ev)) return(NULL)
+  if (max(ev) <= 0 || min(ev) <= tol * max(ev)) return(NULL)
+  tryCatch(chol(m), error = function(e) NULL)
+}
+
+
 #' Orthonormalise a Basis
 #'
 #' @description
@@ -219,7 +250,7 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 orthonorm_basis <- function(basis, order = 0L) {
   order <- check_order(order)
   g <- basis_gram(basis, order = order)
-  r <- tryCatch(chol(g), error = function(e) NULL)
+  r <- chol_pd(g)
   if (is.null(r)) {
     stop(
       "The Gram matrix is singular, so the basis functions are linearly ",
@@ -394,7 +425,7 @@ dr_basis <- function(basis, x, penalty = NULL, constraints = NULL,
   p_tilde <- crossprod(v0, penalty %*% v0)
   p_tilde <- (p_tilde + t(p_tilde)) / 2
 
-  r <- tryCatch(chol(p_tilde), error = function(e) NULL)
+  r <- chol_pd(p_tilde)
   if (is.null(r)) {
     stop(
       "The penalty is singular on the constrained space: some direction is ",

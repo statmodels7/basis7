@@ -94,13 +94,27 @@ test_that("the constraints are configurable, and default to 1 and x", {
   x <- sort(stats::runif(200))
   b <- bspline_basis(dimension = 10)
 
-  # a constant only: one function fewer removed
-  d1 <- dr_basis(b, x, constraints = matrix(1, 1L, length(x)))
+  # A constraint has to remove the penalty's null space, or the directions left
+  # over are neither penalised nor identified. Removing the constant alone goes
+  # with the first-derivative penalty, whose null space is the constants.
+  d1 <- dr_basis(b, x,
+    penalty = basis_gram(b, order = 1L),
+    constraints = matrix(1, 1L, length(x))
+  )
   expect_identical(d1@dimension, 9L)
   expect_lt(max(abs(colSums(basis_eval(d1, x)))), 1e-9)
 
-  # and the default removes two
+  # and the default removes two, which is what the second-derivative penalty
+  # needs: its null space is the straight lines.
   expect_identical(dr_basis(b, x)@dimension, 8L)
+
+  # The mismatch is refused rather than regularised, and deterministically:
+  # the linear direction is exactly unpenalised here, so whether chol() happens
+  # to survive a zero pivot must not be what decides.
+  expect_error(
+    dr_basis(b, x, constraints = matrix(1, 1L, length(x))),
+    "neither penalised nor identified"
+  )
 })
 
 

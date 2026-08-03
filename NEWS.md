@@ -6,6 +6,12 @@
   evaluation points and came back as row names for any basis whose method
   propagates the names of `x`.
 
+* Whether a Gram matrix or a penalty is positive definite is now decided from
+  its eigenvalues rather than from whether `chol()` raises. On a matrix with an
+  exactly zero eigenvalue the pivot that should be zero comes out positive or
+  negative according to rounding, so `orthonorm_basis()` and `dr_basis()` gave
+  different answers on different machines about the same matrix.
+
 # basis7 0.3.0
 
 * `tensor_basis()`, the product of bases, one per variable. Everything follows

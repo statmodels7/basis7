@@ -88,6 +88,7 @@ reference:
   - legendre_table
   - legendre_deriv
   - new_transformed
+  - chol_pd
   - empirical_gram
   - weighted_gram
   - fd_reference
