@@ -116,8 +116,13 @@ numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
   nnode <- 2L * reach + 1L
   out <- NULL
   for (k in seq_len(nnode)) {
-    s <- vapply(kind, function(z) offs[[z]][k], numeric(1))
-    wk <- vapply(kind, function(z) w[[z]][k], numeric(1))
+    # USE.NAMES = FALSE, because `kind` is a character vector and vapply would
+    # otherwise name the offsets after the stencil each point uses. Those names
+    # travel into `x + s * h` and out again as the row names of whatever the
+    # basis returns, so an evaluation method built on outer() would label its
+    # rows "c" and "f".
+    s <- vapply(kind, function(z) offs[[z]][k], numeric(1), USE.NAMES = FALSE)
+    wk <- vapply(kind, function(z) w[[z]][k], numeric(1), USE.NAMES = FALSE)
     val <- f(x + s * h)
     if (is.null(out)) out <- matrix(0, n, ncol(val))
     out <- out + wk * val

@@ -150,3 +150,31 @@ test_that("Gauss-Legendre integrates polynomials of the right degree exactly", {
     expect_equal(got, want, tolerance = 1e-10, label = paste("n =", n))
   }
 })
+
+
+test_that("the numerical derivative does not label its rows after the stencil", {
+  # The stencil each point uses is chosen per point and held in a character
+  # vector. Naming the offsets after it leaks those names through the evaluation
+  # points and out as the row names of the result, for any basis whose method
+  # propagates the names of x -- outer() does, and so does the one in the
+  # vignette.
+  Named <- S7::new_class("Named", parent = basis, package = NULL)
+  S7::method(basis_eval, Named) <- function(basis, x, ...) {
+    out <- exp(-0.5 * outer(x, c(0.25, 0.5, 0.75), "-")^2 / 0.2^2)
+    colnames(out) <- basis_colnames(basis)
+    out
+  }
+  nb <- Named(
+    basis_name = "named", dimension = 3L, lower = 0, upper = 1,
+    basis_params = list()
+  )
+
+  # Endpoints included, so the one-sided stencils are exercised too.
+  x <- c(0, 0.3, 0.5, 1)
+  for (d in 1:3) {
+    expect_null(rownames(basis_deriv(nb, x, order = d)),
+      label = paste("order", d)
+    )
+  }
+  expect_null(rownames(basis_int(nb, x)))
+})
