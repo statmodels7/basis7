@@ -7,7 +7,7 @@ it and one-sided at the endpoints.
 ## Usage
 
 ``` r
-numerical_deriv_matrix(f, x, order, lower, upper)
+numerical_deriv_matrix(f, x, order, lower, upper, step_scale = 1)
 ```
 
 ## Arguments
@@ -28,6 +28,12 @@ numerical_deriv_matrix(f, x, order, lower, upper)
 - lower, upper:
 
   The endpoints of the interval `f` is defined on.
+
+- step_scale:
+
+  A factor applied to the step. Halving it is how
+  [`fd_reference`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
+  measures its own uncertainty.
 
 ## Value
 

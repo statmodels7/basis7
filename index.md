@@ -129,6 +129,51 @@ c(
 #>       954.9932       954.9932
 ```
 
+## Every transform of a basis is one linear map
+
+Orthonormalisation, an identifiability constraint and the
+Demmler-Reinsch construction are the same operation, $`B \mapsto BT`$,
+so they share one class. Derivatives and integrals transform by the same
+$`T`$, and the Gram matrix by congruence, so a parent with an exact Gram
+matrix passes its exactness on.
+
+``` r
+
+o <- orthonorm_basis(b)
+round(basis_gram(o), 12)[1:4, 1:4]
+#>     on1 on2 on3 on4
+#> on1   1   0   0   0
+#> on2   0   1   0   0
+#> on3   0   0   1   0
+#> on4   0   0   0   1
+```
+
+[`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
+builds the basis that diagonalises the empirical inner product and the
+penalty at once, and is empirically orthogonal to a constant and to the
+covariate. It factorises the penalty and not the design, so it survives
+a design that has lost rank, which equally spaced knots produce whenever
+the data leave a knot span empty:
+
+``` r
+
+x <- sort(c(seq(0, 0.25, length.out = 120), seq(0.78, 1, length.out = 120)))
+wide <- bspline_basis(dimension = 14)
+
+c(dimension = wide@dimension, rank = qr(basis_eval(wide, x))$rank)
+#> dimension      rank 
+#>        14        12
+
+d <- dr_basis(wide, x)
+z <- basis_eval(d, x)
+c(
+  off_diagonal = max(abs(crossprod(z)[upper.tri(crossprod(z))])),
+  orthogonal_to_1_and_x = max(abs(crossprod(cbind(1, x), z)))
+)
+#>          off_diagonal orthogonal_to_1_and_x 
+#>          3.108624e-14          7.571721e-14
+```
+
 ## A user-defined basis needs only its evaluation
 
 Everything else has a numerical method registered on the base class, so
@@ -197,8 +242,9 @@ invisible(check_basis(bumps))
 
 |  |  |
 |----|----|
-| families | [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md), [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md) |
+| families | [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md), [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md), [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md) |
 | generics | [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md), [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md), [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md), [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md), [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md) |
+| transforms | [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md), [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md), [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md) |
 | tools | [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md), [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md), [`print()`](https://rdrr.io/r/base/print.html), [`plot()`](https://rdrr.io/r/graphics/plot.default.html) |
 
 ## Related

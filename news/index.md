@@ -1,5 +1,55 @@
 # Changelog
 
+## basis7 0.2.0
+
+- [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md),
+  the Legendre polynomials by recurrence. They span the same space as
+  the raw powers and are chosen over them for conditioning: the Gram
+  matrix of raw powers is a Hilbert matrix, and ten of them are already
+  close to singular in double precision.
+
+- [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+  takes a measure. The default is Lebesgue on the interval; `at` gives
+  the empirical measure of a sample, which is the matrix a design matrix
+  produces, and `weight` gives a weighted integral. Both are handled in
+  the body of the generic, before dispatch, so a method never implements
+  them. **Breaking for user-written methods**: a
+  [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+  method must now name `at` and `weight` in its signature, because S7
+  requires a method’s formals to contain the generic’s.
+
+- `TransformedBasis`, one class for every linear reparametrisation ,
+  with three constructors:
+  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
+  from the Cholesky factor of the Gram matrix rather than from a grid;
+  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
+  from the null space of a constraint; and
+  [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md),
+  the Demmler-Reinsch construction, which diagonalises the empirical
+  inner product and the penalty at once and is empirically orthogonal to
+  a constant and to the covariate.
+
+  Transforms compose by multiplication rather than by nesting, and a
+  transformed basis reports the *parent’s* numerical status, since its
+  own methods delegate and multiply.
+
+- [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
+  factorises the penalty and not the design, so it survives a
+  rank-deficient design, which equally spaced knots produce whenever the
+  data leave a knot span empty. Verified on a design where the Cholesky
+  factor of the design matrix does not exist.
+
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+  allows for the accuracy of its own reference. Each numerical reference
+  is computed at a step and at half of it, and the gap between them
+  bounds its uncertainty; the comparison is given that much slack, point
+  by point. Without it a spline failed at its own knots, where the third
+  derivative jumps and a central difference returns the jump rather than
+  the truncation error. A deliberate five per cent error is still caught
+  by four orders of magnitude.
+
+- A vignette, `defining-a-basis`.
+
 ## basis7 0.1.0
 
 First release.

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -16,6 +16,10 @@
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/defining-a-basis.html">Defining a basis</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -32,6 +36,18 @@
     </div>
 
     <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.2.0" id="basis7-020">basis7 0.2.0<a class="anchor" aria-label="anchor" href="#basis7-020"></a></h2>
+<ul><li><p><code><a href="../reference/poly_basis.html">poly_basis()</a></code>, the Legendre polynomials by recurrence. They span the same space as the raw powers and are chosen over them for conditioning: the Gram matrix of raw powers is a Hilbert matrix, and ten of them are already close to singular in double precision.</p></li>
+<li><p><code><a href="../reference/basis_gram.html">basis_gram()</a></code> takes a measure. The default is Lebesgue on the interval; <code>at</code> gives the empirical measure of a sample, which is the matrix a design matrix produces, and <code>weight</code> gives a weighted integral. Both are handled in the body of the generic, before dispatch, so a method never implements them. <strong>Breaking for user-written methods</strong>: a <code><a href="../reference/basis_gram.html">basis_gram()</a></code> method must now name <code>at</code> and <code>weight</code> in its signature, because S7 requires a method’s formals to contain the generic’s.</p></li>
+<li>
+<p><code>TransformedBasis</code>, one class for every linear reparametrisation , with three constructors: <code><a href="../reference/orthonorm_basis.html">orthonorm_basis()</a></code>, from the Cholesky factor of the Gram matrix rather than from a grid; <code><a href="../reference/constrain_basis.html">constrain_basis()</a></code>, from the null space of a constraint; and <code><a href="../reference/dr_basis.html">dr_basis()</a></code>, the Demmler-Reinsch construction, which diagonalises the empirical inner product and the penalty at once and is empirically orthogonal to a constant and to the covariate.</p>
+<p>Transforms compose by multiplication rather than by nesting, and a transformed basis reports the <em>parent’s</em> numerical status, since its own methods delegate and multiply.</p>
+</li>
+<li><p><code><a href="../reference/dr_basis.html">dr_basis()</a></code> factorises the penalty and not the design, so it survives a rank-deficient design, which equally spaced knots produce whenever the data leave a knot span empty. Verified on a design where the Cholesky factor of the design matrix does not exist.</p></li>
+<li><p><code><a href="../reference/check_basis.html">check_basis()</a></code> allows for the accuracy of its own reference. Each numerical reference is computed at a step and at half of it, and the gap between them bounds its uncertainty; the comparison is given that much slack, point by point. Without it a spline failed at its own knots, where the third derivative jumps and a central difference returns the jump rather than the truncation error. A deliberate five per cent error is still caught by four orders of magnitude.</p></li>
+<li><p>A vignette, <code>defining-a-basis</code>.</p></li>
+</ul></div>
+    <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.1.0" id="basis7-010">basis7 0.1.0<a class="anchor" aria-label="anchor" href="#basis7-010"></a></h2>
 <p>First release.</p>
 <ul><li><p>The <code>basis</code> class and four generics: <code><a href="../reference/basis_eval.html">basis_eval()</a></code>, <code><a href="../reference/basis_deriv.html">basis_deriv()</a></code>, <code><a href="../reference/basis_int.html">basis_int()</a></code> and <code><a href="../reference/basis_gram.html">basis_gram()</a></code>. Derivative order is an argument, so no order is privileged, and <code><a href="../reference/basis_gram.html">basis_gram()</a></code> returns the inner products a roughness penalty integrates.</p></li>
@@ -42,7 +58,8 @@
 <li><p><code><a href="../reference/basis_is_numerical.html">basis_is_numerical()</a></code> answers the same question programmatically.</p></li>
 <li><p><code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> methods; the plot draws the basis, any derivative, or the integral.</p></li>
 </ul></div>
-  </main></div>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
+    </nav></aside></div>
 
 
     <footer><div class="pkgdown-footer-left">

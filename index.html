@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,6 +38,12 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/defining-a-basis.html">Defining a basis</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -146,10 +152,40 @@
 <span><span class="co">#&gt;       954.9932       954.9932</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="every-transform-of-a-basis-is-one-linear-map">Every transform of a basis is one linear map<a class="anchor" aria-label="anchor" href="#every-transform-of-a-basis-is-one-linear-map"></a>
+</h2>
+<p>Orthonormalisation, an identifiability constraint and the Demmler-Reinsch construction are the same operation, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>↦</mo><mi>B</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">B \mapsto BT</annotation></semantics></math>, so they share one class. Derivatives and integrals transform by the same <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>, and the Gram matrix by congruence, so a parent with an exact Gram matrix passes its exactness on.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">o</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/orthonorm_basis.html">orthonorm_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="va">o</span><span class="op">)</span>, <span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
+<span><span class="co">#&gt;     on1 on2 on3 on4</span></span>
+<span><span class="co">#&gt; on1   1   0   0   0</span></span>
+<span><span class="co">#&gt; on2   0   1   0   0</span></span>
+<span><span class="co">#&gt; on3   0   0   1   0</span></span>
+<span><span class="co">#&gt; on4   0   0   0   1</span></span></code></pre></div>
+<p><code><a href="reference/dr_basis.html">dr_basis()</a></code> builds the basis that diagonalises the empirical inner product and the penalty at once, and is empirically orthogonal to a constant and to the covariate. It factorises the penalty and not the design, so it survives a design that has lost rank, which equally spaced knots produce whenever the data leave a knot span empty:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.25</span>, length.out <span class="op">=</span> <span class="fl">120</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.78</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">120</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="va">wide</span><span class="op">@</span><span class="va">dimension</span>, rank <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/qr.html" class="external-link">qr</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">wide</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">$</span><span class="va">rank</span><span class="op">)</span></span>
+<span><span class="co">#&gt; dimension      rank </span></span>
+<span><span class="co">#&gt;        14        12</span></span>
+<span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/dr_basis.html">dr_basis</a></span><span class="op">(</span><span class="va">wide</span>, <span class="va">x</span><span class="op">)</span></span>
+<span><span class="va">z</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">d</span>, <span class="va">x</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span></span>
+<span>  off_diagonal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/lower.tri.html" class="external-link">upper.tri</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>  orthogonal_to_1_and_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">x</span><span class="op">)</span>, <span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="co">#&gt;          off_diagonal orthogonal_to_1_and_x </span></span>
+<span><span class="co">#&gt;          3.108624e-14          7.571721e-14</span></span></code></pre></div>
+</div>
+<div class="section level2">
 <h2 id="a-user-defined-basis-needs-only-its-evaluation">A user-defined basis needs only its evaluation<a class="anchor" aria-label="anchor" href="#a-user-defined-basis-needs-only-its-evaluation"></a>
 </h2>
 <p>Everything else has a numerical method registered on the base class, so a new basis is a subclass and one method. Derivatives use a single finite-difference stencil, never a chain of first differences.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Bumps</span> <span class="op">&lt;-</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Bumps"</span>, parent <span class="op">=</span> <span class="va">basis</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_eval</span>, <span class="va">Bumps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -176,7 +212,7 @@
 </h2>
 <p><code><a href="reference/check_basis.html">check_basis()</a></code> runs six numerical checks: the shapes and column names, the derivatives against finite differences, the integral differentiating back and vanishing at the lower endpoint, the partition of unity where the family claims it, the Gram matrix against an independent quadrature, and missing values travelling through.</p>
 <p>A quantity that came from a fallback is reported as <strong>unchecked</strong>, not as passed. Comparing it with a numerical reference would be the same arithmetic twice, agreeing however wrong the basis is.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="reference/check_basis.html">check_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; check_basis: bspline (6 functions)</span></span>
 <span><span class="co">#&gt;   shape       shapes and column names                        [PASSED]</span></span>
@@ -207,13 +243,19 @@
 <tr>
 <td>families</td>
 <td>
-<code><a href="reference/bspline_basis.html">bspline_basis()</a></code>, <code><a href="reference/fourier_basis.html">fourier_basis()</a></code>
+<code><a href="reference/bspline_basis.html">bspline_basis()</a></code>, <code><a href="reference/fourier_basis.html">fourier_basis()</a></code>, <code><a href="reference/poly_basis.html">poly_basis()</a></code>
 </td>
 </tr>
 <tr>
 <td>generics</td>
 <td>
 <code><a href="reference/basis_eval.html">basis_eval()</a></code>, <code><a href="reference/basis_deriv.html">basis_deriv()</a></code>, <code><a href="reference/basis_int.html">basis_int()</a></code>, <code><a href="reference/basis_gram.html">basis_gram()</a></code>, <code><a href="reference/basis_colnames.html">basis_colnames()</a></code>
+</td>
+</tr>
+<tr>
+<td>transforms</td>
+<td>
+<code><a href="reference/orthonorm_basis.html">orthonorm_basis()</a></code>, <code><a href="reference/constrain_basis.html">constrain_basis()</a></code>, <code><a href="reference/dr_basis.html">dr_basis()</a></code>
 </td>
 </tr>
 <tr>

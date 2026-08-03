@@ -9,6 +9,23 @@ kept, so restricting one is a separate, deliberate step.
   : Construct a B-Spline Basis
 - [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md)
   : Construct a Fourier Basis
+- [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md)
+  : Construct a Legendre Polynomial Basis
+
+## Transforming a basis
+
+Orthonormalisation, identifiability constraints and the Demmler-Reinsch
+construction are the same operation with different matrices, so they
+share one class.
+
+- [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
+  : Orthonormalise a Basis
+- [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
+  : Restrict a Basis to a Linear Constraint
+- [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
+  : Demmler-Reinsch Basis
+- [`TransformedBasis()`](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
+  : Linearly Transformed Basis
 
 ## The interface
 
@@ -34,6 +51,8 @@ rest have numerical methods on the base class.
   : B-Spline Basis
 - [`FourierBasis()`](https://statmodels7.github.io/basis7/reference/FourierBasis.md)
   : Fourier Basis
+- [`PolyBasis()`](https://statmodels7.github.io/basis7/reference/PolyBasis.md)
+  : Legendre Polynomial Basis
 
 ## Validation
 
@@ -67,6 +86,18 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Call splines2 for a B-Spline Design Matrix
 - [`fourier_trig()`](https://statmodels7.github.io/basis7/reference/fourier_trig.md)
   : The Trigonometric Columns of a Fourier Basis
+- [`legendre_table()`](https://statmodels7.github.io/basis7/reference/legendre_table.md)
+  : The Legendre Polynomials by Recurrence
+- [`legendre_deriv()`](https://statmodels7.github.io/basis7/reference/legendre_deriv.md)
+  : Derivatives of the Legendre Polynomials
+- [`new_transformed()`](https://statmodels7.github.io/basis7/reference/new_transformed.md)
+  : Build a Transformed Basis
+- [`empirical_gram()`](https://statmodels7.github.io/basis7/reference/empirical_gram.md)
+  : Gram Matrix Against the Empirical Measure
+- [`weighted_gram()`](https://statmodels7.github.io/basis7/reference/weighted_gram.md)
+  : Gram Matrix Against a Weighted Lebesgue Measure
+- [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
+  : A Finite-Difference Reference, and Where It Can Be Trusted
 - [`check_basis_args()`](https://statmodels7.github.io/basis7/reference/check_basis_args.md)
   : Validate the Arguments Every Basis Constructor Takes
 - [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
