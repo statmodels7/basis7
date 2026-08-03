@@ -54,8 +54,8 @@ The object already answers all four generics.
 ``` r
 
 round(basis_deriv(b, 0.5, order = 1), 4)
-#>       bu1     bu2     bu3    bu4    bu5    bu6
-#> c -0.0059 -0.9154 -4.9073 4.9073 0.9154 0.0059
+#>          bu1     bu2     bu3    bu4    bu5    bu6
+#> [1,] -0.0059 -0.9154 -4.9073 4.9073 0.9154 0.0059
 round(basis_int(b, 1), 4)
 #>         bu1    bu2    bu3    bu4    bu5    bu6
 #> [1,] 0.1504 0.2864 0.3007 0.3007 0.2864 0.1504

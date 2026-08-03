@@ -1,5 +1,13 @@
 # Changelog
 
+## basis7 0.3.1
+
+- The numerical derivative no longer labels the rows of its result after
+  the finite-difference stencil each point uses. The stencil is chosen
+  per point and recorded in a character vector, whose names travelled
+  through the evaluation points and came back as row names for any basis
+  whose method propagates the names of `x`.
+
 ## basis7 0.3.0
 
 - [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),

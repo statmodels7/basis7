@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,10 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.3.1" id="basis7-031">basis7 0.3.1<a class="anchor" aria-label="anchor" href="#basis7-031"></a></h2>
+<ul><li>The numerical derivative no longer labels the rows of its result after the finite-difference stencil each point uses. The stencil is chosen per point and recorded in a character vector, whose names travelled through the evaluation points and came back as row names for any basis whose method propagates the names of <code>x</code>.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.0" id="basis7-030">basis7 0.3.0<a class="anchor" aria-label="anchor" href="#basis7-030"></a></h2>
 <ul><li><p><code><a href="../reference/tensor_basis.html">tensor_basis()</a></code>, the product of bases, one per variable. Everything follows from the marginals because the product separates: a partial derivative differentiates one marginal and leaves the others, the integral over the box from its lower corner is the product of the marginal integrals, and the Gram matrix is the Kronecker product of the marginal ones. A tensor of exactly integrated marginals is therefore exact at any number of variables, where a quadrature over the box would not be.</p></li>
