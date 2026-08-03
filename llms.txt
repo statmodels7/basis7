@@ -1,0 +1,303 @@
+# basis7
+
+Every R package that fits smooth terms carries its own basis code,
+written inside the routine that needs it and exposing exactly what its
+author needed. A cubic B-spline is a fixed mathematical object, and it
+can be written once with everything a modelling routine could want
+already computed.
+
+[basis7](https://statmodels7.github.io/basis7/) makes a basis an object
+that can be **evaluated, differentiated to any order, integrated, and
+asked for its inner products**. The last of these is what no other basis
+code carries: the Gram matrix $`G_d = \int B^{(d)} B^{(d)\top}`$ is
+exactly what a roughness penalty integrates, and here it is exact rather
+than approximated on a grid.
+
+It is the basis layer of [statmodels7](https://statmodels7.github.io),
+an S7 toolkit for statistical modelling, alongside
+[linkfunctions7](https://statmodels7.github.io/linkfunctions7/),
+[distributions7](https://statmodels7.github.io/distributions7/) and
+[optimizers7](https://statmodels7.github.io/optimizers7/).
+
+## Installation
+
+``` r
+
+# install.packages("pak")
+pak::pak("statmodels7/basis7")
+```
+
+## A basis is an object
+
+``` r
+
+b <- bspline_basis(lower = 0, upper = 1, dimension = 6, degree = 3)
+b
+#> Basis: bspline
+#> Functions: 6   Interval: [0, 1]
+#> Parameters:
+#>   degree          3
+#>   knots           0.3333, 0.6667
+#>   boundary_knots  0, 1
+#> Numerical: none
+
+round(basis_eval(b, c(0, 0.25, 0.5, 1)), 4)
+#>         bs1    bs2    bs3    bs4    bs5 bs6
+#> [1,] 1.0000 0.0000 0.0000 0.0000 0.0000   0
+#> [2,] 0.0156 0.4570 0.4570 0.0703 0.0000   0
+#> [3,] 0.0000 0.0312 0.4687 0.4687 0.0312   0
+#> [4,] 0.0000 0.0000 0.0000 0.0000 0.0000   1
+```
+
+The four generics answer in the same shape, so nothing downstream has to
+know which family it was given.
+
+``` r
+
+round(basis_deriv(b, 0.4, order = 2), 3)
+#>      bs1  bs2   bs3 bs4 bs5 bs6
+#> [1,]   0 10.8 -16.2 2.7 2.7   0
+round(basis_int(b, 0.4), 4)
+#>         bs1    bs2    bs3    bs4 bs5 bs6
+#> [1,] 0.0833 0.1581 0.1298 0.0287   0   0
+```
+
+``` r
+
+par(mfrow = c(1, 3))
+plot(b)
+plot(b, order = 1)
+plot(b, order = -1)
+```
+
+![](reference/figures/README-basis-plot-1.png)
+
+## The integral is anchored
+
+Its value at the lower endpoint is exactly zero, for every basis. Any
+antiderivative would satisfy a differentiation check, so leaving the
+constant free would let two bases disagree while both looked right.
+
+``` r
+
+basis_int(fourier_basis(lower = -1, upper = 3, dimension = 5), -1)
+#>      const sin1 cos1 sin2 cos2
+#> [1,]     0    0    0    0    0
+```
+
+## Inner products, exactly
+
+On each knot interval the integrand of the Gram matrix is a polynomial
+of known degree, so a Gauss-Legendre rule sized from that degree leaves
+no quadrature error. For a Fourier basis over a whole period the matrix
+is diagonal in closed form.
+
+``` r
+
+round(basis_gram(b, order = 2), 2)
+#>        bs1     bs2     bs3     bs4     bs5    bs6
+#> bs1  324.0 -445.50   94.50   27.00    0.00    0.0
+#> bs2 -445.5  648.00 -182.25  -30.37   10.12    0.0
+#> bs3   94.5 -182.25  121.50  -30.38  -30.37   27.0
+#> bs4   27.0  -30.37  -30.38  121.50 -182.25   94.5
+#> bs5    0.0   10.12  -30.37 -182.25  648.00 -445.5
+#> bs6    0.0    0.00   27.00   94.50 -445.50  324.0
+round(basis_gram(fourier_basis(dimension = 5), order = 1), 4)
+#>       const    sin1    cos1    sin2    cos2
+#> const     0  0.0000  0.0000  0.0000  0.0000
+#> sin1      0 19.7392  0.0000  0.0000  0.0000
+#> cos1      0  0.0000 19.7392  0.0000  0.0000
+#> sin2      0  0.0000  0.0000 78.9568  0.0000
+#> cos2      0  0.0000  0.0000  0.0000 78.9568
+```
+
+The point of the matrix is that $`\beta^\top G_d \beta`$ is the integral
+of the squared $`d`$-th derivative of the function the coefficients
+describe:
+
+``` r
+
+set.seed(1)
+beta <- rnorm(6)
+f2 <- function(t) (basis_deriv(b, t, order = 2) %*% beta)^2
+
+c(
+  quadratic_form = drop(t(beta) %*% basis_gram(b, order = 2) %*% beta),
+  integral = integrate(function(t) apply(cbind(t), 1, f2), 0, 1)$value
+)
+#> quadratic_form       integral 
+#>       954.9932       954.9932
+```
+
+## A user-defined basis needs only its evaluation
+
+Everything else has a numerical method registered on the base class, so
+a new basis is a subclass and one method. Derivatives use a single
+finite-difference stencil, never a chain of first differences.
+
+``` r
+
+Bumps <- S7::new_class("Bumps", parent = basis)
+
+S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
+  out <- exp(-0.5 * outer(x, basis@basis_params$centres, "-")^2 / 0.15^2)
+  colnames(out) <- basis_colnames(basis)
+  out
+}
+
+bumps <- Bumps(
+  basis_name = "bumps", dimension = 5L, lower = 0, upper = 1,
+  basis_params = list(centres = seq(0.1, 0.9, length.out = 5))
+)
+
+# never implemented, yet available
+round(basis_deriv(bumps, 0.5, order = 1), 4)
+#>       bu1     bu2 bu3    bu4    bu5
+#> c -0.5078 -3.6543   0 3.6543 0.5078
+round(basis_int(bumps, 1), 4)
+#>         bu1    bu2    bu3    bu4    bu5
+#> [1,] 0.2811 0.3674 0.3757 0.3674 0.2811
+```
+
+## Validating a basis
+
+[`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+runs six numerical checks: the shapes and column names, the derivatives
+against finite differences, the integral differentiating back and
+vanishing at the lower endpoint, the partition of unity where the family
+claims it, the Gram matrix against an independent quadrature, and
+missing values travelling through.
+
+A quantity that came from a fallback is reported as **unchecked**, not
+as passed. Comparing it with a numerical reference would be the same
+arithmetic twice, agreeing however wrong the basis is.
+
+``` r
+
+invisible(check_basis(b))
+#> check_basis: bspline (6 functions)
+#>   shape       shapes and column names                        [PASSED]
+#>   deriv       derivatives against finite differences         [PASSED]
+#>   integral    integral differentiates back, zero at lower    [PASSED]
+#>   partition   partition of unity                             [PASSED]
+#>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]
+#>   missing     missing values give missing rows               [PASSED]
+invisible(check_basis(bumps))
+#> check_basis: bumps (5 functions)
+#>   shape       shapes and column names                        [PASSED]
+#>   deriv       derivatives against finite differences         [numerical]
+#>   integral    integral differentiates back, zero at lower    [numerical]
+#>   partition   partition of unity                             [not claimed]
+#>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]
+#>   missing     missing values give missing rows               [PASSED]
+#>   computed numerically: basis_deriv, basis_int, basis_gram
+```
+
+## What is in the box
+
+|  |  |
+|----|----|
+| families | [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md), [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md) |
+| generics | [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md), [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md), [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md), [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md), [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md) |
+| tools | [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md), [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md), [`print()`](https://rdrr.io/r/base/print.html), [`plot()`](https://rdrr.io/r/graphics/plot.default.html) |
+
+## Related
+
+- [linkfunctions7](https://statmodels7.github.io/linkfunctions7/) — link
+  functions with exact derivatives to fourth order
+- [distributions7](https://statmodels7.github.io/distributions7/) —
+  distributions carrying exact derivatives of the log-likelihood
+- [optimizers7](https://statmodels7.github.io/optimizers7/) —
+  optimisation algorithms and stopping rules as objects
+- [the book](https://statmodels7.github.io/book/) — the mathematics
+  behind the toolkit
+
+# Package index
+
+## Bases
+
+The families the package ships. Each is complete: all its functions are
+kept, so restricting one is a separate, deliberate step.
+
+- [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
+  : Construct a B-Spline Basis
+- [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md)
+  : Construct a Fourier Basis
+
+## The interface
+
+What every basis answers. A subclass must implement only the first; the
+rest have numerical methods on the base class.
+
+- [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
+  : Evaluate a Basis
+- [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
+  : Differentiate a Basis
+- [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
+  : Integrate a Basis
+- [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+  : Gram Matrix of a Basis
+- [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
+  : Column Names of a Basis Matrix
+- [`basis()`](https://statmodels7.github.io/basis7/reference/basis.md) :
+  Basis Expansion
+
+## Classes
+
+- [`BsplineBasis()`](https://statmodels7.github.io/basis7/reference/BsplineBasis.md)
+  : B-Spline Basis
+- [`FourierBasis()`](https://statmodels7.github.io/basis7/reference/FourierBasis.md)
+  : Fourier Basis
+
+## Validation
+
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+  : Validate a Basis
+- [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+  : Which of a Basis's Methods Are Numerical
+
+## Internals
+
+Exported for anyone writing a basis of their own: the numerical
+machinery the fallbacks are built from, documented rather than hidden.
+
+- [`print.basis`](https://statmodels7.github.io/basis7/reference/print.basis.md)
+  : Print a Basis
+- [`plot.basis`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
+  : Plot a Basis
+- [`fd_weights()`](https://statmodels7.github.io/basis7/reference/fd_weights.md)
+  : Finite-Difference Weights for an Arbitrary Stencil
+- [`fd_offsets()`](https://statmodels7.github.io/basis7/reference/fd_offsets.md)
+  : Stencil Offsets for a Derivative Order
+- [`numerical_deriv_matrix()`](https://statmodels7.github.io/basis7/reference/numerical_deriv_matrix.md)
+  : Numerically Differentiate a Matrix-Valued Function
+- [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
+  : Gram Matrix by Composite Quadrature
+- [`gauss_legendre()`](https://statmodels7.github.io/basis7/reference/gauss_legendre.md)
+  : Gauss-Legendre Nodes and Weights
+- [`quad_rule()`](https://statmodels7.github.io/basis7/reference/quad_rule.md)
+  : Map a Quadrature Rule onto Intervals
+- [`bspline_design()`](https://statmodels7.github.io/basis7/reference/bspline_design.md)
+  : Call splines2 for a B-Spline Design Matrix
+- [`fourier_trig()`](https://statmodels7.github.io/basis7/reference/fourier_trig.md)
+  : The Trigonometric Columns of a Fourier Basis
+- [`check_basis_args()`](https://statmodels7.github.io/basis7/reference/check_basis_args.md)
+  : Validate the Arguments Every Basis Constructor Takes
+- [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
+  : Validate Evaluation Points Against a Basis
+- [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md)
+  : Validate a Derivative Order
+- [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
+  : Name the Columns of a Basis Matrix
+- [`basis_partitions_unity()`](https://statmodels7.github.io/basis7/reference/basis_partitions_unity.md)
+  : Does This Basis Sum to One?
+- [`rel_close()`](https://statmodels7.github.io/basis7/reference/rel_close.md)
+  : Compare Two Matrices Relative to Their Own Magnitude
+- [`print_basis_checks()`](https://statmodels7.github.io/basis7/reference/print_basis_checks.md)
+  : Print the Outcome of check_basis
+- [`is_base_basis_class()`](https://statmodels7.github.io/basis7/reference/is_base_basis_class.md)
+  : Is This the Package's Own Base Class?
+- [`basis7`](https://statmodels7.github.io/basis7/reference/basis7-package.md)
+  [`basis7-package`](https://statmodels7.github.io/basis7/reference/basis7-package.md)
+  : basis7: An S7 Framework for Basis Expansions
+
