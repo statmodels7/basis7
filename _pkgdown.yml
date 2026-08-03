@@ -1,0 +1,73 @@
+url: https://statmodels7.github.io/basis7/
+
+template:
+  bootstrap: 5
+  bslib:
+    primary: "#3D6B4C"
+    link-color: "#9C3E11"
+
+navbar:
+  structure:
+    left: [reference, news]
+    right: [search, github]
+
+reference:
+- title: Bases
+  desc: >
+    The families the package ships. Each is complete: all its functions are
+    kept, so restricting one is a separate, deliberate step.
+  contents:
+  - bspline_basis
+  - fourier_basis
+
+- title: The interface
+  desc: >
+    What every basis answers. A subclass must implement only the first;
+    the rest have numerical methods on the base class.
+  contents:
+  - basis_eval
+  - basis_deriv
+  - basis_int
+  - basis_gram
+  - basis_colnames
+  - basis
+
+- title: Classes
+  contents:
+  - BsplineBasis
+  - FourierBasis
+
+- title: Validation
+  contents:
+  - check_basis
+  - basis_is_numerical
+
+- title: Internals
+  desc: >
+    Exported for anyone writing a basis of their own: the numerical machinery
+    the fallbacks are built from, documented rather than hidden.
+  contents:
+  - starts_with("basis_eval.")
+  - starts_with("basis_deriv.")
+  - starts_with("basis_int.")
+  - starts_with("basis_gram.")
+  - starts_with("basis_colnames.")
+  - starts_with("print.")
+  - starts_with("plot.")
+  - fd_weights
+  - fd_offsets
+  - numerical_deriv_matrix
+  - numerical_gram
+  - gauss_legendre
+  - quad_rule
+  - bspline_design
+  - fourier_trig
+  - check_basis_args
+  - check_eval_points
+  - check_order
+  - name_columns
+  - basis_partitions_unity
+  - rel_close
+  - print_basis_checks
+  - is_base_basis_class
+  - basis7-package

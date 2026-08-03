@@ -1,0 +1,42 @@
+Package: basis7
+Title: An S7 Framework for Basis Expansions
+Version: 0.1.0
+Authors@R:
+    person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
+Description: Implements basis expansions using the S7 object-oriented system.
+    Bases are objects that can be evaluated, differentiated to any order,
+    integrated, and asked for the Gram matrices of their derivatives, which is
+    what a smoothness penalty integrates. Exact formulas are used wherever they
+    exist, with numerical fallbacks that make a user-defined basis work from its
+    evaluation alone, and a diagnostic that verifies every component.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+URL: https://statmodels7.github.io/basis7/,
+    https://github.com/statmodels7/basis7
+BugReports: https://github.com/statmodels7/basis7/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    graphics,
+    S7,
+    splines2,
+    stats
+Suggests:
+    pkgdown,
+    testthat (>= 3.0.0),
+    knitr,
+    rmarkdown
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0
+RoxygenNote: 7.3.3
+Collate: 
+    'basis7-package.R'
+    'basis_class.R'
+    'generics.R'
+    'numerical_fallbacks.R'
+    'bspline_basis.R'
+    'check_basis.R'
+    'fourier_basis.R'
+    'methods.R'
+    'zzz.R'
