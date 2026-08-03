@@ -29,7 +29,8 @@ basis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on.
+  The endpoints of the interval the basis lives on, or one endpoint per
+  variable for a basis of several.
 
 - basis_params:
 
@@ -56,6 +57,12 @@ Bases are complete: a B-spline basis carries all its functions and its
 rows sum to one. Restricting a basis, whether for identifiability or to
 separate a linear from a nonlinear part, is a linear transformation of
 it and belongs to the layer that owns that decision.
+
+A basis lives on an interval, or, when it is a product of several, on a
+box: `lower` and `upper` then have one entry per variable and
+[`basis_nvar`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
+reports how many. Everything else is unchanged, and a univariate basis
+is the case of one variable rather than a separate kind of object.
 
 ## See also
 

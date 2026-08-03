@@ -58,7 +58,8 @@ de Boor, C. (2001). *A Practical Guide to Splines*. Springer.
 b <- bspline_basis(dimension = 6)
 b
 #> Basis: bspline
-#> Functions: 6   Interval: [0, 1]
+#> Functions: 6   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   degree          3
 #>   knots           0.3333, 0.6667

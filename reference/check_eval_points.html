@@ -11,7 +11,7 @@ missing row."><meta property="og:image" content="https://statmodels7.github.io/b
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,12 +60,14 @@ missing row.</p>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A numeric vector of evaluation points.</p></dd>
+<dd><p>A numeric vector of evaluation points, or a matrix with one column
+per variable.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p><code>x</code>, with near-endpoint values clamped onto the endpoints.</p>
+    <p><code>x</code>, with near-endpoint values clamped onto the endpoints: a
+vector for a basis of one variable and a matrix otherwise.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -76,6 +78,9 @@ silent answer here would take that decision away from it.</p>
 <p>The comparison uses a tolerance relative to the width of the interval, so
 that a point which is an endpoint up to rounding is accepted and then
 clamped onto the endpoint exactly.</p>
+<p>For a basis of several variables the points are a matrix with one column per
+variable, and each column is checked against its own endpoints. A basis of
+one variable keeps taking, and returning, a plain vector.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

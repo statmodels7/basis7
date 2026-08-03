@@ -23,7 +23,8 @@ computed numerically.
 ``` r
 bspline_basis(dimension = 6)
 #> Basis: bspline
-#> Functions: 6   Interval: [0, 1]
+#> Functions: 6   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   degree          3
 #>   knots           0.3333, 0.6667
@@ -31,7 +32,8 @@ bspline_basis(dimension = 6)
 #> Numerical: none
 fourier_basis(dimension = 5)
 #> Basis: fourier
-#> Functions: 5   Interval: [0, 1]
+#> Functions: 5   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   omega        1
 #>   n_pairs      2

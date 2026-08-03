@@ -53,7 +53,8 @@ is computed by quadrature instead of in closed form.
 b <- fourier_basis(dimension = 5)
 b
 #> Basis: fourier
-#> Functions: 5   Interval: [0, 1]
+#> Functions: 5   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   omega        1
 #>   n_pairs      2

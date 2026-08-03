@@ -41,7 +41,8 @@ bumps <- function(lower = 0, upper = 1, dimension = 6, width = 0.12) {
 b <- bumps()
 b
 #> Basis: bumps
-#> Functions: 6   Interval: [0, 1]
+#> Functions: 6   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   centres  <6 values>
 #>   width    0.12
@@ -300,7 +301,7 @@ c(
   orthogonal_to_1_and_x = max(abs(crossprod(cbind(1, xd), z)))
 )
 #>          off_diagonal orthogonal_to_1_and_x 
-#>          1.125910e-13          7.593925e-14
+#>          7.815970e-14          1.501022e-13
 ```
 
 Transforms compose by multiplication rather than by nesting, so a chain
@@ -311,6 +312,72 @@ of them costs one matrix product per evaluation however long it is:
 S7::S7_inherits(orthonorm_basis(cs)@parent_basis, TransformedBasis)
 #> [1] FALSE
 ```
+
+## Multiplying it
+
+A basis of several variables is a product of bases of one, and any basis
+can be a factor, including this one. The result takes a matrix of points
+with one column per variable, and the derivative order becomes a
+multi-index.
+
+``` r
+
+tb <- tensor_basis(b, bspline_basis(dimension = 5))
+c(variables = basis_nvar(tb), functions = tb@dimension)
+#> variables functions 
+#>         2        30
+
+xy <- cbind(runif(6), runif(6))
+dim(basis_deriv(tb, xy, order = c(1, 2)))
+#> [1]  6 30
+```
+
+Everything about the product follows from the marginals, because the
+product separates. The Gram matrix in particular is the Kronecker
+product of the marginal ones, so it stays as exact as they are however
+many variables there are, where a quadrature over the box would degrade
+with every one:
+
+``` r
+
+max(abs(basis_gram(tb) - kronecker(
+  basis_gram(b), basis_gram(bspline_basis(dimension = 5))
+)))
+#> [1] 0
+```
+
+What does not stay cheap is the design matrix, whose columns are the
+product of the marginal dimensions.
+[`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+computes the values the coefficients describe without forming it.
+Coefficients come as an array, whose dimensions line up with the
+marginals:
+
+``` r
+
+cf <- array(rnorm(tb@dimension), dim = c(b@dimension, 5))
+max(abs(basis_contract(tb, xy, cf) -
+  basis_eval(tb, xy) %*% as.numeric(aperm(cf))))
+#> [1] 0
+```
+
+or as factor matrices, one per marginal with a shared number of columns,
+in which case neither the design matrix nor the coefficient array is
+ever formed and the cost is linear in the number of variables:
+
+``` r
+
+gam <- list(
+  matrix(rnorm(b@dimension * 2), b@dimension, 2),
+  matrix(rnorm(5 * 2), 5, 2)
+)
+head(basis_contract(tb, xy, gam), 3)
+#> [1] -0.9356725 -0.6649577 -0.6739005
+```
+
+Choosing those factors is a modelling decision, and belongs to the layer
+that owns the parameters. Evaluating them is basis arithmetic, and
+belongs here.
 
 ## Summary
 
@@ -328,3 +395,7 @@ S7::S7_inherits(orthonorm_basis(cs)@parent_basis, TransformedBasis)
   than as passed.
 - Every transform of a basis is one linear map, and it keeps the
   parent’s exactness.
+- A product of bases is a basis of several variables; its Gram matrix is
+  the Kronecker product of the marginal ones, and
+  [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+  evaluates it against coefficients without forming the product.

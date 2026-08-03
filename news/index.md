@@ -1,5 +1,42 @@
 # Changelog
 
+## basis7 0.3.0
+
+- [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),
+  the product of bases, one per variable. Everything follows from the
+  marginals because the product separates: a partial derivative
+  differentiates one marginal and leaves the others, the integral over
+  the box from its lower corner is the product of the marginal
+  integrals, and the Gram matrix is the Kronecker product of the
+  marginal ones. A tensor of exactly integrated marginals is therefore
+  exact at any number of variables, where a quadrature over the box
+  would not be.
+
+- A basis now declares how many variables it takes, through
+  [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
+  and the length of its endpoints, so a univariate basis is the case of
+  one variable rather than a separate kind of object. Evaluation points
+  become a matrix with one column per variable, and the derivative order
+  becomes a multi-index. A single non-zero order is refused for a
+  product, since it could mean that order in every coordinate or that
+  total order.
+
+- [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+  evaluates a basis against coefficients without necessarily forming the
+  design matrix. Coefficients come as a full array, processed in row
+  blocks so the peak memory is bounded by the block rather than by the
+  sample, or as a list of factor matrices in canonical polyadic form,
+  where the cost is linear in the number of variables instead of
+  exponential in it. A product of six bases of ten functions has a
+  million columns; the factorised route touches neither that matrix nor
+  the coefficient array.
+
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
+  [`print()`](https://rdrr.io/r/base/print.html) and the numerical
+  fallbacks understand several variables.
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) refuses a
+  product and says why.
+
 ## basis7 0.2.0
 
 - [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md),

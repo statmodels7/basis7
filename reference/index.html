@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,6 +101,43 @@
 
         </dt>
         <dd>Linearly Transformed Basis</dd>
+      </dl></div><div class="section level2">
+      <h2 id="several-variables">Several variables<a class="anchor" aria-label="anchor" href="#several-variables"></a></h2>
+
+      <div class="section-desc"><p>A product of bases, and the contraction that computes what a fit needs from the marginal evaluations without forming the product.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="tensor_basis.html">tensor_basis()</a></code>
+
+        </dt>
+        <dd>Construct a Tensor Product Basis</dd>
+
+        <dt>
+
+          <code><a href="basis_contract.html">basis_contract()</a></code>
+
+        </dt>
+        <dd>Evaluate a Basis Against Coefficients</dd>
+
+        <dt>
+
+          <code><a href="TensorBasis.html">TensorBasis()</a></code>
+
+        </dt>
+        <dd>Tensor Product Basis</dd>
+
+        <dt>
+
+          <code><a href="basis_nvar.html">basis_nvar()</a></code>
+
+        </dt>
+        <dd>How Many Variables a Basis Takes</dd>
       </dl></div><div class="section level2">
       <h2 id="the-interface">The interface<a class="anchor" aria-label="anchor" href="#the-interface"></a></h2>
 
@@ -326,6 +363,48 @@
 
         </dt>
         <dd>A Finite-Difference Reference, and Where It Can Be Trusted</dd>
+
+        <dt>
+
+          <code><a href="tensor_design.html">tensor_design()</a></code>
+
+        </dt>
+        <dd>The Row-Wise Kronecker Product of the Marginal Designs</dd>
+
+        <dt>
+
+          <code><a href="marginal_designs.html">marginal_designs()</a></code>
+
+        </dt>
+        <dd>Evaluate Every Marginal at Its Own Column</dd>
+
+        <dt>
+
+          <code><a href="khatri_rao.html">khatri_rao()</a></code>
+
+        </dt>
+        <dd>Row-Wise Kronecker Product of Two Matrices</dd>
+
+        <dt>
+
+          <code><a href="contract_cp.html">contract_cp()</a></code>
+
+        </dt>
+        <dd>Contract a Tensor Product Basis Against Factor Matrices</dd>
+
+        <dt>
+
+          <code><a href="clamp_to_range.html">clamp_to_range()</a></code>
+
+        </dt>
+        <dd>Refuse Points Outside a Range, and Clamp Those On Its Edge</dd>
+
+        <dt>
+
+          <code><a href="coord.html">coord()</a></code> <code><a href="coord.html">replace_coord()</a></code>
+
+        </dt>
+        <dd>One Coordinate of the Evaluation Points</dd>
 
         <dt>
 

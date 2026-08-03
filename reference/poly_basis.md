@@ -44,7 +44,8 @@ is diagonal and perfectly conditioned.
 p <- poly_basis(dimension = 5)
 p
 #> Basis: legendre
-#> Functions: 5   Interval: [0, 1]
+#> Functions: 5   Variables: 1
+#> Domain: [0, 1]
 #> Parameters:
 #>   degree  4
 #> Numerical: none
@@ -62,5 +63,5 @@ round(basis_gram(p), 10)
 x <- seq(0, 1, length.out = 40)
 fitted <- lm.fit(basis_eval(p, x), x^3)$fitted.values
 max(abs(fitted - x^3))
-#> [1] 2.270252e-16
+#> [1] 1.193503e-16
 ```

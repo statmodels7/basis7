@@ -13,7 +13,7 @@ compute its inner products."><meta property="og:image" content="https://statmode
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,8 @@ compute its inner products.</p>
 
 
 <dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
-<dd><p>The endpoints of the interval the basis lives on.</p></dd>
+<dd><p>The endpoints of the interval the basis lives on, or one
+endpoint per variable for a basis of several.</p></dd>
 
 
 <dt id="arg-basis-params">basis_params<a class="anchor" aria-label="anchor" href="#arg-basis-params"></a></dt>
@@ -96,6 +97,11 @@ over through dispatch, with no change to calling code.</p>
 sum to one. Restricting a basis, whether for identifiability or to separate
 a linear from a nonlinear part, is a linear transformation of it and belongs
 to the layer that owns that decision.</p>
+<p>A basis lives on an interval, or, when it is a product of several, on a box:
+<code>lower</code> and <code>upper</code> then have one entry per variable and
+<code><a href="basis_nvar.html">basis_nvar</a></code> reports how many. Everything else is unchanged, and
+a univariate basis is the case of one variable rather than a separate kind
+of object.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

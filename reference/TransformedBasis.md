@@ -33,7 +33,8 @@ TransformedBasis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on.
+  The endpoints of the interval the basis lives on, or one endpoint per
+  variable for a basis of several.
 
 - basis_params:
 

@@ -27,6 +27,20 @@ share one class.
 - [`TransformedBasis()`](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
   : Linearly Transformed Basis
 
+## Several variables
+
+A product of bases, and the contraction that computes what a fit needs
+from the marginal evaluations without forming the product.
+
+- [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
+  : Construct a Tensor Product Basis
+- [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+  : Evaluate a Basis Against Coefficients
+- [`TensorBasis()`](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
+  : Tensor Product Basis
+- [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
+  : How Many Variables a Basis Takes
+
 ## The interface
 
 What every basis answers. A subclass must implement only the first; the
@@ -98,6 +112,19 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Gram Matrix Against a Weighted Lebesgue Measure
 - [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
   : A Finite-Difference Reference, and Where It Can Be Trusted
+- [`tensor_design()`](https://statmodels7.github.io/basis7/reference/tensor_design.md)
+  : The Row-Wise Kronecker Product of the Marginal Designs
+- [`marginal_designs()`](https://statmodels7.github.io/basis7/reference/marginal_designs.md)
+  : Evaluate Every Marginal at Its Own Column
+- [`khatri_rao()`](https://statmodels7.github.io/basis7/reference/khatri_rao.md)
+  : Row-Wise Kronecker Product of Two Matrices
+- [`contract_cp()`](https://statmodels7.github.io/basis7/reference/contract_cp.md)
+  : Contract a Tensor Product Basis Against Factor Matrices
+- [`clamp_to_range()`](https://statmodels7.github.io/basis7/reference/clamp_to_range.md)
+  : Refuse Points Outside a Range, and Clamp Those On Its Edge
+- [`coord()`](https://statmodels7.github.io/basis7/reference/coord.md)
+  [`replace_coord()`](https://statmodels7.github.io/basis7/reference/coord.md)
+  : One Coordinate of the Evaluation Points
 - [`check_basis_args()`](https://statmodels7.github.io/basis7/reference/check_basis_args.md)
   : Validate the Arguments Every Basis Constructor Takes
 - [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)

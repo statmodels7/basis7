@@ -18,11 +18,13 @@ check_eval_points(basis, x)
 
 - x:
 
-  A numeric vector of evaluation points.
+  A numeric vector of evaluation points, or a matrix with one column per
+  variable.
 
 ## Value
 
-`x`, with near-endpoint values clamped onto the endpoints.
+`x`, with near-endpoint values clamped onto the endpoints: a vector for
+a basis of one variable and a matrix otherwise.
 
 ## Details
 
@@ -34,3 +36,7 @@ means; a silent answer here would take that decision away from it.
 The comparison uses a tolerance relative to the width of the interval,
 so that a point which is an endpoint up to rounding is accepted and then
 clamped onto the endpoint exactly.
+
+For a basis of several variables the points are a matrix with one column
+per variable, and each column is checked against its own endpoints. A
+basis of one variable keeps taking, and returning, a plain vector.
