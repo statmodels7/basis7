@@ -451,9 +451,6 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Print the Outcome of check_basis
 - [`is_base_basis_class()`](https://statmodels7.github.io/basis7/reference/is_base_basis_class.md)
   : Is This the Package's Own Base Class?
-- [`basis7`](https://statmodels7.github.io/basis7/reference/basis7-package.md)
-  [`basis7-package`](https://statmodels7.github.io/basis7/reference/basis7-package.md)
-  : basis7: An S7 Framework for Basis Expansions
 
 # Articles
 
