@@ -41,6 +41,13 @@ an S7 toolkit for statistical modelling, alongside
 pak::pak("statmodels7/basis7")
 ```
 
+Or the whole toolkit at once, which also installs the four sibling
+packages:
+
+``` r
+pak::pak("statmodels7/statmodels7")
+```
+
 ## A basis is an object
 
 ``` r
@@ -245,8 +252,8 @@ bumps <- Bumps(
 
 # never implemented, yet available
 round(basis_deriv(bumps, 0.5, order = 1), 4)
-#>       bu1     bu2 bu3    bu4    bu5
-#> c -0.5078 -3.6543   0 3.6543 0.5078
+#>          bu1     bu2 bu3    bu4    bu5
+#> [1,] -0.5078 -3.6543   0 3.6543 0.5078
 round(basis_int(bumps, 1), 4)
 #>         bu1    bu2    bu3    bu4    bu5
 #> [1,] 0.2811 0.3674 0.3757 0.3674 0.2811

@@ -49,6 +49,13 @@ toolkit for statistical modelling, alongside
 pak::pak("statmodels7/basis7")
 ```
 
+Or the whole toolkit at once, which also installs the four sibling
+packages:
+
+```{r eval=FALSE}
+pak::pak("statmodels7/statmodels7")
+```
+
 ## A basis is an object
 
 ```{r}
