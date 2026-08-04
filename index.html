@@ -73,11 +73,14 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"statmodels7/basis7"</span><span class="op">)</span></span></code></pre></div>
+<p>Or the whole toolkit at once, which also installs the four sibling packages:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"statmodels7/statmodels7"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="a-basis-is-an-object">A basis is an object<a class="anchor" aria-label="anchor" href="#a-basis-is-an-object"></a>
 </h2>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span>, dimension <span class="op">=</span> <span class="fl">6</span>, degree <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="va">b</span></span>
 <span><span class="co">#&gt; Basis: bspline</span></span>
@@ -96,14 +99,14 @@
 <span><span class="co">#&gt; [3,] 0.0000 0.0312 0.4687 0.4687 0.0312   0</span></span>
 <span><span class="co">#&gt; [4,] 0.0000 0.0000 0.0000 0.0000 0.0000   1</span></span></code></pre></div>
 <p>The four generics answer in the same shape, so nothing downstream has to know which family it was given.</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_deriv.html">basis_deriv</a></span><span class="op">(</span><span class="va">b</span>, <span class="fl">0.4</span>, order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="fl">3</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      bs1  bs2   bs3 bs4 bs5 bs6</span></span>
 <span><span class="co">#&gt; [1,]   0 10.8 -16.2 2.7 2.7   0</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_int.html">basis_int</a></span><span class="op">(</span><span class="va">b</span>, <span class="fl">0.4</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         bs1    bs2    bs3    bs4 bs5 bs6</span></span>
 <span><span class="co">#&gt; [1,] 0.0833 0.1581 0.1298 0.0287   0   0</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/par.html" class="external-link">par</a></span><span class="op">(</span>mfrow <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">b</span>, order <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
@@ -114,7 +117,7 @@
 <h2 id="the-integral-is-anchored">The integral is anchored<a class="anchor" aria-label="anchor" href="#the-integral-is-anchored"></a>
 </h2>
 <p>Its value at the lower endpoint is exactly zero, for every basis. Any antiderivative would satisfy a differentiation check, so leaving the constant free would let two bases disagree while both looked right.</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/basis_int.html">basis_int</a></span><span class="op">(</span><span class="fu"><a href="reference/fourier_basis.html">fourier_basis</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">3</span>, dimension <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      const sin1 cos1 sin2 cos2</span></span>
 <span><span class="co">#&gt; [1,]     0    0    0    0    0</span></span></code></pre></div>
@@ -123,7 +126,7 @@
 <h2 id="inner-products-exactly">Inner products, exactly<a class="anchor" aria-label="anchor" href="#inner-products-exactly"></a>
 </h2>
 <p>On each knot interval the integrand of the Gram matrix is a polynomial of known degree, so a Gauss-Legendre rule sized from that degree leaves no quadrature error. For a Fourier basis over a whole period the matrix is diagonal in closed form.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="va">b</span>, order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="co">#&gt;        bs1     bs2     bs3     bs4     bs5    bs6</span></span>
 <span><span class="co">#&gt; bs1  324.0 -445.50   94.50   27.00    0.00    0.0</span></span>
@@ -140,7 +143,7 @@
 <span><span class="co">#&gt; sin2      0  0.0000  0.0000 78.9568  0.0000</span></span>
 <span><span class="co">#&gt; cos2      0  0.0000  0.0000  0.0000 78.9568</span></span></code></pre></div>
 <p>The point of the matrix is that <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>β</mi><mi>⊤</mi></msup><msub><mi>G</mi><mi>d</mi></msub><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta^\top G_d \beta</annotation></semantics></math> is the integral of the squared <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>-th derivative of the function the coefficients describe:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
 <span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">(</span><span class="fu"><a href="reference/basis_deriv.html">basis_deriv</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">t</span>, order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
@@ -156,7 +159,7 @@
 <h2 id="every-transform-of-a-basis-is-one-linear-map">Every transform of a basis is one linear map<a class="anchor" aria-label="anchor" href="#every-transform-of-a-basis-is-one-linear-map"></a>
 </h2>
 <p>Orthonormalisation, an identifiability constraint and the Demmler-Reinsch construction are the same operation, <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>↦</mo><mi>B</mi><mi>T</mi></mrow><annotation encoding="application/x-tex">B \mapsto BT</annotation></semantics></math>, so they share one class. Derivatives and integrals transform by the same <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>T</mi><annotation encoding="application/x-tex">T</annotation></semantics></math>, and the Gram matrix by congruence, so a parent with an exact Gram matrix passes its exactness on.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">o</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/orthonorm_basis.html">orthonorm_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="va">o</span><span class="op">)</span>, <span class="fl">12</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">4</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">4</span><span class="op">]</span></span>
 <span><span class="co">#&gt;     on1 on2 on3 on4</span></span>
@@ -165,7 +168,7 @@
 <span><span class="co">#&gt; on3   0   0   1   0</span></span>
 <span><span class="co">#&gt; on4   0   0   0   1</span></span></code></pre></div>
 <p><code><a href="reference/dr_basis.html">dr_basis()</a></code> builds the basis that diagonalises the empirical inner product and the penalty at once, and is empirically orthogonal to a constant and to the covariate. It factorises the penalty and not the design, so it survives a design that has lost rank, which equally spaced knots produce whenever the data leave a knot span empty:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0.25</span>, length.out <span class="op">=</span> <span class="fl">120</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0.78</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">120</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">wide</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">14</span><span class="op">)</span></span>
 <span></span>
@@ -186,7 +189,7 @@
 <h2 id="several-variables-without-building-the-product">Several variables, without building the product<a class="anchor" aria-label="anchor" href="#several-variables-without-building-the-product"></a>
 </h2>
 <p><code><a href="reference/tensor_basis.html">tensor_basis()</a></code> multiplies bases, one per variable. The product separates, so the Gram matrix is the Kronecker product of the marginal ones and stays exact however many variables there are:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">t2</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tensor_basis.html">tensor_basis</a></span><span class="op">(</span><span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">4</span><span class="op">)</span>, <span class="fu"><a href="reference/fourier_basis.html">fourier_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">t2</span></span>
 <span><span class="co">#&gt; Basis: tensor(bspline, fourier)</span></span>
@@ -202,7 +205,7 @@
 <span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p>The design matrix, on the other hand, grows as the product of the marginal dimensions, and that is what makes interactions expensive. <code><a href="reference/basis_contract.html">basis_contract()</a></code> computes the values the coefficients describe from the marginal evaluations alone. Given the coefficients as factor matrices, the cost is linear in the number of variables rather than exponential in it:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">big</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tensor_basis.html">tensor_basis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">big</span><span class="op">@</span><span class="va">dimension</span> <span class="co"># the design matrix would have this many columns</span></span>
 <span><span class="co">#&gt; [1] 1000000</span></span>
@@ -218,7 +221,7 @@
 <h2 id="a-user-defined-basis-needs-only-its-evaluation">A user-defined basis needs only its evaluation<a class="anchor" aria-label="anchor" href="#a-user-defined-basis-needs-only-its-evaluation"></a>
 </h2>
 <p>Everything else has a numerical method registered on the base class, so a new basis is a subclass and one method. Derivatives use a single finite-difference stencil, never a chain of first differences.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Bumps</span> <span class="op">&lt;-</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Bumps"</span>, parent <span class="op">=</span> <span class="va">basis</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_eval</span>, <span class="va">Bumps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
@@ -234,8 +237,8 @@
 <span></span>
 <span><span class="co"># never implemented, yet available</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_deriv.html">basis_deriv</a></span><span class="op">(</span><span class="va">bumps</span>, <span class="fl">0.5</span>, order <span class="op">=</span> <span class="fl">1</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
-<span><span class="co">#&gt;       bu1     bu2 bu3    bu4    bu5</span></span>
-<span><span class="co">#&gt; c -0.5078 -3.6543   0 3.6543 0.5078</span></span>
+<span><span class="co">#&gt;          bu1     bu2 bu3    bu4    bu5</span></span>
+<span><span class="co">#&gt; [1,] -0.5078 -3.6543   0 3.6543 0.5078</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="reference/basis_int.html">basis_int</a></span><span class="op">(</span><span class="va">bumps</span>, <span class="fl">1</span><span class="op">)</span>, <span class="fl">4</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         bu1    bu2    bu3    bu4    bu5</span></span>
 <span><span class="co">#&gt; [1,] 0.2811 0.3674 0.3757 0.3674 0.2811</span></span></code></pre></div>
@@ -245,7 +248,7 @@
 </h2>
 <p><code><a href="reference/check_basis.html">check_basis()</a></code> runs six numerical checks: the shapes and column names, the derivatives against finite differences, the integral differentiating back and vanishing at the lower endpoint, the partition of unity where the family claims it, the Gram matrix against an independent quadrature, and missing values travelling through.</p>
 <p>A quantity that came from a fallback is reported as <strong>unchecked</strong>, not as passed. Comparing it with a numerical reference would be the same arithmetic twice, agreeing however wrong the basis is.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="reference/check_basis.html">check_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; check_basis: bspline (6 functions)</span></span>
 <span><span class="co">#&gt;   shape       shapes and column names                        [PASSED]</span></span>
