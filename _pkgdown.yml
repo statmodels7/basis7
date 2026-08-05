@@ -77,8 +77,6 @@ reference:
   - starts_with("basis_colnames.")
   - starts_with("print.")
   - starts_with("plot.")
-  - fd_weights
-  - fd_offsets
   - numerical_deriv_matrix
   - numerical_gram
   - gauss_legendre

@@ -2,64 +2,6 @@
 NULL
 
 
-#' Finite-Difference Weights for an Arbitrary Stencil
-#'
-#' @description
-#' The weights that turn function values at \code{x + offsets * h} into the
-#' \code{order}-th derivative at \code{x}, divided by \code{h^order}.
-#'
-#' @details
-#' The weights solve the linear system that makes the combination exact on
-#' polynomials up to the degree the stencil can carry. Writing \eqn{s_j} for
-#' the offsets, the Taylor expansion of \eqn{\sum_j w_j f(x + s_j h)} has
-#' \eqn{f^{(i)}(x)} multiplied by \eqn{h^i/i! \sum_j w_j s_j^i}, so requiring
-#' \eqn{\sum_j w_j s_j^i = 0} for \eqn{i \neq d} and \eqn{= d!} for
-#' \eqn{i = d} leaves exactly \eqn{h^d f^{(d)}(x)}. That is a Vandermonde
-#' system in the offsets, solved once per stencil shape.
-#'
-#' Building the weights this way, rather than composing lower-order
-#' differences, is what keeps a high order usable: each numerical
-#' differentiation multiplies the error of the one before it, so a fourth
-#' derivative reached by four nested first differences is noise. One stencil,
-#' never nested.
-#'
-#' @param offsets A numeric vector of stencil offsets, in units of the step.
-#' @param order The derivative order.
-#'
-#' @return A numeric vector of weights, the same length as \code{offsets}.
-#'
-#' @keywords internal
-fd_weights <- function(offsets, order) {
-  n <- length(offsets)
-  # Row i is the offsets raised to the power i - 1: the exponent indexes the
-  # rows, the offsets the columns.
-  A <- outer(seq_len(n) - 1L, offsets, function(power, s) s^power)
-  rhs <- numeric(n)
-  rhs[order + 1L] <- factorial(order)
-  solve(A, rhs)
-}
-
-
-#' Stencil Offsets for a Derivative Order
-#'
-#' @description
-#' The symmetric offsets used away from the interval endpoints, and the
-#' one-sided ones used where a symmetric stencil would not fit.
-#'
-#' @param order The derivative order.
-#'
-#' @return A list with the reach and the three offset vectors.
-#'
-#' @keywords internal
-fd_offsets <- function(order) {
-  r <- max(1L, as.integer(ceiling(order / 2)))
-  list(
-    reach = r,
-    central = seq.int(-r, r),
-    forward = seq.int(0, 2 * r),
-    backward = seq.int(-2 * r, 0)
-  )
-}
 
 
 #' Numerically Differentiate a Matrix-Valued Function
@@ -74,7 +16,7 @@ fd_offsets <- function(order) {
 #' symmetric stencil centred on an endpoint would ask for points outside the
 #' interval, where the basis is not defined. Those points therefore get a
 #' one-sided stencil of the same order and the same number of nodes, built by
-#' \code{\link{fd_weights}} from shifted offsets.
+#' \code{\link[numericals7]{fd_weights}} from shifted offsets.
 #'
 #' The step is \eqn{\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)}, which
 #' balances truncation against rounding for order \eqn{d}, capped so that the
@@ -92,7 +34,7 @@ fd_offsets <- function(order) {
 #'
 #' @keywords internal
 numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
-  off <- fd_offsets(order)
+  off <- numericals7::fd_offsets(order)
   reach <- off$reach
 
   h <- .Machine$double.eps^(1 / (order + 2)) * pmax(1, abs(x)) * step_scale
@@ -106,9 +48,9 @@ numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
   kind[is.na(x)] <- "c"
 
   w <- list(
-    c = fd_weights(off$central, order),
-    f = fd_weights(off$forward, order),
-    b = fd_weights(off$backward, order)
+    c = numericals7::fd_weights(off$central, order),
+    f = numericals7::fd_weights(off$forward, order),
+    b = numericals7::fd_weights(off$backward, order)
   )
   offs <- list(c = off$central, f = off$forward, b = off$backward)
 

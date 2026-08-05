@@ -1,6 +1,6 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.3.1
+Version: 0.4.0
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Implements basis expansions using the S7 object-oriented system.
@@ -18,6 +18,7 @@ BugReports: https://github.com/statmodels7/basis7/issues
 Depends:
     R (>= 4.1.0)
 Imports:
+    numericals7 (>= 0.2.0),
     graphics,
     S7,
     splines2,
@@ -28,6 +29,8 @@ Suggests:
     knitr,
     rmarkdown
 VignetteBuilder: knitr
+Remotes:
+    statmodels7/numericals7
 Config/testthat/edition: 3
 Config/roxygen2/version: 8.0.0
 RoxygenNote: 7.3.3

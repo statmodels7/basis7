@@ -1,3 +1,12 @@
+# basis7 0.4.0
+
+* The finite-difference weights and offsets move to numericals7, where the
+  toolkit's one stencil library now lives; this package's Vandermonde
+  construction was the most general of the three the toolkit carried and is
+  the one that survived. `numerical_deriv_matrix()` keeps its own policy --
+  the interval-aware step cap and the switch to one-sided stencils at the
+  endpoints -- and speaks to the shared weights for everything else.
+
 # basis7 0.3.1
 
 * The numerical derivative no longer labels the rows of its result after the

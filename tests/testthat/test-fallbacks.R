@@ -122,18 +122,18 @@ test_that("one stencil is used, never a chain of first differences", {
 test_that("the finite-difference weights are exact on polynomials", {
   # The weights come from a Vandermonde solve, so the classic stencils must
   # fall out of it rather than being coincidences.
-  expect_equal(basis7:::fd_weights(c(-1, 0, 1), 1L), c(-0.5, 0, 0.5))
-  expect_equal(basis7:::fd_weights(c(-1, 0, 1), 2L), c(1, -2, 1))
-  expect_equal(basis7:::fd_weights(c(-2, -1, 0, 1, 2), 3L),
+  expect_equal(numericals7::fd_weights(c(-1, 0, 1), 1L), c(-0.5, 0, 0.5))
+  expect_equal(numericals7::fd_weights(c(-1, 0, 1), 2L), c(1, -2, 1))
+  expect_equal(numericals7::fd_weights(c(-2, -1, 0, 1, 2), 3L),
     c(-0.5, 1, 0, -1, 0.5),
     tolerance = 1e-10
   )
-  expect_equal(basis7:::fd_weights(c(-2, -1, 0, 1, 2), 4L),
+  expect_equal(numericals7::fd_weights(c(-2, -1, 0, 1, 2), 4L),
     c(1, -4, 6, -4, 1),
     tolerance = 1e-10
   )
   # a one-sided stencil is exact too
-  w <- basis7:::fd_weights(0:2, 1L)
+  w <- numericals7::fd_weights(0:2, 1L)
   expect_equal(w, c(-1.5, 2, -0.5))
 })
 
