@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,10 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.4.0" id="basis7-040">basis7 0.4.0<a class="anchor" aria-label="anchor" href="#basis7-040"></a></h2>
+<ul><li>The finite-difference weights and offsets move to numericals7, where the toolkit’s one stencil library now lives; this package’s Vandermonde construction was the most general of the three the toolkit carried and is the one that survived. <code><a href="../reference/numerical_deriv_matrix.html">numerical_deriv_matrix()</a></code> keeps its own policy – the interval-aware step cap and the switch to one-sided stencils at the endpoints – and speaks to the shared weights for everything else.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.3.1" id="basis7-031">basis7 0.3.1<a class="anchor" aria-label="anchor" href="#basis7-031"></a></h2>
 <ul><li><p>The numerical derivative no longer labels the rows of its result after the finite-difference stencil each point uses. The stencil is chosen per point and recorded in a character vector, whose names travelled through the evaluation points and came back as row names for any basis whose method propagates the names of <code>x</code>.</p></li>

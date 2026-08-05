@@ -11,7 +11,7 @@ for it and one-sided at the endpoints."><meta property="og:image" content="https
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,7 +87,7 @@ element.</p></dd>
 symmetric stencil centred on an endpoint would ask for points outside the
 interval, where the basis is not defined. Those points therefore get a
 one-sided stencil of the same order and the same number of nodes, built by
-<code><a href="fd_weights.html">fd_weights</a></code> from shifted offsets.</p>
+<code><a href="https://statmodels7.github.io/numericals7/reference/fd_weights.html" class="external-link">fd_weights</a></code> from shifted offsets.</p>
 <p>The step is \(\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)\), which
 balances truncation against rounding for order \(d\), capped so that the
 whole stencil fits inside the interval.</p>

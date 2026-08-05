@@ -400,10 +400,6 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Print a Basis
 - [`plot.basis`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
   : Plot a Basis
-- [`fd_weights()`](https://statmodels7.github.io/basis7/reference/fd_weights.md)
-  : Finite-Difference Weights for an Arbitrary Stencil
-- [`fd_offsets()`](https://statmodels7.github.io/basis7/reference/fd_offsets.md)
-  : Stencil Offsets for a Derivative Order
 - [`numerical_deriv_matrix()`](https://statmodels7.github.io/basis7/reference/numerical_deriv_matrix.md)
   : Numerically Differentiate a Matrix-Valued Function
 - [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)

@@ -46,7 +46,7 @@ symmetric stencil centred on an endpoint would ask for points outside
 the interval, where the basis is not defined. Those points therefore get
 a one-sided stencil of the same order and the same number of nodes,
 built by
-[`fd_weights`](https://statmodels7.github.io/basis7/reference/fd_weights.md)
+[`fd_weights`](https://statmodels7.github.io/numericals7/reference/fd_weights.html)
 from shifted offsets.
 
 The step is \\\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)\\, which
