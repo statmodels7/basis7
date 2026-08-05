@@ -28,7 +28,7 @@ A symmetric numeric matrix with `basis@dimension` rows and columns.
 
 ## Details
 
-The integral over the box of a product of separable functions factorises
+The integral over the box of a product of separable functions factorizes
 into a product of one-dimensional integrals, so the matrix is separable
 and costs one marginal Gram matrix per variable rather than one
 integration over the box. A tensor of exactly integrated marginals is

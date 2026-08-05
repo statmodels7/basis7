@@ -1,4 +1,4 @@
-# Orthonormalise a Basis
+# Orthonormalize a Basis
 
 Returns the basis whose functions span the same space and are
 orthonormal in \\L^2\\ on the basis interval.
@@ -13,12 +13,12 @@ orthonorm_basis(basis, order = 0L)
 
 - basis:
 
-  The basis to orthonormalise.
+  The basis to orthonormalize.
 
 - order:
 
   The derivative order whose inner products are made the identity. Zero,
-  the default, orthonormalises the functions themselves.
+  the default, orthonormalizes the functions themselves.
 
 ## Value
 
@@ -28,13 +28,13 @@ An object of class
 ## Details
 
 The transform is read off the Gram matrix rather than estimated on a
-grid. Writing \\G = R^\top R\\ for the Cholesky factorisation of the
+grid. Writing \\G = R^\top R\\ for the Cholesky factorization of the
 Gram matrix, the basis \\B R^{-1}\\ has Gram matrix \\R^{-\top} R^\top R
 R^{-1} = I\\. Because the parent's Gram matrix is exact for the families
-that ship with the package, so is the orthonormalisation: there is no
+that ship with the package, so is the orthonormalization: there is no
 grid, no number of points to choose, and no scale factor to correct.
 
-Orthonormalising an already orthonormal basis returns it unchanged, up
+Orthonormalizing an already orthonormal basis returns it unchanged, up
 to rounding, and the transforms collapse rather than nesting.
 
 ## See also

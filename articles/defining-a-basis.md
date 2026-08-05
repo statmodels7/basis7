@@ -11,7 +11,7 @@ A new basis is a subclass of `basis` and a method for
 Nothing else is required.
 
 Take a basis of Gaussian bumps, $`\exp\{-(x - c_j)^2 / 2s^2\}`$ at
-equally spaced centres $`c_j`$. They are not orthogonal, not a partition
+equally spaced centers $`c_j`$. They are not orthogonal, not a partition
 of unity, and have no compact support, so nothing about them is
 inherited from the families already here.
 
@@ -21,7 +21,7 @@ Bumps <- S7::new_class("Bumps", parent = basis)
 
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
   p <- basis@basis_params
-  out <- exp(-0.5 * outer(x, p$centres, "-")^2 / p$width^2)
+  out <- exp(-0.5 * outer(x, p$centers, "-")^2 / p$width^2)
   colnames(out) <- basis_colnames(basis)
   out
 }
@@ -32,7 +32,7 @@ bumps <- function(lower = 0, upper = 1, dimension = 6, width = 0.12) {
     dimension = as.integer(dimension),
     lower = lower, upper = upper,
     basis_params = list(
-      centres = seq(lower, upper, length.out = dimension),
+      centers = seq(lower, upper, length.out = dimension),
       width = width
     )
   )
@@ -44,7 +44,7 @@ b
 #> Functions: 6   Variables: 1
 #> Domain: [0, 1]
 #> Parameters:
-#>   centres  <6 values>
+#>   centers  <6 values>
 #>   width    0.12
 #> Numerical: basis_deriv, basis_int, basis_gram
 ```
@@ -104,7 +104,7 @@ outside the interval where the basis is not defined.
 
 # the closed form, for comparison: d/dx exp(-(x-c)^2/2s^2) = -(x-c)/s^2 * f
 x <- seq(0, 1, length.out = 5)
-exact <- -outer(x, b@basis_params$centres, "-") / b@basis_params$width^2 *
+exact <- -outer(x, b@basis_params$centers, "-") / b@basis_params$width^2 *
   basis_eval(b, x)
 
 max(abs(basis_deriv(b, x, order = 1) - exact))
@@ -134,7 +134,7 @@ this family:
 
 S7::method(basis_deriv, Bumps) <- function(basis, x, order = 1L, ...) {
   p <- basis@basis_params
-  z <- outer(x, p$centres, "-") / p$width
+  z <- outer(x, p$centers, "-") / p$width
   # Hermite: the d-th derivative of a Gaussian is He_d(-z) / width^d times it
   he <- switch(order + 1L,
     1, -z, z^2 - 1, -z^3 + 3 * z,
@@ -254,7 +254,7 @@ basis_is_numerical(b)
 
 ## Transforming it
 
-Orthonormalisation, an identifiability constraint and the
+Orthonormalization, an identifiability constraint and the
 Demmler-Reinsch construction are the same operation, $`B \mapsto BT`$,
 so they share one class. Derivatives and integrals transform by the same
 $`T`$, and the Gram matrix by congruence, so a parent with an exact Gram
@@ -286,7 +286,7 @@ max(abs(colSums(basis_eval(cs, grid))))
 
 And
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-builds the basis that diagonalises the empirical inner product and the
+builds the basis that diagonalizes the empirical inner product and the
 penalty at once, and is empirically orthogonal to a constant and to
 $`x`$. It works on any basis, this one included:
 
@@ -375,7 +375,7 @@ head(basis_contract(tb, xy, gam), 3)
 #> [1] -0.9356725 -0.6649577 -0.6739005
 ```
 
-Choosing those factors is a modelling decision, and belongs to the layer
+Choosing those factors is a modeling decision, and belongs to the layer
 that owns the parameters. Evaluating them is basis arithmetic, and
 belongs here.
 

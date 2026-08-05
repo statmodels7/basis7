@@ -15,7 +15,7 @@
 
 - The numerical derivative no longer labels the rows of its result after
   the finite-difference stencil each point uses. The stencil is chosen
-  per point and recorded in a character vector, whose names travelled
+  per point and recorded in a character vector, whose names traveled
   through the evaluation points and came back as row names for any basis
   whose method propagates the names of `x`.
 
@@ -57,7 +57,7 @@
   sample, or as a list of factor matrices in canonical polyadic form,
   where the cost is linear in the number of variables instead of
   exponential in it. A product of six bases of ten functions has a
-  million columns; the factorised route touches neither that matrix nor
+  million columns; the factorized route touches neither that matrix nor
   the coefficient array.
 
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
@@ -84,14 +84,14 @@
   method must now name `at` and `weight` in its signature, because S7
   requires a method’s formals to contain the generic’s.
 
-- `TransformedBasis`, one class for every linear reparametrisation ,
+- `TransformedBasis`, one class for every linear reparametrization ,
   with three constructors:
   [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
   from the Cholesky factor of the Gram matrix rather than from a grid;
   [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
   from the null space of a constraint; and
   [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md),
-  the Demmler-Reinsch construction, which diagonalises the empirical
+  the Demmler-Reinsch construction, which diagonalizes the empirical
   inner product and the penalty at once and is empirically orthogonal to
   a constant and to the covariate.
 
@@ -100,7 +100,7 @@
   own methods delegate and multiply.
 
 - [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-  factorises the penalty and not the design, so it survives a
+  factorizes the penalty and not the design, so it survives a
   rank-deficient design, which equally spaced knots produce whenever the
   data leave a knot span empty. Verified on a design where the Cholesky
   factor of the design matrix does not exist.

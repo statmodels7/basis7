@@ -14,12 +14,12 @@ kept, so restricting one is a separate, deliberate step.
 
 ## Transforming a basis
 
-Orthonormalisation, identifiability constraints and the Demmler-Reinsch
+Orthonormalization, identifiability constraints and the Demmler-Reinsch
 construction are the same operation with different matrices, so they
 share one class.
 
 - [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
-  : Orthonormalise a Basis
+  : Orthonormalize a Basis
 - [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
   : Restrict a Basis to a Linear Constraint
 - [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
@@ -103,7 +103,7 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`new_transformed()`](https://statmodels7.github.io/basis7/reference/new_transformed.md)
   : Build a Transformed Basis
 - [`chol_pd()`](https://statmodels7.github.io/basis7/reference/chol_pd.md)
-  : Cholesky Factorisation, With the Rank Decided Before It
+  : Cholesky Factorization, With the Rank Decided Before It
 - [`empirical_gram()`](https://statmodels7.github.io/basis7/reference/empirical_gram.md)
   : Gram Matrix Against the Empirical Measure
 - [`weighted_gram()`](https://statmodels7.github.io/basis7/reference/weighted_gram.md)

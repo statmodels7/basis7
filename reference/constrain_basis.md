@@ -34,7 +34,7 @@ An object of class
 
 The transform is an orthonormal basis of the null space of \\C\\,
 extracted from its singular value decomposition, so the constrained
-basis spans precisely the admissible functions and no reparametrisation
+basis spans precisely the admissible functions and no reparametrization
 of the constraint changes the space it produces.
 
 What the package supplies is the mechanics. Which constraint a model

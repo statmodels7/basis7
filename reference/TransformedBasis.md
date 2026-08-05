@@ -54,8 +54,8 @@ An object of class `TransformedBasis`.
 
 ## Details
 
-Orthonormalising a basis, restricting it to satisfy a linear constraint,
-and rebuilding it so that it diagonalises an inner product are the same
+Orthonormalizing a basis, restricting it to satisfy a linear constraint,
+and rebuilding it so that it diagonalizes an inner product are the same
 operation with different matrices, so they share one class. Derivatives
 and integrals transform by the same \\T\\, because differentiation and
 integration are linear and \\T\\ does not depend on \\x\\; the Gram

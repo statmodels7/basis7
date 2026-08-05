@@ -56,7 +56,7 @@ The inner product is taken against a measure, and which measure matters.
 The default is Lebesgue on the basis interval, which is what a roughness
 penalty integrates. Supplying `at` takes the empirical measure of those
 points instead, \\B^\top B / n\\, which is the matrix a design matrix
-actually produces and the one a basis is diagonalised against when the
+actually produces and the one a basis is diagonalized against when the
 construction is meant to depend on where the data lie. Supplying
 `weight` takes a weighted Lebesgue measure.
 

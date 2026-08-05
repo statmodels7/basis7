@@ -1,6 +1,6 @@
 # Demmler-Reinsch Basis
 
-Returns the basis that simultaneously diagonalises the empirical inner
+Returns the basis that simultaneously diagonalizes the empirical inner
 product at the given points and the penalty, and is empirically
 orthogonal to the constraint functions.
 
@@ -51,13 +51,13 @@ The construction has three steps. The constraint matrix \\C =
 (\mathbf{1}, x)^\top B\\ is formed and the basis restricted to its null
 space \\V_0\\, which makes the remaining functions empirically
 orthogonal to a constant and to \\x\\. The pencil \\(V_0^\top (B^\top
-B/n) V_0,\\ V_0^\top P V_0)\\ is then diagonalised, and the transform is
+B/n) V_0,\\ V_0^\top P V_0)\\ is then diagonalized, and the transform is
 \\T = V_0 A\\. The resulting design matrix \\Z = B T\\ has \\Z^\top Z\\
 diagonal, has \\T^\top P T\\ equal to the identity, and satisfies
 \\(\mathbf{1}, x)^\top Z = 0\\ exactly.
 
 Three properties make this construction usable where others are not. It
-factorises only a \\q \times K\\ and a \\(K-q) \times (K-q)\\ matrix,
+factorizes only a \\q \times K\\ and a \\(K-q) \times (K-q)\\ matrix,
 never anything of the size of the sample. It tolerates a rank-deficient
 \\B\\, which equally spaced knots produce whenever the data leave a knot
 span empty, because the matrix inverted is the penalty and not the
@@ -65,7 +65,7 @@ design. And the transform is kept, so prediction at new points is the
 parent's evaluation multiplied by it, like any other transformed basis.
 
 The last property is what the separation of a linear from a nonlinear
-effect needs: a reparametrisation that does not satisfy \\(\mathbf{1},
+effect needs: a reparametrization that does not satisfy \\(\mathbf{1},
 x)^\top Z = 0\\ estimates the sum of the two correctly and the split
 between them with bias.
 

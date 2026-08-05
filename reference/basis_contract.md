@@ -57,8 +57,8 @@ Coefficients come in two shapes.
   is ever formed.
 
 The second shape is what makes a model with high-order interactions
-affordable, and what the factorised tensor product spline models of
-Ruegamer (2024) estimate. Choosing the factors is a modelling decision
+affordable, and what the factorized tensor product spline models of
+Ruegamer (2024) estimate. Choosing the factors is a modeling decision
 and belongs to the layer that owns the parameters; evaluating them is
 basis arithmetic and belongs here.
 
@@ -84,7 +84,7 @@ cf <- array(rnorm(20), dim = c(5, 4))
 max(abs(basis_contract(b, x, cf) - basis_eval(b, x) %*% as.numeric(cf)))
 #> [1] 0.9842723
 
-# or a rank-two factorisation, which never forms either matrix
+# or a rank-two factorization, which never forms either matrix
 g <- list(matrix(rnorm(10), 5, 2), matrix(rnorm(8), 4, 2))
 head(basis_contract(b, x, g))
 #> [1]  0.08658967 -0.37591495  0.27853745  0.52864812  0.35983032  0.70173222
