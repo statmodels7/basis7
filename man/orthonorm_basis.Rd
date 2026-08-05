@@ -2,15 +2,15 @@
 % Please edit documentation in R/transformed_basis.R
 \name{orthonorm_basis}
 \alias{orthonorm_basis}
-\title{Orthonormalise a Basis}
+\title{Orthonormalize a Basis}
 \usage{
 orthonorm_basis(basis, order = 0L)
 }
 \arguments{
-\item{basis}{The basis to orthonormalise.}
+\item{basis}{The basis to orthonormalize.}
 
 \item{order}{The derivative order whose inner products are made the
-identity. Zero, the default, orthonormalises the functions themselves.}
+identity. Zero, the default, orthonormalizes the functions themselves.}
 }
 \value{
 An object of class \code{\link{TransformedBasis}}.
@@ -21,14 +21,14 @@ Returns the basis whose functions span the same space and are orthonormal in
 }
 \details{
 The transform is read off the Gram matrix rather than estimated on a grid.
-Writing \eqn{G = R^\top R} for the Cholesky factorisation of the Gram matrix,
+Writing \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix,
 the basis \eqn{B R^{-1}} has Gram matrix
 \eqn{R^{-\top} R^\top R R^{-1} = I}. Because the parent's Gram matrix is
 exact for the families that ship with the package, so is the
-orthonormalisation: there is no grid, no number of points to choose, and no
+orthonormalization: there is no grid, no number of points to choose, and no
 scale factor to correct.
 
-Orthonormalising an already orthonormal basis returns it unchanged, up to
+Orthonormalizing an already orthonormal basis returns it unchanged, up to
 rounding, and the transforms collapse rather than nesting.
 }
 \examples{

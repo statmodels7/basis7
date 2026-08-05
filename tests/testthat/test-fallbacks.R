@@ -3,7 +3,7 @@
 # Gaussian bumps, with everything but basis_eval left to the base class.
 Bumps <- S7::new_class("Bumps", parent = basis)
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
-  ctr <- basis@basis_params$centres
+  ctr <- basis@basis_params$centers
   s <- basis@basis_params$width
   out <- exp(-0.5 * outer(x, ctr, "-")^2 / s^2)
   colnames(out) <- basis_colnames(basis)
@@ -14,7 +14,7 @@ bumps <- function(k = 5, lower = 0, upper = 1) {
     basis_name = "bumps", dimension = as.integer(k),
     lower = lower, upper = upper,
     basis_params = list(
-      centres = seq(lower + 0.1, upper - 0.1, length.out = k),
+      centers = seq(lower + 0.1, upper - 0.1, length.out = k),
       width = 0.15
     )
   )
@@ -22,12 +22,12 @@ bumps <- function(k = 5, lower = 0, upper = 1) {
 
 # The closed forms, for comparison: d/dx exp(-(x-c)^2/2s^2) = -(x-c)/s^2 * f.
 bump_d1 <- function(b, x) {
-  ctr <- b@basis_params$centres
+  ctr <- b@basis_params$centers
   s <- b@basis_params$width
   -outer(x, ctr, "-") / s^2 * basis_eval(b, x)
 }
 bump_d2 <- function(b, x) {
-  ctr <- b@basis_params$centres
+  ctr <- b@basis_params$centers
   s <- b@basis_params$width
   z <- outer(x, ctr, "-")
   (z^2 / s^4 - 1 / s^2) * basis_eval(b, x)

@@ -19,7 +19,7 @@ test_that("evaluation at the exact endpoints works for every family", {
 
 
 test_that("the numerical derivative works AT the endpoints", {
-  # A symmetric stencil centred on an endpoint asks for points outside the
+  # A symmetric stencil centered on an endpoint asks for points outside the
   # interval, where the basis is not defined. Those points get a one-sided
   # stencil instead; without it the step would be clamped to zero and the
   # result would be a division by zero.

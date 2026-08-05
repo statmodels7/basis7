@@ -23,7 +23,7 @@ reference:
 
 - title: Transforming a basis
   desc: >
-    Orthonormalisation, identifiability constraints and the Demmler-Reinsch
+    Orthonormalization, identifiability constraints and the Demmler-Reinsch
     construction are the same operation with different matrices, so they share
     one class.
   contents:

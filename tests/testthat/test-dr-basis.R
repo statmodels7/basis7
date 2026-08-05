@@ -29,8 +29,8 @@ test_that("the three defining properties hold exactly", {
 
 test_that("the properties survive a RANK-DEFICIENT design", {
   # Equally spaced knots with a gap in the data: the Schoenberg-Whitney
-  # interlacing fails and B loses rank. Any construction that factorises the
-  # design cannot start here, which is the reason this one factorises the
+  # interlacing fails and B loses rank. Any construction that factorizes the
+  # design cannot start here, which is the reason this one factorizes the
   # penalty instead. Checked rather than believed.
   # The gap is placed deterministically rather than drawn, so the test asserts
   # a property of the construction and not of one random seed.
@@ -95,7 +95,7 @@ test_that("the constraints are configurable, and default to 1 and x", {
   b <- bspline_basis(dimension = 10)
 
   # A constraint has to remove the penalty's null space, or the directions left
-  # over are neither penalised nor identified. Removing the constant alone goes
+  # over are neither penalized nor identified. Removing the constant alone goes
   # with the first-derivative penalty, whose null space is the constants.
   d1 <- dr_basis(b, x,
     penalty = basis_gram(b, order = 1L),
@@ -108,12 +108,12 @@ test_that("the constraints are configurable, and default to 1 and x", {
   # needs: its null space is the straight lines.
   expect_identical(dr_basis(b, x)@dimension, 8L)
 
-  # The mismatch is refused rather than regularised, and deterministically:
-  # the linear direction is exactly unpenalised here, so whether chol() happens
+  # The mismatch is refused rather than regularized, and deterministically:
+  # the linear direction is exactly unpenalized here, so whether chol() happens
   # to survive a zero pivot must not be what decides.
   expect_error(
     dr_basis(b, x, constraints = matrix(1, 1L, length(x))),
-    "neither penalised nor identified"
+    "neither penalized nor identified"
   )
 })
 
@@ -134,13 +134,13 @@ test_that("scaling can be turned off and changes only the scale", {
 
 
 test_that("a singular penalty on the constrained space is refused by name", {
-  # A direction that is neither penalised nor identified is not a basis
-  # function, and saying so beats regularising quietly.
+  # A direction that is neither penalized nor identified is not a basis
+  # function, and saying so beats regularizing quietly.
   expect_error(
     dr_basis(bspline_basis(dimension = 5), seq(0, 1, length.out = 40),
       penalty = matrix(0, 5, 5)
     ),
-    "neither penalised nor identified"
+    "neither penalized nor identified"
   )
 })
 

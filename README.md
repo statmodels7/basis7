@@ -18,7 +18,7 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 Every R package that fits smooth terms carries its own basis code,
 written inside the routine that needs it and exposing exactly what its
 author needed. A cubic B-spline is a fixed mathematical object, and it
-can be written once with everything a modelling routine could want
+can be written once with everything a modeling routine could want
 already computed.
 
 `{basis7}` makes a basis an object that can be **evaluated,
@@ -29,7 +29,7 @@ penalty integrates, and here it is exact rather than approximated on a
 grid.
 
 It is the basis layer of [statmodels7](https://statmodels7.github.io),
-an S7 toolkit for statistical modelling, alongside
+an S7 toolkit for statistical modeling, alongside
 [linkfunctions7](https://statmodels7.github.io/linkfunctions7/),
 [distributions7](https://statmodels7.github.io/distributions7/) and
 [optimizers7](https://statmodels7.github.io/optimizers7/).
@@ -147,7 +147,7 @@ c(
 
 ## Every transform of a basis is one linear map
 
-Orthonormalisation, an identifiability constraint and the
+Orthonormalization, an identifiability constraint and the
 Demmler-Reinsch construction are the same operation, $B \mapsto BT$, so
 they share one class. Derivatives and integrals transform by the same
 $T$, and the Gram matrix by congruence, so a parent with an exact Gram
@@ -163,9 +163,9 @@ round(basis_gram(o), 12)[1:4, 1:4]
 #> on4   0   0   0   1
 ```
 
-`dr_basis()` builds the basis that diagonalises the empirical inner
+`dr_basis()` builds the basis that diagonalizes the empirical inner
 product and the penalty at once, and is empirically orthogonal to a
-constant and to the covariate. It factorises the penalty and not the
+constant and to the covariate. It factorizes the penalty and not the
 design, so it survives a design that has lost rank, which equally spaced
 knots produce whenever the data leave a knot span empty:
 
@@ -240,14 +240,14 @@ finite-difference stencil, never a chain of first differences.
 Bumps <- S7::new_class("Bumps", parent = basis)
 
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
-  out <- exp(-0.5 * outer(x, basis@basis_params$centres, "-")^2 / 0.15^2)
+  out <- exp(-0.5 * outer(x, basis@basis_params$centers, "-")^2 / 0.15^2)
   colnames(out) <- basis_colnames(basis)
   out
 }
 
 bumps <- Bumps(
   basis_name = "bumps", dimension = 5L, lower = 0, upper = 1,
-  basis_params = list(centres = seq(0.1, 0.9, length.out = 5))
+  basis_params = list(centers = seq(0.1, 0.9, length.out = 5))
 )
 
 # never implemented, yet available
@@ -265,7 +265,7 @@ round(basis_int(bumps, 1), 4)
 the derivatives against finite differences, the integral differentiating
 back and vanishing at the lower endpoint, the partition of unity where
 the family claims it, the Gram matrix against an independent quadrature,
-and missing values travelling through.
+and missing values traveling through.
 
 A quantity that came from a fallback is reported as **unchecked**, not
 as passed. Comparing it with a numerical reference would be the same
@@ -308,6 +308,6 @@ invisible(check_basis(bumps))
 - [distributions7](https://statmodels7.github.io/distributions7/) —
   distributions carrying exact derivatives of the log-likelihood
 - [optimizers7](https://statmodels7.github.io/optimizers7/) —
-  optimisation algorithms and stopping rules as objects
+  optimization algorithms and stopping rules as objects
 - [the book](https://statmodels7.github.io/book/) — the mathematics
   behind the toolkit

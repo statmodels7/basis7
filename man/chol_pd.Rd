@@ -2,7 +2,7 @@
 % Please edit documentation in R/transformed_basis.R
 \name{chol_pd}
 \alias{chol_pd}
-\title{Cholesky Factorisation, With the Rank Decided Before It}
+\title{Cholesky Factorization, With the Rank Decided Before It}
 \usage{
 chol_pd(m, tol = 1e-12)
 }

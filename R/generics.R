@@ -148,7 +148,7 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' The default is Lebesgue on the basis interval, which is what a roughness
 #' penalty integrates. Supplying \code{at} takes the empirical measure of those
 #' points instead, \eqn{B^\top B / n}, which is the matrix a design matrix
-#' actually produces and the one a basis is diagonalised against when the
+#' actually produces and the one a basis is diagonalized against when the
 #' construction is meant to depend on where the data lie. Supplying
 #' \code{weight} takes a weighted Lebesgue measure.
 #'

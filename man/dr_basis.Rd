@@ -30,7 +30,7 @@ on a common scale.}
 An object of class \code{\link{TransformedBasis}}.
 }
 \description{
-Returns the basis that simultaneously diagonalises the empirical inner
+Returns the basis that simultaneously diagonalizes the empirical inner
 product at the given points and the penalty, and is empirically orthogonal
 to the constraint functions.
 }
@@ -39,13 +39,13 @@ The construction has three steps. The constraint matrix
 \eqn{C = (\mathbf{1}, x)^\top B} is formed and the basis restricted to its
 null space \eqn{V_0}, which makes the remaining functions empirically
 orthogonal to a constant and to \eqn{x}. The pencil
-\eqn{(V_0^\top (B^\top B/n) V_0,\; V_0^\top P V_0)} is then diagonalised, and
+\eqn{(V_0^\top (B^\top B/n) V_0,\; V_0^\top P V_0)} is then diagonalized, and
 the transform is \eqn{T = V_0 A}. The resulting design matrix
 \eqn{Z = B T} has \eqn{Z^\top Z} diagonal, has \eqn{T^\top P T} equal to the
 identity, and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0} exactly.
 
 Three properties make this construction usable where others are not. It
-factorises only a \eqn{q \times K} and a \eqn{(K-q) \times (K-q)} matrix,
+factorizes only a \eqn{q \times K} and a \eqn{(K-q) \times (K-q)} matrix,
 never anything of the size of the sample. It tolerates a rank-deficient
 \eqn{B}, which equally spaced knots produce whenever the data leave a knot
 span empty, because the matrix inverted is the penalty and not the design.
@@ -53,7 +53,7 @@ And the transform is kept, so prediction at new points is the parent's
 evaluation multiplied by it, like any other transformed basis.
 
 The last property is what the separation of a linear from a nonlinear effect
-needs: a reparametrisation that does not satisfy
+needs: a reparametrization that does not satisfy
 \eqn{(\mathbf{1}, x)^\top Z = 0} estimates the sum of the two correctly and
 the split between them with bias.
 }

@@ -37,8 +37,8 @@ A basis obtained from another by a fixed linear map of its functions,
 \code{\link{constrain_basis}} or \code{\link{dr_basis}}.
 }
 \details{
-Orthonormalising a basis, restricting it to satisfy a linear constraint, and
-rebuilding it so that it diagonalises an inner product are the same
+Orthonormalizing a basis, restricting it to satisfy a linear constraint, and
+rebuilding it so that it diagonalizes an inner product are the same
 operation with different matrices, so they share one class. Derivatives and
 integrals transform by the same \eqn{T}, because differentiation and
 integration are linear and \eqn{T} does not depend on \eqn{x}; the Gram

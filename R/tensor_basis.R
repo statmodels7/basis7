@@ -229,7 +229,7 @@ S7::method(basis_int, TensorBasis) <- function(basis, x, ...) {
 #' @description
 #' The Kronecker product of the marginal Gram matrices.
 #' @details
-#' The integral over the box of a product of separable functions factorises
+#' The integral over the box of a product of separable functions factorizes
 #' into a product of one-dimensional integrals, so the matrix is separable and
 #' costs one marginal Gram matrix per variable rather than one integration over
 #' the box. A tensor of exactly integrated marginals is therefore exact at any
@@ -347,8 +347,8 @@ khatri_rao <- function(a, b) {
 #' }
 #'
 #' The second shape is what makes a model with high-order interactions
-#' affordable, and what the factorised tensor product spline models of
-#' Ruegamer (2024) estimate. Choosing the factors is a modelling decision and
+#' affordable, and what the factorized tensor product spline models of
+#' Ruegamer (2024) estimate. Choosing the factors is a modeling decision and
 #' belongs to the layer that owns the parameters; evaluating them is basis
 #' arithmetic and belongs here.
 #'
@@ -377,7 +377,7 @@ khatri_rao <- function(a, b) {
 #' cf <- array(rnorm(20), dim = c(5, 4))
 #' max(abs(basis_contract(b, x, cf) - basis_eval(b, x) %*% as.numeric(cf)))
 #'
-#' # or a rank-two factorisation, which never forms either matrix
+#' # or a rank-two factorization, which never forms either matrix
 #' g <- list(matrix(rnorm(10), 5, 2), matrix(rnorm(8), 4, 2))
 #' head(basis_contract(b, x, g))
 #'

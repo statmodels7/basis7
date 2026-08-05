@@ -1,4 +1,4 @@
-# The one wrapper for every linear reparametrisation.
+# The one wrapper for every linear reparametrization.
 
 parents <- function() {
   list(
@@ -9,7 +9,7 @@ parents <- function() {
 }
 
 
-test_that("orthonormalisation makes the Gram matrix the identity", {
+test_that("orthonormalization makes the Gram matrix the identity", {
   # The exit test of the construction, by both routes: the exact congruence
   # the transform performs, and an independent quadrature that knows nothing
   # about it.
@@ -27,7 +27,7 @@ test_that("orthonormalisation makes the Gram matrix the identity", {
 })
 
 
-test_that("orthonormalisation preserves the span", {
+test_that("orthonormalization preserves the span", {
   b <- bspline_basis(dimension = 6)
   o <- orthonorm_basis(b)
   x <- seq(0, 1, length.out = 80)
@@ -40,7 +40,7 @@ test_that("orthonormalisation preserves the span", {
 })
 
 
-test_that("orthonormalising at a derivative order is possible where it exists", {
+test_that("orthonormalizing at a derivative order is possible where it exists", {
   # At order 1 the Gram matrix of a Fourier basis is singular, because the
   # constant differentiates to zero, so the refusal must name that.
   expect_error(orthonorm_basis(fourier_basis(dimension = 5), order = 1L),
@@ -89,12 +89,12 @@ test_that("transforms compose by multiplication rather than by nesting", {
   expect_false(S7::S7_inherits(o2@parent_basis, TransformedBasis))
   expect_identical(dim(o2@transform), c(6L, 6L))
 
-  # orthonormalising something already orthonormal changes nothing
+  # orthonormalizing something already orthonormal changes nothing
   expect_equal(abs(basis_eval(o2, x)), abs(basis_eval(o1, x)),
     tolerance = 1e-8
   )
 
-  # a constraint on top of an orthonormalisation is still one object
+  # a constraint on top of an orthonormalization is still one object
   cs <- constrain_basis(o1, colSums(basis_eval(o1, x)))
   expect_identical(cs@parent_basis@basis_name, "bspline")
   expect_identical(dim(cs@transform), c(6L, 5L))

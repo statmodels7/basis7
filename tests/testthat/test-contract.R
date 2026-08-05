@@ -78,9 +78,9 @@ test_that("the canonical polyadic form gives the array it encodes", {
 })
 
 
-test_that("a full-rank factorisation reproduces any array, in three variables", {
+test_that("a full-rank factorization reproduces any array, in three variables", {
   # The exit test of the form: with one rank-one term per coefficient the
-  # factorisation is exact, so nothing is lost by the representation itself.
+  # factorization is exact, so nothing is lost by the representation itself.
   set.seed(55)
   dims <- c(3L, 3L, 3L)
   b <- tensor_basis(lapply(dims, function(k) {
@@ -104,10 +104,10 @@ test_that("a full-rank factorisation reproduces any array, in three variables", 
 })
 
 
-test_that("the factorised form never builds the design matrix", {
+test_that("the factorized form never builds the design matrix", {
   # The claim the form exists for. A product of six bases of ten functions has
   # a million columns, so a design matrix for a thousand points would be eight
-  # gigabytes; the factorisation touches neither it nor the coefficient array.
+  # gigabytes; the factorization touches neither it nor the coefficient array.
   set.seed(56)
   d <- 6L
   k <- 10L

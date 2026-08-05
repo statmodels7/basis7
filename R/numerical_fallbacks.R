@@ -13,7 +13,7 @@ NULL
 #'
 #' @details
 #' A basis is evaluated at its endpoints as readily as anywhere else, and a
-#' symmetric stencil centred on an endpoint would ask for points outside the
+#' symmetric stencil centered on an endpoint would ask for points outside the
 #' interval, where the basis is not defined. Those points therefore get a
 #' one-sided stencil of the same order and the same number of nodes, built by
 #' \code{\link[numericals7]{fd_weights}} from shifted offsets.

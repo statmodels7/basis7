@@ -10,8 +10,8 @@ NULL
 #' \code{\link{constrain_basis}} or \code{\link{dr_basis}}.
 #'
 #' @details
-#' Orthonormalising a basis, restricting it to satisfy a linear constraint, and
-#' rebuilding it so that it diagonalises an inner product are the same
+#' Orthonormalizing a basis, restricting it to satisfy a linear constraint, and
+#' rebuilding it so that it diagonalizes an inner product are the same
 #' operation with different matrices, so they share one class. Derivatives and
 #' integrals transform by the same \eqn{T}, because differentiation and
 #' integration are linear and \eqn{T} does not depend on \eqn{x}; the Gram
@@ -185,7 +185,7 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 }
 
 
-#' Cholesky Factorisation, With the Rank Decided Before It
+#' Cholesky Factorization, With the Rank Decided Before It
 #'
 #' @description
 #' The Cholesky factor of a symmetric matrix, or \code{NULL} when the matrix is
@@ -216,7 +216,7 @@ chol_pd <- function(m, tol = 1e-12) {
 }
 
 
-#' Orthonormalise a Basis
+#' Orthonormalize a Basis
 #'
 #' @description
 #' Returns the basis whose functions span the same space and are orthonormal in
@@ -224,19 +224,19 @@ chol_pd <- function(m, tol = 1e-12) {
 #'
 #' @details
 #' The transform is read off the Gram matrix rather than estimated on a grid.
-#' Writing \eqn{G = R^\top R} for the Cholesky factorisation of the Gram matrix,
+#' Writing \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix,
 #' the basis \eqn{B R^{-1}} has Gram matrix
 #' \eqn{R^{-\top} R^\top R R^{-1} = I}. Because the parent's Gram matrix is
 #' exact for the families that ship with the package, so is the
-#' orthonormalisation: there is no grid, no number of points to choose, and no
+#' orthonormalization: there is no grid, no number of points to choose, and no
 #' scale factor to correct.
 #'
-#' Orthonormalising an already orthonormal basis returns it unchanged, up to
+#' Orthonormalizing an already orthonormal basis returns it unchanged, up to
 #' rounding, and the transforms collapse rather than nesting.
 #'
-#' @param basis The basis to orthonormalise.
+#' @param basis The basis to orthonormalize.
 #' @param order The derivative order whose inner products are made the
-#'   identity. Zero, the default, orthonormalises the functions themselves.
+#'   identity. Zero, the default, orthonormalizes the functions themselves.
 #'
 #' @return An object of class \code{\link{TransformedBasis}}.
 #'
@@ -254,8 +254,8 @@ orthonorm_basis <- function(basis, order = 0L) {
   if (is.null(r)) {
     stop(
       "The Gram matrix is singular, so the basis functions are linearly ",
-      "dependent and cannot be orthonormalised. Reduce 'dimension', or ",
-      "orthonormalise at order 0.",
+      "dependent and cannot be orthonormalized. Reduce 'dimension', or ",
+      "orthonormalize at order 0.",
       call. = FALSE
     )
   }
@@ -273,7 +273,7 @@ orthonorm_basis <- function(basis, order = 0L) {
 #' @details
 #' The transform is an orthonormal basis of the null space of \eqn{C},
 #' extracted from its singular value decomposition, so the constrained basis
-#' spans precisely the admissible functions and no reparametrisation of the
+#' spans precisely the admissible functions and no reparametrization of the
 #' constraint changes the space it produces.
 #'
 #' What the package supplies is the mechanics. Which constraint a model term
@@ -331,7 +331,7 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' Demmler-Reinsch Basis
 #'
 #' @description
-#' Returns the basis that simultaneously diagonalises the empirical inner
+#' Returns the basis that simultaneously diagonalizes the empirical inner
 #' product at the given points and the penalty, and is empirically orthogonal
 #' to the constraint functions.
 #'
@@ -340,13 +340,13 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' \eqn{C = (\mathbf{1}, x)^\top B} is formed and the basis restricted to its
 #' null space \eqn{V_0}, which makes the remaining functions empirically
 #' orthogonal to a constant and to \eqn{x}. The pencil
-#' \eqn{(V_0^\top (B^\top B/n) V_0,\; V_0^\top P V_0)} is then diagonalised, and
+#' \eqn{(V_0^\top (B^\top B/n) V_0,\; V_0^\top P V_0)} is then diagonalized, and
 #' the transform is \eqn{T = V_0 A}. The resulting design matrix
 #' \eqn{Z = B T} has \eqn{Z^\top Z} diagonal, has \eqn{T^\top P T} equal to the
 #' identity, and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0} exactly.
 #'
 #' Three properties make this construction usable where others are not. It
-#' factorises only a \eqn{q \times K} and a \eqn{(K-q) \times (K-q)} matrix,
+#' factorizes only a \eqn{q \times K} and a \eqn{(K-q) \times (K-q)} matrix,
 #' never anything of the size of the sample. It tolerates a rank-deficient
 #' \eqn{B}, which equally spaced knots produce whenever the data leave a knot
 #' span empty, because the matrix inverted is the penalty and not the design.
@@ -354,7 +354,7 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' evaluation multiplied by it, like any other transformed basis.
 #'
 #' The last property is what the separation of a linear from a nonlinear effect
-#' needs: a reparametrisation that does not satisfy
+#' needs: a reparametrization that does not satisfy
 #' \eqn{(\mathbf{1}, x)^\top Z = 0} estimates the sum of the two correctly and
 #' the split between them with bias.
 #'
@@ -419,7 +419,7 @@ dr_basis <- function(basis, x, penalty = NULL, constraints = NULL,
   }
   v0 <- s$v[, seq.int(rank + 1L, k), drop = FALSE]
 
-  # Step 2: diagonalise the pencil. The PENALTY is the matrix factorised, not
+  # Step 2: diagonalize the pencil. The PENALTY is the matrix factorized, not
   # the design, which is what lets a rank-deficient B through.
   g_tilde <- crossprod(b %*% v0) / n
   p_tilde <- crossprod(v0, penalty %*% v0)
@@ -429,7 +429,7 @@ dr_basis <- function(basis, x, penalty = NULL, constraints = NULL,
   if (is.null(r)) {
     stop(
       "The penalty is singular on the constrained space: some direction is ",
-      "neither penalised nor identified there. Reduce 'dimension', or supply ",
+      "neither penalized nor identified there. Reduce 'dimension', or supply ",
       "a penalty with a smaller null space.",
       call. = FALSE
     )

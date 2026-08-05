@@ -78,7 +78,7 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
   nvar <- basis_nvar(basis)
 
   # Points strictly inside the domain: the numerical reference differences
-  # through neighbouring points, and at an endpoint it would have to switch to
+  # through neighboring points, and at an endpoint it would have to switch to
   # a one-sided stencil, whose error is larger and would be read as a failure
   # of the basis rather than of the reference. The endpoints are covered by
   # the shape and integral checks, which need no reference.
