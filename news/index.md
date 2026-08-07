@@ -46,7 +46,7 @@
   and the length of its endpoints, so a univariate basis is the case of
   one variable rather than a separate kind of object. Evaluation points
   become a matrix with one column per variable, and the derivative order
-  becomes a multi-index. A single non-zero order is refused for a
+  becomes a multi-index. A single non-zero order is rejected for a
   product, since it could mean that order in every coordinate or that
   total order.
 
@@ -63,8 +63,8 @@
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
   [`print()`](https://rdrr.io/r/base/print.html) and the numerical
   fallbacks understand several variables.
-  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) refuses a
-  product and says why.
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) rejects a
+  product with an explanatory message.
 
 ## basis7 0.2.0
 
