@@ -361,7 +361,7 @@ basis_is_numerical <- function(basis) {
   # A transformed basis registers all three methods, but each of them delegates
   # to the parent and multiplies, so what is numerical about it is whatever was
   # numerical about the parent. Reporting its own methods would say a value was
-  # exact when it was a finite difference wearing a matrix.
+  # exact when it was a finite difference arranged as a matrix.
   if (S7::S7_inherits(basis, TransformedBasis)) {
     return(basis_is_numerical(basis@parent_basis))
   }

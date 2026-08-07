@@ -26,7 +26,7 @@ knots placed at equal spacing.
 The basis is complete: all \code{dimension} functions are kept, so the rows
 of \code{\link{basis_eval}} sum to one. Dropping a function for
 identifiability is a linear transformation of the basis and a decision for
-the layer that knows what the term means.
+the layer that owns the meaning of the term.
 
 A basis of \eqn{K} functions with degree \eqn{m} has \eqn{K - m - 1}
 interior knots, so \eqn{K \ge m + 1} is required, with equality giving the
