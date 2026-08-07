@@ -35,7 +35,7 @@
   the length of its endpoints, so a univariate basis is the case of one
   variable rather than a separate kind of object. Evaluation points become a
   matrix with one column per variable, and the derivative order becomes a
-  multi-index. A single non-zero order is refused for a product, since it
+  multi-index. A single non-zero order is rejected for a product, since it
   could mean that order in every coordinate or that total order.
 
 * `basis_contract()` evaluates a basis against coefficients without
@@ -48,7 +48,7 @@
   coefficient array.
 
 * `check_basis()`, `print()` and the numerical fallbacks understand several
-  variables. `plot()` refuses a product and says why.
+  variables. `plot()` rejects a product with an explanatory message.
 
 # basis7 0.2.0
 
