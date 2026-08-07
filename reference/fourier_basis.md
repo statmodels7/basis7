@@ -32,7 +32,7 @@ An object of class
 
 The dimension must be odd. A sine without its cosine is a basis that can
 represent a wave at one phase and not at another, so a dimension that
-would leave a half pair is refused rather than adjusted: growing it
+would leave a half pair is rejected rather than adjusted: growing it
 silently would return a basis of a size the caller did not ask for, and
 the constructor is the only place the inconsistency can be caught.
 
@@ -72,7 +72,7 @@ round(basis_gram(b), 10)
 #> sin2      0  0.0  0.0  0.5  0.0
 #> cos2      0  0.0  0.0  0.0  0.5
 
-# an even dimension would leave half a pair, and is refused
+# an even dimension would leave half a pair, and is rejected
 try(fourier_basis(dimension = 4))
 #> Error : 'dimension' must be odd: a Fourier basis holds a constant plus complete sine-cosine pairs, so 4 would leave half a pair. Use 3 or 5.
 ```

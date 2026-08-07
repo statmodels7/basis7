@@ -36,7 +36,7 @@ package has a numerical method registered on the
 and is therefore available from this one alone.
 
 The generic validates the evaluation points before dispatching, so every
-method, including one written outside the package, refuses a point
+method, including one written outside the package, rejects a point
 outside the basis interval and receives points that are endpoints up to
 rounding already clamped onto them.
 

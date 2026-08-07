@@ -35,8 +35,8 @@ The basis is complete: all `dimension` functions are kept, so the rows
 of
 [`basis_eval`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
 sum to one. Dropping a function for identifiability is a linear
-transformation of the basis and a decision for the layer that knows what
-the term means.
+transformation of the basis and a decision for the layer that owns the
+meaning of the term.
 
 A basis of \\K\\ functions with degree \\m\\ has \\K - m - 1\\ interior
 knots, so \\K \ge m + 1\\ is required, with equality giving the

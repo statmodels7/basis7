@@ -63,5 +63,5 @@ round(basis_gram(p), 10)
 x <- seq(0, 1, length.out = 40)
 fitted <- lm.fit(basis_eval(p, x), x^3)$fitted.values
 max(abs(fitted - x^3))
-#> [1] 1.193503e-16
+#> [1] 2.270252e-16
 ```

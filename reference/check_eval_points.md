@@ -29,9 +29,10 @@ a basis of one variable and a matrix otherwise.
 ## Details
 
 A basis is defined on its interval and nowhere else, so a point outside
-it is refused rather than extrapolated. Which extrapolation rule a model
-wants, if any, is a decision for the layer that knows what the covariate
-means; a silent answer here would take that decision away from it.
+it is rejected rather than extrapolated. Which extrapolation rule a
+model wants, if any, is a decision for the layer that owns the meaning
+of the covariate; a silent answer here would take that decision away
+from it.
 
 The comparison uses a tolerance relative to the width of the interval,
 so that a point which is an endpoint up to rounding is accepted and then
