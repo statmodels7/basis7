@@ -1,6 +1,6 @@
-# Refuse Points Outside a Range, and Clamp Those On Its Edge
+# Reject Points Outside a Range, and Clamp Those On Its Edge
 
-Refuse Points Outside a Range, and Clamp Those On Its Edge
+Reject Points Outside a Range, and Clamp Those On Its Edge
 
 ## Usage
 

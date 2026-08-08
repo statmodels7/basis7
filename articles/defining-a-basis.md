@@ -151,7 +151,9 @@ basis_is_numerical(b)
 ```
 
 Only that one generic changed; the integral and the Gram matrix are
-still computed numerically, and the object says so.
+still computed numerically, and
+[`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+reports it.
 
 ## Validating it
 

@@ -119,7 +119,7 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`contract_cp()`](https://statmodels7.github.io/basis7/reference/contract_cp.md)
   : Contract a Tensor Product Basis Against Factor Matrices
 - [`clamp_to_range()`](https://statmodels7.github.io/basis7/reference/clamp_to_range.md)
-  : Refuse Points Outside a Range, and Clamp Those On Its Edge
+  : Reject Points Outside a Range, and Clamp Those On Its Edge
 - [`coord()`](https://statmodels7.github.io/basis7/reference/coord.md)
   [`replace_coord()`](https://statmodels7.github.io/basis7/reference/coord.md)
   : One Coordinate of the Evaluation Points
