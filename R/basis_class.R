@@ -187,7 +187,7 @@ check_eval_points <- function(basis, x) {
 }
 
 
-#' Refuse Points Outside a Range, and Clamp Those On Its Edge
+#' Reject Points Outside a Range, and Clamp Those On Its Edge
 #'
 #' @param z A numeric vector.
 #' @param lo,hi The endpoints.

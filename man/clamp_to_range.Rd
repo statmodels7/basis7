@@ -2,7 +2,7 @@
 % Please edit documentation in R/basis_class.R
 \name{clamp_to_range}
 \alias{clamp_to_range}
-\title{Refuse Points Outside a Range, and Clamp Those On Its Edge}
+\title{Reject Points Outside a Range, and Clamp Those On Its Edge}
 \usage{
 clamp_to_range(z, lo, hi, what)
 }
@@ -17,6 +17,6 @@ clamp_to_range(z, lo, hi, what)
 \code{z}, clamped.
 }
 \description{
-Refuse Points Outside a Range, and Clamp Those On Its Edge
+Reject Points Outside a Range, and Clamp Those On Its Edge
 }
 \keyword{internal}
