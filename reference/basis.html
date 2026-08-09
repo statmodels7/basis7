@@ -87,7 +87,17 @@ endpoint per variable for a basis of several.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Concrete bases are subclasses. Each implements at least
+    <p>A basis of dimension \(d\) on \([a, b]\) is the collection
+\(\varphi_1, \dots, \varphi_d\), and the object exists so that a
+function may be written as a linear combination of them,</p>
+<p>$$f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta,
+  \qquad B(x)_{ij} = \varphi_j(x_i),$$</p>
+<p>with \(B(x)\) the \(n \times d\) design matrix
+<code><a href="basis_eval.html">basis_eval</a></code> returns. Fitting \(f\) is then a linear
+problem in \(\beta\) whatever the family, which is what makes
+derivatives, the anchored integral and the Gram matrix properties of the
+basis rather than of the fit.</p>
+<p>Concrete bases are subclasses. Each implements at least
 <code><a href="basis_eval.html">basis_eval</a></code>; <code><a href="basis_deriv.html">basis_deriv</a></code>,
 <code><a href="basis_int.html">basis_int</a></code> and <code><a href="basis_gram.html">basis_gram</a></code> fall back to numerical
 methods registered on this class, so a subclass that implements only its

@@ -86,7 +86,18 @@ back.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The checks are:</p><ol><li><p><strong>shape</strong>: every generic returns a matrix of the declared size,
+    <p>The identities verified, for a basis \(\varphi_1, \dots, \varphi_d\) on
+\([a, b]\), are</p>
+<p>$$\varphi_j^{(k)}(x) = \frac{\mathrm{d}}{\mathrm{d}x}\,
+    \varphi_j^{(k-1)}(x), \qquad
+  \frac{\mathrm{d}}{\mathrm{d}x} \int_a^x \varphi_j(t)\,\mathrm{d}t
+    = \varphi_j(x), \qquad
+  \int_a^a \varphi_j = 0,$$</p>
+<p>together with \(\sum_j \varphi_j(x) = 1\) where the family has that
+property and
+\(G_{jl} = \int \varphi_j \varphi_l \,\mathrm{d}\mu = G_{lj}\) with
+\(G \succeq 0\) for the Gram matrix.</p>
+<p>The checks are:</p><ol><li><p><strong>shape</strong>: every generic returns a matrix of the declared size,
 with the declared column names, for a vector and for a single point;</p></li>
 <li><p><strong>derivatives</strong>: each analytic order agrees with one numerical
 differentiation of the order below it;</p></li>

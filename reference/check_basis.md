@@ -40,6 +40,18 @@ run. The attribute `"numerical"` records which generics fell back.
 
 ## Details
 
+The identities verified, for a basis \\\varphi_1, \dots, \varphi_d\\ on
+\\\[a, b\]\\, are
+
+\$\$\varphi_j^{(k)}(x) = \frac{\mathrm{d}}{\mathrm{d}x}\\
+\varphi_j^{(k-1)}(x), \qquad \frac{\mathrm{d}}{\mathrm{d}x} \int_a^x
+\varphi_j(t)\\\mathrm{d}t = \varphi_j(x), \qquad \int_a^a \varphi_j =
+0,\$\$
+
+together with \\\sum_j \varphi_j(x) = 1\\ where the family has that
+property and \\G\_{jl} = \int \varphi_j \varphi_l \\\mathrm{d}\mu =
+G\_{lj}\\ with \\G \succeq 0\\ for the Gram matrix.
+
 The checks are:
 
 1.  **shape**: every generic returns a matrix of the declared size, with

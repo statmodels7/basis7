@@ -42,6 +42,19 @@ An object inheriting from class `basis`.
 
 ## Details
 
+A basis of dimension \\d\\ on \\\[a, b\]\\ is the collection
+\\\varphi_1, \dots, \varphi_d\\, and the object exists so that a
+function may be written as a linear combination of them,
+
+\$\$f(x) = \sum\_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta, \qquad
+B(x)\_{ij} = \varphi_j(x_i),\$\$
+
+with \\B(x)\\ the \\n \times d\\ design matrix
+[`basis_eval`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
+returns. Fitting \\f\\ is then a linear problem in \\\beta\\ whatever
+the family, which is what makes derivatives, the anchored integral and
+the Gram matrix properties of the basis rather than of the fit.
+
 Concrete bases are subclasses. Each implements at least
 [`basis_eval`](https://statmodels7.github.io/basis7/reference/basis_eval.md);
 [`basis_deriv`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),

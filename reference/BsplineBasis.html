@@ -83,7 +83,18 @@ that the knots are placed and the arguments checked.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Evaluation, derivatives and integrals come from <span class="pkg">splines2</span>, which
+    <p>On a knot sequence \(t_1 \le \cdots \le t_{d+m+1}\) the functions are
+defined by the Cox-de Boor recurrence, from the indicators upward:</p>
+<p>$$B_{j,0}(x) = \mathbf{1}\{t_j \le x &lt; t_{j+1}\},$$</p>
+<p>$$B_{j,q}(x) = \frac{x - t_j}{t_{j+q} - t_j} B_{j,q-1}(x)
+  + \frac{t_{j+q+1} - x}{t_{j+q+1} - t_{j+1}} B_{j+1,q-1}(x),
+  \qquad q = 1, \dots, m,$$</p>
+<p>a term with a zero denominator being taken as zero. Two properties follow
+and are what the basis is used for: \(B_{j,m}\) vanishes outside
+\([t_j, t_{j+m+1}]\), so the design matrix is banded, and
+\(\sum_j B_{j,m}(x) = 1\) on the interval, so the basis is complete and
+carries its own constant.</p>
+<p>Evaluation, derivatives and integrals come from <span class="pkg">splines2</span>, which
 computes all three from the recurrence rather than by differencing. The
 Gram matrix is integrated exactly, interval by interval: on each knot
 interval the integrand is a polynomial of known degree, so a Gauss-Legendre

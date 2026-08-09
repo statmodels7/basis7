@@ -43,6 +43,21 @@ the arguments checked.
 
 ## Details
 
+On a knot sequence \\t_1 \le \cdots \le t\_{d+m+1}\\ the functions are
+defined by the Cox-de Boor recurrence, from the indicators upward:
+
+\$\$B\_{j,0}(x) = \mathbf{1}\\t_j \le x \< t\_{j+1}\\,\$\$
+
+\$\$B\_{j,q}(x) = \frac{x - t_j}{t\_{j+q} - t_j} B\_{j,q-1}(x) +
+\frac{t\_{j+q+1} - x}{t\_{j+q+1} - t\_{j+1}} B\_{j+1,q-1}(x), \qquad q =
+1, \dots, m,\$\$
+
+a term with a zero denominator being taken as zero. Two properties
+follow and are what the basis is used for: \\B\_{j,m}\\ vanishes outside
+\\\[t_j, t\_{j+m+1}\]\\, so the design matrix is banded, and \\\sum_j
+B\_{j,m}(x) = 1\\ on the interval, so the basis is complete and carries
+its own constant.
+
 Evaluation, derivatives and integrals come from splines2, which computes
 all three from the recurrence rather than by differencing. The Gram
 matrix is integrated exactly, interval by interval: on each knot
