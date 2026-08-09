@@ -311,6 +311,7 @@ weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) 
 #' basis_colnames(bspline_basis(dimension = 4))
 #' basis_colnames(fourier_basis(dimension = 5))
 #'
+#' @seealso \code{\link{basis_nvar}}, \code{\link{basis_is_numerical}}
 #' @export
 basis_colnames <- S7::new_generic("basis_colnames", "basis", function(basis, ...) {
   S7::S7_dispatch()

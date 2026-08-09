@@ -29,3 +29,6 @@ the difference between a validator and a formality.
 basis_is_numerical(bspline_basis(dimension = 5))
 
 }
+\seealso{
+\code{\link{basis_colnames}}, \code{\link{basis_nvar}}
+}

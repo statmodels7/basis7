@@ -105,6 +105,7 @@ basis <- S7::new_class(
 #' basis_nvar(bspline_basis(dimension = 5))
 #' basis_nvar(tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3)))
 #'
+#' @seealso \code{\link{basis_colnames}}, \code{\link{basis_is_numerical}}
 #' @export
 basis_nvar <- function(basis) {
   length(basis@lower)

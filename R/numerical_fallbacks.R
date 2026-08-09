@@ -356,6 +356,7 @@ is_base_basis_class <- function(cls) {
 #' @examples
 #' basis_is_numerical(bspline_basis(dimension = 5))
 #'
+#' @seealso \code{\link{basis_colnames}}, \code{\link{basis_nvar}}
 #' @export
 basis_is_numerical <- function(basis) {
   # A transformed basis registers all three methods, but each of them delegates
