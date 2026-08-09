@@ -11,6 +11,20 @@ NULL
 #' likeliest mistake.
 #'
 #' @details
+#' The identities verified, for a basis \eqn{\varphi_1, \dots, \varphi_d} on
+#' \eqn{[a, b]}, are
+#'
+#' \deqn{\varphi_j^{(k)}(x) = \frac{\mathrm{d}}{\mathrm{d}x}\,
+#'     \varphi_j^{(k-1)}(x), \qquad
+#'   \frac{\mathrm{d}}{\mathrm{d}x} \int_a^x \varphi_j(t)\,\mathrm{d}t
+#'     = \varphi_j(x), \qquad
+#'   \int_a^a \varphi_j = 0,}
+#'
+#' together with \eqn{\sum_j \varphi_j(x) = 1} where the family has that
+#' property and
+#' \eqn{G_{jl} = \int \varphi_j \varphi_l \,\mathrm{d}\mu = G_{lj}} with
+#' \eqn{G \succeq 0} for the Gram matrix.
+#'
 #' The checks are:
 #' \enumerate{
 #'   \item \strong{shape}: every generic returns a matrix of the declared size,

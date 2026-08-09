@@ -7,6 +7,19 @@
 #' compute its inner products.
 #'
 #' @details
+#' A basis of dimension \eqn{d} on \eqn{[a, b]} is the collection
+#' \eqn{\varphi_1, \dots, \varphi_d}, and the object exists so that a
+#' function may be written as a linear combination of them,
+#'
+#' \deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta,
+#'   \qquad B(x)_{ij} = \varphi_j(x_i),}
+#'
+#' with \eqn{B(x)} the \eqn{n \times d} design matrix
+#' \code{\link{basis_eval}} returns. Fitting \eqn{f} is then a linear
+#' problem in \eqn{\beta} whatever the family, which is what makes
+#' derivatives, the anchored integral and the Gram matrix properties of the
+#' basis rather than of the fit.
+#'
 #' Concrete bases are subclasses. Each implements at least
 #' \code{\link{basis_eval}}; \code{\link{basis_deriv}},
 #' \code{\link{basis_int}} and \code{\link{basis_gram}} fall back to numerical

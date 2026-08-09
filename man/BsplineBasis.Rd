@@ -32,6 +32,21 @@ The S7 class of B-spline bases. Constructed by
 \code{\link{bspline_basis}}.
 }
 \details{
+On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
+defined by the Cox-de Boor recurrence, from the indicators upward:
+
+\deqn{B_{j,0}(x) = \mathbf{1}\{t_j \le x < t_{j+1}\},}
+
+\deqn{B_{j,q}(x) = \frac{x - t_j}{t_{j+q} - t_j} B_{j,q-1}(x)
+  + \frac{t_{j+q+1} - x}{t_{j+q+1} - t_{j+1}} B_{j+1,q-1}(x),
+  \qquad q = 1, \dots, m,}
+
+a term with a zero denominator being taken as zero. Two properties follow
+and are what the basis is used for: \eqn{B_{j,m}} vanishes outside
+\eqn{[t_j, t_{j+m+1}]}, so the design matrix is banded, and
+\eqn{\sum_j B_{j,m}(x) = 1} on the interval, so the basis is complete and
+carries its own constant.
+
 Evaluation, derivatives and integrals come from \pkg{splines2}, which
 computes all three from the recurrence rather than by differencing. The
 Gram matrix is integrated exactly, interval by interval: on each knot
