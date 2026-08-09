@@ -22,6 +22,15 @@ Returns the definite integral of every basis function from the lower
 endpoint of the basis interval up to each evaluation point.
 }
 \details{
+Column \eqn{j} of the result is
+
+\deqn{\int_{a}^{x} \phi_j(t)\,\mathrm{d}t,}
+
+with \eqn{a} the basis interval's lower endpoint, so that the integral of
+an expansion is the expansion of the integral:
+\eqn{\int_a^x \sum_j \beta_j \phi_j = \sum_j \beta_j} times column
+\eqn{j}.
+
 The convention is fixed and is part of the contract: the value at
 \code{basis@lower} is exactly zero, for every basis and every column. Any
 antiderivative would satisfy the differentiation check, so without a fixed

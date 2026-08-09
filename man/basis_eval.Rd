@@ -22,6 +22,13 @@ Returns the design matrix of the basis at the given points: one row per
 evaluation point, one column per basis function.
 }
 \details{
+Entry \eqn{(i, j)} of the result is \eqn{\phi_j(x_i)}, so an expansion
+with coefficients \eqn{\beta} is evaluated as
+
+\deqn{f(x) = \sum_{j=1}^{d} \beta_j \phi_j(x) = B(x)\,\beta,}
+
+and the matrix is the design block a regression on the basis uses.
+
 This is the only generic a basis must implement. Everything else in the
 package has a numerical method registered on the \code{\link{basis}} class
 and is therefore available from this one alone.

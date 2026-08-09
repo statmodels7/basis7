@@ -9,6 +9,13 @@ NULL
 #' evaluation point, one column per basis function.
 #'
 #' @details
+#' Entry \eqn{(i, j)} of the result is \eqn{\phi_j(x_i)}, so an expansion
+#' with coefficients \eqn{\beta} is evaluated as
+#'
+#' \deqn{f(x) = \sum_{j=1}^{d} \beta_j \phi_j(x) = B(x)\,\beta,}
+#'
+#' and the matrix is the design block a regression on the basis uses.
+#'
 #' This is the only generic a basis must implement. Everything else in the
 #' package has a numerical method registered on the \code{\link{basis}} class
 #' and is therefore available from this one alone.
@@ -100,6 +107,15 @@ basis_deriv <- S7::new_generic(
 #' endpoint of the basis interval up to each evaluation point.
 #'
 #' @details
+#' Column \eqn{j} of the result is
+#'
+#' \deqn{\int_{a}^{x} \phi_j(t)\,\mathrm{d}t,}
+#'
+#' with \eqn{a} the basis interval's lower endpoint, so that the integral of
+#' an expansion is the expansion of the integral:
+#' \eqn{\int_a^x \sum_j \beta_j \phi_j = \sum_j \beta_j} times column
+#' \eqn{j}.
+#'
 #' The convention is fixed and is part of the contract: the value at
 #' \code{basis@lower} is exactly zero, for every basis and every column. Any
 #' antiderivative would satisfy the differentiation check, so without a fixed
