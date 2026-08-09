@@ -29,6 +29,11 @@ arithmetic twice, agreeing however wrong the basis is.
 uses this to report such an order as not checked rather than as passed,
 which is the difference between a validator and a formality.
 
+## See also
+
+[`basis_colnames`](https://statmodels7.github.io/basis7/reference/basis_colnames.md),
+[`basis_nvar`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
+
 ## Examples
 
 ``` r

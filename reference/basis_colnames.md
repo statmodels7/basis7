@@ -24,6 +24,11 @@ basis_colnames(basis, ...)
 
 A character vector of length `basis@dimension`.
 
+## See also
+
+[`basis_nvar`](https://statmodels7.github.io/basis7/reference/basis_nvar.md),
+[`basis_is_numerical`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+
 ## Examples
 
 ``` r
