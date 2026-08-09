@@ -29,6 +29,14 @@ A numeric matrix with `length(x)` rows and `basis@dimension` columns.
 
 ## Details
 
+Column \\j\\ of the result is
+
+\$\$\int\_{a}^{x} \phi_j(t)\\\mathrm{d}t,\$\$
+
+with \\a\\ the basis interval's lower endpoint, so that the integral of
+an expansion is the expansion of the integral: \\\int_a^x \sum_j \beta_j
+\phi_j = \sum_j \beta_j\\ times column \\j\\.
+
 The convention is fixed and is part of the contract: the value at
 `basis@lower` is exactly zero, for every basis and every column. Any
 antiderivative would satisfy the differentiation check, so without a

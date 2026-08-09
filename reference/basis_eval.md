@@ -30,6 +30,13 @@ with the column names the basis declares.
 
 ## Details
 
+Entry \\(i, j)\\ of the result is \\\phi_j(x_i)\\, so an expansion with
+coefficients \\\beta\\ is evaluated as
+
+\$\$f(x) = \sum\_{j=1}^{d} \beta_j \phi_j(x) = B(x)\\\beta,\$\$
+
+and the matrix is the design block a regression on the basis uses.
+
 This is the only generic a basis must implement. Everything else in the
 package has a numerical method registered on the
 [`basis`](https://statmodels7.github.io/basis7/reference/basis.md) class

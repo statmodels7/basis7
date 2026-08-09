@@ -71,7 +71,11 @@ evaluation point, one column per basis function.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>This is the only generic a basis must implement. Everything else in the
+    <p>Entry \((i, j)\) of the result is \(\phi_j(x_i)\), so an expansion
+with coefficients \(\beta\) is evaluated as</p>
+<p>$$f(x) = \sum_{j=1}^{d} \beta_j \phi_j(x) = B(x)\,\beta,$$</p>
+<p>and the matrix is the design block a regression on the basis uses.</p>
+<p>This is the only generic a basis must implement. Everything else in the
 package has a numerical method registered on the <code><a href="basis.html">basis</a></code> class
 and is therefore available from this one alone.</p>
 <p>The generic validates the evaluation points before dispatching, so every
