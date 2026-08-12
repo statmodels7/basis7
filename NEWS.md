@@ -1,3 +1,8 @@
+# basis7 0.4.1
+
+* The finite-difference step comes from `numericals7::fd_step()` as the
+  offsets and the weights already did, instead of restating its formula.
+
 # basis7 0.4.0
 
 * The finite-difference weights and offsets move to numericals7, where the

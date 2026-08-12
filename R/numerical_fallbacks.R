@@ -37,7 +37,9 @@ numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
   off <- numericals7::fd_offsets(order)
   reach <- off$reach
 
-  h <- .Machine$double.eps^(1 / (order + 2)) * pmax(1, abs(x)) * step_scale
+  # the step is numericals7's, like the nodes and the weights below: written
+  # out here it would be a second copy of a rule that has one home
+  h <- numericals7::fd_step(x, order, accuracy = 2L) * step_scale
   h <- pmin(h, 0.4 * (upper - lower) / (2 * reach))
 
   # Which stencil each point can afford: symmetric when both sides have room,
