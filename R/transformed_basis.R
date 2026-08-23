@@ -6,8 +6,8 @@ NULL
 #'
 #' @description
 #' A basis obtained from another by a fixed linear map of its functions,
-#' \eqn{\tilde{B}(x) = B(x)\,T}. Constructed by \code{\link{orthonorm_basis}},
-#' \code{\link{constrain_basis}} or \code{\link{dr_basis}}.
+#' \eqn{\tilde{B}(x) = B(x)\,T}. Constructed by [orthonorm_basis()],
+#' [constrain_basis()] or [dr_basis()].
 #'
 #' @details
 #' Orthonormalizing a basis, restricting it to satisfy a linear constraint, and
@@ -22,7 +22,7 @@ NULL
 #' the dimension.
 #'
 #' Transforms compose by multiplication rather than by nesting: transforming a
-#' \code{TransformedBasis} again produces one object holding the product of the
+#' `TransformedBasis` again produces one object holding the product of the
 #' two matrices, so a chain of transforms costs one matrix multiplication per
 #' evaluation however long it is.
 #'
@@ -30,10 +30,10 @@ NULL
 #' @param parent_basis The basis being transformed.
 #' @param transform The matrix \eqn{T}, with one row per parent function.
 #'
-#' @return An object of class \code{TransformedBasis}.
+#' @return An object of class `TransformedBasis`.
 #'
-#' @seealso \code{\link{orthonorm_basis}}, \code{\link{constrain_basis}},
-#'   \code{\link{dr_basis}}
+#' @seealso [orthonorm_basis()], [constrain_basis()],
+#'   [dr_basis()]
 #'
 #' @examples
 #' o <- orthonorm_basis(bspline_basis(dimension = 6))
@@ -65,16 +65,16 @@ TransformedBasis <- S7::new_class(
 #' Build a Transformed Basis
 #'
 #' @description
-#' Wraps a basis in a \code{\link{TransformedBasis}}, collapsing the transform
+#' Wraps a basis in a [TransformedBasis()], collapsing the transform
 #' into the parent's when the parent is already one.
 #'
 #' @param basis The basis to transform.
 #' @param transform The matrix \eqn{T}.
 #' @param name The name of the resulting basis.
 #' @param prefix The prefix for its column names.
-#' @param params Extra entries for \code{basis_params}.
+#' @param params Extra entries for `basis_params`.
 #'
-#' @return An object of class \code{\link{TransformedBasis}}.
+#' @return An object of class [TransformedBasis()].
 #'
 #' @keywords internal
 new_transformed <- function(basis, transform, name, prefix, params = list()) {
@@ -101,9 +101,9 @@ new_transformed <- function(basis, transform, name, prefix, params = list()) {
 #' The transform's prefix numbered from one. The parent's names cannot be kept:
 #' each new function is a combination of all of them, and a transform may
 #' produce fewer functions than it consumed.
-#' @param basis A \code{\link{TransformedBasis}} object.
+#' @param basis A [TransformedBasis()] object.
 #' @param ... Unused.
-#' @return A character vector of length \code{basis@dimension}.
+#' @return A character vector of length `basis@dimension`.
 #' @keywords internal
 S7::method(basis_colnames, TransformedBasis) <- function(basis, ...) {
   paste0(basis@basis_params$prefix, seq_len(basis@dimension))
@@ -114,10 +114,10 @@ S7::method(basis_colnames, TransformedBasis) <- function(basis, ...) {
 #'
 #' @name basis_eval.TransformedBasis
 #' @description The parent's evaluation, multiplied by the transform.
-#' @param basis A \code{\link{TransformedBasis}} object.
+#' @param basis A [TransformedBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows.
+#' @return A numeric matrix with `length(x)` rows.
 #' @keywords internal
 S7::method(basis_eval, TransformedBasis) <- function(basis, x, ...) {
   name_columns(basis_eval(basis@parent_basis, x) %*% basis@transform, basis)
@@ -129,12 +129,12 @@ S7::method(basis_eval, TransformedBasis) <- function(basis, x, ...) {
 #' @name basis_deriv.TransformedBasis
 #' @description
 #' The parent's derivatives, multiplied by the transform: differentiation is
-#' linear and the transform does not depend on \code{x}.
-#' @param basis A \code{\link{TransformedBasis}} object.
+#' linear and the transform does not depend on `x`.
+#' @param basis A [TransformedBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows.
+#' @return A numeric matrix with `length(x)` rows.
 #' @keywords internal
 S7::method(basis_deriv, TransformedBasis) <- function(basis, x, order = 1L, ...) {
   d <- basis_deriv(basis@parent_basis, x, order = order)
@@ -149,10 +149,10 @@ S7::method(basis_deriv, TransformedBasis) <- function(basis, x, order = 1L, ...)
 #' The parent's integral, multiplied by the transform. The anchor at the lower
 #' endpoint survives, since a linear combination of columns that are all zero
 #' there is zero there.
-#' @param basis A \code{\link{TransformedBasis}} object.
+#' @param basis A [TransformedBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows.
+#' @return A numeric matrix with `length(x)` rows.
 #' @keywords internal
 S7::method(basis_int, TransformedBasis) <- function(basis, x, ...) {
   name_columns(basis_int(basis@parent_basis, x) %*% basis@transform, basis)
@@ -166,11 +166,11 @@ S7::method(basis_int, TransformedBasis) <- function(basis, x, ...) {
 #' The congruence \eqn{T^\top G\, T} of the parent's Gram matrix, so a parent
 #' whose inner products are exact passes that on rather than falling back to
 #' quadrature.
-#' @param basis A \code{\link{TransformedBasis}} object.
+#' @param basis A [TransformedBasis()] object.
 #' @param order The derivative order.
 #' @param at,weight Handled by the generic before dispatch; unused here.
 #' @param ... Passed to the parent's method.
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #' @keywords internal
 S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
@@ -188,14 +188,14 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 #' Cholesky Factorization, With the Rank Decided Before It
 #'
 #' @description
-#' The Cholesky factor of a symmetric matrix, or \code{NULL} when the matrix is
+#' The Cholesky factor of a symmetric matrix, or `NULL` when the matrix is
 #' not positive definite to the given relative tolerance.
 #'
 #' @details
 #' The verdict comes from the eigenvalues rather than from whether
-#' \code{\link[base]{chol}} raises. On a matrix with an exactly zero eigenvalue
+#' [base::chol()] raises. On a matrix with an exactly zero eigenvalue
 #' the pivot that should be zero comes out positive or negative according to
-#' rounding, so \code{chol()} succeeds on some platforms and fails on others,
+#' rounding, so `chol()` succeeds on some platforms and fails on others,
 #' and a construction that asks it whether a penalty is usable gets a different
 #' answer on different machines. Comparing the smallest eigenvalue with the
 #' largest is a statement about the matrix, and gives the same answer
@@ -205,7 +205,7 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 #' @param tol The relative tolerance below which the smallest eigenvalue counts
 #'   as zero.
 #'
-#' @return The upper triangular Cholesky factor, or \code{NULL}.
+#' @return The upper triangular Cholesky factor, or `NULL`.
 #'
 #' @keywords internal
 chol_pd <- function(m, tol = 1e-12) {
@@ -238,9 +238,9 @@ chol_pd <- function(m, tol = 1e-12) {
 #' @param order The derivative order whose inner products are made the
 #'   identity. Zero, the default, orthonormalizes the functions themselves.
 #'
-#' @return An object of class \code{\link{TransformedBasis}}.
+#' @return An object of class [TransformedBasis()].
 #'
-#' @seealso \code{\link{basis_gram}}, \code{\link{constrain_basis}}
+#' @seealso [basis_gram()], [constrain_basis()]
 #'
 #' @examples
 #' o <- orthonorm_basis(bspline_basis(dimension = 6))
@@ -287,9 +287,9 @@ orthonorm_basis <- function(basis, order = 0L) {
 #' @param tol The relative tolerance below which a singular value counts as
 #'   zero when determining the rank.
 #'
-#' @return An object of class \code{\link{TransformedBasis}}.
+#' @return An object of class [TransformedBasis()].
 #'
-#' @seealso \code{\link{dr_basis}}, \code{\link{orthonorm_basis}}
+#' @seealso [dr_basis()], [orthonorm_basis()]
 #'
 #' @examples
 #' b <- bspline_basis(dimension = 6)
@@ -364,22 +364,22 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' @param penalty A square penalty matrix with one row per basis function.
 #'   Defaults to the second-derivative Gram matrix, the integrated squared
 #'   second derivative. A discrete difference penalty is passed explicitly, for
-#'   instance \code{crossprod(diff(diag(k), differences = 2))}.
+#'   instance `crossprod(diff(diag(k), differences = 2))`.
 #' @param constraints A matrix with one row per constraint and one column per
 #'   evaluation point, whose row space the result is made empirically
-#'   orthogonal to. Defaults to a constant and \code{x}, which is the
+#'   orthogonal to. Defaults to a constant and `x`, which is the
 #'   separation of a linear from a nonlinear effect.
 #' @param scale Whether to rescale so that
 #'   \eqn{\mathrm{tr}(Z^\top Z/n) = 1}, which puts the bases of different terms
 #'   on a common scale.
 #'
-#' @return An object of class \code{\link{TransformedBasis}}.
+#' @return An object of class [TransformedBasis()].
 #'
 #' @references
 #' Demmler, A. and Reinsch, C. (1975). Oscillation matrices with spline
-#' smoothing. \emph{Numerische Mathematik} 24, 375-382.
+#' smoothing. *Numerische Mathematik* 24, 375-382.
 #'
-#' @seealso \code{\link{constrain_basis}}, \code{\link{basis_gram}}
+#' @seealso [constrain_basis()], [basis_gram()]
 #'
 #' @examples
 #' set.seed(1)

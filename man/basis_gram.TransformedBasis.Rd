@@ -4,7 +4,7 @@
 \alias{basis_gram.TransformedBasis}
 \title{Gram Matrix of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link{TransformedBasis}} object.}
+\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
 
 \item{order}{The derivative order.}
 

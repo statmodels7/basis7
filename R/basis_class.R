@@ -15,14 +15,14 @@
 #'   \qquad B(x)_{ij} = \varphi_j(x_i),}
 #'
 #' with \eqn{B(x)} the \eqn{n \times d} design matrix
-#' \code{\link{basis_eval}} returns. Fitting \eqn{f} is then a linear
+#' [basis_eval()] returns. Fitting \eqn{f} is then a linear
 #' problem in \eqn{\beta} whatever the family, which is what makes
 #' derivatives, the anchored integral and the Gram matrix properties of the
 #' basis rather than of the fit.
 #'
 #' Concrete bases are subclasses. Each implements at least
-#' \code{\link{basis_eval}}; \code{\link{basis_deriv}},
-#' \code{\link{basis_int}} and \code{\link{basis_gram}} fall back to numerical
+#' [basis_eval()]; [basis_deriv()],
+#' [basis_int()] and [basis_gram()] fall back to numerical
 #' methods registered on this class, so a subclass that implements only its
 #' evaluation is immediately complete. Every closed form registered later takes
 #' over through dispatch, with no change to calling code.
@@ -33,8 +33,8 @@
 #' to the layer that owns that decision.
 #'
 #' A basis lives on an interval, or, when it is a product of several, on a box:
-#' \code{lower} and \code{upper} then have one entry per variable and
-#' \code{\link{basis_nvar}} reports how many. Everything else is unchanged, and
+#' `lower` and `upper` then have one entry per variable and
+#' [basis_nvar()] reports how many. Everything else is unchanged, and
 #' a univariate basis is the case of one variable rather than a separate kind
 #' of object.
 #'
@@ -44,10 +44,10 @@
 #'   endpoint per variable for a basis of several.
 #' @param basis_params A named list of whatever else the subclass needs.
 #'
-#' @return An object inheriting from class \code{basis}.
+#' @return An object inheriting from class `basis`.
 #'
-#' @seealso \code{\link{basis_eval}}, \code{\link{check_basis}},
-#'   \code{\link{bspline_basis}}, \code{\link{fourier_basis}}
+#' @seealso [basis_eval()], [check_basis()],
+#'   [bspline_basis()], [fourier_basis()]
 #'
 #' @examples
 #' # `basis` is abstract; construct a concrete subclass
@@ -97,7 +97,7 @@ basis <- S7::new_class(
 #' a basis declares its input dimension by construction rather than by saying
 #' so separately and possibly disagreeing.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #'
 #' @return A positive integer.
 #'
@@ -105,7 +105,7 @@ basis <- S7::new_class(
 #' basis_nvar(bspline_basis(dimension = 5))
 #' basis_nvar(tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3)))
 #'
-#' @seealso \code{\link{basis_colnames}}, \code{\link{basis_is_numerical}}
+#' @seealso [basis_colnames()], [basis_is_numerical()]
 #' @export
 basis_nvar <- function(basis) {
   length(basis@lower)
@@ -121,7 +121,7 @@ basis_nvar <- function(basis) {
 #' @param lower,upper The endpoints of the interval.
 #' @param dimension The number of basis functions.
 #'
-#' @return \code{dimension}, as an integer.
+#' @return `dimension`, as an integer.
 #'
 #' @keywords internal
 check_basis_args <- function(lower, upper, dimension) {
@@ -143,7 +143,7 @@ check_basis_args <- function(lower, upper, dimension) {
 #' Validate Evaluation Points Against a Basis
 #'
 #' @description
-#' Checks that \code{x} is numeric and lies inside the basis interval, and
+#' Checks that `x` is numeric and lies inside the basis interval, and
 #' returns it unchanged. Missing values are allowed and travel through to a
 #' missing row.
 #'
@@ -161,11 +161,11 @@ check_basis_args <- function(lower, upper, dimension) {
 #' variable, and each column is checked against its own endpoints. A basis of
 #' one variable keeps taking, and returning, a plain vector.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points, or a matrix with one column
 #'   per variable.
 #'
-#' @return \code{x}, with near-endpoint values clamped onto the endpoints: a
+#' @return `x`, with near-endpoint values clamped onto the endpoints: a
 #'   vector for a basis of one variable and a matrix otherwise.
 #'
 #' @keywords internal
@@ -207,7 +207,7 @@ check_eval_points <- function(basis, x) {
 #' @param lo,hi The endpoints.
 #' @param what A phrase naming the range, used in the error message.
 #'
-#' @return \code{z}, clamped.
+#' @return `z`, clamped.
 #'
 #' @keywords internal
 clamp_to_range <- function(z, lo, hi, what) {
@@ -233,9 +233,9 @@ clamp_to_range <- function(z, lo, hi, what) {
 #' them.
 #'
 #' @param m A numeric matrix with as many columns as the basis has functions.
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #'
-#' @return \code{m}, with column names set.
+#' @return `m`, with column names set.
 #'
 #' @keywords internal
 name_columns <- function(m, basis) {

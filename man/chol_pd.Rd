@@ -21,7 +21,7 @@ not positive definite to the given relative tolerance.
 }
 \details{
 The verdict comes from the eigenvalues rather than from whether
-\code{\link[base]{chol}} raises. On a matrix with an exactly zero eigenvalue
+\code{\link[base:chol]{base::chol()}} raises. On a matrix with an exactly zero eigenvalue
 the pivot that should be zero comes out positive or negative according to
 rounding, so \code{chol()} succeeds on some platforms and fails on others,
 and a construction that asks it whether a penalty is usable gets a different

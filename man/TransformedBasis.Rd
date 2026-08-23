@@ -33,8 +33,8 @@ An object of class \code{TransformedBasis}.
 }
 \description{
 A basis obtained from another by a fixed linear map of its functions,
-\eqn{\tilde{B}(x) = B(x)\,T}. Constructed by \code{\link{orthonorm_basis}},
-\code{\link{constrain_basis}} or \code{\link{dr_basis}}.
+\eqn{\tilde{B}(x) = B(x)\,T}. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
+\code{\link[=constrain_basis]{constrain_basis()}} or \code{\link[=dr_basis]{dr_basis()}}.
 }
 \details{
 Orthonormalizing a basis, restricting it to satisfy a linear constraint, and
@@ -60,6 +60,6 @@ dim(o@transform)
 
 }
 \seealso{
-\code{\link{orthonorm_basis}}, \code{\link{constrain_basis}},
-\code{\link{dr_basis}}
+\code{\link[=orthonorm_basis]{orthonorm_basis()}}, \code{\link[=constrain_basis]{constrain_basis()}},
+\code{\link[=dr_basis]{dr_basis()}}
 }

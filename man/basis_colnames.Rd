@@ -25,5 +25,5 @@ basis_colnames(fourier_basis(dimension = 5))
 
 }
 \seealso{
-\code{\link{basis_nvar}}, \code{\link{basis_is_numerical}}
+\code{\link[=basis_nvar]{basis_nvar()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
 }

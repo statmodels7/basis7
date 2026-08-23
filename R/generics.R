@@ -17,7 +17,7 @@ NULL
 #' and the matrix is the design block a regression on the basis uses.
 #'
 #' This is the only generic a basis must implement. Everything else in the
-#' package has a numerical method registered on the \code{\link{basis}} class
+#' package has a numerical method registered on the [basis()] class
 #' and is therefore available from this one alone.
 #'
 #' The generic validates the evaluation points before dispatching, so every
@@ -25,15 +25,15 @@ NULL
 #' the basis interval and receives points that are endpoints up to rounding
 #' already clamped onto them.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points inside the basis interval.
 #' @param ... Passed to methods.
 #'
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns, with the column names the basis declares.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns, with the column names the basis declares.
 #'
-#' @seealso \code{\link{basis_deriv}}, \code{\link{basis_int}},
-#'   \code{\link{basis_gram}}
+#' @seealso [basis_deriv()], [basis_int()],
+#'   [basis_gram()]
 #'
 #' @examples
 #' b <- bspline_basis(dimension = 6)
@@ -52,8 +52,8 @@ basis_eval <- S7::new_generic("basis_eval", "basis", function(basis, x, ...) {
 #' Differentiate a Basis
 #'
 #' @description
-#' Returns the \code{order}-th derivative of every basis function at the given
-#' points, as a matrix of the same shape as \code{\link{basis_eval}}.
+#' Returns the `order`-th derivative of every basis function at the given
+#' points, as a matrix of the same shape as [basis_eval()].
 #'
 #' @details
 #' Derivative order is an argument rather than a family of generics because it
@@ -62,22 +62,22 @@ basis_eval <- S7::new_generic("basis_eval", "basis", function(basis, x, ...) {
 #' An order beyond what the family supports returns the zero matrix rather than
 #' raising, which is the value of the derivative and not an omission.
 #'
-#' \code{order = 0} returns \code{\link{basis_eval}}, so that a loop over
+#' `order = 0` returns [basis_eval()], so that a loop over
 #' orders needs no special case.
 #'
 #' A subclass that registers no method for this generic gets the numerical one
-#' of the \code{\link{basis}} class, which applies a single central difference
-#' stencil to \code{\link{basis_eval}}.
+#' of the [basis()] class, which applies a single central difference
+#' stencil to [basis_eval()].
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points inside the basis interval.
 #' @param order The derivative order, a non-negative integer.
 #' @param ... Passed to methods.
 #'
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #'
-#' @seealso \code{\link{basis_eval}}, \code{\link{basis_is_numerical}}
+#' @seealso [basis_eval()], [basis_is_numerical()]
 #'
 #' @examples
 #' b <- bspline_basis(dimension = 6, degree = 3)
@@ -117,19 +117,19 @@ basis_deriv <- S7::new_generic(
 #' \eqn{j}.
 #'
 #' The convention is fixed and is part of the contract: the value at
-#' \code{basis@lower} is exactly zero, for every basis and every column. Any
+#' `basis@lower` is exactly zero, for every basis and every column. Any
 #' antiderivative would satisfy the differentiation check, so without a fixed
 #' constant of integration two bases could disagree while both being right,
 #' and a sum of them would be wrong in a way nothing would report.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points inside the basis interval.
 #' @param ... Passed to methods.
 #'
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #'
-#' @seealso \code{\link{basis_eval}}, \code{\link{basis_deriv}}
+#' @seealso [basis_eval()], [basis_deriv()]
 #'
 #' @examples
 #' b <- fourier_basis(dimension = 5)
@@ -146,7 +146,7 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' Gram Matrix of a Basis
 #'
 #' @description
-#' Returns the matrix of inner products of the \code{order}-th derivatives of
+#' Returns the matrix of inner products of the `order`-th derivatives of
 #' the basis functions,
 #' \deqn{G_{ab} = \int_{\ell}^{u} B_a^{(d)}(t)\, B_b^{(d)}(t)\, \mathrm{d}t.}
 #'
@@ -162,11 +162,11 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #'
 #' The inner product is taken against a measure, and which measure matters.
 #' The default is Lebesgue on the basis interval, which is what a roughness
-#' penalty integrates. Supplying \code{at} takes the empirical measure of those
+#' penalty integrates. Supplying `at` takes the empirical measure of those
 #' points instead, \eqn{B^\top B / n}, which is the matrix a design matrix
 #' actually produces and the one a basis is diagonalized against when the
 #' construction is meant to depend on where the data lie. Supplying
-#' \code{weight} takes a weighted Lebesgue measure.
+#' `weight` takes a weighted Lebesgue measure.
 #'
 #' Both alternatives are handled in the body of the generic, before dispatch,
 #' so a method never sees them and never has to implement them; it always
@@ -174,7 +174,7 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' its signature, because S7 requires a method's formals to contain the
 #' generic's.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param order The derivative order, a non-negative integer. Zero, the
 #'   default, gives the inner products of the basis functions themselves.
 #' @param at An optional numeric vector of points. When given, the inner
@@ -184,10 +184,10 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #'   weight the integral by.
 #' @param ... Passed to methods.
 #'
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #'
-#' @seealso \code{\link{basis_deriv}}
+#' @seealso [basis_deriv()]
 #'
 #' @examples
 #' b <- fourier_basis(dimension = 5)
@@ -220,11 +220,11 @@ basis_gram <- S7::new_generic(
 #' design matrix produces, rather than those of the functions on their
 #' interval.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param order The derivative order.
 #' @param at A numeric vector of points.
 #'
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #'
 #' @keywords internal
@@ -257,14 +257,14 @@ empirical_gram <- function(basis, order, at) {
 #' Gauss-Legendre. A weight is an arbitrary function, so no family has a closed
 #' form for it and the quadrature is always used.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param order The derivative order.
 #' @param weight A function of one numeric vector.
 #' @param panels The number of subintervals.
 #' @param nodes The number of quadrature nodes per subinterval.
 #' @param ... Unused.
 #'
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #'
 #' @keywords internal
@@ -302,16 +302,16 @@ weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) 
 #' functions after the family name; a subclass whose functions have their own
 #' identities overrides it.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param ... Passed to methods.
 #'
-#' @return A character vector of length \code{basis@dimension}.
+#' @return A character vector of length `basis@dimension`.
 #'
 #' @examples
 #' basis_colnames(bspline_basis(dimension = 4))
 #' basis_colnames(fourier_basis(dimension = 5))
 #'
-#' @seealso \code{\link{basis_nvar}}, \code{\link{basis_is_numerical}}
+#' @seealso [basis_nvar()], [basis_is_numerical()]
 #' @export
 basis_colnames <- S7::new_generic("basis_colnames", "basis", function(basis, ...) {
   S7::S7_dispatch()
@@ -320,11 +320,11 @@ basis_colnames <- S7::new_generic("basis_colnames", "basis", function(basis, ...
 #' @name basis_colnames.basis
 #' @title Default Column Names
 #' @description
-#' Numbers the basis functions after the family name, as in \code{bs1},
-#' \code{bs2}, and so on.
-#' @param basis An object inheriting from class \code{basis}.
+#' Numbers the basis functions after the family name, as in `bs1`,
+#' `bs2`, and so on.
+#' @param basis An object inheriting from class `basis`.
 #' @param ... Unused.
-#' @return A character vector of length \code{basis@dimension}.
+#' @return A character vector of length `basis@dimension`.
 #' @keywords internal
 S7::method(basis_colnames, basis) <- function(basis, ...) {
   paste0(substr(basis@basis_name, 1L, 2L), seq_len(basis@dimension))
@@ -347,7 +347,7 @@ S7::method(basis_colnames, basis) <- function(basis, ...) {
 #' @param order The value supplied by the caller.
 #' @param nvar The number of variables the basis takes.
 #'
-#' @return \code{order}, as an integer vector of length \code{nvar}.
+#' @return `order`, as an integer vector of length `nvar`.
 #'
 #' @keywords internal
 check_order <- function(order, nvar = 1L) {

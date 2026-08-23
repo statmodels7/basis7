@@ -7,7 +7,7 @@ NULL
 #' Numerically Differentiate a Matrix-Valued Function
 #'
 #' @description
-#' The \code{order}-th derivative of \code{f} at each point of \code{x}, by a
+#' The `order`-th derivative of `f` at each point of `x`, by a
 #' single finite-difference stencil, symmetric where the interval leaves room
 #' for it and one-sided at the endpoints.
 #'
@@ -16,7 +16,7 @@ NULL
 #' symmetric stencil centered on an endpoint would ask for points outside the
 #' interval, where the basis is not defined. Those points therefore get a
 #' one-sided stencil of the same order and the same number of nodes, built by
-#' \code{\link[numericals7]{fd_weights}} from shifted offsets.
+#' [numericals7::fd_weights()] from shifted offsets.
 #'
 #' The step is \eqn{\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)}, which
 #' balances truncation against rounding for order \eqn{d}, capped so that the
@@ -26,11 +26,11 @@ NULL
 #'   element.
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
-#' @param lower,upper The endpoints of the interval \code{f} is defined on.
+#' @param lower,upper The endpoints of the interval `f` is defined on.
 #' @param step_scale A factor applied to the step. Halving it is how
-#'   \code{\link{fd_reference}} measures its own uncertainty.
+#'   [fd_reference()] measures its own uncertainty.
 #'
-#' @return A numeric matrix with \code{length(x)} rows.
+#' @return A numeric matrix with `length(x)` rows.
 #'
 #' @keywords internal
 numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
@@ -78,7 +78,7 @@ numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
 #' Gauss-Legendre Nodes and Weights
 #'
 #' @description
-#' The \code{n}-point Gauss-Legendre rule on \eqn{[-1, 1]}, which integrates
+#' The `n`-point Gauss-Legendre rule on \eqn{[-1, 1]}, which integrates
 #' polynomials of degree up to \eqn{2n - 1} exactly.
 #'
 #' @details
@@ -90,7 +90,7 @@ numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
 #'
 #' @param n The number of nodes, a positive integer.
 #'
-#' @return A list with components \code{nodes} and \code{weights}.
+#' @return A list with components `nodes` and `weights`.
 #'
 #' @keywords internal
 gauss_legendre <- function(n) {
@@ -111,13 +111,13 @@ gauss_legendre <- function(n) {
 #' Map a Quadrature Rule onto Intervals
 #'
 #' @description
-#' Places an \code{n}-point Gauss-Legendre rule on each interval given by
+#' Places an `n`-point Gauss-Legendre rule on each interval given by
 #' consecutive breakpoints, and returns the pooled nodes and weights.
 #'
 #' @param breaks A numeric vector of at least two increasing breakpoints.
 #' @param n The number of nodes per interval.
 #'
-#' @return A list with components \code{nodes} and \code{weights}.
+#' @return A list with components `nodes` and `weights`.
 #'
 #' @keywords internal
 quad_rule <- function(breaks, n) {
@@ -139,19 +139,19 @@ quad_rule <- function(breaks, n) {
 #' @title Numerical Derivatives of a Basis
 #' @description
 #' The default derivative method, applying one finite-difference stencil to
-#' \code{\link{basis_eval}}. It is what a basis that registers no derivative
+#' [basis_eval()]. It is what a basis that registers no derivative
 #' method of its own uses, so that implementing the evaluation is enough to
 #' have a complete basis.
 #' @details
-#' See \code{\link{numerical_deriv_matrix}} for the stencil and the step, and
-#' \code{\link{basis_is_numerical}} for asking an object whether its
+#' See [numerical_deriv_matrix()] for the stencil and the step, and
+#' [basis_is_numerical()] for asking an object whether its
 #' derivatives come from here.
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
   d <- basis_nvar(basis)
@@ -200,12 +200,12 @@ S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
 #' The rule is placed on the segments between consecutive evaluation points,
 #' and the results are accumulated, which makes the value at the lower
 #' endpoint exactly zero by construction rather than by cancellation.
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param x A numeric vector of evaluation points.
 #' @param nodes The number of quadrature nodes per segment.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_int, basis) <- function(basis, x, nodes = 12L, ...) {
   if (basis_nvar(basis) > 1L) {
@@ -247,16 +247,16 @@ S7::method(basis_int, basis) <- function(basis, x, nodes = 12L, ...) {
 #' The default inner-product method: composite Gauss-Legendre over the basis
 #' interval, applied to the outer product of the requested derivatives.
 #' @details
-#' The rule is placed on \code{panels} equal subintervals. A basis with
+#' The rule is placed on `panels` equal subintervals. A basis with
 #' closed-form inner products, or one that is piecewise polynomial and so can
 #' be integrated exactly by a rule sized from its degree, registers its own
 #' method and this one is not used.
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param order The derivative order.
 #' @param panels The number of subintervals.
 #' @param nodes The number of quadrature nodes per subinterval.
 #' @param ... Unused.
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #' @keywords internal
 S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
@@ -269,16 +269,16 @@ S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
 #' Gram Matrix by Composite Quadrature
 #'
 #' @description
-#' The inner products of the order-\code{order} derivatives, by Gauss-Legendre
+#' The inner products of the order-`order` derivatives, by Gauss-Legendre
 #' on equal subintervals. Shared by the default method and by any basis whose
 #' closed form does not apply to the arguments it was given.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param order The derivative order.
 #' @param panels The number of subintervals.
 #' @param nodes The number of quadrature nodes per subinterval.
 #'
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #'
 #' @keywords internal
@@ -315,7 +315,7 @@ numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
 #' Is This the Package's Own Base Class?
 #'
 #' @description
-#' Asks whether an S7 class is the abstract \code{\link{basis}} class, which is
+#' Asks whether an S7 class is the abstract [basis()] class, which is
 #' how a method registered on it is told apart from one a subclass supplied.
 #'
 #' @details
@@ -326,7 +326,7 @@ numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
 #'
 #' @param cls An S7 class.
 #'
-#' @return \code{TRUE} or \code{FALSE}.
+#' @return `TRUE` or `FALSE`.
 #'
 #' @keywords internal
 is_base_basis_class <- function(cls) {
@@ -345,20 +345,20 @@ is_base_basis_class <- function(cls) {
 #' @details
 #' A value computed by finite differences or by quadrature cannot be checked
 #' against a numerical reference: the comparison would be the same arithmetic
-#' twice, agreeing however wrong the basis is. \code{\link{check_basis}} uses
+#' twice, agreeing however wrong the basis is. [check_basis()] uses
 #' this to report such an order as not checked rather than as passed, which is
 #' the difference between a validator and a formality.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #'
-#' @return A named logical vector with elements \code{basis_deriv},
-#'   \code{basis_int} and \code{basis_gram}, \code{TRUE} where the numerical
+#' @return A named logical vector with elements `basis_deriv`,
+#'   `basis_int` and `basis_gram`, `TRUE` where the numerical
 #'   fallback is in force.
 #'
 #' @examples
 #' basis_is_numerical(bspline_basis(dimension = 5))
 #'
-#' @seealso \code{\link{basis_colnames}}, \code{\link{basis_nvar}}
+#' @seealso [basis_colnames()], [basis_nvar()]
 #' @export
 basis_is_numerical <- function(basis) {
   # A transformed basis registers all three methods, but each of them delegates

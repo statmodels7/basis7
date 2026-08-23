@@ -4,7 +4,7 @@
 \alias{basis_int.BsplineBasis}
 \title{Integral of a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link{BsplineBasis}} object.}
+\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 
@@ -16,7 +16,7 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 The exact integral from the lower boundary knot, from
-\code{\link[splines2]{bSpline}}, which follows the same convention as this
+\code{\link[splines2:bSpline]{splines2::bSpline()}}, which follows the same convention as this
 package: the value at the lower endpoint is zero.
 }
 \keyword{internal}

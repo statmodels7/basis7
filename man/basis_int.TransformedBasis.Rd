@@ -4,7 +4,7 @@
 \alias{basis_int.TransformedBasis}
 \title{Integral of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link{TransformedBasis}} object.}
+\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

@@ -65,5 +65,5 @@ round(basis_gram(b, at = runif(2000)), 3)
 
 }
 \seealso{
-\code{\link{basis_deriv}}
+\code{\link[=basis_deriv]{basis_deriv()}}
 }

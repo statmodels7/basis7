@@ -4,7 +4,7 @@
 \alias{basis_deriv.FourierBasis}
 \title{Derivatives of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 
@@ -18,6 +18,6 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 Exact derivatives of any order, from the shift identity of
-\code{\link{FourierBasis}}. The constant differentiates to zero.
+\code{\link[=FourierBasis]{FourierBasis()}}. The constant differentiates to zero.
 }
 \keyword{internal}

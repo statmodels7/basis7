@@ -4,7 +4,7 @@
 \alias{basis_gram.FourierBasis}
 \title{Gram Matrix of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{order}{The derivative order.}
 
@@ -28,6 +28,6 @@ order, and \eqn{(\omega/2)(2\pi j/\omega)^{2d}} for both members of pair
 \eqn{j}.
 
 When \code{omega} is not the width of the interval the orthogonality fails,
-and the numerical method of the \code{\link{basis}} class is used instead.
+and the numerical method of the \code{\link[=basis]{basis()}} class is used instead.
 }
 \keyword{internal}

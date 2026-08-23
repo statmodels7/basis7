@@ -30,7 +30,7 @@ with coefficients \eqn{\beta} is evaluated as
 and the matrix is the design block a regression on the basis uses.
 
 This is the only generic a basis must implement. Everything else in the
-package has a numerical method registered on the \code{\link{basis}} class
+package has a numerical method registered on the \code{\link[=basis]{basis()}} class
 and is therefore available from this one alone.
 
 The generic validates the evaluation points before dispatching, so every
@@ -47,6 +47,6 @@ rowSums(basis_eval(b, seq(0, 1, length.out = 5)))
 
 }
 \seealso{
-\code{\link{basis_deriv}}, \code{\link{basis_int}},
-\code{\link{basis_gram}}
+\code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}},
+\code{\link[=basis_gram]{basis_gram()}}
 }

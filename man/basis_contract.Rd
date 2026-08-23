@@ -71,5 +71,5 @@ Ruegamer, D. (2024). Scalable higher-order tensor product spline models.
 \emph{Proceedings of AISTATS}.
 }
 \seealso{
-\code{\link{tensor_basis}}, \code{\link{basis_eval}}
+\code{\link[=tensor_basis]{tensor_basis()}}, \code{\link[=basis_eval]{basis_eval()}}
 }

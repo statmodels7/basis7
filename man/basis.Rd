@@ -40,14 +40,14 @@ function may be written as a linear combination of them,
   \qquad B(x)_{ij} = \varphi_j(x_i),}
 
 with \eqn{B(x)} the \eqn{n \times d} design matrix
-\code{\link{basis_eval}} returns. Fitting \eqn{f} is then a linear
+\code{\link[=basis_eval]{basis_eval()}} returns. Fitting \eqn{f} is then a linear
 problem in \eqn{\beta} whatever the family, which is what makes
 derivatives, the anchored integral and the Gram matrix properties of the
 basis rather than of the fit.
 
 Concrete bases are subclasses. Each implements at least
-\code{\link{basis_eval}}; \code{\link{basis_deriv}},
-\code{\link{basis_int}} and \code{\link{basis_gram}} fall back to numerical
+\code{\link[=basis_eval]{basis_eval()}}; \code{\link[=basis_deriv]{basis_deriv()}},
+\code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} fall back to numerical
 methods registered on this class, so a subclass that implements only its
 evaluation is immediately complete. Every closed form registered later takes
 over through dispatch, with no change to calling code.
@@ -59,7 +59,7 @@ to the layer that owns that decision.
 
 A basis lives on an interval, or, when it is a product of several, on a box:
 \code{lower} and \code{upper} then have one entry per variable and
-\code{\link{basis_nvar}} reports how many. Everything else is unchanged, and
+\code{\link[=basis_nvar]{basis_nvar()}} reports how many. Everything else is unchanged, and
 a univariate basis is the case of one variable rather than a separate kind
 of object.
 }
@@ -71,6 +71,6 @@ c(b@lower, b@upper)
 
 }
 \seealso{
-\code{\link{basis_eval}}, \code{\link{check_basis}},
-\code{\link{bspline_basis}}, \code{\link{fourier_basis}}
+\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=check_basis]{check_basis()}},
+\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
 }

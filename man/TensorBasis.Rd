@@ -31,7 +31,7 @@ An object of class \code{TensorBasis}.
 \description{
 The basis of products of the functions of several bases, one per variable:
 \deqn{B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).}
-Constructed by \code{\link{tensor_basis}}.
+Constructed by \code{\link[=tensor_basis]{tensor_basis()}}.
 }
 \details{
 Everything a tensor product needs follows from the marginals, because the
@@ -41,7 +41,7 @@ the product of the marginal integrals; and the Gram matrix is the Kronecker
 product of the marginal Gram matrices, so a tensor of exactly integrated
 marginals is exactly integrated too, however many variables it has.
 
-Columns follow the convention of \code{\link[base]{kronecker}}: the last
+Columns follow the convention of \code{\link[base:kronecker]{base::kronecker()}}: the last
 marginal varies fastest.
 }
 \examples{
@@ -50,5 +50,5 @@ c(basis_nvar(t2), t2@dimension)
 
 }
 \seealso{
-\code{\link{tensor_basis}}, \code{\link{basis_contract}}
+\code{\link[=tensor_basis]{tensor_basis()}}, \code{\link[=basis_contract]{basis_contract()}}
 }

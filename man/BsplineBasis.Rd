@@ -24,12 +24,12 @@ endpoint per variable for a basis of several.}
 }
 \value{
 An object of class \code{BsplineBasis}. Use
-\code{\link{bspline_basis}} rather than calling the class directly, so
+\code{\link[=bspline_basis]{bspline_basis()}} rather than calling the class directly, so
 that the knots are placed and the arguments checked.
 }
 \description{
 The S7 class of B-spline bases. Constructed by
-\code{\link{bspline_basis}}.
+\code{\link[=bspline_basis]{bspline_basis()}}.
 }
 \details{
 On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
@@ -59,5 +59,5 @@ S7::S7_inherits(b, BsplineBasis)
 
 }
 \seealso{
-\code{\link{bspline_basis}}
+\code{\link[=bspline_basis]{bspline_basis()}}
 }

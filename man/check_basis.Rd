@@ -60,7 +60,7 @@ row and nothing else.
 }
 
 An order whose value comes from the numerical fallback is reported as
-\code{[numerical]} rather than as passed. Checking such a value against a
+\verb{[numerical]} rather than as passed. Checking such a value against a
 numerical reference would be the same arithmetic twice, agreeing however
 wrong the basis is, and a validator that reports agreement in that case is
 worse than one that reports nothing: it says a thing was verified when it
@@ -86,5 +86,5 @@ invisible(check_basis(fourier_basis(dimension = 5)))
 
 }
 \seealso{
-\code{\link{basis_is_numerical}}
+\code{\link[=basis_is_numerical]{basis_is_numerical()}}
 }

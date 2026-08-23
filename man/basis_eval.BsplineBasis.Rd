@@ -4,7 +4,7 @@
 \alias{basis_eval.BsplineBasis}
 \title{Evaluate a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link{BsplineBasis}} object.}
+\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 
@@ -16,6 +16,6 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 The design matrix of the B-spline recurrence, from
-\code{\link[splines2]{bSpline}}.
+\code{\link[splines2:bSpline]{splines2::bSpline()}}.
 }
 \keyword{internal}

@@ -4,7 +4,7 @@
 \alias{basis_eval.TransformedBasis}
 \title{Evaluate a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link{TransformedBasis}} object.}
+\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

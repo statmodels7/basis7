@@ -9,9 +9,9 @@ NULL
 #' Reports the family, the number of functions, the interval, any parameters
 #' the family carries, and which of the derived quantities are computed
 #' numerically.
-#' @param x An object inheriting from class \code{basis}.
+#' @param x An object inheriting from class `basis`.
 #' @param ... Unused.
-#' @return \code{x}, invisibly.
+#' @return `x`, invisibly.
 #' @examples
 #' bspline_basis(dimension = 6)
 #' fourier_basis(dimension = 5)
@@ -60,13 +60,13 @@ S7::method(print, basis) <- function(x, ...) {
 #' @name plot.basis
 #' @description
 #' Draws every basis function over the interval, or its derivative or integral.
-#' @param x An object inheriting from class \code{basis}.
-#' @param order What to draw: \code{0} for the basis functions, a positive
-#'   integer for that derivative, \code{-1} for the integral from the lower
+#' @param x An object inheriting from class `basis`.
+#' @param order What to draw: `0` for the basis functions, a positive
+#'   integer for that derivative, `-1` for the integral from the lower
 #'   endpoint.
 #' @param n The number of points at which to evaluate.
-#' @param ... Passed to \code{\link[graphics]{matplot}}.
-#' @return \code{x}, invisibly.
+#' @param ... Passed to [graphics::matplot()].
+#' @return `x`, invisibly.
 #' @examples
 #' b <- bspline_basis(dimension = 6)
 #' plot(b)

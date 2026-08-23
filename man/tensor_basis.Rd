@@ -10,7 +10,7 @@ tensor_basis(...)
 \item{...}{The bases to multiply, or a single list of them.}
 }
 \value{
-An object of class \code{\link{TensorBasis}}.
+An object of class \code{\link[=TensorBasis]{TensorBasis()}}.
 }
 \description{
 Multiplies bases, one per variable, into the basis of all products of their
@@ -19,7 +19,7 @@ functions.
 \details{
 The result has \eqn{\prod_j K_j} functions and takes \eqn{D} variables, so
 the evaluation points become a matrix with one column per variable. That
-growth is the reason \code{\link{basis_contract}} exists: it computes what a
+growth is the reason \code{\link[=basis_contract]{basis_contract()}} exists: it computes what a
 fit needs from the marginal evaluations alone, without ever forming the
 product.
 
@@ -47,5 +47,5 @@ Wood, S. N. (2006). Low-rank scale-invariant tensor product smooths for
 generalized additive mixed models. \emph{Biometrics} 62, 1025-1036.
 }
 \seealso{
-\code{\link{basis_contract}}, \code{\link{basis_gram}}
+\code{\link[=basis_contract]{basis_contract()}}, \code{\link[=basis_gram]{basis_gram()}}
 }

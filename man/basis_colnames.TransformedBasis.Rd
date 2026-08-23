@@ -4,7 +4,7 @@
 \alias{basis_colnames.TransformedBasis}
 \title{Column Names of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link{TransformedBasis}} object.}
+\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
 
 \item{...}{Unused.}
 }

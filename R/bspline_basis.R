@@ -6,7 +6,7 @@ NULL
 #'
 #' @description
 #' The S7 class of B-spline bases. Constructed by
-#' \code{\link{bspline_basis}}.
+#' [bspline_basis()].
 #'
 #' @details
 #' On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
@@ -32,11 +32,11 @@ NULL
 #'
 #' @inheritParams basis
 #'
-#' @return An object of class \code{BsplineBasis}. Use
-#'   \code{\link{bspline_basis}} rather than calling the class directly, so
+#' @return An object of class `BsplineBasis`. Use
+#'   [bspline_basis()] rather than calling the class directly, so
 #'   that the knots are placed and the arguments checked.
 #'
-#' @seealso \code{\link{bspline_basis}}
+#' @seealso [bspline_basis()]
 #'
 #' @examples
 #' b <- bspline_basis(dimension = 5)
@@ -53,8 +53,8 @@ BsplineBasis <- S7::new_class("BsplineBasis", parent = basis)
 #' knots placed at equal spacing.
 #'
 #' @details
-#' The basis is complete: all \code{dimension} functions are kept, so the rows
-#' of \code{\link{basis_eval}} sum to one. Dropping a function for
+#' The basis is complete: all `dimension` functions are kept, so the rows
+#' of [basis_eval()] sum to one. Dropping a function for
 #' identifiability is a linear transformation of the basis and a decision for
 #' the layer that owns the meaning of the term.
 #'
@@ -65,16 +65,16 @@ BsplineBasis <- S7::new_class("BsplineBasis", parent = basis)
 #'
 #' @param lower,upper The endpoints of the interval.
 #' @param dimension The number of basis functions, at least
-#'   \code{degree + 1}.
+#'   `degree + 1`.
 #' @param degree The degree of the piecewise polynomials. Three, the default,
 #'   gives cubic splines.
 #'
-#' @return An object of class \code{\link{BsplineBasis}}.
+#' @return An object of class [BsplineBasis()].
 #'
 #' @references
-#' de Boor, C. (2001). \emph{A Practical Guide to Splines}. Springer.
+#' de Boor, C. (2001). *A Practical Guide to Splines*. Springer.
 #'
-#' @seealso \code{\link{fourier_basis}}, \code{\link{check_basis}}
+#' @seealso [fourier_basis()], [check_basis()]
 #'
 #' @examples
 #' b <- bspline_basis(dimension = 6)
@@ -132,12 +132,12 @@ bspline_basis <- function(lower = 0, upper = 1, dimension = 5, degree = 3) {
 #' @name basis_eval.BsplineBasis
 #' @description
 #' The design matrix of the B-spline recurrence, from
-#' \code{\link[splines2]{bSpline}}.
-#' @param basis A \code{\link{BsplineBasis}} object.
+#' [splines2::bSpline()].
+#' @param basis A [BsplineBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_eval, BsplineBasis) <- function(basis, x, ...) {
   name_columns(bspline_design(basis, x), basis)
@@ -150,12 +150,12 @@ S7::method(basis_eval, BsplineBasis) <- function(basis, x, ...) {
 #' @description
 #' Exact derivatives from the B-spline recurrence. An order above the degree
 #' gives the zero matrix, which is the value of that derivative.
-#' @param basis A \code{\link{BsplineBasis}} object.
+#' @param basis A [BsplineBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_deriv, BsplineBasis) <- function(basis, x, order = 1L, ...) {
   if (order > basis@basis_params$degree) {
@@ -172,13 +172,13 @@ S7::method(basis_deriv, BsplineBasis) <- function(basis, x, order = 1L, ...) {
 #' @name basis_int.BsplineBasis
 #' @description
 #' The exact integral from the lower boundary knot, from
-#' \code{\link[splines2]{bSpline}}, which follows the same convention as this
+#' [splines2::bSpline()], which follows the same convention as this
 #' package: the value at the lower endpoint is zero.
-#' @param basis A \code{\link{BsplineBasis}} object.
+#' @param basis A [BsplineBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_int, BsplineBasis) <- function(basis, x, ...) {
   name_columns(bspline_design(basis, x, integral = TRUE), basis)
@@ -196,10 +196,10 @@ S7::method(basis_int, BsplineBasis) <- function(basis, x, ...) {
 #' matrix has degree \eqn{2(m - d)}. A Gauss-Legendre rule with \eqn{m - d + 1}
 #' nodes integrates degree \eqn{2(m - d) + 1} exactly, so the result carries no
 #' quadrature error, only floating-point error.
-#' @param basis A \code{\link{BsplineBasis}} object.
+#' @param basis A [BsplineBasis()] object.
 #' @param order The derivative order.
 #' @param ... Unused.
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #' @keywords internal
 S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
@@ -228,7 +228,7 @@ S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
 #' knot arguments are assembled once and the dependency stays behind the S7
 #' interface.
 #'
-#' @param basis A \code{\link{BsplineBasis}} object.
+#' @param basis A [BsplineBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param derivs The derivative order, or zero.
 #' @param integral Whether to return the integral instead.

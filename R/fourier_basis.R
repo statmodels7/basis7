@@ -5,7 +5,7 @@ NULL
 #' Fourier Basis
 #'
 #' @description
-#' The S7 class of Fourier bases. Constructed by \code{\link{fourier_basis}}.
+#' The S7 class of Fourier bases. Constructed by [fourier_basis()].
 #'
 #' @details
 #' The basis holds a constant function and pairs of sines and cosines of
@@ -19,11 +19,11 @@ NULL
 #'
 #' @inheritParams basis
 #'
-#' @return An object of class \code{FourierBasis}. Use
-#'   \code{\link{fourier_basis}} rather than calling the class directly, so
+#' @return An object of class `FourierBasis`. Use
+#'   [fourier_basis()] rather than calling the class directly, so
 #'   that the dimension is checked and the period recorded.
 #'
-#' @seealso \code{\link{fourier_basis}}
+#' @seealso [fourier_basis()]
 #'
 #' @examples
 #' f <- fourier_basis(dimension = 5)
@@ -46,7 +46,7 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #' return a basis of a size the caller did not ask for, and the constructor is
 #' the only place the inconsistency can be caught.
 #'
-#' The period \code{omega} defaults to the width of the interval, which is what
+#' The period `omega` defaults to the width of the interval, which is what
 #' makes the basis functions orthogonal on it. A different period is accepted
 #' and everything still works, but the interval is then no longer a whole
 #' number of periods, so the Gram matrix stops being diagonal and is computed
@@ -54,11 +54,11 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #'
 #' @param lower,upper The endpoints of the interval.
 #' @param dimension The number of basis functions, an odd positive integer.
-#' @param omega The period. Defaults to \code{upper - lower}.
+#' @param omega The period. Defaults to `upper - lower`.
 #'
-#' @return An object of class \code{\link{FourierBasis}}.
+#' @return An object of class [FourierBasis()].
 #'
-#' @seealso \code{\link{bspline_basis}}, \code{\link{check_basis}}
+#' @seealso [bspline_basis()], [check_basis()]
 #'
 #' @examples
 #' b <- fourier_basis(dimension = 5)
@@ -112,9 +112,9 @@ fourier_basis <- function(lower = 0, upper = 1, dimension = 5, omega = NULL) {
 #' @name basis_colnames.FourierBasis
 #' @description
 #' The constant followed by the sine and cosine of each frequency.
-#' @param basis A \code{\link{FourierBasis}} object.
+#' @param basis A [FourierBasis()] object.
 #' @param ... Unused.
-#' @return A character vector of length \code{basis@dimension}.
+#' @return A character vector of length `basis@dimension`.
 #' @keywords internal
 S7::method(basis_colnames, FourierBasis) <- function(basis, ...) {
   n_pairs <- basis@basis_params$n_pairs
@@ -132,12 +132,12 @@ S7::method(basis_colnames, FourierBasis) <- function(basis, ...) {
 #' @name basis_eval.FourierBasis
 #' @description
 #' The constant and the sine-cosine pairs, from the shift identity of
-#' \code{\link{FourierBasis}} at order zero.
-#' @param basis A \code{\link{FourierBasis}} object.
+#' [FourierBasis()] at order zero.
+#' @param basis A [FourierBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_eval, FourierBasis) <- function(basis, x, ...) {
   out <- cbind(rep(1, length(x)), fourier_trig(basis, x, 0L))
@@ -151,13 +151,13 @@ S7::method(basis_eval, FourierBasis) <- function(basis, x, ...) {
 #' @name basis_deriv.FourierBasis
 #' @description
 #' Exact derivatives of any order, from the shift identity of
-#' \code{\link{FourierBasis}}. The constant differentiates to zero.
-#' @param basis A \code{\link{FourierBasis}} object.
+#' [FourierBasis()]. The constant differentiates to zero.
+#' @param basis A [FourierBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param order The derivative order.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_deriv, FourierBasis) <- function(basis, x, order = 1L, ...) {
   out <- cbind(rep(0, length(x)), fourier_trig(basis, x, order))
@@ -178,11 +178,11 @@ S7::method(basis_deriv, FourierBasis) <- function(basis, x, order = 1L, ...) {
 #' raw antiderivative are \eqn{-\omega/(2\pi j)} while the cosine columns are
 #' already zero. Subtracting the value at the lower endpoint fixes every column
 #' at once and makes the convention hold exactly.
-#' @param basis A \code{\link{FourierBasis}} object.
+#' @param basis A [FourierBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param ... Unused.
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension` columns.
 #' @keywords internal
 S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
   anti <- fourier_trig(basis, x, -1L)
@@ -208,13 +208,13 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #' order, and \eqn{(\omega/2)(2\pi j/\omega)^{2d}} for both members of pair
 #' \eqn{j}.
 #'
-#' When \code{omega} is not the width of the interval the orthogonality fails,
-#' and the numerical method of the \code{\link{basis}} class is used instead.
-#' @param basis A \code{\link{FourierBasis}} object.
+#' When `omega` is not the width of the interval the orthogonality fails,
+#' and the numerical method of the [basis()] class is used instead.
+#' @param basis A [FourierBasis()] object.
 #' @param order The derivative order.
 #' @param ... Passed to the numerical method when the period is not the
 #'   interval width.
-#' @return A symmetric numeric matrix with \code{basis@dimension} rows and
+#' @return A symmetric numeric matrix with `basis@dimension` rows and
 #'   columns.
 #' @keywords internal
 S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
@@ -240,15 +240,15 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 #' The Trigonometric Columns of a Fourier Basis
 #'
 #' @description
-#' The sine and cosine columns at derivative order \code{d}, from the shift
+#' The sine and cosine columns at derivative order `d`, from the shift
 #' identity. Order \eqn{-1} gives an antiderivative.
 #'
-#' @param basis A \code{\link{FourierBasis}} object.
+#' @param basis A [FourierBasis()] object.
 #' @param x A numeric vector of evaluation points.
 #' @param d The order, which may be negative.
 #'
-#' @return A numeric matrix with \code{length(x)} rows and
-#'   \code{basis@dimension - 1} columns.
+#' @return A numeric matrix with `length(x)` rows and
+#'   `basis@dimension - 1` columns.
 #'
 #' @keywords internal
 fourier_trig <- function(basis, x, d) {

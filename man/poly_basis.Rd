@@ -13,7 +13,7 @@ poly_basis(lower = 0, upper = 1, dimension = 4)
 \code{dimension - 1}.}
 }
 \value{
-An object of class \code{\link{PolyBasis}}.
+An object of class \code{\link[=PolyBasis]{PolyBasis()}}.
 }
 \description{
 The polynomials of degree below \code{dimension} on \eqn{[\ell, u]},
@@ -41,5 +41,5 @@ max(abs(fitted - x^3))
 
 }
 \seealso{
-\code{\link{bspline_basis}}, \code{\link{fourier_basis}}
+\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
 }

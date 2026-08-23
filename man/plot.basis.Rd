@@ -12,7 +12,7 @@ endpoint.}
 
 \item{n}{The number of points at which to evaluate.}
 
-\item{...}{Passed to \code{\link[graphics]{matplot}}.}
+\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}.}
 }
 \value{
 \code{x}, invisibly.

@@ -4,7 +4,7 @@
 \alias{basis_eval.FourierBasis}
 \title{Evaluate a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 
@@ -16,6 +16,6 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 The constant and the sine-cosine pairs, from the shift identity of
-\code{\link{FourierBasis}} at order zero.
+\code{\link[=FourierBasis]{FourierBasis()}} at order zero.
 }
 \keyword{internal}

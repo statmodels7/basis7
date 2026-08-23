@@ -7,7 +7,7 @@
 contract_cp(basis, x, coef)
 }
 \arguments{
-\item{basis}{A \code{\link{TensorBasis}} object.}
+\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 

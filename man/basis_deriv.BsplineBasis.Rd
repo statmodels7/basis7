@@ -4,7 +4,7 @@
 \alias{basis_deriv.BsplineBasis}
 \title{Derivatives of a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link{BsplineBasis}} object.}
+\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

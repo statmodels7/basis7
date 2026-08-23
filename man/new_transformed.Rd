@@ -18,10 +18,10 @@ new_transformed(basis, transform, name, prefix, params = list())
 \item{params}{Extra entries for \code{basis_params}.}
 }
 \value{
-An object of class \code{\link{TransformedBasis}}.
+An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
 }
 \description{
-Wraps a basis in a \code{\link{TransformedBasis}}, collapsing the transform
+Wraps a basis in a \code{\link[=TransformedBasis]{TransformedBasis()}}, collapsing the transform
 into the parent's when the parent is already one.
 }
 \keyword{internal}

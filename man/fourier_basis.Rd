@@ -14,7 +14,7 @@ fourier_basis(lower = 0, upper = 1, dimension = 5, omega = NULL)
 \item{omega}{The period. Defaults to \code{upper - lower}.}
 }
 \value{
-An object of class \code{\link{FourierBasis}}.
+An object of class \code{\link[=FourierBasis]{FourierBasis()}}.
 }
 \description{
 A basis of a constant function and \eqn{(K-1)/2} sine-cosine pairs of
@@ -46,5 +46,5 @@ try(fourier_basis(dimension = 4))
 
 }
 \seealso{
-\code{\link{bspline_basis}}, \code{\link{check_basis}}
+\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=check_basis]{check_basis()}}
 }

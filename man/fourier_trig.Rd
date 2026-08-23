@@ -7,7 +7,7 @@
 fourier_trig(basis, x, d)
 }
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

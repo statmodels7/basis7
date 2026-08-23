@@ -4,7 +4,7 @@
 \alias{basis_int.FourierBasis}
 \title{Integral of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

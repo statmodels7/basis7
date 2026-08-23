@@ -16,7 +16,7 @@ bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 gives cubic splines.}
 }
 \value{
-An object of class \code{\link{BsplineBasis}}.
+An object of class \code{\link[=BsplineBasis]{BsplineBasis()}}.
 }
 \description{
 A basis of B-splines of the given degree on \eqn{[\ell, u]}, with interior
@@ -24,7 +24,7 @@ knots placed at equal spacing.
 }
 \details{
 The basis is complete: all \code{dimension} functions are kept, so the rows
-of \code{\link{basis_eval}} sum to one. Dropping a function for
+of \code{\link[=basis_eval]{basis_eval()}} sum to one. Dropping a function for
 identifiability is a linear transformation of the basis and a decision for
 the layer that owns the meaning of the term.
 
@@ -48,5 +48,5 @@ round(basis_gram(b, order = 2), 2)
 de Boor, C. (2001). \emph{A Practical Guide to Splines}. Springer.
 }
 \seealso{
-\code{\link{fourier_basis}}, \code{\link{check_basis}}
+\code{\link[=fourier_basis]{fourier_basis()}}, \code{\link[=check_basis]{check_basis()}}
 }

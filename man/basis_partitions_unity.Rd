@@ -14,6 +14,6 @@ basis_partitions_unity(basis)
 }
 \description{
 Whether the family is a partition of unity, which
-\code{\link{check_basis}} tests only for the families that claim it.
+\code{\link[=check_basis]{check_basis()}} tests only for the families that claim it.
 }
 \keyword{internal}

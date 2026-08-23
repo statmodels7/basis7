@@ -4,7 +4,7 @@
 \alias{basis_int.PolyBasis}
 \title{Integral of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link{PolyBasis}} object.}
+\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

@@ -27,22 +27,22 @@ NULL
 #'
 #' The checks are:
 #' \enumerate{
-#'   \item \strong{shape}: every generic returns a matrix of the declared size,
+#'   \item **shape**: every generic returns a matrix of the declared size,
 #'     with the declared column names, for a vector and for a single point;
-#'   \item \strong{derivatives}: each analytic order agrees with one numerical
+#'   \item **derivatives**: each analytic order agrees with one numerical
 #'     differentiation of the order below it;
-#'   \item \strong{integral}: it differentiates back to the basis, and is
+#'   \item **integral**: it differentiates back to the basis, and is
 #'     exactly zero at the lower endpoint;
-#'   \item \strong{partition of unity}: the rows sum to one, for the families
+#'   \item **partition of unity**: the rows sum to one, for the families
 #'     that have that property;
-#'   \item \strong{Gram}: symmetric, positive semidefinite, and equal to an
+#'   \item **Gram**: symmetric, positive semidefinite, and equal to an
 #'     independent quadrature;
-#'   \item \strong{missing values}: a missing evaluation point gives a missing
+#'   \item **missing values**: a missing evaluation point gives a missing
 #'     row and nothing else.
 #' }
 #'
 #' An order whose value comes from the numerical fallback is reported as
-#' \code{[numerical]} rather than as passed. Checking such a value against a
+#' `[numerical]` rather than as passed. Checking such a value against a
 #' numerical reference would be the same arithmetic twice, agreeing however
 #' wrong the basis is, and a validator that reports agreement in that case is
 #' worse than one that reports nothing: it says a thing was verified when it
@@ -62,17 +62,17 @@ NULL
 #' five per cent is still caught by four orders of magnitude, which is the
 #' check that the allowance has not blunted anything.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param n The number of points at which to test.
 #' @param orders The derivative orders to check.
 #' @param tol The relative tolerance for the derivative and integral checks.
 #' @param verbose Whether to print the outcome.
 #'
-#' @return A named logical vector, invisibly, with \code{NA} for a check that
-#'   was not run. The attribute \code{"numerical"} records which generics fell
+#' @return A named logical vector, invisibly, with `NA` for a check that
+#'   was not run. The attribute `"numerical"` records which generics fell
 #'   back.
 #'
-#' @seealso \code{\link{basis_is_numerical}}
+#' @seealso [basis_is_numerical()]
 #'
 #' @examples
 #' invisible(check_basis(bspline_basis(dimension = 6)))
@@ -201,11 +201,11 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
 #'
 #' @description
 #' Whether the family is a partition of unity, which
-#' \code{\link{check_basis}} tests only for the families that claim it.
+#' [check_basis()] tests only for the families that claim it.
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #'
-#' @return \code{TRUE} or \code{FALSE}.
+#' @return `TRUE` or `FALSE`.
 #'
 #' @keywords internal
 basis_partitions_unity <- function(basis) {
@@ -221,7 +221,7 @@ basis_partitions_unity <- function(basis) {
 #' One Coordinate of the Evaluation Points
 #'
 #' @description
-#' The \code{j}th variable of the points, and the points with that variable
+#' The `j`th variable of the points, and the points with that variable
 #' replaced. A basis of one variable has a vector of points and no coordinate
 #' to pick, so both are the identity there.
 #'
@@ -229,8 +229,8 @@ basis_partitions_unity <- function(basis) {
 #' @param j The coordinate.
 #' @param z The replacement values.
 #'
-#' @return A numeric vector for \code{coord}, and points of the same shape as
-#'   \code{x} for \code{replace_coord}.
+#' @return A numeric vector for `coord`, and points of the same shape as
+#'   `x` for `replace_coord`.
 #'
 #' @keywords internal
 coord <- function(x, j) {
@@ -272,7 +272,7 @@ replace_coord <- function(x, j, z) {
 #' @param a,b Numeric matrices of the same shape.
 #' @param tol The relative tolerance.
 #'
-#' @return \code{TRUE} or \code{FALSE}.
+#' @return `TRUE` or `FALSE`.
 #'
 #' @keywords internal
 rel_close <- function(a, b, tol, slack = NULL) {
@@ -293,7 +293,7 @@ rel_close <- function(a, b, tol, slack = NULL) {
 #' A Finite-Difference Reference, and Where It Can Be Trusted
 #'
 #' @description
-#' Differentiates \code{f} numerically, and reports at which points the
+#' Differentiates `f` numerically, and reports at which points the
 #' result is a usable reference.
 #'
 #' @details
@@ -301,7 +301,7 @@ rel_close <- function(a, b, tol, slack = NULL) {
 #' the stencil assumes. A spline does not: at a knot its third derivative
 #' jumps, so a stencil that straddles the knot returns a number of the order of
 #' the jump rather than of the truncation error, and comparing an exact
-#' analytical value against it reports a failure of the \emph{reference}.
+#' analytical value against it reports a failure of the *reference*.
 #'
 #' Recomputing with the step halved says how much of the reference is error.
 #' For a smooth point the two differ by about three quarters of the truncation,
@@ -317,8 +317,8 @@ rel_close <- function(a, b, tol, slack = NULL) {
 #' @param x A numeric vector of evaluation points.
 #' @param lower,upper The endpoints of the interval.
 #'
-#' @return A list with the reference \code{value} and the matrix
-#'   \code{uncertainty} bounding its error at each entry.
+#' @return A list with the reference `value` and the matrix
+#'   `uncertainty` bounding its error at each entry.
 #'
 #' @keywords internal
 fd_reference <- function(f, x, lower, upper) {
@@ -336,11 +336,11 @@ fd_reference <- function(f, x, lower, upper) {
 
 #' Print the Outcome of check_basis
 #'
-#' @param basis An object inheriting from class \code{basis}.
+#' @param basis An object inheriting from class `basis`.
 #' @param res The logical vector of results.
 #' @param num The logical vector of numerical fallbacks.
 #'
-#' @return \code{NULL}, invisibly.
+#' @return `NULL`, invisibly.
 #'
 #' @keywords internal
 print_basis_checks <- function(basis, res, num) {

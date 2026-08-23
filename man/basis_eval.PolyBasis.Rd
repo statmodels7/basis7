@@ -4,7 +4,7 @@
 \alias{basis_eval.PolyBasis}
 \title{Evaluate a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link{PolyBasis}} object.}
+\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

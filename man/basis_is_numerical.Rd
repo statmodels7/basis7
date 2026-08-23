@@ -21,7 +21,7 @@ its own method or falls back to the numerical one.
 \details{
 A value computed by finite differences or by quadrature cannot be checked
 against a numerical reference: the comparison would be the same arithmetic
-twice, agreeing however wrong the basis is. \code{\link{check_basis}} uses
+twice, agreeing however wrong the basis is. \code{\link[=check_basis]{check_basis()}} uses
 this to report such an order as not checked rather than as passed, which is
 the difference between a validator and a formality.
 }
@@ -30,5 +30,5 @@ basis_is_numerical(bspline_basis(dimension = 5))
 
 }
 \seealso{
-\code{\link{basis_colnames}}, \code{\link{basis_nvar}}
+\code{\link[=basis_colnames]{basis_colnames()}}, \code{\link[=basis_nvar]{basis_nvar()}}
 }

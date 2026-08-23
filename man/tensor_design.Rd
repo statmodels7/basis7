@@ -7,7 +7,7 @@
 tensor_design(basis, x, order = NULL, integral = FALSE)
 }
 \arguments{
-\item{basis}{A \code{\link{TensorBasis}} object.}
+\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 

@@ -24,11 +24,11 @@ endpoint per variable for a basis of several.}
 }
 \value{
 An object of class \code{FourierBasis}. Use
-\code{\link{fourier_basis}} rather than calling the class directly, so
+\code{\link[=fourier_basis]{fourier_basis()}} rather than calling the class directly, so
 that the dimension is checked and the period recorded.
 }
 \description{
-The S7 class of Fourier bases. Constructed by \code{\link{fourier_basis}}.
+The S7 class of Fourier bases. Constructed by \code{\link[=fourier_basis]{fourier_basis()}}.
 }
 \details{
 The basis holds a constant function and pairs of sines and cosines of
@@ -46,5 +46,5 @@ S7::S7_inherits(f, FourierBasis)
 
 }
 \seealso{
-\code{\link{fourier_basis}}
+\code{\link[=fourier_basis]{fourier_basis()}}
 }

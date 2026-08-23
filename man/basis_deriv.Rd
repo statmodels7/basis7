@@ -21,7 +21,7 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 Returns the \code{order}-th derivative of every basis function at the given
-points, as a matrix of the same shape as \code{\link{basis_eval}}.
+points, as a matrix of the same shape as \code{\link[=basis_eval]{basis_eval()}}.
 }
 \details{
 Derivative order is an argument rather than a family of generics because it
@@ -30,12 +30,12 @@ of degree \eqn{k} has \eqn{k} non-trivial derivatives followed by zeros.
 An order beyond what the family supports returns the zero matrix rather than
 raising, which is the value of the derivative and not an omission.
 
-\code{order = 0} returns \code{\link{basis_eval}}, so that a loop over
+\code{order = 0} returns \code{\link[=basis_eval]{basis_eval()}}, so that a loop over
 orders needs no special case.
 
 A subclass that registers no method for this generic gets the numerical one
-of the \code{\link{basis}} class, which applies a single central difference
-stencil to \code{\link{basis_eval}}.
+of the \code{\link[=basis]{basis()}} class, which applies a single central difference
+stencil to \code{\link[=basis_eval]{basis_eval()}}.
 }
 \examples{
 b <- bspline_basis(dimension = 6, degree = 3)
@@ -46,5 +46,5 @@ all(basis_deriv(b, 0.5, order = 4) == 0)
 
 }
 \seealso{
-\code{\link{basis_eval}}, \code{\link{basis_is_numerical}}
+\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
 }

@@ -4,7 +4,7 @@
 \alias{basis_gram.PolyBasis}
 \title{Gram Matrix of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link{PolyBasis}} object.}
+\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
 
 \item{order}{The derivative order.}
 

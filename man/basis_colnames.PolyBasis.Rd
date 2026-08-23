@@ -4,7 +4,7 @@
 \alias{basis_colnames.PolyBasis}
 \title{Column Names of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link{PolyBasis}} object.}
+\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
 
 \item{...}{Unused.}
 }

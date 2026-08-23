@@ -27,7 +27,7 @@ separation of a linear from a nonlinear effect.}
 on a common scale.}
 }
 \value{
-An object of class \code{\link{TransformedBasis}}.
+An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
 }
 \description{
 Returns the basis that simultaneously diagonalizes the empirical inner
@@ -72,5 +72,5 @@ Demmler, A. and Reinsch, C. (1975). Oscillation matrices with spline
 smoothing. \emph{Numerische Mathematik} 24, 375-382.
 }
 \seealso{
-\code{\link{constrain_basis}}, \code{\link{basis_gram}}
+\code{\link[=constrain_basis]{constrain_basis()}}, \code{\link[=basis_gram]{basis_gram()}}
 }

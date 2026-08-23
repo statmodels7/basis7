@@ -4,7 +4,7 @@
 \alias{basis_colnames.TensorBasis}
 \title{Column Names of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link{TensorBasis}} object.}
+\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
 
 \item{...}{Unused.}
 }

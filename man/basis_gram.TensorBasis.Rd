@@ -4,7 +4,7 @@
 \alias{basis_gram.TensorBasis}
 \title{Gram Matrix of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link{TensorBasis}} object.}
+\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
 
 \item{order}{An integer vector with one entry per variable.}
 

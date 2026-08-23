@@ -18,15 +18,15 @@ A numeric matrix with \code{length(x)} rows and
 }
 \description{
 The default derivative method, applying one finite-difference stencil to
-\code{\link{basis_eval}}. It is what a basis that registers no derivative
+\code{\link[=basis_eval]{basis_eval()}}. It is what a basis that registers no derivative
 method of its own uses, so that implementing the evaluation is enough to
 have a complete basis.
 }
 \details{
 Numerical Derivatives of a Basis
 
-See \code{\link{numerical_deriv_matrix}} for the stencil and the step, and
-\code{\link{basis_is_numerical}} for asking an object whether its
+See \code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}} for the stencil and the step, and
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} for asking an object whether its
 derivatives come from here.
 }
 \keyword{internal}

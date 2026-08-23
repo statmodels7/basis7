@@ -7,7 +7,7 @@
 bspline_design(basis, x, derivs = 0L, integral = FALSE)
 }
 \arguments{
-\item{basis}{A \code{\link{BsplineBasis}} object.}
+\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
 
 \item{x}{A numeric vector of evaluation points.}
 

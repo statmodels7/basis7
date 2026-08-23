@@ -16,7 +16,7 @@ for a single constraint.}
 zero when determining the rank.}
 }
 \value{
-An object of class \code{\link{TransformedBasis}}.
+An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
 }
 \description{
 Returns the basis whose coefficient vectors are exactly those satisfying
@@ -44,5 +44,5 @@ max(abs(colSums(basis_eval(cs, x))))
 
 }
 \seealso{
-\code{\link{dr_basis}}, \code{\link{orthonorm_basis}}
+\code{\link[=dr_basis]{dr_basis()}}, \code{\link[=orthonorm_basis]{orthonorm_basis()}}
 }

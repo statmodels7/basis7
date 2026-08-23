@@ -4,7 +4,7 @@
 \alias{basis_colnames.FourierBasis}
 \title{Column Names of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link{FourierBasis}} object.}
+\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
 
 \item{...}{Unused.}
 }

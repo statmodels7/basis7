@@ -13,7 +13,7 @@ orthonorm_basis(basis, order = 0L)
 identity. Zero, the default, orthonormalizes the functions themselves.}
 }
 \value{
-An object of class \code{\link{TransformedBasis}}.
+An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
 }
 \description{
 Returns the basis whose functions span the same space and are orthonormal in
@@ -37,5 +37,5 @@ round(basis_gram(o), 12) # the identity, exactly
 
 }
 \seealso{
-\code{\link{basis_gram}}, \code{\link{constrain_basis}}
+\code{\link[=basis_gram]{basis_gram()}}, \code{\link[=constrain_basis]{constrain_basis()}}
 }

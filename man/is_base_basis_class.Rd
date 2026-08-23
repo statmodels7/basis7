@@ -13,7 +13,7 @@ is_base_basis_class(cls)
 \code{TRUE} or \code{FALSE}.
 }
 \description{
-Asks whether an S7 class is the abstract \code{\link{basis}} class, which is
+Asks whether an S7 class is the abstract \code{\link[=basis]{basis()}} class, which is
 how a method registered on it is told apart from one a subclass supplied.
 }
 \details{

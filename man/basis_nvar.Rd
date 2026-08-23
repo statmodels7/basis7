@@ -27,5 +27,5 @@ basis_nvar(tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 
 
 }
 \seealso{
-\code{\link{basis_colnames}}, \code{\link{basis_is_numerical}}
+\code{\link[=basis_colnames]{basis_colnames()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
 }

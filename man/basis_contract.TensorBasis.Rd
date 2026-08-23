@@ -4,7 +4,7 @@
 \alias{basis_contract.TensorBasis}
 \title{Contract a Tensor Product Basis Against Coefficients}
 \arguments{
-\item{basis}{A \code{\link{TensorBasis}} object.}
+\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 

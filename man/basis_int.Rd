@@ -44,5 +44,5 @@ round(basis_int(b, c(0.25, 0.5, 1)), 4)
 
 }
 \seealso{
-\code{\link{basis_eval}}, \code{\link{basis_deriv}}
+\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}
 }
