@@ -333,18 +333,17 @@ khatri_rao <- function(a, b) {
 #' only the marginal evaluations.
 #'
 #' Coefficients come in two shapes.
-#' \itemize{
-#'   \item An **array** of dimension \eqn{(K_1, \ldots, K_D)}, which is
-#'     the general case. The rows are processed in blocks, so the peak memory
-#'     is bounded by the block size rather than by the number of observations,
-#'     however large the product.
-#'   \item A **list of factor matrices** \eqn{\Gamma_j} of size
-#'     \eqn{K_j \times F}, the canonical polyadic form, in which the
-#'     coefficient array is a sum of \eqn{F} outer products. Here the value is
-#'     \eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}, which costs
-#'     \eqn{O(nF\sum_j K_j)} in both time and memory: neither the design matrix
-#'     nor the coefficient array is ever formed.
-#' }
+#'
+#' - An **array** of dimension \eqn{(K_1, \ldots, K_D)}, which is
+#'   the general case. The rows are processed in blocks, so the peak memory
+#'   is bounded by the block size rather than by the number of observations,
+#'   however large the product.
+#' - A **list of factor matrices** \eqn{\Gamma_j} of size
+#'   \eqn{K_j \times F}, the canonical polyadic form, in which the
+#'   coefficient array is a sum of \eqn{F} outer products. Here the value is
+#'   \eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}, which costs
+#'   \eqn{O(nF\sum_j K_j)} in both time and memory: neither the design matrix
+#'   nor the coefficient array is ever formed.
 #'
 #' The second shape is what makes a model with high-order interactions
 #' affordable, and what the factorized tensor product spline models of

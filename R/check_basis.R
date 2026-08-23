@@ -26,20 +26,19 @@ NULL
 #' \eqn{G \succeq 0} for the Gram matrix.
 #'
 #' The checks are:
-#' \enumerate{
-#'   \item **shape**: every generic returns a matrix of the declared size,
-#'     with the declared column names, for a vector and for a single point;
-#'   \item **derivatives**: each analytic order agrees with one numerical
-#'     differentiation of the order below it;
-#'   \item **integral**: it differentiates back to the basis, and is
-#'     exactly zero at the lower endpoint;
-#'   \item **partition of unity**: the rows sum to one, for the families
-#'     that have that property;
-#'   \item **Gram**: symmetric, positive semidefinite, and equal to an
-#'     independent quadrature;
-#'   \item **missing values**: a missing evaluation point gives a missing
-#'     row and nothing else.
-#' }
+#'
+#' 1. **shape**: every generic returns a matrix of the declared size,
+#'    with the declared column names, for a vector and for a single point;
+#' 2. **derivatives**: each analytic order agrees with one numerical
+#'    differentiation of the order below it;
+#' 3. **integral**: it differentiates back to the basis, and is
+#'    exactly zero at the lower endpoint;
+#' 4. **partition of unity**: the rows sum to one, for the families
+#'    that have that property;
+#' 5. **Gram**: symmetric, positive semidefinite, and equal to an
+#'    independent quadrature;
+#' 6. **missing values**: a missing evaluation point gives a missing
+#'    row and nothing else.
 #'
 #' An order whose value comes from the numerical fallback is reported as
 #' `[numerical]` rather than as passed. Checking such a value against a
