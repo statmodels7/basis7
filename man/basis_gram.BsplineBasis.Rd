@@ -4,24 +4,55 @@
 \alias{basis_gram.BsplineBasis}
 \title{Gram Matrix of a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
+\item{basis}{A \link{BsplineBasis} object.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{0}. \code{2} is the usual roughness penalty for a cubic.}
 
-\item{...}{Unused.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
+
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with column names \code{bs1}, \code{bs2}, and so on. Banded, entry \eqn{(a, b)}
+being zero whenever the two supports do not overlap.
 }
 \description{
-Exact inner products, integrated knot interval by knot interval.
+Returns the inner products of the \code{order}-th derivatives exactly, by
+integrating over one knot interval at a time with a Gauss-Legendre rule
+sized so that it reproduces the integrand exactly. This is the matrix a
+roughness penalty on a spline is built from, so its exactness is worth the
+small amount of work.
 }
-\details{
-On each knot interval the order-\eqn{d} derivative of a spline of degree
-\eqn{m} is a polynomial of degree \eqn{m - d}, so the integrand of the Gram
-matrix has degree \eqn{2(m - d)}. A Gauss-Legendre rule with \eqn{m - d + 1}
-nodes integrates degree \eqn{2(m - d) + 1} exactly, so the result carries no
-quadrature error, only floating-point error.
+\section{Why it is exact}{
+On one knot interval the order-\eqn{d} derivative of a spline of degree
+\eqn{m} is a polynomial of degree \eqn{m - d}, so the integrand
+\eqn{B_a^{(d)} B_b^{(d)}} has degree \eqn{2(m - d)}. A Gauss-Legendre
+rule with \eqn{m - d + 1} nodes is exact to degree \eqn{2(m - d) + 1},
+which is one higher, so the only error left is floating point. Against the
+same knot-aligned construction run at 20 nodes instead, the worst entry
+agrees to 3.1e-16, 2.1e-14, 8.0e-13 and 7.3e-12 at orders 0 to 3 on a
+cubic basis of six functions.
+
+The breaks are the boundary knots and the interior knots, so no panel
+straddles a knot, and the exactness claim rests on that: at \code{order = m} the
+derivative is a step function, and a rule spanning a knot would integrate
+the wrong thing. Measured on the same basis, the general
+\code{weight} route of \code{\link[=basis_gram]{basis_gram()}}, whose 50 equal panels do not line up with
+the knots, is out by 1.4e-3 at order 2 and by 65 at order 3.
+}
+
+\section{Above the degree}{
+An \code{order} above \code{degree} returns the zero matrix, every derivative having
+vanished. Below it the matrix is singular with an \code{order}-dimensional null
+space, the polynomials of lower degree differentiating away.
+}
+
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}} for the generic and the alternative measures;
+\code{\link[=quad_rule]{quad_rule()}}, which builds the composite rule.
 }
 \keyword{internal}

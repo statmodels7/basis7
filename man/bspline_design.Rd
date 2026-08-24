@@ -7,20 +7,49 @@
 bspline_design(basis, x, derivs = 0L, integral = FALSE)
 }
 \arguments{
-\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
+\item{basis}{A \link{BsplineBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points, already validated by the
+generic.}
 
-\item{derivs}{The derivative order, or zero.}
+\item{derivs}{The derivative order, default \code{0}. Must not exceed
+\code{basis@basis_params$degree}; \code{\link[=basis_deriv.BsplineBasis]{basis_deriv.BsplineBasis()}} short-circuits
+above that and never calls here.}
 
-\item{integral}{Whether to return the integral instead.}
+\item{integral}{\code{TRUE} to return the integral anchored at the lower
+boundary knot instead of the functions. Default \code{FALSE}.}
 }
 \value{
-A numeric matrix, stripped of the attributes \pkg{splines2} attaches.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, of class \code{matrix} alone, with no dimnames and none of the
+attributes \pkg{splines2} attaches. Callers add the column names through
+\code{\link[=name_columns]{name_columns()}}.
 }
 \description{
-The single point at which this package talks to \pkg{splines2}, so that the
-knot arguments are assembled once and the dependency stays behind the S7
-interface.
+The single point at which this package talks to \pkg{splines2}. It
+assembles the knot arguments from \code{basis@basis_params}, calls
+\code{\link[splines2:bSpline]{splines2::bSpline()}} once, and returns a plain matrix, so the dependency
+stays behind the S7 interface and no caller has to know its argument names
+or its return class.
+}
+\details{
+\code{intercept = TRUE} is passed always, so all \code{dimension} functions come
+back; \pkg{splines2} would otherwise drop the first.
+
+The returned object is of class \code{BSpline} and carries ten attributes,
+among them \code{x}, \code{knots}, \code{degree} and \code{intercept}. Rebuilding it as
+\code{matrix(as.numeric(out), ...)} strips every one, which matters because
+those attributes would survive arithmetic and reappear on a matrix that no
+longer describes them. The dimensions are taken from \code{length(x)} and
+\code{basis@dimension}, so a mismatch with what \pkg{splines2} returned surfaces
+here.
+
+\code{derivs} and \code{integral} are mutually exclusive in practice, each caller
+setting at most one.
+}
+\seealso{
+\code{\link[splines2:bSpline]{splines2::bSpline()}}, the function called;
+\code{\link[=basis_eval.BsplineBasis]{basis_eval.BsplineBasis()}}, \code{\link[=basis_deriv.BsplineBasis]{basis_deriv.BsplineBasis()}} and
+\code{\link[=basis_int.BsplineBasis]{basis_int.BsplineBasis()}}, its three callers.
 }
 \keyword{internal}

@@ -7,46 +7,98 @@
 bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval.}
+\item{lower, upper}{The endpoints of the interval, each a single finite
+number with \code{lower < upper}. Default \eqn{[0, 1]}. They are the boundary
+knots, and evaluating outside them throws.}
 
-\item{dimension}{The number of basis functions, at least
-\code{degree + 1}.}
+\item{dimension}{The number of basis functions, a single whole number of at
+least \code{degree + 1}, default \code{5}. It is the number of columns, so it fixes
+the flexibility of the fit; the interior knot count follows as
+\code{dimension - degree - 1}.}
 
-\item{degree}{The degree of the piecewise polynomials. Three, the default,
-gives cubic splines.}
+\item{degree}{The degree of the piecewise polynomials, a single
+non-negative whole number, default \code{3} for cubic splines. \code{0} gives
+indicators of the knot intervals and \code{1} piecewise linear functions. A
+spline of degree \eqn{m} has \eqn{m} non-trivial derivatives; above that
+\code{\link[=basis_deriv]{basis_deriv()}} returns exact zeros.}
 }
 \value{
-An object of class \code{\link[=BsplineBasis]{BsplineBasis()}}.
+An object of class \link{BsplineBasis}, with \code{basis_name} \code{"bspline"},
+\code{basis_params} holding \code{degree}, \code{knots} and \code{boundary_knots}, and column
+names \code{bs1}, \code{bs2}, and so on.
 }
 \description{
-A basis of B-splines of the given degree on \eqn{[\ell, u]}, with interior
-knots placed at equal spacing.
+Returns a basis of \code{dimension} B-splines of the given degree on
+\eqn{[\ell, u]}, with the interior knots placed at equal spacing. This is
+the general-purpose choice: the functions have local support, so a
+coefficient moves the fitted curve only near its own knots, and the
+conditioning does not deteriorate as the dimension grows.
 }
-\details{
-The basis is complete: all \code{dimension} functions are kept, so the rows
-of \code{\link[=basis_eval]{basis_eval()}} sum to one. Dropping a function for
-identifiability is a linear transformation of the basis and a decision for
-the layer that owns the meaning of the term.
+\section{Dimension, degree and knots}{
+A basis of \eqn{K} functions of degree \eqn{m} has \eqn{K - m - 1}
+interior knots, so \eqn{K \ge m + 1}; a smaller \code{dimension} throws, naming
+both numbers. At equality there is no interior knot and the basis is the
+polynomials of degree \eqn{m} on the whole interval, which it spans
+exactly. The knots are \code{seq(lower, upper, length.out = K - m + 1)} with the
+endpoints dropped, so they are equally spaced; a quantile placement is not
+offered, and a caller wanting one can build the class directly.
 
-A basis of \eqn{K} functions with degree \eqn{m} has \eqn{K - m - 1}
-interior knots, so \eqn{K \ge m + 1} is required, with equality giving the
-polynomials of degree \eqn{m} on the whole interval and no interior knot at
-all.
+\code{degree = 0} gives indicator functions of the knot intervals, a step basis,
+and \code{degree = 1} the piecewise linear hat functions.
 }
+
+\section{The basis is complete}{
+All \code{dimension} functions are kept, so the rows of \code{\link[=basis_eval]{basis_eval()}} sum to
+one and the basis spans the constant. Beside an intercept the design is
+therefore rank deficient by one. Dropping a function is a linear
+transformation of the basis: use \code{\link[=constrain_basis]{constrain_basis()}}, which keeps the
+object a basis, and leave the choice of constraint to whatever owns the
+meaning of the term.
+}
+
+\section{Where each quantity comes from}{
+\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_int]{basis_int()}} call
+\code{\link[splines2:bSpline]{splines2::bSpline()}}, which evaluates the recurrence and its exact
+derivative and integral. The Gram matrix is integrated in this package,
+knot interval by knot interval with a rule sized from the degree, and is
+exact to rounding. Nothing about a B-spline basis is differenced, and
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports all three \code{FALSE}.
+}
+
 \examples{
 b <- bspline_basis(dimension = 6)
 b
 
-# local support: each function is non-zero on a few knot intervals only
+# Local support: each function is non-zero on a few knot intervals only.
 round(basis_eval(b, c(0.1, 0.5, 0.9)), 3)
 
-# the second-derivative Gram matrix, which a roughness penalty integrates
+# The basis carries its own constant, so its rows sum to one.
+max(abs(rowSums(basis_eval(b, seq(0, 1, length.out = 25))) - 1))
+
+# The second-derivative Gram matrix, the matrix of a roughness penalty.
 round(basis_gram(b, order = 2), 2)
+
+# At dimension = degree + 1 there is no interior knot, and the basis is
+# the polynomials of that degree: a cubic is fitted exactly.
+p <- bspline_basis(dimension = 4, degree = 3)
+length(p@basis_params$knots)
+x <- seq(0, 1, length.out = 40)
+max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
+
+# Degree 0 gives indicators of the knot intervals.
+basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
+
+# Too few functions for the degree is refused, with both numbers named.
+try(bspline_basis(dimension = 3, degree = 3))
 
 }
 \references{
-de Boor, C. (2001). \emph{A Practical Guide to Splines}. Springer.
+de Boor, C. (2001). \emph{A Practical Guide to Splines}, revised edition.
+Springer.
 }
 \seealso{
-\code{\link[=fourier_basis]{fourier_basis()}}, \code{\link[=check_basis]{check_basis()}}
+\code{\link[=fourier_basis]{fourier_basis()}} for a periodic basis and \code{\link[=poly_basis]{poly_basis()}} for a
+global polynomial one; \code{\link[=constrain_basis]{constrain_basis()}} to remove the constant;
+\code{\link[=dr_basis]{dr_basis()}} to rotate this basis into the Demmler-Reinsch form a
+penalized fit uses; \code{\link[=basis_gram]{basis_gram()}} for its roughness penalty.
 }

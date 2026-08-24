@@ -31,17 +31,20 @@ marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} show
 any numeric entry of more than four values. Defaults to an empty list.}
 }
 \value{
-An object of class \code{BsplineBasis}. Use
-\code{\link[=bspline_basis]{bspline_basis()}} rather than calling the class directly, so
-that the knots are placed and the arguments checked.
+An object of class \code{BsplineBasis}, inheriting from \link{basis}, with
+the same five properties and \code{basis_params} holding \code{degree}, \code{knots} and
+\code{boundary_knots}. Call \code{\link[=bspline_basis]{bspline_basis()}} instead of this class directly;
+it places the knots and checks the dimension against the degree.
 }
 \description{
-The S7 class of B-spline bases. Constructed by
-\code{\link[=bspline_basis]{bspline_basis()}}.
+The S7 class of B-spline bases, the objects \code{\link[=bspline_basis]{bspline_basis()}} returns. It
+adds no property to \link{basis} and exists as the class the spline methods
+dispatch on. A B-spline basis is piecewise polynomial, each function
+supported on a few knot intervals, and its functions sum to one.
 }
-\details{
+\section{The Cox-de Boor recurrence}{
 On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
-defined by the Cox-de Boor recurrence, from the indicators upward:
+defined from the indicators upward:
 
 \deqn{B_{j,0}(x) = \mathbf{1}\{t_j \le x < t_{j+1}\},}
 
@@ -49,23 +52,51 @@ defined by the Cox-de Boor recurrence, from the indicators upward:
   + \frac{t_{j+q+1} - x}{t_{j+q+1} - t_{j+1}} B_{j+1,q-1}(x),
   \qquad q = 1, \dots, m,}
 
-a term with a zero denominator being taken as zero. Two properties follow
-and are what the basis is used for: \eqn{B_{j,m}} vanishes outside
-\eqn{[t_j, t_{j+m+1}]}, so the design matrix is banded, and
-\eqn{\sum_j B_{j,m}(x) = 1} on the interval, so the basis is complete and
-carries its own constant.
-
-Evaluation, derivatives and integrals come from \pkg{splines2}, which
-computes all three from the recurrence rather than by differencing. The
-Gram matrix is integrated exactly, interval by interval: on each knot
-interval the integrand is a polynomial of known degree, so a Gauss-Legendre
-rule sized from that degree leaves no quadrature error.
+a term with a zero denominator being taken as zero.
 }
+
+\section{The two properties that follow}{
+\eqn{B_{j,m}} vanishes outside \eqn{[t_j, t_{j+m+1}]}, so at most
+\eqn{m + 1} columns are non-zero in any row and the design matrix is
+banded: at \code{degree = 3} exactly four of them, whatever the dimension. And
+\eqn{\sum_j B_{j,m}(x) = 1} on the interval, measured to 2.2e-16, so the
+basis carries its own constant and is collinear with an intercept in the
+same design.
+}
+
+\section{Where the numbers come from}{
+Evaluation, derivatives and integrals come from
+\code{\link[splines2:bSpline]{splines2::bSpline()}}, through the single wrapper \code{\link[=bspline_design]{bspline_design()}}, which
+computes all three from the recurrence and takes no differences. The Gram
+matrix is integrated here instead, knot interval by knot interval, and is
+exact: see \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}}.
+}
+
+\section{Its \code{basis_params}}{
+Three entries: \code{degree}, the interior \code{knots} as a numeric vector, and
+\code{boundary_knots}, which is \code{c(lower, upper)}.
+}
+
 \examples{
 b <- bspline_basis(dimension = 5)
 S7::S7_inherits(b, BsplineBasis)
+b@basis_params
+
+# Local support: at most degree + 1 columns are non-zero in a row.
+E <- basis_eval(bspline_basis(dimension = 12), seq(0.05, 0.95, by = 0.1))
+rowSums(E != 0)
+
+# And the rows sum to one.
+max(abs(rowSums(E) - 1))
 
 }
+\references{
+de Boor, C. (2001). \emph{A Practical Guide to Splines}, revised edition.
+Springer.
+}
 \seealso{
-\code{\link[=bspline_basis]{bspline_basis()}}
+\code{\link[=bspline_basis]{bspline_basis()}}, the constructor;
+\code{\link[=basis_eval.BsplineBasis]{basis_eval.BsplineBasis()}}, \code{\link[=basis_deriv.BsplineBasis]{basis_deriv.BsplineBasis()}},
+\code{\link[=basis_int.BsplineBasis]{basis_int.BsplineBasis()}} and \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} for the
+methods registered on it.
 }

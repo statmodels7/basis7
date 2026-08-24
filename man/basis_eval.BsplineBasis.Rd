@@ -4,18 +4,31 @@
 \alias{basis_eval.BsplineBasis}
 \title{Evaluate a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
+\item{basis}{A \link{BsplineBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{bs1}, \code{bs2}, and so on.
 }
 \description{
-The design matrix of the B-spline recurrence, from
-\code{\link[splines2:bSpline]{splines2::bSpline()}}.
+Returns the B-spline design matrix at the given points, evaluated by
+\code{\link[splines2:bSpline]{splines2::bSpline()}} from the Cox-de Boor recurrence. At most
+\code{degree + 1} entries of any row are non-zero, and the row sums are one to
+2.2e-16.
+}
+\details{
+The call goes through \code{\link[=bspline_design]{bspline_design()}} with \code{intercept = TRUE}, so all
+\code{dimension} functions are returned and none is dropped for
+identifiability. The result is stripped of the ten attributes
+\pkg{splines2} attaches and of its \code{BSpline} class, leaving a plain
+matrix, so a consumer never has to know where the numbers came from.
+}
+\seealso{
+\code{\link[=bspline_design]{bspline_design()}}, the one call into \pkg{splines2};
+\code{\link[=basis_eval]{basis_eval()}} for the generic.
 }
 \keyword{internal}

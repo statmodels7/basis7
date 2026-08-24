@@ -4,20 +4,41 @@
 \alias{basis_deriv.BsplineBasis}
 \title{Derivatives of a B-Spline Basis}
 \arguments{
-\item{basis}{A \code{\link[=BsplineBasis]{BsplineBasis()}} object.}
+\item{basis}{A \link{BsplineBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{1}. Above \code{basis@basis_params$degree} the result is exactly
+zero.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{bs1}, \code{bs2}, and so on.
 }
 \description{
-Exact derivatives from the B-spline recurrence. An order above the degree
-gives the zero matrix, which is the value of that derivative.
+Returns the \code{order}-th derivative of every B-spline, exactly, from the
+derivative form of the Cox-de Boor recurrence in \code{\link[splines2:bSpline]{splines2::bSpline()}}. An
+order above the degree short-circuits to the zero matrix, which is the
+value of that derivative; nothing is thrown.
+}
+\details{
+A spline of degree \eqn{m} is piecewise polynomial of that degree, so it
+has \eqn{m} non-trivial derivatives and the rest vanish: a cubic gives
+three, and \code{order = 4} is exactly zero everywhere. The short-circuit
+happens here because \pkg{splines2} rejects a \code{derivs} above the degree
+instead of returning zeros.
+
+The derivative of order \eqn{m} is a step function, discontinuous at each
+interior knot, and the value returned at a knot is the one the recurrence
+gives there. That matters for a Gram matrix, which is why
+\code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} integrates knot interval by knot interval and
+never across one.
+}
+\seealso{
+\code{\link[=bspline_design]{bspline_design()}}, the one call into \pkg{splines2};
+\code{\link[=basis_deriv]{basis_deriv()}} for the generic.
 }
 \keyword{internal}
