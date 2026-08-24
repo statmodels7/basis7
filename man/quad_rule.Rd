@@ -25,9 +25,9 @@ composite rule every quadrature in the package is built from.
 }
 \details{
 Each interval gets the same \code{n} nodes, affinely mapped from
-\\eqn{[-1, 1]}, and its weights scaled by half its width. The result is
+\eqn{[-1, 1]}, and its weights scaled by half its width. The result is
 exact for any function that is a polynomial of degree at most
-\\eqn{2n - 1} \strong{on each interval separately}, which is why the callers
+\eqn{2n - 1} \strong{on each interval separately}, which is why the callers
 choose their breaks with care: \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} uses the knots,
 so no interval straddles the point where a spline's derivative jumps.
 
@@ -36,7 +36,7 @@ two; the nodes come out in interval order, which is increasing when the
 breaks are.
 }
 \seealso{
-\code{\link[=gauss_legendre]{gauss_legendre()}}, which supplies the rule on \\eqn{[-1, 1]};
+\code{\link[=gauss_legendre]{gauss_legendre()}}, which supplies the rule on \eqn{[-1, 1]};
 \code{\link[=numerical_gram]{numerical_gram()}} and \code{\link[=basis_int.basis]{basis_int.basis()}}, which consume it.
 }
 \keyword{internal}

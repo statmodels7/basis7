@@ -33,7 +33,7 @@ Gram matrix against.
 \section{One variable}{
 The interval is cut into \code{panels} equal pieces with an \code{nodes}-point rule
 on each, and the matrix is formed as a crossproduct of
-\\eqn{\\sqrt{w_i}\\,B^{(d)}(t_i)}, which keeps it positive semidefinite
+\eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps it positive semidefinite
 whatever the integrand does. It is then symmetrized as \code{(G + t(G))/2}, the
 two triangles of a crossproduct differing in their last bits.
 }

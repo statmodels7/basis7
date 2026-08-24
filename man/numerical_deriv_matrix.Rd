@@ -45,14 +45,14 @@ weight vectors come from \code{\link[numericals7:fd_weights]{numericals7::fd_wei
 \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}} supplies.
 
 Accuracy is not lost at the ends. Measured against exact Legendre
-derivatives on \\eqn{[0, 1]}, the first derivative agrees to 5.1e-10
+derivatives on \eqn{[0, 1]}, the first derivative agrees to 5.1e-10
 relative at the two endpoints and to 3.9e-10 in the interior.
 }
 
 \section{The step}{
 The step is \code{\link[numericals7:fd_step]{numericals7::fd_step()}}'s,
-\\eqn{\\varepsilon^{1/(d+2)}\\max(1, \\lvert x\\rvert)}, which balances
-truncation against rounding for order \\eqn{d}. It is written nowhere in
+\eqn{\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)}, which balances
+truncation against rounding for order \eqn{d}. It is written nowhere in
 this package, a second copy of a rule with one home being how two packages
 come to disagree.
 
@@ -64,7 +64,7 @@ has five.
 
 \section{What it costs in accuracy}{
 Measured against exact Legendre derivatives at 21 interior points of
-\\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
+\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4. That is what
 a family which registers no derivative method gets, and the reason to write
 a closed form where one exists.

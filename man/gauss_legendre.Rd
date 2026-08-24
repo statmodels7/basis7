@@ -16,15 +16,15 @@ A list of two numeric vectors of length \code{n}: \code{nodes}, in increasing
 order, and \code{weights}, positive and summing to 2.
 }
 \description{
-Returns the \code{n}-point Gauss-Legendre rule on \\eqn{[-1, 1]}: the nodes and
-the weights that integrate every polynomial of degree up to \\eqn{2n - 1}
-exactly. At \code{n = 5} the rule reproduces \\eqn{\\int t^9} as \code{0} and first
-departs at \\eqn{t^{10}}, returning 0.17889 against 0.18182.
+Returns the \code{n}-point Gauss-Legendre rule on \eqn{[-1, 1]}: the nodes and
+the weights that integrate every polynomial of degree up to \eqn{2n - 1}
+exactly. At \code{n = 5} the rule reproduces \eqn{\int t^9} as \code{0} and first
+departs at \eqn{t^{10}}, returning 0.17889 against 0.18182.
 }
 \details{
 The construction is Golub-Welsch: the nodes are the eigenvalues of the
 symmetric tridiagonal Jacobi matrix of the Legendre recurrence, with
-off-diagonal \\eqn{i/\\sqrt{4i^2 - 1}}, and the weights are twice the square
+off-diagonal \eqn{i/\sqrt{4i^2 - 1}}, and the weights are twice the square
 of the first component of each eigenvector. The weights sum to 2, the
 length of the interval.
 

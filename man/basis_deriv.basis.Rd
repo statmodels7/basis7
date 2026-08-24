@@ -32,7 +32,7 @@ Numerical Derivatives of a Basis
 \section{Accuracy}{
 One stencil of the order wanted, never a chain of first differences.
 Measured against exact Legendre derivatives at 21 interior points of
-\\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
+\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4. See
 \code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}} for the stencil, the step and the endpoint rule.
 }
