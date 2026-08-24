@@ -4,14 +4,20 @@
 \alias{basis_colnames.PolyBasis}
 \title{Column Names of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A character vector of length \code{basis@dimension}.
+A character vector of length \code{basis@dimension}, \code{"P0"} first.
 }
 \description{
-The polynomials numbered by their degree, from zero.
+Names the columns \code{P0}, \code{P1}, ..., \code{P(dimension - 1)}, so that a column's
+name is the degree of the polynomial in it. This replaces the default
+\code{le1}, \code{le2} of \code{\link[=basis_colnames.basis]{basis_colnames.basis()}}, where the number would be the
+degree plus one and a reader would have to remember the offset.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}} for the generic.
 }
 \keyword{internal}

@@ -4,28 +4,51 @@
 \alias{basis_gram.PolyBasis}
 \title{Gram Matrix of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{0}.}
 
-\item{at, weight}{Handled by the generic before dispatch; unused here.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with column names \code{P0}, \code{P1}, and so on. Diagonal at \code{order = 0},
+singular with an \code{order}-dimensional null space above it, and exactly
+zero above \code{dimension - 1}.
 }
 \description{
-Exact inner products: diagonal in closed form at order zero, and by an exact
-Gauss-Legendre rule above it.
+Returns the inner products of the \code{order}-th derivatives exactly, with no
+quadrature error at any order. At \code{order = 0} the matrix is diagonal and
+written down; above that a Gauss-Legendre rule with as many nodes as the
+basis has functions integrates the product exactly, the integrand being a
+polynomial of low enough degree.
 }
-\details{
-The Legendre polynomials satisfy
-\eqn{\int_{-1}^{1} P_m P_n \, \mathrm{d}t = 2\delta_{mn}/(2n+1)}, so on the
-basis interval the order-zero matrix is diagonal with entries
-\eqn{(u - \ell)/(2n+1)}. At higher orders the derivatives are no longer
-orthogonal, but the integrand stays a polynomial of degree at most
-\eqn{2(K - 1 - d)}, so a rule with \eqn{K} nodes integrates it exactly.
+\section{Order zero}{
+The polynomials satisfy
+\eqn{\int_{-1}^{1} P_m P_n \,\mathrm{d}t = 2\delta_{mn}/(2n+1)}, so on
+\eqn{[\ell, u]} the matrix is diagonal with entries
+\eqn{(u - \ell)/(2n+1)}. It is written directly and costs nothing.
+}
+
+\section{Higher orders}{
+Derivatives of Legendre polynomials are not orthogonal, so the matrix is
+full. The integrand \eqn{P_m^{(d)} P_n^{(d)}} is a polynomial of degree at
+most \eqn{2(K - 1 - d)}, and a \eqn{K}-node Gauss-Legendre rule is exact
+to degree \eqn{2K - 1}, which is larger for every \eqn{d \ge 1}. The
+quadrature is therefore exact to rounding, and the result is symmetrized as
+\code{(G + t(G))/2} because the two triangles of a crossproduct differ in their
+last bits.
+
+An \code{order} above \code{dimension - 1} returns the zero matrix, every derivative
+having vanished.
+}
+
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}} for the generic and the alternative measures.
 }
 \keyword{internal}

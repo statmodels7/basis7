@@ -7,39 +7,88 @@
 poly_basis(lower = 0, upper = 1, dimension = 4)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval.}
+\item{lower, upper}{The endpoints of the interval, each a single finite
+number with \code{lower < upper}. Default \eqn{[0, 1]}. Evaluating outside
+throws.}
 
-\item{dimension}{The number of polynomials, so the highest degree is
-\code{dimension - 1}.}
+\item{dimension}{The number of polynomials, a single whole number of at
+least 1, default \code{4}. The highest degree is \code{dimension - 1}, so \code{1} gives
+the constant alone.}
 }
 \value{
-An object of class \code{\link[=PolyBasis]{PolyBasis()}}.
+An object of class \link{PolyBasis}, with \code{basis_name} \code{"legendre"},
+\code{basis_params} holding \code{degree = dimension - 1}, and column names \code{P0},
+\code{P1}, and so on.
 }
 \description{
-The polynomials of degree below \code{dimension} on \eqn{[\ell, u]},
-expressed in the Legendre basis rather than in raw powers.
+Returns a basis of the polynomials of degree below \code{dimension} on
+\eqn{[\ell, u]}, written in the Legendre polynomials and not in raw powers.
+The two span the same space, so a fit through either gives the same curve;
+the Legendre form is the one that survives being fitted, its Gram matrix
+being diagonal where the raw powers' is a Hilbert matrix.
 }
-\details{
-The Legendre polynomials span exactly the same space as
-\eqn{1, x, x^2, \ldots}, and the choice between them is numerical. Raw
-powers give a Gram matrix that is a Hilbert matrix, whose condition number
-grows so fast that a basis of ten of them is already close to singular in
-double precision. The Legendre polynomials are orthogonal, so their Gram
-matrix is diagonal and perfectly conditioned.
+\section{Why not raw powers}{
+Fitting \eqn{1, x, x^2, \ldots} on \eqn{[0, 1]} gives the Gram matrix
+\eqn{H_{mn} = 1/(m + n + 1)}, the Hilbert matrix, whose condition number
+grows geometrically. The condition numbers of the two order-0 Gram
+matrices, measured on \eqn{[0, 1]}:\tabular{lll}{
+   \code{dimension} \tab Legendre \tab raw powers \cr
+   5 \tab 9 \tab 4.8e+05 \cr
+   10 \tab 19 \tab 1.6e+13 \cr
+   15 \tab 29 \tab 2.5e+17 \cr
 }
+
+
+At ten raw powers a least-squares solve has already lost most of its
+digits; at fifteen the matrix is numerically singular. The Legendre
+condition number is \eqn{2K - 1}, growing linearly.
+}
+
+\section{The Gram matrix}{
+The polynomials are orthogonal on their own interval,
+\eqn{\int_{-1}^{1} P_m P_n \,\mathrm{d}t = 2\delta_{mn}/(2n+1)}, so
+\code{basis_gram(p)} is diagonal with entries \eqn{(u - \ell)/(2n+1)} for
+\eqn{n = 0, \ldots, K-1}. They are \strong{not} orthonormal: pass the basis
+through \code{\link[=orthonorm_basis]{orthonorm_basis()}} for that.
+}
+
+\section{Degree and dimension}{
+\code{dimension} counts functions and the degrees start at zero, so
+\code{poly_basis(dimension = 4)} holds \eqn{P_0, P_1, P_2, P_3}, a cubic. The
+basis contains the constant, so it is collinear with an intercept in the
+same design; drop one or the other, or use \code{\link[=constrain_basis]{constrain_basis()}}.
+}
+
 \examples{
 p <- poly_basis(dimension = 5)
 p
 
-# orthogonal, so the Gram matrix is diagonal
-round(basis_gram(p), 10)
+# Orthogonal, so the Gram matrix is diagonal, with entries (u - l)/(2n + 1).
+round(diag(basis_gram(p)), 8)
+1 / (2 * (0:4) + 1)
 
-# and it spans the same space as the raw powers
+# And well conditioned where the raw powers are not.
+H <- outer(0:9, 0:9, function(a, b) 1 / (a + b + 1))
+c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
+  raw_powers = kappa(H, exact = TRUE))
+
+# It spans the same space as the raw powers, so a cubic is fitted exactly.
 x <- seq(0, 1, length.out = 40)
-fitted <- lm.fit(basis_eval(p, x), x^3)$fitted.values
-max(abs(fitted - x^3))
+max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
+
+# P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.
+basis_eval(p, c(0, 1))
+
+# Derivatives above the highest degree are exactly zero.
+range(basis_deriv(p, c(0.2, 0.8), order = 5))
 
 }
+\references{
+Abramowitz, M. and Stegun, I. A. (1964). \emph{Handbook of Mathematical
+Functions}, chapter 22. National Bureau of Standards.
+}
 \seealso{
-\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
+\code{\link[=bspline_basis]{bspline_basis()}} for a local basis and \code{\link[=fourier_basis]{fourier_basis()}} for a
+periodic one; \code{\link[=orthonorm_basis]{orthonorm_basis()}} to make the Gram matrix the identity;
+\code{\link[=basis_gram]{basis_gram()}} for the roughness penalty of this basis.
 }

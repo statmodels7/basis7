@@ -7,26 +7,36 @@
 legendre_deriv(basis, x, order)
 }
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number.
+Order 0 returns the polynomials themselves.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, no dimnames, \code{NA} in the rows where \code{x} is \code{NA}.
 }
 \description{
-The \code{order}-th derivative of \eqn{P_0, \ldots, P_{K-1}} with respect to
-\code{x}, on the basis interval.
+Computes the \code{order}-th derivative of \eqn{P_0, \ldots, P_{K-1}} with
+respect to \code{x} on the basis interval. The one routine behind both
+\code{\link[=basis_eval.PolyBasis]{basis_eval.PolyBasis()}}, which calls it at order 0, and
+\code{\link[=basis_deriv.PolyBasis]{basis_deriv.PolyBasis()}}.
 }
 \details{
-Differentiating the identity
-\eqn{P_{n+1}' - P_{n-1}' = (2n+1) P_n} repeatedly gives
-\eqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1) P_n^{(d-1)}}, which builds each
-order from the one below it in closed form, with no differencing anywhere.
-The chain rule for the shift to \eqn{[\ell, u]} contributes
-\eqn{(2/(u-\ell))^{d}}.
+Differentiating \eqn{P_{n+1}' - P_{n-1}' = (2n+1) P_n} repeatedly gives
+\deqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1)\, P_n^{(d-1)},}
+which builds order \eqn{d} from order \eqn{d-1} in closed form, with no
+difference taken anywhere. The seeds are \eqn{P_0^{(d)} = 0} for
+\eqn{d \ge 1} and \eqn{P_1' = 1}, \eqn{P_1^{(d)} = 0} above.
+
+The loop runs \code{order} times over a \code{length(x)} by \code{K} table, so the cost is
+\eqn{O(d n K)}, and it produces exact zeros once every polynomial has been
+differentiated away. The shift onto \eqn{[-1, 1]} contributes
+\eqn{(2/(u - \ell))^d}, applied once after the loop.
+}
+\seealso{
+\code{\link[=legendre_table]{legendre_table()}}, which supplies order 0.
 }
 \keyword{internal}

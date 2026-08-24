@@ -4,24 +4,36 @@
 \alias{basis_int.PolyBasis}
 \title{Integral of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, exactly zero in the row at \code{basis@lower}.
 }
 \description{
-The exact integral from the lower endpoint.
+Returns \eqn{\int_{\ell}^{x} P_n(t)\,\mathrm{d}t} for every polynomial,
+in closed form and with no quadrature. The zero at the lower endpoint that
+\code{\link[=basis_int]{basis_int()}} promises falls out of the identity used and needs no
+correction term.
 }
 \details{
-From \eqn{\int P_n = (P_{n+1} - P_{n-1})/(2n+1)} for \eqn{n \ge 1} and
-\eqn{\int P_0 = t}. The convention is satisfied without a correction: at
-\eqn{t = -1} the combination \eqn{P_{n+1} - P_{n-1}} is
-\eqn{(-1)^{n+1} - (-1)^{n-1} = 0}, and the constant term is anchored by
-construction.
+The identity is \eqn{\int P_n = (P_{n+1} - P_{n-1})/(2n+1)} for
+\eqn{n \ge 1}, with \eqn{\int P_0 = t}, so one table of \eqn{K + 1}
+polynomials supplies all \eqn{K} integrals: the integral of the last one
+reaches one degree beyond the basis.
+
+The anchoring is automatic. At \eqn{t = -1}, which is the lower endpoint,
+\eqn{P_{n+1} - P_{n-1}} is \eqn{(-1)^{n+1} - (-1)^{n-1} = 0}, and the
+\eqn{n = 0} column is written as \eqn{(t + 1)/2 \cdot (u - \ell)}, which
+also vanishes there. Every column is therefore exactly zero at
+\code{basis@lower}, with no cancellation of large numbers behind it.
+}
+\seealso{
+\code{\link[=basis_int]{basis_int()}} for the generic and the anchoring convention;
+\code{\link[=legendre_table]{legendre_table()}}, which supplies the polynomials.
 }
 \keyword{internal}

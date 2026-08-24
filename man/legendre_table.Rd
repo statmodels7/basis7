@@ -7,15 +7,34 @@
 legendre_table(t, k)
 }
 \arguments{
-\item{t}{A numeric vector in \eqn{[-1, 1]}.}
+\item{t}{A numeric vector on \eqn{[-1, 1]}, the evaluation points already
+shifted.}
 
-\item{k}{The number of polynomials.}
+\item{k}{The number of polynomials, a whole number of at least 1.}
 }
 \value{
-A numeric matrix with \code{length(t)} rows and \code{k} columns.
+A numeric matrix with \code{length(t)} rows and \code{k} columns, no
+dimnames. Column 1 is the constant 1.
 }
 \description{
-A table of \eqn{P_0, \ldots, P_{k-1}} evaluated at \code{t} in
-\eqn{[-1, 1]}, from the three-term recurrence.
+Builds a table of \eqn{P_0, \ldots, P_{k-1}} evaluated at \code{t} on
+\eqn{[-1, 1]}, one column per polynomial, from the three-term recurrence
+\deqn{(n+1) P_{n+1}(t) = (2n+1)\, t\, P_n(t) - n\, P_{n-1}(t),}
+seeded with \eqn{P_0 = 1} and \eqn{P_1 = t}. Used by
+\code{\link[=basis_eval.PolyBasis]{basis_eval.PolyBasis()}} and, at one extra column, by
+\code{\link[=basis_int.PolyBasis]{basis_int.PolyBasis()}}.
+}
+\details{
+The recurrence is evaluated in the standard variable, never in the basis
+interval's own, because \eqn{|P_n(t)| \le 1} on \eqn{[-1, 1]} and the
+recurrence is stable there. Cost is \eqn{O(nk)} for \code{n} points, one column
+per step.
+
+\code{t} is not range-checked here; the caller has already shifted validated
+points onto \eqn{[-1, 1]}. Outside that interval the recurrence still runs
+and the polynomials grow without bound.
+}
+\seealso{
+\code{\link[=legendre_deriv]{legendre_deriv()}}, which starts from this table.
 }
 \keyword{internal}

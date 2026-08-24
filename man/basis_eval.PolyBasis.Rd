@@ -4,17 +4,35 @@
 \alias{basis_eval.PolyBasis}
 \title{Evaluate a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{P0}, \code{P1}, and so on.
 }
 \description{
-The three-term recurrence, on the shifted variable.
+Evaluates \eqn{P_0, \ldots, P_{K-1}} at the given points by the three-term
+recurrence
+\deqn{(n+1) P_{n+1}(t) = (2n+1)\, t\, P_n(t) - n\, P_{n-1}(t),}
+after shifting the points from \eqn{[\ell, u]} onto \eqn{[-1, 1]} by
+\eqn{t = 2(x - \ell)/(u - \ell) - 1}. The recurrence is stable on that
+interval, every \eqn{|P_n| \le 1} there, so no rescaling is needed at any
+dimension.
+}
+\details{
+One pass builds the whole table, column \eqn{n+1} from columns \eqn{n} and
+\eqn{n-1}, at a cost of \eqn{O(nK)} for \code{n} points. Missing points give
+missing rows.
+
+The values at the ends are exact: \eqn{P_n(u) = 1} for every \eqn{n}, and
+\eqn{P_n(\ell) = (-1)^n}.
+}
+\seealso{
+\code{\link[=legendre_table]{legendre_table()}}, which holds the recurrence;
+\code{\link[=basis_eval]{basis_eval()}} for the generic.
 }
 \keyword{internal}

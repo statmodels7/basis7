@@ -4,20 +4,34 @@
 \alias{basis_deriv.PolyBasis}
 \title{Derivatives of a Legendre Basis}
 \arguments{
-\item{basis}{A \code{\link[=PolyBasis]{PolyBasis()}} object.}
+\item{basis}{A \link{PolyBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{1}. Above \code{dimension - 1} the result is exactly zero.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{P0}, \code{P1}, and so on.
 }
 \description{
-Exact derivatives of any order, from the derivative of the recurrence. An
-order above the highest degree gives the zero matrix.
+Returns the \code{order}-th derivative of every Legendre polynomial, exactly and
+at any order, from the recurrence
+\eqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1) P_n^{(d-1)}}. No difference is
+taken anywhere, so the fourth derivative is as accurate as the first, and
+an order above \code{basis@basis_params$degree} returns exact zeros.
+}
+\details{
+Each order is built from the one below it, so reaching order \eqn{d} costs
+\eqn{d} passes over a table of \eqn{K} columns. The shift onto
+\eqn{[-1, 1]} contributes a factor \eqn{(2/(u - \ell))^d} by the chain
+rule, applied once at the end.
+}
+\seealso{
+\code{\link[=legendre_deriv]{legendre_deriv()}}, which holds the recurrence;
+\code{\link[=basis_deriv]{basis_deriv()}} for the generic.
 }
 \keyword{internal}
