@@ -7,15 +7,36 @@
 quad_rule(breaks, n)
 }
 \arguments{
-\item{breaks}{A numeric vector of at least two increasing breakpoints.}
+\item{breaks}{A numeric vector of at least two increasing breakpoints. The
+first and last are the ends of the span.}
 
-\item{n}{The number of nodes per interval.}
+\item{n}{The number of nodes per interval, a single positive whole number.}
 }
 \value{
-A list with components \code{nodes} and \code{weights}.
+A list of two numeric vectors of length
+\code{n * (length(breaks) - 1)}: \code{nodes} and \code{weights}, ordered interval by
+interval.
 }
 \description{
-Places an \code{n}-point Gauss-Legendre rule on each interval given by
-consecutive breakpoints, and returns the pooled nodes and weights.
+Places an \code{n}-point Gauss-Legendre rule on each interval between
+consecutive breakpoints and returns the pooled nodes and weights, so that
+\code{sum(weights * f(nodes))} is the integral over the whole span. The
+composite rule every quadrature in the package is built from.
+}
+\details{
+Each interval gets the same \code{n} nodes, affinely mapped from
+\\eqn{[-1, 1]}, and its weights scaled by half its width. The result is
+exact for any function that is a polynomial of degree at most
+\\eqn{2n - 1} \strong{on each interval separately}, which is why the callers
+choose their breaks with care: \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} uses the knots,
+so no interval straddles the point where a spline's derivative jumps.
+
+Nothing is validated. \code{breaks} must be increasing and of length at least
+two; the nodes come out in interval order, which is increasing when the
+breaks are.
+}
+\seealso{
+\code{\link[=gauss_legendre]{gauss_legendre()}}, which supplies the rule on \\eqn{[-1, 1]};
+\code{\link[=numerical_gram]{numerical_gram()}} and \code{\link[=basis_int.basis]{basis_int.basis()}}, which consume it.
 }
 \keyword{internal}

@@ -7,28 +7,73 @@
 basis_is_numerical(basis)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 }
 \value{
-A named logical vector with elements \code{basis_deriv},
-\code{basis_int} and \code{basis_gram}, \code{TRUE} where the numerical
-fallback is in force.
+A named logical vector of length 3, with elements \code{basis_deriv},
+\code{basis_int} and \code{basis_gram}, \code{TRUE} where the numerical fallback is in
+force.
 }
 \description{
-Reports, for each of the three derived generics, whether the basis supplies
-its own method or falls back to the numerical one.
+Reports, for each of \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}},
+whether the basis supplies its own method or falls back to the numerical
+one on the abstract \link{basis} class. \code{TRUE} means the values come from finite
+differences or quadrature, so they carry that method's error and cannot be
+verified against a numerical reference.
 }
-\details{
-A value computed by finite differences or by quadrature cannot be checked
-against a numerical reference: the comparison would be the same arithmetic
-twice, agreeing however wrong the basis is. \code{\link[=check_basis]{check_basis()}} uses
-this to report such an order as not checked rather than as passed, which is
-the difference between a validator and a formality.
+\section{What it decides}{
+\code{\link[=check_basis]{check_basis()}} reads it to decide which of its checks can mean anything.
+Comparing a finite difference against a finite difference is the same
+arithmetic twice, agreeing however wrong the basis is, so the \code{deriv} and
+\code{integral} checks are not run at all where this reports \code{TRUE}.
+\code{\link[=print.basis]{print.basis()}} shows the same information on its \verb{Numerical:} line.
 }
+
+\section{How it is answered}{
+For an ordinary class, by asking which class each method is registered on
+through \code{attr(m, "signature")[[1]]} and testing it with
+\code{\link[=is_base_basis_class]{is_base_basis_class()}}. A generic with no method at all counts as
+numerical.
+
+Two classes are answered by delegation instead. A \link{TransformedBasis}
+reports its parent's: all three of its methods are registered, but each one
+calls the parent and multiplies, so what is exact about it is whatever was
+exact about the parent. A \link{TensorBasis} reports \code{TRUE} for a quantity that
+is numerical in \strong{any} margin, every one of its methods being a product of
+its margins'.
+}
+
+\section{What it cannot see}{
+The question asked is which class the method is registered on. It says
+nothing about which branch that method takes. A method registered on a concrete class
+that itself calls the fallback is reported as exact:
+\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does that when the period is not the interval
+width, and \code{basis_is_numerical()} reports \code{FALSE} for its Gram matrix
+either way.
+}
+
 \examples{
+# Every shipped family, and every wrapper over one, is exact throughout.
 basis_is_numerical(bspline_basis(dimension = 5))
+basis_is_numerical(orthonorm_basis(fourier_basis(dimension = 5)))
+
+# A basis defined from its evaluation alone answers TRUE to all three.
+Bumps <- S7::new_class("Bumps", parent = basis)
+S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
+  out <- exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension),
+                          "-")^2 / 0.12^2)
+  colnames(out) <- basis_colnames(basis)
+  out
+}
+bump <- Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
+basis_is_numerical(bump)
+
+# A product is exact only where every margin is.
+basis_is_numerical(tensor_basis(bump, poly_basis(dimension = 3)))
 
 }
 \seealso{
-\code{\link[=basis_colnames]{basis_colnames()}}, \code{\link[=basis_nvar]{basis_nvar()}}
+\code{\link[=check_basis]{check_basis()}}, which reads it to decide what to test;
+\code{\link[=print.basis]{print.basis()}}, which prints it; \code{vignette("defining-a-basis")}, where a
+basis is taken from all three \code{TRUE} to all three \code{FALSE}.
 }

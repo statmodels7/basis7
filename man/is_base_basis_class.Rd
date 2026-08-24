@@ -7,19 +7,30 @@
 is_base_basis_class(cls)
 }
 \arguments{
-\item{cls}{An S7 class.}
+\item{cls}{An S7 class object, as returned by \code{S7::S7_class()}.}
 }
 \value{
-\code{TRUE} or \code{FALSE}.
+A single \code{TRUE} or \code{FALSE}.
 }
 \description{
-Asks whether an S7 class is the abstract \code{\link[=basis]{basis()}} class, which is
-how a method registered on it is told apart from one a subclass supplied.
+Reports whether an S7 class is the abstract \link{basis} class. That is how
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} tells a method registered on the base class, which
+is a numerical fallback, from one a subclass supplied.
 }
 \details{
-Identity is tried first because it is the usual case and costs nothing, then
-the name and package, because identity is not preserved when a package's
-code is re-evaluated rather than loaded. Coverage tools do exactly that, so
-an identity-only test passes every ordinary check and fails there.
+Identity is tried first, being the usual case and costing nothing, and the
+name and package are compared when it fails. The second test is necessary:
+\code{identical()} on an S7 class is object identity, so it is \code{FALSE} for a
+class re-created from the same definition, and that is what happens
+whenever a package's code is evaluated instead of loaded. Coverage tools do exactly
+that, so an identity-only test passes every ordinary check and fails under
+\code{covr} alone.
+
+The same defect in \code{linkfunctions7} made every fallback differentiate the
+order below it, and the log link's fourth derivative came back wrong by a
+factor of 900 while the whole five-platform check matrix stayed green.
+}
+\seealso{
+\code{\link[=basis_is_numerical]{basis_is_numerical()}}, its only caller.
 }
 \keyword{internal}

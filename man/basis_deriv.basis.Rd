@@ -4,29 +4,50 @@
 \alias{basis_deriv.basis}
 \title{Numerical Derivatives of a Basis}
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{Evaluation points inside the basis interval: a numeric vector for
+a basis of one variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a
+basis of several.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number, or
+one per variable. More than one non-zero entry throws.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{\link[=basis_colnames]{basis_colnames()}}.
 }
 \description{
-The default derivative method, applying one finite-difference stencil to
-\code{\link[=basis_eval]{basis_eval()}}. It is what a basis that registers no derivative
-method of its own uses, so that implementing the evaluation is enough to
-have a complete basis.
+The derivative method every basis inherits from the abstract \link{basis} class:
+one finite-difference stencil of the order asked for, applied to
+\code{\link[=basis_eval]{basis_eval()}}. A subclass supplying its evaluation alone therefore answers
+\code{\link[=basis_deriv]{basis_deriv()}} immediately, and registering a closed form later takes over
+through dispatch with no change to calling code.
 }
 \details{
 Numerical Derivatives of a Basis
+}
+\section{Accuracy}{
+One stencil of the order wanted, never a chain of first differences.
+Measured against exact Legendre derivatives at 21 interior points of
+\\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
+1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4. See
+\code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}} for the stencil, the step and the endpoint rule.
+}
 
-See \code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}} for the stencil and the step, and
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} for asking an object whether its
-derivatives come from here.
+\section{A basis of several variables}{
+The stencil differentiates along one coordinate at a time, replacing that
+column of the points and holding the others. A mixed partial such as
+\code{c(1, 1)} therefore throws: a stencil in the plane carries the product of
+two errors, and the one family that needs mixed partials,
+\code{\link[=tensor_basis]{tensor_basis()}}, computes them exactly from its margins.
+}
+
+\seealso{
+\code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}}, which does the work;
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} to ask an object whether its derivatives come from
+here; \code{\link[=basis_deriv]{basis_deriv()}} for the generic.
 }
 \keyword{internal}

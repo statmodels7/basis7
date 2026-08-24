@@ -4,30 +4,50 @@
 \alias{basis_gram.basis}
 \title{Numerical Gram Matrix of a Basis}
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{0}, or one per variable.}
 
-\item{panels}{The number of subintervals.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
 
-\item{nodes}{The number of quadrature nodes per subinterval.}
+\item{panels}{The number of equal subintervals, default \code{50}. For a basis
+of several variables the rule is a product and each coordinate gets
+\code{ceiling(panels^(1/d))} panels, so 8 apiece at \code{panels = 50} on two
+variables.}
 
-\item{...}{Unused.}
+\item{nodes}{The number of Gauss-Legendre nodes per subinterval, default
+\code{12}.}
+
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-The default inner-product method: composite Gauss-Legendre over the basis
-interval, applied to the outer product of the requested derivatives.
+The inner-product method every basis inherits from the abstract \link{basis}
+class: composite Gauss-Legendre over \code{panels} equal subintervals of the
+interval, applied to the requested derivatives. A one-line wrapper over
+\code{\link[=numerical_gram]{numerical_gram()}}, which is where the work is and which the other families
+also call when their closed form does not apply.
 }
 \details{
 Numerical Gram Matrix of a Basis
 
-The rule is placed on \code{panels} equal subintervals. A basis with
-closed-form inner products, or one that is piecewise polynomial and so can
-be integrated exactly by a rule sized from its degree, registers its own
-method and this one is not used.
+Its accuracy is bounded by the derivative it integrates. On a polynomial
+family the order-0 matrix agrees with the closed form to 5.2e-15, while at
+order 2 the gap is 3.0e-08 relative, which is the finite-difference error
+of \code{\link[=basis_deriv.basis]{basis_deriv.basis()}} carried through the integral, and no fault of the
+quadrature.
+
+All three shipped families and both wrappers register their own method, so
+this one is reached only by a basis defined outside the package.
+}
+\seealso{
+\code{\link[=numerical_gram]{numerical_gram()}}, which it calls; \code{\link[=basis_gram]{basis_gram()}} for the generic
+and the alternative measures.
 }
 \keyword{internal}

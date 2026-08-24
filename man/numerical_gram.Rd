@@ -7,21 +7,56 @@
 numerical_gram(basis, order = 0L, panels = 50L, nodes = 12L)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, default \code{0}. Passed through
+\code{\link[=check_order]{check_order()}}, so a single non-zero order on a basis of several
+variables throws.}
 
-\item{panels}{The number of subintervals.}
+\item{panels}{The number of equal subintervals, default \code{50}, divided among
+the coordinates as above for a basis of several variables.}
 
-\item{nodes}{The number of quadrature nodes per subinterval.}
+\item{nodes}{The number of Gauss-Legendre nodes per subinterval, default
+\code{12}, exact for a polynomial integrand of degree up to 23 on each panel.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-The inner products of the order-\code{order} derivatives, by Gauss-Legendre
-on equal subintervals. Shared by the default method and by any basis whose
-closed form does not apply to the arguments it was given.
+Computes the inner products of the order-\code{order} derivatives by
+Gauss-Legendre on equal subintervals. Shared by \code{\link[=basis_gram.basis]{basis_gram.basis()}}, by
+\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} when the period is not the interval width, and
+by \code{\link[=check_basis]{check_basis()}} as the independent reference it compares a family's own
+Gram matrix against.
+}
+\section{One variable}{
+The interval is cut into \code{panels} equal pieces with an \code{nodes}-point rule
+on each, and the matrix is formed as a crossproduct of
+\\eqn{\\sqrt{w_i}\\,B^{(d)}(t_i)}, which keeps it positive semidefinite
+whatever the integrand does. It is then symmetrized as \code{(G + t(G))/2}, the
+two triangles of a crossproduct differing in their last bits.
+}
+
+\section{Several variables}{
+The rule is a product over the box: the nodes are the lattice of the
+marginal rules and the weights their products. Each coordinate gets
+\code{max(2, ceiling(panels^(1/d)))} panels, so the total node count stays near
+\code{panels * nodes^d} and does not grow as \code{panels^d}. At the defaults on two
+variables that is 8 panels of 12 nodes per coordinate, 9216 points.
+}
+
+\section{Accuracy}{
+Equal panels line up with nothing in particular, so a family whose
+derivative has kinks is integrated less well than one whose does not. On a
+polynomial family the order-0 matrix agrees with the closed form to
+5.2e-15; on a cubic B-spline at order 2, where the second derivative kinks
+at knots the panels miss, the same comparison is 1.4e-03, or 2.1e-06
+relative. Raising \code{panels} is the remedy where the breaks cannot be aligned.
+}
+
+\seealso{
+\code{\link[=quad_rule]{quad_rule()}}, which builds the composite rule;
+\code{\link[=basis_gram]{basis_gram()}} for the generic.
 }
 \keyword{internal}

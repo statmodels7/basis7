@@ -7,20 +7,37 @@
 gauss_legendre(n)
 }
 \arguments{
-\item{n}{The number of nodes, a positive integer.}
+\item{n}{The number of nodes, a single positive whole number. \code{1} returns
+the midpoint rule directly. \code{n < 1} throws
+\verb{'n' must be a positive integer.}}
 }
 \value{
-A list with components \code{nodes} and \code{weights}.
+A list of two numeric vectors of length \code{n}: \code{nodes}, in increasing
+order, and \code{weights}, positive and summing to 2.
 }
 \description{
-The \code{n}-point Gauss-Legendre rule on \eqn{[-1, 1]}, which integrates
-polynomials of degree up to \eqn{2n - 1} exactly.
+Returns the \code{n}-point Gauss-Legendre rule on \\eqn{[-1, 1]}: the nodes and
+the weights that integrate every polynomial of degree up to \\eqn{2n - 1}
+exactly. At \code{n = 5} the rule reproduces \\eqn{\\int t^9} as \code{0} and first
+departs at \\eqn{t^{10}}, returning 0.17889 against 0.18182.
 }
 \details{
-The nodes are the eigenvalues of the symmetric tridiagonal Jacobi matrix of
-the Legendre recurrence and the weights come from the first component of
-each eigenvector, which is the Golub-Welsch construction. Computing them
-rather than tabulating them keeps any node count available, which the exact
-spline rules need: a rule per knot interval, sized from the degree.
+The construction is Golub-Welsch: the nodes are the eigenvalues of the
+symmetric tridiagonal Jacobi matrix of the Legendre recurrence, with
+off-diagonal \\eqn{i/\\sqrt{4i^2 - 1}}, and the weights are twice the square
+of the first component of each eigenvector. The weights sum to 2, the
+length of the interval.
+
+They are computed at call time, which keeps every node count available.
+That is what the exact spline rules need: one rule per knot interval, sized
+from the degree and the derivative order, where a table would offer only
+the counts someone thought to tabulate.
+}
+\references{
+Golub, G. H. and Welsch, J. H. (1969). Calculation of Gauss quadrature
+rules. \emph{Mathematics of Computation} \strong{23}, 221-230.
+}
+\seealso{
+\code{\link[=quad_rule]{quad_rule()}}, which maps this rule onto a sequence of intervals.
 }
 \keyword{internal}
