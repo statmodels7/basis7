@@ -31,28 +31,55 @@ marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} show
 any numeric entry of more than four values. Defaults to an empty list.}
 }
 \value{
-An object of class \code{FourierBasis}. Use
-\code{\link[=fourier_basis]{fourier_basis()}} rather than calling the class directly, so
-that the dimension is checked and the period recorded.
+An object of class \code{FourierBasis}, inheriting from \link{basis}, with
+the same five properties and \code{basis_params} holding \code{omega}, \code{n_pairs}
+and \code{full_period}. Call \code{\link[=fourier_basis]{fourier_basis()}} instead of this class directly;
+it rejects an even dimension, defaults the period and records all three.
 }
 \description{
-The S7 class of Fourier bases. Constructed by \code{\link[=fourier_basis]{fourier_basis()}}.
+The S7 class of Fourier bases, the objects \code{\link[=fourier_basis]{fourier_basis()}} returns. It
+adds no property to \link{basis} and exists as the class the trigonometric
+methods dispatch on. A Fourier basis holds a constant function and pairs of
+sines and cosines of increasing frequency, and answers every derivative and
+its integral from one identity.
 }
-\details{
-The basis holds a constant function and pairs of sines and cosines of
-increasing frequency. Every derivative and the antiderivative come from one
-identity, so no order is special:
+\section{One identity for every order}{
+Writing \eqn{z = 2\pi (x - \ell)/\omega} for the phase and \eqn{\omega}
+for the period,
 \deqn{\frac{\mathrm{d}^{k}}{\mathrm{d}x^{k}} \sin(j z)
-      = \left(\frac{2\pi j}{\omega}\right)^{k} \sin\!\left(j z + \frac{k\pi}{2}\right),
-      \qquad z = \frac{2\pi (x - \ell)}{\omega},}
-and likewise for the cosine. The identity holds for negative \eqn{k} as
-well, which is where the antiderivative comes from.
+      = \left(\frac{2\pi j}{\omega}\right)^{k}
+        \sin\!\left(j z + \frac{k\pi}{2}\right),}
+and the same for the cosine. Differentiating a sinusoid shifts its phase by
+a quarter turn and multiplies it by its frequency, so no order is a special
+case and the fourth derivative costs exactly what the first does.
+
+The identity holds for negative \eqn{k}, which is where the antiderivative
+comes from: \code{\link[=basis_int.FourierBasis]{basis_int.FourierBasis()}} evaluates it at \eqn{k = -1} and
+subtracts the value at the lower endpoint.
 }
+
+\section{Its \code{basis_params}}{
+Three entries. \code{omega} is the period, \code{n_pairs} is
+\code{(dimension - 1) \%/\% 2}, and \code{full_period} records whether \code{omega} equals
+the width of the interval. The last decides which route
+\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} takes: a closed diagonal matrix when it is
+\code{TRUE}, a quadrature when it is not.
+}
+
 \examples{
 f <- fourier_basis(dimension = 5)
 S7::S7_inherits(f, FourierBasis)
+f@basis_params
+
+# Differentiating shifts the phase by a quarter turn: the first derivative
+# of sin1 at the start of the period is its own frequency, 2*pi.
+basis_deriv(f, 0, order = 1)
+2 * pi
 
 }
 \seealso{
-\code{\link[=fourier_basis]{fourier_basis()}}
+\code{\link[=fourier_basis]{fourier_basis()}}, the constructor;
+\code{\link[=basis_eval.FourierBasis]{basis_eval.FourierBasis()}}, \code{\link[=basis_deriv.FourierBasis]{basis_deriv.FourierBasis()}},
+\code{\link[=basis_int.FourierBasis]{basis_int.FourierBasis()}} and \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} for the
+methods registered on it.
 }

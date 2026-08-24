@@ -4,25 +4,36 @@
 \alias{basis_int.FourierBasis}
 \title{Integral of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
+\item{basis}{A \link{FourierBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, exactly zero in the row at \code{basis@lower}.
 }
 \description{
-The exact integral from the lower endpoint.
+Returns \eqn{\int_{\ell}^{x} \varphi_j(t)\,\mathrm{d}t} for every column
+in closed form, with no quadrature. The constant integrates to
+\eqn{x - \ell} and the sinusoids come from the phase-shift identity of
+\link{FourierBasis} taken at order \eqn{-1}.
 }
 \details{
-The shift identity at order \eqn{-1} gives an antiderivative, not the one
-this package's convention asks for, and the two differ by a constant that is
-not the same for every column: at the lower endpoint the sine columns of the
-raw antiderivative are \eqn{-\omega/(2\pi j)} while the cosine columns are
-already zero. Subtracting the value at the lower endpoint fixes every column
-at once and makes the convention hold exactly.
+The identity at \eqn{k = -1} gives \emph{an} antiderivative, which is not the
+one \code{\link[=basis_int]{basis_int()}} promises. The two differ by a constant that is not the
+same in every column: at the lower endpoint the sine columns of the raw
+antiderivative are \eqn{-\omega/(2\pi j)} while the cosine columns are
+already zero. Subtracting the row at the lower endpoint corrects every
+column at once and makes the anchoring exact.
+
+Over a full period every sinusoid integrates to zero, so the row at
+\code{basis@upper} is \eqn{(\omega, 0, 0, \ldots)}, which is the area under a
+fitted curve being the constant's coefficient times the period.
+}
+\seealso{
+\code{\link[=basis_int]{basis_int()}} for the generic and the anchoring convention;
+\code{\link[=fourier_trig]{fourier_trig()}}, which supplies the raw antiderivative.
 }
 \keyword{internal}

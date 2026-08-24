@@ -4,18 +4,30 @@
 \alias{basis_eval.FourierBasis}
 \title{Evaluate a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
+\item{basis}{A \link{FourierBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{const}, \code{sin1}, \code{cos1}, and so on.
 }
 \description{
-The constant and the sine-cosine pairs, from the shift identity of
-\code{\link[=FourierBasis]{FourierBasis()}} at order zero.
+Evaluates the constant and the sine-cosine pairs at the given points, from
+the phase-shift identity of \link{FourierBasis} taken at order zero, where it is
+the sinusoid itself. The first column is \code{1} at every point; column
+\eqn{2j} is \eqn{\sin(j z)} and column \eqn{2j + 1} is \eqn{\cos(j z)},
+with \eqn{z = 2\pi (x - \ell)/\omega}.
+}
+\details{
+Cost is two \code{sin()} and \code{cos()} calls per frequency per point, with no
+recurrence and no accumulation, so a high frequency is evaluated as
+accurately as a low one. Missing points give missing rows.
+}
+\seealso{
+\code{\link[=fourier_trig]{fourier_trig()}}, which builds the trigonometric columns;
+\code{\link[=basis_eval]{basis_eval()}} for the generic.
 }
 \keyword{internal}

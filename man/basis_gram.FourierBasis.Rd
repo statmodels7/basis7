@@ -4,30 +4,56 @@
 \alias{basis_gram.FourierBasis}
 \title{Gram Matrix of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
+\item{basis}{A \link{FourierBasis} object.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{0}.}
 
-\item{...}{Passed to the numerical method when the period is not the
-interval width.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
+
+\item{...}{Passed to \code{\link[=numerical_gram]{numerical_gram()}} on the non-full-period branch,
+where \code{panels} and \code{nodes} control the quadrature. Ignored on the closed
+branch.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with column names \code{const}, \code{sin1}, and so on. Diagonal when the interval
+is one whole period, full otherwise; singular for any \code{order >= 1}, the
+constant differentiating away.
 }
 \description{
-The inner products of the basis functions, diagonal in closed form when the
-interval is a whole period.
+Returns the inner products of the \code{order}-th derivatives. On a whole period
+the matrix is diagonal and written down in closed form; on any other period
+the orthogonality fails and the method computes a quadrature instead.
 }
-\details{
-Over a whole period the trigonometric functions are mutually orthogonal, and
-remain so after differentiation, since a derivative only shifts the phase and
-rescales. The order-\eqn{d} Gram matrix is therefore diagonal, with entries
-\eqn{\omega} for the constant at order zero, zero for it at every higher
-order, and \eqn{(\omega/2)(2\pi j/\omega)^{2d}} for both members of pair
-\eqn{j}.
+\section{The closed form}{
+Over a whole period the trigonometric functions are mutually orthogonal,
+and stay orthogonal after differentiation, a derivative only shifting the
+phase and rescaling. The order-\eqn{d} matrix is therefore diagonal, with
 
-When \code{omega} is not the width of the interval the orthogonality fails,
-and the numerical method of the \code{\link[=basis]{basis()}} class is used instead.
+\deqn{G_{00} = \omega \ (d = 0), \quad 0 \ (d \ge 1), \qquad
+  G_{jj} = \frac{\omega}{2}\left(\frac{2\pi j}{\omega}\right)^{2d}}
+
+for both members of pair \eqn{j}. At \code{dimension = 7} on \eqn{[0, 1]} the
+order-2 diagonal is \verb{0, 779.27, 779.27, 12468.4, 12468.4, 63121.1, 63121.1}, matching \eqn{(2\pi j)^4/2} exactly.
+}
+
+\section{The other period}{
+When \code{basis_params$full_period} is \code{FALSE} the method delegates to
+\code{\link[=numerical_gram]{numerical_gram()}}, composite Gauss-Legendre over the interval, and the
+result is a full matrix.
+
+Note that \code{\link[=basis_is_numerical]{basis_is_numerical()}} still reports \code{FALSE} for \code{basis_gram} on
+such a basis: it reads the class the method is registered on, which is
+\code{FourierBasis} in both branches. \code{\link[=check_basis]{check_basis()}} reads the same predicate,
+so it holds the quadrature to the tolerance meant for a closed form; the
+quadrature is accurate enough that this passes.
+}
+
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}} for the generic and the alternative measures;
+\code{\link[=numerical_gram]{numerical_gram()}} for the branch taken on another period.
 }
 \keyword{internal}

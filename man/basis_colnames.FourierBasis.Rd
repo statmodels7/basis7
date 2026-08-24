@@ -4,14 +4,27 @@
 \alias{basis_colnames.FourierBasis}
 \title{Column Names of a Fourier Basis}
 \arguments{
-\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
+\item{basis}{A \link{FourierBasis} object.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A character vector of length \code{basis@dimension}.
+A character vector of length \code{basis@dimension}, \code{"const"} first.
 }
 \description{
-The constant followed by the sine and cosine of each frequency.
+Names the columns \code{const}, \code{sin1}, \code{cos1}, \code{sin2}, \code{cos2}, and so on: the
+constant first, then the sine and cosine of each frequency in the order the
+matrix holds them. A coefficient's name therefore says which harmonic it
+belongs to, where the default \verb{fo1 ... fo5} of \code{\link[=basis_colnames.basis]{basis_colnames.basis()}}
+would leave the reader counting.
+}
+\details{
+At \code{n_pairs == 0}, which is \code{dimension = 1}, the answer is the single name
+\code{"const"} and the general branch is skipped. Falling through it would give
+\code{"sin"} and \code{"cos"} with no number, \code{paste0()} recycling a zero-length
+argument to the empty string.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}} for the generic.
 }
 \keyword{internal}

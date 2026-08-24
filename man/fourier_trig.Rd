@@ -7,18 +7,39 @@
 fourier_trig(basis, x, d)
 }
 \arguments{
-\item{basis}{A \code{\link[=FourierBasis]{FourierBasis()}} object.}
+\item{basis}{A \link{FourierBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points. Not range-checked here.}
 
-\item{d}{The order, which may be negative.}
+\item{d}{The order, a single whole number that may be negative. \code{-1} gives
+an antiderivative, \code{0} the functions themselves.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension - 1} columns.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension - 1}
+columns, no dimnames, sine and cosine interleaved by frequency.
 }
 \description{
-The sine and cosine columns at derivative order \code{d}, from the shift
-identity. Order \eqn{-1} gives an antiderivative.
+Builds the sine and cosine columns at derivative order \code{d} from the
+phase-shift identity
+\deqn{\frac{\mathrm{d}^{d}}{\mathrm{d}x^{d}} \sin(jz)
+  = \left(\frac{2\pi j}{\omega}\right)^{d}
+    \sin\!\left(jz + \frac{d\pi}{2}\right),}
+the one routine behind \code{\link[=basis_eval.FourierBasis]{basis_eval.FourierBasis()}} at \code{d = 0},
+\code{\link[=basis_deriv.FourierBasis]{basis_deriv.FourierBasis()}} above it and \code{\link[=basis_int.FourierBasis]{basis_int.FourierBasis()}} at
+\code{d = -1}. The constant column is not included; each caller prepends its
+own.
+}
+\details{
+At \code{d = -1} the identity gives an antiderivative whose constant is not the
+one \code{\link[=basis_int]{basis_int()}} promises; the caller subtracts the row at the lower
+endpoint. Columns are interleaved sine-then-cosine per frequency, matching
+\code{\link[=basis_colnames.FourierBasis]{basis_colnames.FourierBasis()}}.
+
+At \code{n_pairs == 0} the result is a \code{length(x)} by 0 matrix, and the loop is
+skipped.
+}
+\seealso{
+\code{\link[=basis_eval.FourierBasis]{basis_eval.FourierBasis()}}, \code{\link[=basis_deriv.FourierBasis]{basis_deriv.FourierBasis()}} and
+\code{\link[=basis_int.FourierBasis]{basis_int.FourierBasis()}}, its three callers.
 }
 \keyword{internal}
