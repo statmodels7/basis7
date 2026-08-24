@@ -4,15 +4,28 @@
 \alias{basis_colnames.TensorBasis}
 \title{Column Names of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
 A character vector of length \code{basis@dimension}.
 }
 \description{
-The marginal names joined by dots, in the order the columns come out: the
-last marginal varies fastest.
+Pastes the margins' column names with dots, in the order the columns come
+out: the last marginal varies fastest, following \code{\link[base:kronecker]{base::kronecker()}}. A
+column named \code{bs2.cos1} is the product of the parent B-spline's second
+function with the Fourier margin's first cosine, so a coefficient's name
+says which marginal function it belongs to in each variable.
+}
+\details{
+The names are built with the same recycling \code{\link[=khatri_rao]{khatri_rao()}} uses, the second
+factor repeated within each element of the first. \code{outer()} would give the
+transpose of this, which reads plausibly and labels every column but the
+first and last wrongly.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}} for the generic; \code{\link[=khatri_rao]{khatri_rao()}}, whose ordering
+this matches.
 }
 \keyword{internal}

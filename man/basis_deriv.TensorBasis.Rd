@@ -4,24 +4,38 @@
 \alias{basis_deriv.TensorBasis}
 \title{Partial Derivatives of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 
-\item{order}{An integer vector with one entry per variable.}
+\item{order}{An integer vector with one entry per variable, or a single
+\code{0}. A single non-zero order throws, having two readings; see
+\code{\link[=check_order]{check_order()}}.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{nrow(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns.
 }
 \description{
-The mixed partial derivative given by a multi-index, one order per variable.
+Returns the mixed partial derivative named by a multi-index, one order per
+variable: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
+\eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins are,
+and the one place in the package a mixed partial is available at all, the
+numerical fallback refusing them.
 }
 \details{
-The product separates, so the derivative differentiates each marginal to its
-own order and multiplies the results. An order beyond what a marginal
-supports makes that factor, and so the whole product, zero.
+The product separates, so the derivative differentiates each margin to its
+own order and multiplies the results. No cross term appears and no stencil
+in the plane is needed, which is why the accuracy of a mixed partial here
+is the accuracy of the margins' own derivatives.
+
+An order beyond what a margin carries makes that factor zero, so the whole
+product is zero: \code{c(4, 0)} on a cubic B-spline margin is the exact zero
+matrix whatever the other margins do.
+}
+\seealso{
+\code{\link[=tensor_design]{tensor_design()}}, which does the work; \code{\link[=basis_deriv]{basis_deriv()}} for the
+generic and the multi-index rule.
 }
 \keyword{internal}

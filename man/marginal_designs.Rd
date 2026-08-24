@@ -7,18 +7,25 @@
 marginal_designs(basis, x, order = NULL, integral = FALSE)
 }
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 
-\item{order}{An integer vector of derivative orders, or \code{NULL}.}
+\item{order}{An integer vector with one entry per variable, or \code{NULL} for
+the functions themselves.}
 
-\item{integral}{Whether to integrate instead.}
+\item{integral}{\code{TRUE} to ask each margin for its anchored integral.}
 }
 \value{
-A list of numeric matrices, one per marginal.
+A list of \code{basis_nvar(basis)} numeric matrices, the \eqn{j}th with
+\code{nrow(x)} rows and \code{basis@marginals[[j]]@dimension} columns.
 }
 \description{
-Evaluate Every Marginal at Its Own Column
+Returns a list of the margins' design matrices, each evaluated at its own
+column of the points, and each differentiated or integrated as asked. The
+first step of \code{\link[=tensor_design]{tensor_design()}}.
+}
+\seealso{
+\code{\link[=tensor_design]{tensor_design()}}, its only caller.
 }
 \keyword{internal}

@@ -31,32 +31,72 @@ knots and degree of a B-spline, the frequency of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 
-\item{marginals}{The list of bases being multiplied, one per variable.}
+\item{marginals}{The list of bases being multiplied, one per variable, each
+of one variable itself. Kept whole, so each can still be evaluated and
+asked what it is.}
 }
 \value{
-An object of class \code{TensorBasis}.
+An object of class \code{TensorBasis}, inheriting from \link{basis}, with the
+five properties of a basis plus \code{marginals}, and \code{basis_params} holding
+\code{marginal_dimensions}.
 }
 \description{
-The basis of products of the functions of several bases, one per variable:
+The S7 class of tensor product bases: all products of the functions of
+several bases, one basis per variable,
 \deqn{B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).}
-Constructed by \code{\link[=tensor_basis]{tensor_basis()}}.
+It carries the marginals whole, and every quantity it answers with is built
+from theirs, so a product of exactly integrated marginals is itself exact
+at any number of variables. Constructed by \code{\link[=tensor_basis]{tensor_basis()}}.
 }
-\details{
-Everything a tensor product needs follows from the marginals, because the
-product separates. A partial derivative differentiates one marginal and
-leaves the others alone; the integral over the box from its lower corner is
-the product of the marginal integrals; and the Gram matrix is the Kronecker
-product of the marginal Gram matrices, so a tensor of exactly integrated
-marginals is exactly integrated too, however many variables it has.
+\section{Everything follows from the marginals}{
+The product separates, so each generic reduces to its marginals':
+\itemize{
+\item a partial derivative differentiates one marginal to its own order and
+leaves the others alone, \code{order} being a multi-index;
+\item the integral over the box from the lower corner is the product of the
+marginal integrals, and the anchor survives, a product whose every factor
+is zero at the corner being zero there;
+\item the Gram matrix is the Kronecker product of the marginal Gram matrices,
+which is a product of one-dimensional integrals and never a quadrature
+over the box.
+}
 
-Columns follow the convention of \code{\link[base:kronecker]{base::kronecker()}}: the last
-marginal varies fastest.
+That last point is what keeps the construction affordable. A quadrature
+over a box of \eqn{D} variables costs a node count exponential in \eqn{D}
+and carries an error to match; a Kronecker product of exact marginal
+matrices is exact, and costs one marginal Gram matrix per variable.
 }
+
+\section{Column order}{
+Columns follow \code{\link[base:kronecker]{base::kronecker()}}: the \strong{last} marginal varies fastest.
+At two variables of 3 and 2 functions the names are \code{bs1.P0}, \code{bs1.P1},
+\code{bs2.P0}, \code{bs2.P1}, \code{bs3.P0}, \code{bs3.P1}.
+
+That order matters when coefficients are supplied as an array, R storing an
+array with its \emph{first} index fastest. \code{\link[=basis_contract]{basis_contract()}} reverses the
+dimensions for you; a hand-written \code{as.numeric(coef)} does not, and pairs
+every coefficient with the wrong function.
+}
+
+\section{What the validator enforces}{
+\verb{@marginals} must be non-empty and hold only bases, and \verb{@dimension} must
+equal the product of their dimensions.
+}
+
 \examples{
 t2 <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
 c(basis_nvar(t2), t2@dimension)
 
+# The last marginal varies fastest, and the names record both margins.
+basis_colnames(tensor_basis(bspline_basis(dimension = 3, degree = 2),
+                            poly_basis(dimension = 2)))
+
+# A product is exact wherever its margins are.
+basis_is_numerical(t2)
+
 }
 \seealso{
-\code{\link[=tensor_basis]{tensor_basis()}}, \code{\link[=basis_contract]{basis_contract()}}
+\code{\link[=tensor_basis]{tensor_basis()}}, the constructor; \code{\link[=basis_contract]{basis_contract()}}, which
+evaluates a fit without forming the product; \code{\link[=basis_gram]{basis_gram()}} for the
+Kronecker identity.
 }

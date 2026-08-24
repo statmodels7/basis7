@@ -4,26 +4,42 @@
 \alias{basis_gram.TensorBasis}
 \title{Gram Matrix of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
-\item{order}{An integer vector with one entry per variable.}
+\item{order}{The derivative order, an integer vector with one entry per
+variable, or a single \code{0}. Each margin is asked for its own entry.}
 
-\item{at, weight}{Handled by the generic before dispatch; unused here.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
 
-\item{...}{Passed to the marginals.}
+\item{...}{Passed to each margin's method.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with the product column names on both margins.
 }
 \description{
-The Kronecker product of the marginal Gram matrices.
+Returns the Kronecker product of the marginal Gram matrices, which is the
+integral over the box exactly, with no quadrature. A product of exactly
+integrated margins is therefore exact at any number of variables, where a
+rule over the box would cost a node count exponential in the number of
+variables and still carry an error.
 }
 \details{
 The integral over the box of a product of separable functions factorizes
-into a product of one-dimensional integrals, so the matrix is separable and
-costs one marginal Gram matrix per variable rather than one integration over
-the box. A tensor of exactly integrated marginals is therefore exact at any
-number of variables, where a quadrature over the box would not be.
+into one-dimensional integrals, so
+\eqn{G = G_1 \otimes \cdots \otimes G_D} with \eqn{G_j} the margin's own
+matrix at that margin's own order. It costs one marginal Gram matrix per
+variable and no integration over the box at all.
+
+The result is symmetrized as \code{(G + t(G))/2}, a Kronecker product of
+symmetric matrices being symmetric only up to the order its entries were
+formed in. It is singular whenever any margin's is, so an \code{order} with any
+non-zero entry gives a singular matrix.
+}
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}} for the generic and the alternative measures;
+\code{\link[base:kronecker]{base::kronecker()}}, whose column order this follows.
 }
 \keyword{internal}

@@ -4,22 +4,31 @@
 \alias{basis_int.TensorBasis}
 \title{Integral of a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
-\item{x}{A numeric matrix with one column per variable.}
+\item{x}{A numeric matrix with one column per variable, the upper corners
+of the boxes.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{nrow(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns,
+exactly zero in the row at the lower corner.
 }
 \description{
-The integral over the box from the lower corner to each point.
+Returns the integral over the box from the lower corner to each point, one
+iterated integral per variable, in closed form wherever the margins have
+one. It is the only integral over a box in the package, the numerical
+fallback taking one variable alone.
 }
 \details{
 The integrand separates, so the multiple integral is the product of the
-marginal integrals, and the anchor survives: a product in which every factor
-is zero at the corner is zero at the corner.
+marginal integrals. The anchoring convention of \code{\link[=basis_int]{basis_int()}} survives
+without a correction: a product in which every factor is zero at the corner
+is zero at the corner, so the row at \code{basis@lower} is exactly zero.
+}
+\seealso{
+\code{\link[=tensor_design]{tensor_design()}}, which does the work; \code{\link[=basis_int]{basis_int()}} for the
+generic and the anchoring convention.
 }
 \keyword{internal}

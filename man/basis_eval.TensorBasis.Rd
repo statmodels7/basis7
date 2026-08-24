@@ -4,17 +4,31 @@
 \alias{basis_eval.TensorBasis}
 \title{Evaluate a Tensor Product Basis}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
-\item{x}{A numeric matrix with one column per variable.}
+\item{x}{A numeric matrix with one column per variable, or a vector taken
+by row. Each column is checked against its own margin's interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{nrow(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns,
+with column names pasting the margins' with dots.
 }
 \description{
-The row-wise Kronecker product of the marginal evaluations.
+Evaluates each margin at its own column of the points and takes the
+row-wise Kronecker product, so row \eqn{i} of the result is
+\eqn{B_1(x_{i1}) \otimes \cdots \otimes B_D(x_{iD})}. The matrix has
+\eqn{\prod_j K_j} columns, so at several variables it is worth avoiding,
+and \code{\link[=basis_contract]{basis_contract()}} avoids it.
+}
+\details{
+Cost is one marginal evaluation per variable plus the products, and the
+result is \code{nrow(x)} by \code{basis@dimension}, which at four margins of eight
+functions and 20000 points is 625 MB. Nothing is cached.
+}
+\seealso{
+\code{\link[=tensor_design]{tensor_design()}} and \code{\link[=khatri_rao]{khatri_rao()}}, which do the work;
+\code{\link[=basis_contract]{basis_contract()}}, for the value of a fit without this matrix.
 }
 \keyword{internal}

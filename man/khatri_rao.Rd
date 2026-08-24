@@ -7,14 +7,31 @@
 khatri_rao(a, b)
 }
 \arguments{
-\item{a, b}{Numeric matrices with the same number of rows.}
+\item{a, b}{Numeric matrices with the same number of rows. The row counts
+are not checked; a mismatch gives R's own recycling behavior.}
 }
 \value{
-A numeric matrix with \code{ncol(a) * ncol(b)} columns.
+A numeric matrix with \code{nrow(a)} rows and \code{ncol(a) * ncol(b)}
+columns, no dimnames.
 }
 \description{
-For matrices with the same number of rows, the matrix whose \eqn{i}th row is
-the Kronecker product of their \eqn{i}th rows, with the columns of the
-second varying fastest.
+For two matrices with the same number of rows, returns the matrix whose
+\eqn{i}th row is the Kronecker product of their \eqn{i}th rows. Reducing
+the margins' design matrices with it gives the product's, one row of
+\eqn{\prod_j K_j} entries per observation.
+}
+\details{
+The columns come out with \code{b} varying fastest, matching
+\code{\link[base:kronecker]{base::kronecker()}} and \code{\link[=basis_colnames.TensorBasis]{basis_colnames.TensorBasis()}}. That is the whole
+column-order convention of a tensor basis, and the reason \code{\link[=basis_contract]{basis_contract()}}
+reverses an array's dimensions before flattening it.
+
+The result has \code{ncol(a) * ncol(b)} columns, so reducing across several
+margins grows geometrically; nothing here bounds that, and
+\code{\link[=basis_contract]{basis_contract()}} is what avoids paying it.
+}
+\seealso{
+\code{\link[=tensor_design]{tensor_design()}}, its only caller;
+\code{\link[=basis_colnames.TensorBasis]{basis_colnames.TensorBasis()}}, which names its columns.
 }
 \keyword{internal}

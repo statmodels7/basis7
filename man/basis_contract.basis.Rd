@@ -4,19 +4,34 @@
 \alias{basis_contract.basis}
 \title{Contract an Ordinary Basis Against Coefficients}
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis} other
+than \link{TensorBasis}.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{coef}{A numeric vector, or a matrix of several sets of coefficients.}
+\item{coef}{A numeric vector of length \code{basis@dimension}, or a matrix with
+that many rows and one column per set of coefficients.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric vector, or a matrix when \code{coef} is one.
+A numeric vector with one value per point, or a matrix with one
+column per column of \code{coef}.
 }
 \description{
-The design matrix times the coefficients. For a basis of one variable there
-is nothing to avoid forming, so the definition is the computation.
+Returns \code{basis_eval(basis, x) \%*\% coef}. For a basis of one variable the
+design matrix has \code{basis@dimension} columns and there is nothing worth
+avoiding, so the definition is the computation. The method every class
+inherits except \link{TensorBasis}.
+}
+\details{
+\code{coef} is taken in the design's own column order, there being one obvious
+one. Several sets of coefficients may be given as the columns of a matrix,
+and the result then has one column each.
+}
+\seealso{
+\code{\link[=basis_contract]{basis_contract()}} for the generic;
+\code{\link[=basis_contract.TensorBasis]{basis_contract.TensorBasis()}} for the case where the design matrix is
+worth avoiding.
 }
 \keyword{internal}

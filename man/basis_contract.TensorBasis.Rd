@@ -4,24 +4,52 @@
 \alias{basis_contract.TensorBasis}
 \title{Contract a Tensor Product Basis Against Coefficients}
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
 \item{x}{A numeric matrix with one column per variable.}
 
-\item{coef}{An array with one dimension per marginal, or a list of factor
-matrices in canonical polyadic form.}
+\item{coef}{An array of dimension \verb{(K_1, ..., K_D)}, a numeric vector of
+\code{basis@dimension} values in the design's own column order, or a list of
+\code{D} factor matrices in canonical polyadic form.}
 
-\item{block}{The number of rows processed at once when \code{coef} is an
-array. It bounds the peak memory, which is otherwise what forming the
-design matrix would cost.}
+\item{block}{The number of rows processed at once when \code{coef} is an array
+or a vector, default \code{1024}. It bounds the peak memory, which is
+otherwise what forming the design matrix would cost. Ignored for a list.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
 A numeric vector with one value per row of \code{x}.
 }
 \description{
-The value of the function the coefficients describe, computed from the
-marginal evaluations without forming the tensor design matrix.
+Returns the value of the function the coefficients describe, computed from
+the marginal evaluations. A list of factor matrices goes to
+\code{\link[=contract_cp]{contract_cp()}}, which forms nothing; an array or a vector is contracted in
+blocks of \code{block} rows, so the peak memory is one block's design matrix and
+not the whole one.
+}
+\section{The blocked route}{
+Each block of rows is evaluated through \code{\link[=tensor_design]{tensor_design()}} and multiplied by
+the flattened coefficients, and the block is then discarded. Measured at
+four margins of eight functions and 20000 points, where the full design is
+625 MB: 32 MB at the default block and 0.83 s, against 625 MB and 1.00 s
+for the design route, agreeing exactly. Raising \code{block} past a few thousand
+buys no speed and costs memory linearly.
+}
+
+\section{The flattening}{
+An array is passed through \code{aperm()} before flattening, because the design's
+columns run with the last margin fastest while an R array is stored with
+its first index fastest. A plain vector has no dimensions to reverse and is
+taken in the design's column order as it stands, so the two shapes describe
+different functions from the same numbers. See \code{\link[=basis_contract]{basis_contract()}}.
+
+A \code{coef} of the wrong length, or an array whose dimensions are not the
+margins', throws with the expected values named.
+}
+
+\seealso{
+\code{\link[=contract_cp]{contract_cp()}} for the factorized route; \code{\link[=basis_contract]{basis_contract()}} for
+the generic and the two shapes of coefficient.
 }
 \keyword{internal}

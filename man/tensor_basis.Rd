@@ -7,45 +7,79 @@
 tensor_basis(...)
 }
 \arguments{
-\item{...}{The bases to multiply, or a single list of them.}
+\item{...}{The bases to multiply, two or more, or a single list of them.
+Each must take one variable; a \link{TensorBasis} among them is flattened into
+its own margins.}
 }
 \value{
-An object of class \code{\link[=TensorBasis]{TensorBasis()}}.
+An object of class \link{TensorBasis} with \code{basis_name}
+\verb{tensor(<names>)}, \code{basis_params} holding \code{marginal_dimensions}, and
+column names pasting the margins' with dots.
 }
 \description{
 Multiplies bases, one per variable, into the basis of all products of their
-functions.
+functions. This is how a smooth surface of several covariates is built from
+one-dimensional pieces: the result is a basis like any other, evaluated at
+a matrix of points instead of a vector, and every generic answers exactly
+where the margins do.
 }
-\details{
+\section{Size}{
 The result has \eqn{\prod_j K_j} functions and takes \eqn{D} variables, so
-the evaluation points become a matrix with one column per variable. That
-growth is the reason \code{\link[=basis_contract]{basis_contract()}} exists: it computes what a
-fit needs from the marginal evaluations alone, without ever forming the
-product.
+the evaluation points become a matrix of \eqn{D} columns. The dimension
+grows geometrically: four cubic B-splines of eight functions each give
+4096 columns, and the design matrix at 20000 observations would be 625 MB.
 
-Each marginal must take one variable. A product of products is flattened
-rather than nested, so the marginals of the result are always the original
-bases.
+\code{\link[=basis_contract]{basis_contract()}} exists for that reason. It computes what a fit needs
+from the marginal evaluations, in blocks for a full coefficient array and
+without forming anything at all for a factorized one.
 }
+
+\section{Flattening}{
+Each marginal must take one variable. A product of products is flattened
+and never nested, so \verb{@marginals} always holds the original bases and
+\code{\link[=basis_nvar]{basis_nvar()}} counts them all: multiplying a two-way product by a third
+basis gives one three-way product with three margins.
+}
+
+\section{The interval}{
+\verb{@lower} and \verb{@upper} hold one entry per variable, taken from the margins,
+so the domain is the box they span and a point outside any margin's
+interval throws.
+}
+
 \examples{
-b <- tensor_basis(bspline_basis(dimension = 4), bspline_basis(dimension = 3, degree = 2))
+b <- tensor_basis(bspline_basis(dimension = 4),
+                  bspline_basis(dimension = 3, degree = 2))
 b
 
 x <- cbind(c(0.2, 0.5), c(0.7, 0.1))
 round(basis_eval(b, x), 4)
 
-# the Gram matrix is the Kronecker product of the marginal ones
-g <- basis_gram(b)
-max(abs(g - kronecker(
+# The Gram matrix is the Kronecker product of the marginal ones, exactly.
+max(abs(basis_gram(b) - kronecker(
   basis_gram(bspline_basis(dimension = 4)),
   basis_gram(bspline_basis(dimension = 3, degree = 2))
 )))
 
+# The integral is anchored at the lower corner of the box.
+basis_int(b, cbind(0, 0))
+
+# A product of products is flattened, so the margins stay one-dimensional.
+t3 <- tensor_basis(b, fourier_basis(dimension = 3))
+c(basis_nvar(t3), length(t3@marginals), t3@dimension)
+
+# The dimension grows geometrically. basis_contract() exists for that.
+vapply(2:5, function(D) {
+  tensor_basis(rep(list(bspline_basis(dimension = 8)), D))@dimension
+}, numeric(1))
+
 }
 \references{
 Wood, S. N. (2006). Low-rank scale-invariant tensor product smooths for
-generalized additive mixed models. \emph{Biometrics} 62, 1025-1036.
+generalized additive mixed models. \emph{Biometrics} \strong{62}, 1025-1036.
 }
 \seealso{
-\code{\link[=basis_contract]{basis_contract()}}, \code{\link[=basis_gram]{basis_gram()}}
+\code{\link[=basis_contract]{basis_contract()}}, for evaluating a fit without the design
+matrix; \code{\link[=basis_gram]{basis_gram()}}, which is a Kronecker product here; \code{\link[=dr_basis]{dr_basis()}}
+and \code{\link[=constrain_basis]{constrain_basis()}}, which apply to a product as to any basis.
 }

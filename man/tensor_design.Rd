@@ -7,19 +7,29 @@
 tensor_design(basis, x, order = NULL, integral = FALSE)
 }
 \arguments{
-\item{basis}{A \code{\link[=TensorBasis]{TensorBasis()}} object.}
+\item{basis}{A \link{TensorBasis} object.}
 
-\item{x}{A numeric matrix with one column per variable.}
+\item{x}{A numeric matrix with one column per variable, already validated.}
 
-\item{order}{An integer vector of derivative orders, or \code{NULL}.}
+\item{order}{An integer vector with one entry per variable, or \code{NULL} for
+the functions themselves.}
 
-\item{integral}{Whether to integrate instead.}
+\item{integral}{\code{TRUE} to ask each margin for its anchored integral instead
+of its evaluation. Not combined with \code{order}; each caller sets at most
+one.}
 }
 \value{
-A numeric matrix with \code{nrow(x)} rows.
+A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns,
+no dimnames; callers add them through \code{\link[=name_columns]{name_columns()}}.
 }
 \description{
-Evaluates each marginal, differentiated or integrated as asked, and
-multiplies the results row by row.
+Evaluates each margin, differentiated or integrated as asked, and reduces
+the results with \code{\link[=khatri_rao]{khatri_rao()}} into the product's own design matrix. The
+one body behind \code{\link[=basis_eval.TensorBasis]{basis_eval.TensorBasis()}}, \code{\link[=basis_deriv.TensorBasis]{basis_deriv.TensorBasis()}}
+and \code{\link[=basis_int.TensorBasis]{basis_int.TensorBasis()}}, which differ only in what they ask the
+margins for.
+}
+\seealso{
+\code{\link[=marginal_designs]{marginal_designs()}} and \code{\link[=khatri_rao]{khatri_rao()}}, its two steps.
 }
 \keyword{internal}
