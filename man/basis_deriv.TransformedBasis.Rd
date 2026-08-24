@@ -4,19 +4,34 @@
 \alias{basis_deriv.TransformedBasis}
 \title{Derivatives of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
+\item{basis}{A \link{TransformedBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{1}, passed to the parent unchanged.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns.
 }
 \description{
-The parent's derivatives, multiplied by the transform: differentiation is
-linear and the transform does not depend on \code{x}.
+Returns the parent's \code{order}-th derivative multiplied by the transform,
+\eqn{\tilde{B}^{(d)}(x) = B^{(d)}(x)\,T}. Differentiation is linear and
+\eqn{T} does not depend on \code{x}, so the same matrix serves at every order
+and no derivative of the transformation itself enters.
+}
+\details{
+The accuracy is the parent's. Where the parent differentiates exactly so
+does this; where the parent falls back to a stencil the result is that
+stencil's answer arranged by \eqn{T}, which is why \code{\link[=basis_is_numerical]{basis_is_numerical()}}
+reports the parent's flags for a transformed basis in place of its own
+registered methods.
+}
+\seealso{
+\code{\link[=basis_deriv]{basis_deriv()}} for the generic; \code{\link[=basis_is_numerical]{basis_is_numerical()}} for whose
+accuracy this inherits.
 }
 \keyword{internal}

@@ -4,21 +4,40 @@
 \alias{basis_gram.TransformedBasis}
 \title{Gram Matrix of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
+\item{basis}{A \link{TransformedBasis} object.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, a single non-negative whole number,
+default \code{0}, passed to the parent unchanged.}
 
-\item{at, weight}{Handled by the generic before dispatch; unused here.}
+\item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
+they never arrive here. Named only because S7 requires a method's formals
+to contain the generic's.}
 
-\item{...}{Passed to the parent's method.}
+\item{...}{Passed to the parent's method, so \code{panels} and \code{nodes} reach a
+parent whose Gram matrix is a quadrature.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-The congruence \eqn{T^\top G\, T} of the parent's Gram matrix, so a parent
-whose inner products are exact passes that on rather than falling back to
-quadrature.
+Returns the congruence \eqn{T^\top G\,T} of the parent's Gram matrix. A
+parent whose inner products are exact passes that exactness on, so an
+orthonormalized B-spline has an exactly diagonal Gram matrix and no
+quadrature is run anywhere.
+}
+\details{
+The congruence preserves symmetry and positive semidefiniteness, and can
+only lower the rank, by at most \code{nrow(T) - ncol(T)}. The result is
+symmetrized as \code{(G + t(G))/2} before it is returned, the two orderings of a
+triple product differing in their last bits.
+
+\code{\link[=orthonorm_basis]{orthonorm_basis()}} is exact for this reason: it chooses \eqn{T} so that
+\eqn{T^\top G\,T} is the identity, and the check
+\code{basis_gram(orthonorm_basis(b))} returns it to 4.4e-16 on a cubic B-spline.
+}
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}} for the generic; \code{\link[=orthonorm_basis]{orthonorm_basis()}}, which chooses
+\eqn{T} to make this the identity.
 }
 \keyword{internal}

@@ -32,42 +32,75 @@ knots and degree of a B-spline, the frequency of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 
-\item{parent_basis}{The basis being transformed.}
+\item{parent_basis}{The basis being transformed, any object inheriting from
+\link{basis}. Kept whole, so it can still be evaluated and asked what it is.}
 
-\item{transform}{The matrix \eqn{T}, with one row per parent function.}
+\item{transform}{The matrix \eqn{T}, numeric, with one row per parent
+function and one column per function of the result.}
 }
 \value{
-An object of class \code{TransformedBasis}.
+An object of class \code{TransformedBasis}, inheriting from \link{basis},
+with the five properties of a basis plus \code{parent_basis} and \code{transform}.
 }
 \description{
-A basis obtained from another by a fixed linear map of its functions,
-\eqn{\tilde{B}(x) = B(x)\,T}. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
+The S7 class of bases obtained from another by a fixed linear map of its
+functions, \eqn{\tilde{B}(x) = B(x)\,T}. It carries the parent and the
+matrix, and it is itself a basis, so a constrained or rotated basis goes on
+answering every generic and nothing downstream has to know a
+transformation happened. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
 \code{\link[=constrain_basis]{constrain_basis()}} or \code{\link[=dr_basis]{dr_basis()}}.
 }
-\details{
-Orthonormalizing a basis, restricting it to satisfy a linear constraint, and
-rebuilding it so that it diagonalizes an inner product are the same
-operation with different matrices, so they share one class. Derivatives and
-integrals transform by the same \eqn{T}, because differentiation and
-integration are linear and \eqn{T} does not depend on \eqn{x}; the Gram
-matrix transforms by congruence, \eqn{T^\top G\, T}, so a parent with an
-exact Gram matrix passes its exactness on.
+\section{Three operations, one class}{
+Orthonormalizing a basis, restricting it to satisfy a linear constraint,
+and rebuilding it so that it diagonalizes an inner product are the same
+operation with different matrices. Each generic follows from linearity:
 
-\eqn{T} may have fewer columns than rows, which is how a constraint reduces
-the dimension.
+\deqn{\tilde{B}^{(d)}(x) = B^{(d)}(x)\,T, \qquad
+  \int_a^x \tilde{B} = \left(\int_a^x B\right) T, \qquad
+  \tilde{G} = T^\top G\, T.}
 
-Transforms compose by multiplication rather than by nesting: transforming a
-\code{TransformedBasis} again produces one object holding the product of the
-two matrices, so a chain of transforms costs one matrix multiplication per
-evaluation however long it is.
+Differentiation and integration are linear and \eqn{T} does not depend on
+\eqn{x}, so both transform by the same matrix; the Gram matrix transforms
+by congruence. A parent with exact derivatives and an exact Gram matrix
+therefore passes its exactness on, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports the
+parent's answer in place of this class's own methods.
+
+The anchored integral survives too: a linear combination of columns that
+are all zero at the lower endpoint is zero there.
 }
+
+\section{Fewer columns than rows}{
+\eqn{T} may be \eqn{K \times m} with \eqn{m < K}, which is how
+\code{\link[=constrain_basis]{constrain_basis()}} reduces the dimension. \verb{@dimension} is \code{ncol(transform)}
+and the parent's is \code{nrow(transform)}.
+}
+
+\section{Transforms compose by multiplication}{
+Transforming a \code{TransformedBasis} again produces one object holding the
+product of the two matrices, with the original as its parent. A chain of
+transformations therefore costs one matrix multiplication per evaluation
+however long it is. The \verb{@basis_name} still nests, so an orthonormalized
+orthonormal basis reads \code{orthonorm(orthonorm(bspline))} while
+\verb{@parent_basis} is the B-spline.
+}
+
 \examples{
 o <- orthonorm_basis(bspline_basis(dimension = 6))
 S7::S7_inherits(o, TransformedBasis)
 dim(o@transform)
 
+# A constraint takes a column away.
+x <- seq(0, 1, length.out = 200)
+b <- bspline_basis(dimension = 6)
+dim(constrain_basis(b, colSums(basis_eval(b, x)))@transform)
+
+# Transforming twice keeps one matrix and the original parent.
+oo <- orthonorm_basis(o)
+dim(oo@transform)
+class(oo@parent_basis)
+
 }
 \seealso{
-\code{\link[=orthonorm_basis]{orthonorm_basis()}}, \code{\link[=constrain_basis]{constrain_basis()}},
-\code{\link[=dr_basis]{dr_basis()}}
+\code{\link[=orthonorm_basis]{orthonorm_basis()}}, \code{\link[=constrain_basis]{constrain_basis()}} and \code{\link[=dr_basis]{dr_basis()}}, the
+three constructors; \code{\link[=new_transformed]{new_transformed()}}, which they share.
 }

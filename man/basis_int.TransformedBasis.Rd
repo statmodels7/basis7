@@ -4,18 +4,28 @@
 \alias{basis_int.TransformedBasis}
 \title{Integral of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
+\item{basis}{A \link{TransformedBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, exactly zero in the row at \code{basis@lower}.
 }
 \description{
-The parent's integral, multiplied by the transform. The anchor at the lower
-endpoint survives, since a linear combination of columns that are all zero
-there is zero there.
+Returns the parent's anchored integral multiplied by the transform. The
+anchoring survives without a correction: every column of the parent's
+integral is zero at the lower endpoint, and a linear combination of zeros
+is zero.
+}
+\details{
+Integration is linear and \eqn{T} does not depend on \code{x}, so the identity
+is exactly the one \code{\link[=basis_deriv.TransformedBasis]{basis_deriv.TransformedBasis()}} uses in the other
+direction. The accuracy is again the parent's.
+}
+\seealso{
+\code{\link[=basis_int]{basis_int()}} for the generic and the anchoring convention.
 }
 \keyword{internal}

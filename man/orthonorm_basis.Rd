@@ -7,35 +7,77 @@
 orthonorm_basis(basis, order = 0L)
 }
 \arguments{
-\item{basis}{The basis to orthonormalize.}
+\item{basis}{The basis to orthonormalize, any object inheriting from
+\link{basis}.}
 
 \item{order}{The derivative order whose inner products are made the
-identity. Zero, the default, orthonormalizes the functions themselves.}
+identity, a single non-negative whole number, default \code{0}. Any value
+above \code{0} throws for the shipped families, their higher-order Gram
+matrices being singular.}
 }
 \value{
-An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
+An object of class \link{TransformedBasis} with \code{basis_name}
+\verb{orthonorm(<parent>)} and column names \code{on1}, \code{on2}, and so on. Its
+dimension is the parent's.
 }
 \description{
-Returns the basis whose functions span the same space and are orthonormal in
-\eqn{L^2} on the basis interval.
+Returns a basis spanning the same functions whose Gram matrix is the
+identity, so that the design matrix has orthogonal columns of unit norm in
+\eqn{L^2} and a least-squares fit against it is perfectly conditioned. The
+transform is read off the Gram matrix, so for the shipped families the
+orthonormalization is exact: there is no grid, no number of points to
+choose, and no scale factor to correct.
 }
-\details{
-The transform is read off the Gram matrix rather than estimated on a grid.
-Writing \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix,
-the basis \eqn{B R^{-1}} has Gram matrix
-\eqn{R^{-\top} R^\top R R^{-1} = I}. Because the parent's Gram matrix is
-exact for the families that ship with the package, so is the
-orthonormalization: there is no grid, no number of points to choose, and no
-scale factor to correct.
+\section{The construction}{
+Write \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix.
+The basis \eqn{B R^{-1}} then has Gram matrix
+\eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. Measured on a
+cubic B-spline of six functions, \code{basis_gram()} of the result differs from
+the identity by 4.4e-16.
 
-Orthonormalizing an already orthonormal basis returns it unchanged, up to
-rounding, and the transforms collapse rather than nesting.
+The span is unchanged, \eqn{R^{-1}} being invertible: a function the parent
+can represent is fitted by the orthonormalized basis to rounding.
 }
+
+\section{Orthonormal in which inner product}{
+\code{order} chooses it. At \code{0}, the default, the functions themselves are
+orthonormal. Above that the \code{order}-th derivatives would be, and the Gram
+matrix there is singular for every family, the constant differentiating
+away, so the factorization fails and an error says so. Orthonormalizing a
+derivative therefore needs a basis whose constant has already been removed
+by \code{\link[=constrain_basis]{constrain_basis()}}.
+}
+
+\section{Composing}{
+Orthonormalizing an already orthonormal basis returns it unchanged up to
+rounding, and the two transforms collapse into one matrix; only
+\verb{@basis_name} records the second pass.
+}
+
 \examples{
-o <- orthonorm_basis(bspline_basis(dimension = 6))
-round(basis_gram(o), 12) # the identity, exactly
+b <- bspline_basis(dimension = 6)
+o <- orthonorm_basis(b)
+
+# The Gram matrix is the identity, exactly.
+round(basis_gram(o), 12)
+max(abs(basis_gram(o) - diag(6)))
+
+# The span is unchanged: a function the parent represents is fitted exactly.
+set.seed(1)
+x <- seq(0, 1, length.out = 100)
+f <- drop(basis_eval(b, x) \%*\% rnorm(6))
+max(abs(lm.fit(basis_eval(o, x), f)$residuals))
+
+# Orthonormalizing again changes nothing, and keeps one matrix.
+max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
+class(orthonorm_basis(o)@parent_basis)
+
+# A higher order is refused: that Gram matrix is singular.
+try(orthonorm_basis(b, order = 2))
 
 }
 \seealso{
-\code{\link[=basis_gram]{basis_gram()}}, \code{\link[=constrain_basis]{constrain_basis()}}
+\code{\link[=basis_gram]{basis_gram()}}, which supplies \eqn{G} and which the result makes
+the identity; \code{\link[=constrain_basis]{constrain_basis()}} to remove a direction first;
+\code{\link[=dr_basis]{dr_basis()}} for a rotation that diagonalizes two matrices at once.
 }

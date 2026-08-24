@@ -7,26 +7,42 @@
 chol_pd(m, tol = 1e-12)
 }
 \arguments{
-\item{m}{A symmetric numeric matrix.}
+\item{m}{A symmetric numeric matrix. Symmetry is assumed, never checked:
+\code{eigen(symmetric = TRUE)} reads the lower triangle.}
 
-\item{tol}{The relative tolerance below which the smallest eigenvalue counts
-as zero.}
+\item{tol}{The relative tolerance below which the smallest eigenvalue
+counts as zero, default \code{1e-12}. The test is
+\code{min(ev) > tol * max(ev)}, so it is scale-free.}
 }
 \value{
-The upper triangular Cholesky factor, or \code{NULL}.
+The upper triangular Cholesky factor \eqn{R} with
+\eqn{m = R^\top R}, or \code{NULL} when \code{m} is empty, holds an \code{NA}, or is not
+positive definite to \code{tol}.
 }
 \description{
-The Cholesky factor of a symmetric matrix, or \code{NULL} when the matrix is
-not positive definite to the given relative tolerance.
+Returns the upper triangular Cholesky factor of a symmetric matrix, or
+\code{NULL} when the matrix is not positive definite to the given relative
+tolerance. The verdict comes from the eigenvalues and never from whether
+\code{\link[base:chol]{base::chol()}} raised, so it is the same on every platform.
 }
 \details{
-The verdict comes from the eigenvalues rather than from whether
-\code{\link[base:chol]{base::chol()}} raises. On a matrix with an exactly zero eigenvalue
-the pivot that should be zero comes out positive or negative according to
-rounding, so \code{chol()} succeeds on some platforms and fails on others,
-and a construction that asks it whether a penalty is usable gets a different
-answer on different machines. Comparing the smallest eigenvalue with the
-largest is a statement about the matrix, and gives the same answer
-everywhere.
+On a matrix with an exactly zero eigenvalue the pivot that should be zero
+comes out positive or negative according to rounding, so \code{chol()} succeeds
+on some platforms and fails on others. A construction that asks it whether
+a Gram matrix or a penalty is usable therefore gets a different answer on
+different machines: \code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}} once disagreed
+with themselves between this machine and the CI runners for exactly that
+reason.
+
+Comparing the smallest eigenvalue with the largest is a statement about the
+matrix and gives the same answer everywhere. The eigendecomposition costs
+little beside what both callers already do.
+
+The \code{chol()} call is still wrapped, so a matrix that passes the eigenvalue
+test and fails the factorization anyway returns \code{NULL} instead of throwing.
+}
+\seealso{
+\code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}}, its two callers, which turn
+a \code{NULL} into an error naming what to do about it.
 }
 \keyword{internal}

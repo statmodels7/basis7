@@ -4,16 +4,29 @@
 \alias{basis_eval.TransformedBasis}
 \title{Evaluate a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
+\item{basis}{A \link{TransformedBasis} object.}
 
-\item{x}{A numeric vector of evaluation points.}
+\item{x}{A numeric vector of evaluation points inside the basis interval,
+which is the parent's.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows.
+A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
+columns, with column names \code{on1}, \code{cn1} or \code{dr1} and so on.
 }
 \description{
-The parent's evaluation, multiplied by the transform.
+Evaluates the parent and multiplies by the transform,
+\eqn{\tilde{B}(x) = B(x)\,T}. Nothing is recomputed and no property of the
+parent is lost: the result spans a subspace of what the parent spans, and
+spans all of it when \eqn{T} is square and invertible.
+}
+\details{
+Cost is one parent evaluation plus one \code{length(x)} by \code{K} by \code{m} matrix
+product. Because \code{\link[=new_transformed]{new_transformed()}} collapses a chain into one matrix,
+that is the cost however many transformations were composed.
+}
+\seealso{
+\code{\link[=basis_eval]{basis_eval()}} for the generic; \link{TransformedBasis} for the class.
 }
 \keyword{internal}

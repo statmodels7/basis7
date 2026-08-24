@@ -7,42 +7,79 @@
 constrain_basis(basis, constraint, tol = 1e-10)
 }
 \arguments{
-\item{basis}{The basis to restrict.}
+\item{basis}{The basis to restrict, any object inheriting from \link{basis}.}
 
-\item{constraint}{A matrix with one column per basis function, or a vector
-for a single constraint.}
+\item{constraint}{A numeric matrix with one column per basis function, or a
+plain vector for a single constraint, which is taken as one row. Rows
+need not be independent; the rank is computed.}
 
 \item{tol}{The relative tolerance below which a singular value counts as
-zero when determining the rank.}
+zero when the rank is determined, default \code{1e-10}, applied as
+\code{tol * max(d)}.}
 }
 \value{
-An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
+An object of class \link{TransformedBasis} of dimension
+\code{basis@dimension - rank}, with \code{basis_name} \verb{constrained(<parent>)},
+column names \code{cn1}, \code{cn2}, and so on, and \code{basis_params$constraint_rank}.
 }
 \description{
-Returns the basis whose coefficient vectors are exactly those satisfying
-\eqn{C\beta = 0}, with the dimension reduced by the rank of \eqn{C}.
+Returns a basis whose functions are exactly those of the parent satisfying
+\eqn{C\beta = 0}, with the dimension reduced by the rank of \eqn{C}. This
+is how a basis that carries its own constant is made to sit beside an
+intercept, and how a smooth term is made identifiable.
 }
-\details{
-The transform is an orthonormal basis of the null space of \eqn{C},
-extracted from its singular value decomposition, so the constrained basis
-spans precisely the admissible functions and no reparametrization of the
-constraint changes the space it produces.
+\section{The construction}{
+The transform is an orthonormal basis of the null space of \eqn{C}, taken
+from the right singular vectors of its singular value decomposition
+belonging to the zero singular values. The constrained basis therefore
+spans precisely the admissible functions, and rescaling or reordering the
+rows of \eqn{C} changes nothing about the space produced.
+
+The rank is counted as the number of singular values above
+\code{tol * max(d)}, and the result has \code{basis@dimension - rank} columns, with
+the rank recorded in \code{basis_params$constraint_rank}.
+}
+
+\section{Writing the constraint}{
+\code{constraint} has one column per basis function, so a condition on the
+fitted curve is expressed by first evaluating the basis. The usual
+sum-to-zero identifiability constraint over a grid or over the observed
+covariate is \code{colSums(basis_eval(b, x))}, which makes the fitted values sum
+to zero there; several constraints are the rows of a matrix.
 
 What the package supplies is the mechanics. Which constraint a model term
 should carry, whether a sum-to-zero condition for identifiability or
-orthogonality to a linear part, is a decision that needs to know what the
-term means, and belongs to the layer that does.
+orthogonality to a linear part, needs to know what the term means and
+belongs to the layer that does.
 }
+
+\section{Errors}{
+A \code{constraint} that is not numeric, or whose column count is not
+\code{basis@dimension}, throws with both numbers named; a missing value throws;
+and a constraint of full rank leaves no functions and throws, in place of
+returning a basis of zero columns.
+}
+
 \examples{
 b <- bspline_basis(dimension = 6)
-
-# sum to zero over a grid: the usual identifiability constraint
 x <- seq(0, 1, length.out = 200)
+
+# Sum to zero over a grid: the usual identifiability constraint, which
+# removes the constant a B-spline basis carries.
 cs <- constrain_basis(b, colSums(basis_eval(b, x)))
 cs@dimension
+cs@basis_params$constraint_rank
 max(abs(colSums(basis_eval(cs, x))))
+
+# Two constraints take two columns: sum to zero and orthogonal to x.
+C <- rbind(colSums(basis_eval(b, x)), colSums(basis_eval(b, x) * x))
+constrain_basis(b, C)@dimension
+
+# A constraint of full rank leaves nothing, and is refused.
+try(constrain_basis(b, diag(6)))
 
 }
 \seealso{
-\code{\link[=dr_basis]{dr_basis()}}, \code{\link[=orthonorm_basis]{orthonorm_basis()}}
+\code{\link[=orthonorm_basis]{orthonorm_basis()}} for a transformation that keeps the dimension;
+\code{\link[=dr_basis]{dr_basis()}}, which applies a constraint and a rotation together.
 }

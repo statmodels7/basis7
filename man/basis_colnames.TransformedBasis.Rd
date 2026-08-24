@@ -4,16 +4,29 @@
 \alias{basis_colnames.TransformedBasis}
 \title{Column Names of a Transformed Basis}
 \arguments{
-\item{basis}{A \code{\link[=TransformedBasis]{TransformedBasis()}} object.}
+\item{basis}{A \link{TransformedBasis} object.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
 A character vector of length \code{basis@dimension}.
 }
 \description{
-The transform's prefix numbered from one. The parent's names cannot be kept:
-each new function is a combination of all of them, and a transform may
-produce fewer functions than it consumed.
+Numbers the columns under the two-letter prefix the transformation
+recorded: \verb{on1 ... onk} after \code{\link[=orthonorm_basis]{orthonorm_basis()}}, \verb{cn1 ...} after
+\code{\link[=constrain_basis]{constrain_basis()}}, \verb{dr1 ...} after \code{\link[=dr_basis]{dr_basis()}}.
+}
+\details{
+The parent's names cannot be carried over. Each new function is a
+combination of all the parent's, so no single one of them names it, and a
+constraint returns fewer functions than it consumed. The prefix at least
+records which transformation produced the column, which the default
+\code{\link[=basis_colnames.basis]{basis_colnames.basis()}} would not: it takes the first two characters of
+\verb{@basis_name}, and every name here begins with the transformation's, so a
+chain would give \code{or1} for both an orthonormalization and its
+re-orthonormalization.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}} for the generic.
 }
 \keyword{internal}

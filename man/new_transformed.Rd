@@ -7,21 +7,42 @@
 new_transformed(basis, transform, name, prefix, params = list())
 }
 \arguments{
-\item{basis}{The basis to transform.}
+\item{basis}{The basis to transform, any object inheriting from \link{basis}.}
 
-\item{transform}{The matrix \eqn{T}.}
+\item{transform}{The matrix \eqn{T}, with one row per function of \code{basis}.}
 
-\item{name}{The name of the resulting basis.}
+\item{name}{The \code{basis_name} of the result. The callers pass
+\code{orthonorm(...)}, \code{constrained(...)} or \code{dr(...)} wrapped around the
+parent's own name, so the name nests even where the matrices collapse.}
 
-\item{prefix}{The prefix for its column names.}
+\item{prefix}{The two-letter prefix its column names are numbered under:
+\code{"on"}, \code{"cn"} or \code{"dr"}.}
 
-\item{params}{Extra entries for \code{basis_params}.}
+\item{params}{Extra entries for \code{basis_params}, merged with \code{prefix}.
+\code{\link[=constrain_basis]{constrain_basis()}} adds \code{constraint_rank} and \code{\link[=dr_basis]{dr_basis()}} adds that and
+\code{empirical_variance}.}
 }
 \value{
-An object of class \code{\link[=TransformedBasis]{TransformedBasis()}}.
+An object of class \link{TransformedBasis}.
 }
 \description{
-Wraps a basis in a \code{\link[=TransformedBasis]{TransformedBasis()}}, collapsing the transform
-into the parent's when the parent is already one.
+Wraps a basis in a \link{TransformedBasis}, collapsing the transform into the
+parent's when the parent is already one, so that a chain of transformations
+is stored as a single matrix. The one constructor \code{\link[=orthonorm_basis]{orthonorm_basis()}},
+\code{\link[=constrain_basis]{constrain_basis()}} and \code{\link[=dr_basis]{dr_basis()}} all go through.
+}
+\details{
+When \code{basis} is itself a \code{TransformedBasis}, the result holds
+\code{basis@transform \%*\% transform} and the original's parent. The dimension of
+the result is \code{ncol(transform)}, and its interval is the parent's, a linear
+map of the functions leaving the domain alone.
+
+Nothing is validated. The callers have already checked the shape of their
+own matrix, and a \code{transform} whose row count disagrees with the parent's
+dimension gives R's own non-conformable-arguments error at the first
+evaluation.
+}
+\seealso{
+\link{TransformedBasis}, the class it builds.
 }
 \keyword{internal}
