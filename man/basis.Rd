@@ -13,64 +13,118 @@ basis(
 )
 }
 \arguments{
-\item{basis_name}{A short name for the family, used when printing.}
+\item{basis_name}{A single string naming the family, printed by
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
+any computation.}
 
-\item{dimension}{The number of functions in the basis, a positive integer.}
+\item{dimension}{The number of functions in the basis, a single integer of
+at least 1. Must be of storage mode integer.}
 
 \item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several.}
+endpoint per variable for a basis of several. Both finite, of the same
+length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
+\code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
-\item{basis_params}{A named list of whatever else the subclass needs.}
+\item{basis_params}{A named list of whatever else the subclass needs: the
+knots and degree of a B-spline, the frequency of a Fourier basis, the
+marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
+any numeric entry of more than four values. Defaults to an empty list.}
 }
 \value{
-An object inheriting from class \code{basis}.
+This class is abstract and cannot be constructed. A subclass
+constructed from it is an S7 object with properties \code{basis_name}
+(character), \code{dimension} (integer), \code{lower} and \code{upper} (numeric, one
+entry per variable) and \code{basis_params} (list).
 }
 \description{
-The abstract parent of every basis in the package. A basis is a finite
-collection of functions on an interval, and the object carries what is
-needed to evaluate that collection, differentiate it, integrate it, and
-compute its inner products.
+The abstract parent of every basis in the package, and the class to inherit
+from when writing one of your own. A basis is a finite collection of
+functions on an interval; the object carries the interval, how many
+functions there are, and whatever else the family needs, and the generics
+evaluate that collection, differentiate it, integrate it and take its inner
+products. The class is abstract, so \code{basis(...)} throws; construct one of
+the concrete families or a subclass.
 }
-\details{
-A basis of dimension \eqn{d} on \eqn{[a, b]} is the collection
+\section{What a basis is}{
+A basis of dimension \eqn{d} on \eqn{[a, b]} is a collection
 \eqn{\varphi_1, \dots, \varphi_d}, and the object exists so that a
 function may be written as a linear combination of them,
 
 \deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta,
   \qquad B(x)_{ij} = \varphi_j(x_i),}
 
-with \eqn{B(x)} the \eqn{n \times d} design matrix
-\code{\link[=basis_eval]{basis_eval()}} returns. Fitting \eqn{f} is then a linear
-problem in \eqn{\beta} whatever the family, which is what makes
-derivatives, the anchored integral and the Gram matrix properties of the
-basis rather than of the fit.
-
-Concrete bases are subclasses. Each implements at least
-\code{\link[=basis_eval]{basis_eval()}}; \code{\link[=basis_deriv]{basis_deriv()}},
-\code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} fall back to numerical
-methods registered on this class, so a subclass that implements only its
-evaluation is immediately complete. Every closed form registered later takes
-over through dispatch, with no change to calling code.
-
-Bases are complete: a B-spline basis carries all its functions and its rows
-sum to one. Restricting a basis, whether for identifiability or to separate
-a linear from a nonlinear part, is a linear transformation of it and belongs
-to the layer that owns that decision.
-
-A basis lives on an interval, or, when it is a product of several, on a box:
-\code{lower} and \code{upper} then have one entry per variable and
-\code{\link[=basis_nvar]{basis_nvar()}} reports how many. Everything else is unchanged, and
-a univariate basis is the case of one variable rather than a separate kind
-of object.
+with \eqn{B(x)} the \eqn{n \times d} design matrix \code{\link[=basis_eval]{basis_eval()}}
+returns. Fitting \eqn{f} is a linear problem in \eqn{\beta} whatever the
+family, so the derivative, the anchored integral and the Gram matrix are
+all properties of the basis alone and can be computed once, before any
+data arrive.
 }
+
+\section{Writing a subclass}{
+A concrete basis is a subclass of this one. It must implement
+\code{\link[=basis_eval]{basis_eval()}}; \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} have
+numerical methods registered on this class, so a subclass supplying its
+evaluation alone answers all four generics immediately. A closed form
+registered later takes over through dispatch, with no change to calling
+code, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which of the three are still on
+the fallback. The vignette \code{vignette("defining-a-basis")} works one
+through.
+}
+
+\section{Bases here are complete}{
+A B-spline basis carries all its functions, so its rows sum to one and it
+spans the constant. Restricting a basis, for identifiability or to separate
+a linear part from a nonlinear one, is a linear transformation of it:
+\code{\link[=constrain_basis]{constrain_basis()}}, \code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}} each return a
+\link{TransformedBasis} that is itself a basis, so nothing downstream has to
+know a restriction happened.
+}
+
+\section{One variable or several}{
+A basis lives on an interval, or, when it is a product of several, on a
+box. \verb{@lower} and \verb{@upper} then hold one endpoint per variable and
+\code{\link[=basis_nvar]{basis_nvar()}} reports how many; \code{\link[=basis_eval]{basis_eval()}} takes a matrix of that
+many columns instead of a vector. Nothing else changes, and a basis of one
+variable is the case \eqn{d = 1} of the same object.
+}
+
+\section{What the validator enforces}{
+\verb{@basis_name} must be one string, \verb{@dimension} one integer of at least 1,
+and \verb{@lower} and \verb{@upper} must be finite, of equal length and strictly
+ordered within each variable. A double \verb{@dimension} is rejected by S7's own
+property check before the validator runs, so pass \code{6L} or an
+\code{as.integer()}; the constructors take a plain \code{6} and convert it.
+}
+
 \examples{
-# `basis` is abstract; construct a concrete subclass
+# The class is abstract, so it is a subclass that gets constructed.
 b <- bspline_basis(dimension = 6)
 b@dimension
 c(b@lower, b@upper)
+b@basis_params$degree
+
+# Its five properties are the same five on every basis in the package.
+S7::prop_names(b)
+S7::prop_names(fourier_basis(dimension = 5))
+
+# Inheriting from it and writing one method gives a working basis.
+Bumps <- S7::new_class("Bumps", parent = basis)
+S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
+  exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension), "-")^2 / 0.12^2)
+}
+bump <- Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
+
+# The three unwritten generics answer anyway, from finite differences.
+basis_is_numerical(bump)
+round(basis_deriv(bump, c(0.25, 0.75), order = 1), 4)
+
+# An interval the wrong way round is caught at construction.
+try(Bumps(basis_name = "b", dimension = 4L, lower = 1, upper = 0))
 
 }
 \seealso{
-\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=check_basis]{check_basis()}},
-\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
+\code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}} and \code{\link[=poly_basis]{poly_basis()}} for the
+three concrete families; \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}}
+and \code{\link[=basis_gram]{basis_gram()}} for the generics every basis answers; \code{\link[=check_basis]{check_basis()}}
+to verify a subclass of your own.
 }

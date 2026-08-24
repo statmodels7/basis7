@@ -7,25 +7,48 @@
 basis_nvar(basis)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 }
 \value{
-A positive integer.
+A single positive integer, of length one and never \code{NA}.
 }
 \description{
-One for an ordinary basis, and the number of marginals for a product of
-several.
+Returns the number of variables a basis is a function of: \code{1} for the three
+shipped families and for any wrapper over them, and the number of margins
+for a \code{\link[=tensor_basis]{tensor_basis()}}. It is the number of columns \code{\link[=basis_eval]{basis_eval()}} expects
+its \code{x} to have, so it answers what shape of input the object takes.
 }
 \details{
-The number is read off the endpoints, which carry one entry per variable, so
-a basis declares its input dimension by construction rather than by saying
-so separately and possibly disagreeing.
+The count is \code{length(basis@lower)}, the endpoints carrying one entry per
+variable. A basis therefore declares its input dimension by construction:
+there is no separate property that could disagree with the interval, and
+the validator already requires \verb{@lower} and \verb{@upper} to be of the same
+length.
+
+At \code{basis_nvar(b) == 1} the evaluation points are a plain numeric vector
+and the generics return an \code{n} by \verb{@dimension} matrix. Above one they are a
+matrix of \code{basis_nvar(b)} columns, one per variable; a plain vector is
+reshaped by row, so \code{c(0.1, 0.2, 0.5, 0.6)} on a two-variable basis is the
+two points \verb{(0.1, 0.2)} and \verb{(0.5, 0.6)}. \code{plot()} refuses a basis of more
+than one variable, having no single picture to draw.
 }
 \examples{
+# One variable for every family and every wrapper over one.
 basis_nvar(bspline_basis(dimension = 5))
-basis_nvar(tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3)))
+basis_nvar(orthonorm_basis(bspline_basis(dimension = 5)))
+
+# A product answers with its number of margins.
+tb <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
+basis_nvar(tb)
+
+# Which is the number of columns basis_eval() reads: four numbers are two
+# points on a two-variable basis, one row each.
+dim(basis_eval(tb, c(0.1, 0.2, 0.5, 0.6)))
+dim(basis_eval(tb, cbind(c(0.1, 0.5), c(0.2, 0.6))))
 
 }
 \seealso{
-\code{\link[=basis_colnames]{basis_colnames()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
+\code{\link[=basis_eval]{basis_eval()}}, whose input shape this describes;
+\code{\link[=tensor_basis]{tensor_basis()}}, the only shipped family that answers more than \code{1};
+\code{\link[=print.basis]{print.basis()}}, which shows it on the \verb{Variables:} line.
 }

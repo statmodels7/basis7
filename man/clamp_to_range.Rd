@@ -7,16 +7,37 @@
 clamp_to_range(z, lo, hi, what)
 }
 \arguments{
-\item{z}{A numeric vector.}
+\item{z}{A numeric vector. \code{NA} entries are ignored.}
 
-\item{lo, hi}{The endpoints.}
+\item{lo, hi}{The endpoints, single finite numbers with \code{lo < hi}. Not
+validated here; the class validator has already required it.}
 
-\item{what}{A phrase naming the range, used in the error message.}
+\item{what}{A phrase naming the range, spliced into the error message
+between "fall outside" and the interval. Callers pass
+\code{"the basis interval"} or \code{"the range of variable 2"}.}
 }
 \value{
-\code{z}, clamped.
+\code{z}, of the same length, with entries within tolerance of an
+endpoint set to that endpoint exactly.
 }
 \description{
-Reject Points Outside a Range, and Clamp Those On Its Edge
+Throws if any entry of \code{z} lies outside \verb{[lo, hi]} by more than \code{1e-8}
+times the width of the range, and otherwise returns \code{z} with anything
+inside that tolerance moved onto the nearer endpoint. The one place the
+range rule of the package is written; \code{\link[=check_eval_points]{check_eval_points()}} calls it once
+per variable.
+}
+\details{
+The tolerance is relative to the width, \code{1e-8 * (hi - lo)}, so the rule
+means the same on \eqn{[0, 1]} and on \eqn{[0, 1000]}. Entries that are
+\code{NA} are excluded from both the test and the clamp, and travel through.
+
+The error message names the count and the range, as in
+\verb{2 of 5 evaluation points fall outside the basis interval [0, 1].}, and is
+raised with \code{call. = FALSE}, so the phrase \code{what} supplies is what a user
+sees in place of this function's name.
+}
+\seealso{
+\code{\link[=check_eval_points]{check_eval_points()}}, its only caller.
 }
 \keyword{internal}

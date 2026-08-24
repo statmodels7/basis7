@@ -7,15 +7,39 @@
 check_basis_args(lower, upper, dimension)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval.}
+\item{lower, upper}{The endpoints of the interval, each a single finite
+number with \code{lower < upper}.}
 
-\item{dimension}{The number of basis functions.}
+\item{dimension}{The number of basis functions, a single whole number of at
+least 1, integer or double.}
 }
 \value{
-\code{dimension}, as an integer.
+\code{dimension} as an integer of length one.
 }
 \description{
-Checks the interval and the number of functions, and returns the dimension
-as an integer. Called by every constructor before anything family-specific.
+Checks the three arguments common to \code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
+and \code{\link[=poly_basis]{poly_basis()}}, and returns the dimension coerced to integer, which is
+the storage mode the class validator requires. Every constructor calls it
+first, before anything family-specific, so the three report the same errors
+in the same words.
+}
+\details{
+Three conditions, each throwing with \code{call. = FALSE}:
+\itemize{
+\item \code{lower} and \code{upper} must each be a single finite number, else
+\verb{'lower' and 'upper' must be single finite numbers.}
+\item \code{lower} must be strictly below \code{upper}, else
+\verb{'lower' must be strictly less than 'upper'.}
+\item \code{dimension} must be a single finite number, at least 1 and whole, else
+\verb{'dimension' must be a single positive integer.}
+}
+
+A whole-valued double passes and is converted, so a caller writing \code{6}
+rather than \code{6L} is served. The multivariate case is not reachable here:
+\code{\link[=tensor_basis]{tensor_basis()}} builds its endpoints from margins already validated.
+}
+\seealso{
+\code{\link[=check_eval_points]{check_eval_points()}}, the same role for the points a basis is
+evaluated at.
 }
 \keyword{internal}

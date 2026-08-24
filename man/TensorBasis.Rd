@@ -14,14 +14,22 @@ TensorBasis(
 )
 }
 \arguments{
-\item{basis_name}{A short name for the family, used when printing.}
+\item{basis_name}{A single string naming the family, printed by
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
+any computation.}
 
-\item{dimension}{The number of functions in the basis, a positive integer.}
+\item{dimension}{The number of functions in the basis, a single integer of
+at least 1. Must be of storage mode integer.}
 
 \item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several.}
+endpoint per variable for a basis of several. Both finite, of the same
+length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
+\code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
-\item{basis_params}{A named list of whatever else the subclass needs.}
+\item{basis_params}{A named list of whatever else the subclass needs: the
+knots and degree of a B-spline, the frequency of a Fourier basis, the
+marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
+any numeric entry of more than four values. Defaults to an empty list.}
 
 \item{marginals}{The list of bases being multiplied, one per variable.}
 }

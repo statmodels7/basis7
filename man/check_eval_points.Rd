@@ -7,32 +7,49 @@
 check_eval_points(basis, x)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{x}{A numeric vector of evaluation points, or a matrix with one column
-per variable.}
+\item{x}{A numeric vector of evaluation points for a basis of one variable,
+or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a basis of several. A
+one-column matrix is accepted for a basis of one variable and flattened;
+a vector is accepted for a basis of several and taken by row. \code{NA} is
+allowed anywhere and is neither range-checked nor clamped.}
 }
 \value{
-\code{x}, with near-endpoint values clamped onto the endpoints: a
-vector for a basis of one variable and a matrix otherwise.
+\code{x} with near-endpoint values clamped onto the endpoints: a numeric
+vector for a basis of one variable, a numeric matrix of \code{\link[=basis_nvar]{basis_nvar()}}
+columns otherwise.
 }
 \description{
-Checks that \code{x} is numeric and lies inside the basis interval, and
-returns it unchanged. Missing values are allowed and travel through to a
-missing row.
+Checks that \code{x} is numeric and lies inside the basis interval, reshapes it
+for a basis of several variables, and returns it with near-endpoint values
+clamped exactly onto the endpoints. Every method that evaluates a basis
+calls it first, so the three families and the fallbacks agree on what a
+legal evaluation point is. Missing values pass through and become a missing
+row of the result.
 }
 \details{
-A basis is defined on its interval and nowhere else, so a point outside it
-is rejected rather than extrapolated. Which extrapolation rule a model wants,
-if any, is a decision for the layer that owns the meaning of the covariate; a
+A basis is defined on its interval and nowhere else, so a point outside is
+rejected with an error naming how many points were outside and what the
+interval is. No extrapolation rule is applied: which one a model wants, if
+any, belongs to the layer that owns the meaning of the covariate, and a
 silent answer here would take that decision away from it.
 
-The comparison uses a tolerance relative to the width of the interval, so
-that a point which is an endpoint up to rounding is accepted and then
-clamped onto the endpoint exactly.
+The comparison carries a tolerance of \code{1e-8} times the width of the
+interval, so a point that is an endpoint up to rounding is accepted and
+then set to the endpoint exactly. On \eqn{[0, 1]} that admits \code{1 + 5e-9}
+and refuses \code{1 + 5e-8}; on \eqn{[0, 1000]} it admits \code{1000 + 5e-6}. The
+clamp matters because a B-spline evaluated a rounding step past its last
+knot is zero in every column.
 
-For a basis of several variables the points are a matrix with one column per
-variable, and each column is checked against its own endpoints. A basis of
-one variable keeps taking, and returning, a plain vector.
+For a basis of several variables \code{x} is a matrix of one column per
+variable, each column checked against its own endpoints. A plain vector is
+accepted there and reshaped \strong{by row}, so on two variables
+\code{c(0.1, 0.2, 0.5, 0.6)} is the two points \verb{(0.1, 0.2)} and \verb{(0.5, 0.6)}. A
+matrix of the wrong number of columns throws, naming the number wanted.
+}
+\seealso{
+\code{\link[=clamp_to_range]{clamp_to_range()}}, which does the per-variable work;
+\code{\link[=check_basis_args]{check_basis_args()}}, the same role for a constructor's arguments.
 }
 \keyword{internal}

@@ -7,16 +7,26 @@
 name_columns(m, basis)
 }
 \arguments{
-\item{m}{A numeric matrix with as many columns as the basis has functions.}
+\item{m}{A numeric matrix with exactly \code{basis@dimension} columns.}
 
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 }
 \value{
-\code{m}, with column names set.
+\code{m}, with its column names set and its contents untouched.
 }
 \description{
-Gives a basis matrix the column names the basis declares, so that
-evaluation, derivatives and integrals of the same basis always agree on
-them.
+Sets \code{colnames(m)} to \code{\link[=basis_colnames]{basis_colnames()}} of the basis and returns the
+matrix. Every method returning an \code{n} by \verb{@dimension} matrix ends with a
+call to it, so the evaluation, the derivatives of every order, the integral
+and the Gram matrix of one basis all carry the same column names in the
+same order.
+}
+\details{
+The names come from the basis, so a matrix with the wrong number of
+columns produces R's own recycling error instead of a silently mislabeled
+result. Nothing else is checked.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}}, which supplies the names.
 }
 \keyword{internal}
