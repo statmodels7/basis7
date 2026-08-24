@@ -7,16 +7,36 @@
 print_basis_checks(basis, res, num)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}. Read for
+its \verb{@basis_name} and \verb{@dimension} only.}
 
-\item{res}{The logical vector of results.}
+\item{res}{The named logical vector of results, in the order \code{shape},
+\code{deriv}, \code{integral}, \code{partition}, \code{gram}, \code{missing}.}
 
-\item{num}{The logical vector of numerical fallbacks.}
+\item{num}{The named logical vector \code{\link[=basis_is_numerical]{basis_is_numerical()}} returns, printed
+as the closing line when any entry is \code{TRUE}.}
 }
 \value{
-\code{NULL}, invisibly.
+\code{NULL}, invisibly. Called for the printed output.
 }
 \description{
-Print the Outcome of check_basis
+Prints the six-row table \code{\link[=check_basis]{check_basis()}} shows when \code{verbose} is \code{TRUE}: a
+header naming the family and its dimension, one line per check with a
+description and a verdict, and a closing line listing the quantities that
+came from the numerical fallback.
+}
+\details{
+A verdict is \verb{[PASSED]}, \verb{[FAILED]}, or one of two things for an \code{NA}. A
+check not run because the quantity is a finite difference prints
+\verb{[numerical]}; the partition-of-unity check on a family that is not one
+prints \verb{[not claimed]}. Saying which matters: a value that was not verified
+is a gap, where a property never promised is not.
+
+Only \code{deriv}, \code{integral} and \code{partition} can be \code{NA} today. The other three
+rows carry a \verb{[numerical]} label in the table that nothing currently
+reaches, \code{shape}, \code{gram} and \code{missing} all being assigned on every path.
+}
+\seealso{
+\code{\link[=check_basis]{check_basis()}}, its only caller.
 }
 \keyword{internal}

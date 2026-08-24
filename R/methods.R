@@ -72,7 +72,10 @@ NULL
 #' # as numerical, where every shipped family reports none.
 #' Bumps <- S7::new_class("Bumps", parent = basis)
 #' S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
-#'   exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension), "-")^2 / 0.12^2)
+#'   out <- exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension),
+#'                           "-")^2 / 0.12^2)
+#'   colnames(out) <- basis_colnames(basis)
+#'   out
 #' }
 #' Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
 S7::method(print, basis) <- function(x, ...) {

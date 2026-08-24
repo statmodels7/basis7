@@ -10,19 +10,40 @@ coord(x, j)
 replace_coord(x, j, z)
 }
 \arguments{
-\item{x}{A numeric vector or matrix of evaluation points.}
+\item{x}{A numeric vector of evaluation points, or a matrix of one column
+per variable.}
 
-\item{j}{The coordinate.}
+\item{j}{The coordinate to read or write, a column index. Ignored when \code{x}
+is a vector.}
 
-\item{z}{The replacement values.}
+\item{z}{The replacement values, for \code{replace_coord()} only: a numeric
+vector as long as \code{x} has rows.}
 }
 \value{
-A numeric vector for \code{coord}, and points of the same shape as
-\code{x} for \code{replace_coord}.
+\code{coord()} returns a numeric vector: column \code{j} of \code{x}, or \code{x}
+itself when it is not a matrix. \code{replace_coord()} returns points of the
+same shape as \code{x}: the matrix with column \code{j} overwritten, or \code{z} itself
+when \code{x} is not a matrix.
 }
 \description{
-The \code{j}th variable of the points, and the points with that variable
-replaced. A basis of one variable has a vector of points and no coordinate
-to pick, so both are the identity there.
+A matched pair for reading and writing one variable of a set of evaluation
+points. \code{coord(x, j)} returns the \code{j}th variable; \code{replace_coord(x, j, z)}
+returns the points with that variable replaced by \code{z} and the others left
+alone. \code{\link[=check_basis]{check_basis()}} uses them to sweep one coordinate at a time when the
+basis takes several.
+}
+\details{
+Both are the identity for a basis of one variable, where \code{x} is a plain
+vector with no coordinate to pick: \code{coord()} returns \code{x} and
+\code{replace_coord()} returns \code{z}, so the caller writes one loop over
+\code{seq_len(basis_nvar(basis))} with no branch for the univariate case.
+
+Neither validates anything. \code{j} outside the columns of \code{x} gives R's own
+subscript error, and a \code{z} of the wrong length is recycled by R's usual
+rules.
+}
+\seealso{
+\code{\link[=check_basis]{check_basis()}}, their only caller, and \code{\link[=basis_nvar]{basis_nvar()}} for the
+count they loop over.
 }
 \keyword{internal}

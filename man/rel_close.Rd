@@ -7,32 +7,51 @@
 rel_close(a, b, tol, slack = NULL)
 }
 \arguments{
-\item{a, b}{Numeric matrices of the same shape.}
+\item{a, b}{Numeric matrices of the same shape. Neither is privileged; the
+comparison is symmetric.}
 
-\item{tol}{The relative tolerance.}
+\item{tol}{The relative tolerance, a single positive number.}
+
+\item{slack}{An optional numeric matrix of the same shape as \code{a}, an
+absolute allowance added entry by entry through \code{pmax(tol * den, slack)}.
+\code{\link[=check_basis]{check_basis()}} passes \code{\link[=fd_reference]{fd_reference()}}'s \code{uncertainty} here, so a point
+whose finite-difference reference is unreliable is allowed the error that
+reference has. \code{NULL}, the default, allows none.}
 }
 \value{
-\code{TRUE} or \code{FALSE}.
+A single \code{TRUE} or \code{FALSE}: \code{TRUE} when every informative entry
+agrees within its own allowance.
 }
 \description{
-Whether two matrices agree to a relative tolerance, with the denominator
-taken from the values themselves rather than floored at one.
+Reports whether two matrices agree to a relative tolerance, with the
+denominator taken from the values themselves and floored at a millionth of
+the column's own scale. The one comparison \code{\link[=check_basis]{check_basis()}} makes, so that
+its derivative, integral and Gram checks all read agreement the same way.
 }
-\details{
-Flooring the denominator at one would flatten a disagreement between two
-small numbers into apparent agreement, which is exactly the region a basis
-spends most of its time in: a B-spline is zero on most of its interval. The
-denominator is therefore the values themselves.
+\section{Why the denominator is not floored at one}{
+Flooring at one would flatten a disagreement between two small numbers into
+apparent agreement, and small numbers are most of what a basis produces: a
+B-spline is exactly zero on most of its interval. The denominator is
+\code{pmax(abs(a), abs(b))}.
+}
 
-It is floored, but at a millionth of the scale of the column it belongs to
-rather than at one. A basis function's derivative crosses zero, and at the
-crossing the pointwise value vanishes while the numerical reference carries
-its usual rounding error; dividing that error by nothing reports a failure
-of the reference as a failure of the basis. Tying the floor to the curve's
-own magnitude keeps a proportional error detectable wherever the curve is
-large, which is where a wrong formula shows itself.
+\section{Why it is floored at all}{
+A basis function's derivative crosses zero, and at the crossing the
+pointwise value vanishes while the numerical reference carries its usual
+rounding error. Dividing that error by nothing reports a failure of the
+reference as a failure of the basis. The floor is \code{1e-6} times the largest
+absolute value in the same column, so a proportional error stays detectable
+wherever the curve is large, which is where a wrong formula shows itself.
+}
 
-Columns whose whole scale is at the level of rounding error are skipped,
-since neither side carries information there.
+\section{Columns with nothing to say}{
+A column whose whole scale is below \code{1e-8} of the largest column's is
+skipped: neither side carries information there. If every column is
+skipped the answer is \code{TRUE}.
+}
+
+\seealso{
+\code{\link[=check_basis]{check_basis()}}, its caller, and \code{\link[=fd_reference]{fd_reference()}}, which supplies
+\code{slack}.
 }
 \keyword{internal}

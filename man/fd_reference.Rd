@@ -7,25 +7,33 @@
 fd_reference(f, x, lower, upper)
 }
 \arguments{
-\item{f}{A function of a numeric vector returning a matrix.}
+\item{f}{A function of one numeric vector returning a numeric matrix with
+one row per point. \code{\link[=check_basis]{check_basis()}} passes a closure over
+\code{\link[=basis_deriv]{basis_deriv()}} or \code{\link[=basis_int]{basis_int()}}.}
 
 \item{x}{A numeric vector of evaluation points.}
 
-\item{lower, upper}{The endpoints of the interval.}
+\item{lower, upper}{The endpoints of the interval, so that the stencil can
+be shifted to one side near an end instead of leaving the domain.}
 }
 \value{
-A list with the reference \code{value} and the matrix
-\code{uncertainty} bounding its error at each entry.
+A list of two matrices of the same shape as \code{f(x)}: \code{value}, the
+first derivative estimated at the full step, and \code{uncertainty}, four
+times the gap between that estimate and the one at half the step. An
+entry where either estimate is \code{NA} gets an infinite uncertainty, so the
+comparison there is unconstrained.
 }
 \description{
-Differentiates \code{f} numerically, and reports at which points the
-result is a usable reference.
+Differentiates \code{f} once numerically and returns both the estimate and a
+bound on its own error, entry by entry. \code{\link[=check_basis]{check_basis()}} uses the second to
+decide how much slack the comparison at each point deserves, so a point
+where the reference is unreliable does not report the basis as wrong.
 }
 \details{
 A central difference is only valid where the function has the derivatives
 the stencil assumes. A spline does not: at a knot its third derivative
 jumps, so a stencil that straddles the knot returns a number of the order of
-the jump rather than of the truncation error, and comparing an exact
+the jump and not of the truncation error, and comparing an exact
 analytical value against it reports a failure of the \emph{reference}.
 
 Recomputing with the step halved says how much of the reference is error.
@@ -37,5 +45,9 @@ supports. This is the same device used elsewhere in the toolkit for a
 parameter that is not differentiable, and it needs the same care: the two
 estimates are compared with each other, not against a denominator floored at
 one, since near a kink both are small and still differ by a factor.
+}
+\seealso{
+\code{\link[=check_basis]{check_basis()}}, its only caller; \code{\link[=rel_close]{rel_close()}}, which consumes
+\code{uncertainty}; \code{\link[=numerical_deriv_matrix]{numerical_deriv_matrix()}}, which computes each estimate.
 }
 \keyword{internal}
