@@ -7,25 +7,51 @@
 weighted_gram(basis, order, weight, panels = 50L, nodes = 12L, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object of one variable, of any class inheriting from
+\link{basis}. More than one variable throws.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, already validated by \code{\link[=check_order]{check_order()}}.}
 
-\item{weight}{A function of one numeric vector.}
+\item{weight}{A function of one numeric vector returning one non-negative
+value per point. A wrong length, an \code{NA} or a negative value throws.}
 
-\item{panels}{The number of subintervals.}
+\item{panels}{The number of equal subintervals, default \code{50}.}
 
-\item{nodes}{The number of quadrature nodes per subinterval.}
+\item{nodes}{The number of Gauss-Legendre nodes per subinterval, default
+\code{12}.}
 
 \item{...}{Unused.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-\eqn{\int B^{(d)} B^{(d)\top} w(t)\, \mathrm{d}t}, by composite
-Gauss-Legendre. A weight is an arbitrary function, so no family has a closed
-form for it and the quadrature is always used.
+Computes \eqn{\int_a^b B^{(d)}(t)\, B^{(d)}(t)^\top w(t)\,\mathrm{d}t}
+by composite Gauss-Legendre. A weight is an arbitrary function, so no
+family has a closed form for it and the quadrature is always run. Called
+from the body of \code{\link[=basis_gram]{basis_gram()}} when \code{weight} is supplied.
+}
+\details{
+The interval is cut into \code{panels} equal pieces and an \code{nodes}-point
+Gauss-Legendre rule is placed on each, which integrates a polynomial of
+degree up to \code{2 * nodes - 1} exactly on every panel. The weight is folded
+into the quadrature weights and the matrix formed as a crossproduct of
+\eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps the result positive
+semidefinite whatever the weight does.
+
+Measured against the closed forms at \eqn{w \equiv 1} with the defaults,
+worst absolute entry: 5e-15 at order 0 and 2e-11 at order 2 for Fourier and
+Legendre; 5e-12 at order 0 and 1.4e-3 at order 2 for a cubic B-spline over
+eight knots, 2e-6 of the matrix's own scale, the second derivative there
+having kinks the panel breaks do not line up with. Raise \code{panels} when a
+family's derivative is not smooth.
+
+A basis of several variables is refused: the rule above is
+one-dimensional.
+}
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}}, its only caller, and \code{\link[=empirical_gram]{empirical_gram()}} for the
+other alternative measure.
 }
 \keyword{internal}

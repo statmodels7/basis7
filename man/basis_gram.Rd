@@ -7,63 +7,115 @@
 basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{The derivative order, a non-negative integer. Zero, the
-default, gives the inner products of the basis functions themselves.}
+\item{order}{The derivative order whose inner products are wanted. A single
+non-negative whole number, default \code{0}, giving the inner products of the
+basis functions themselves; \code{2} is the usual roughness penalty. One entry
+per variable for a basis of several.}
 
-\item{at}{An optional numeric vector of points. When given, the inner
-products are taken against the empirical measure of those points rather
-than against Lebesgue measure.}
+\item{at}{An optional numeric vector of points, or a matrix of
+\code{\link[=basis_nvar]{basis_nvar()}} columns. When given, the inner products are taken against
+the empirical measure of those points and divided by their number.
+Missing values are dropped before evaluation; no usable point left
+throws.}
 
-\item{weight}{An optional function of one numeric vector, a density to
-weight the integral by.}
+\item{weight}{An optional function of one numeric vector returning one
+non-negative value per point, a density to weight the integral by.
+Refused for a basis of several variables. A function returning the wrong
+length, an \code{NA} or a negative value throws.}
 
-\item{...}{Passed to methods.}
+\item{...}{Passed to methods, and to \code{\link[=weighted_gram]{weighted_gram()}} when \code{weight} is
+given, where \code{panels} and \code{nodes} control the quadrature.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins. Positive semidefinite, and
+singular for any \code{order >= 1}.
 }
 \description{
-Returns the matrix of inner products of the \code{order}-th derivatives of
-the basis functions,
-\deqn{G_{ab} = \int_{\ell}^{u} B_a^{(d)}(t)\, B_b^{(d)}(t)\, \mathrm{d}t.}
+Returns the matrix of inner products of the \code{order}-th derivatives of the
+basis functions,
+\deqn{G_{ab} = \int_{a}^{b} \varphi_a^{(d)}(t)\,\varphi_b^{(d)}(t)\,
+  \mathrm{d}t,}
+which is the matrix of a roughness penalty: \eqn{\beta^\top G_2 \beta} is
+exactly \eqn{\int (f'')^2} for the function \eqn{f} the coefficients
+describe. The three shipped families compute it in closed form, so no
+quadrature error enters a penalized fit.
 }
-\details{
-The Gram matrix is what a roughness penalty integrates: the quadratic form
-\eqn{\beta^\top G_2 \beta} is \eqn{\int (f'')^2}, for \eqn{f} the function
-the coefficients describe. It is basis mathematics, an inner product, and
-says nothing about which combination a model should be shrunk by.
+\section{What it is and what it is not}{
+The Gram matrix is an inner product of basis functions, so it depends on
+the basis and the interval and on nothing else. It says which combinations
+of coefficients are wiggly; how hard to shrink them is a separate decision
+belonging to whatever fits the model.
 
-It is symmetric and positive semidefinite by construction, and singular
-whenever the order-\eqn{d} derivatives are linearly dependent, which for
-\eqn{d \ge 1} they always are: constants differentiate to zero.
-
-The inner product is taken against a measure, and which measure matters.
-The default is Lebesgue on the basis interval, which is what a roughness
-penalty integrates. Supplying \code{at} takes the empirical measure of those
-points instead, \eqn{B^\top B / n}, which is the matrix a design matrix
-actually produces and the one a basis is diagonalized against when the
-construction is meant to depend on where the data lie. Supplying
-\code{weight} takes a weighted Lebesgue measure.
-
-Both alternatives are handled in the body of the generic, before dispatch,
-so a method never sees them and never has to implement them; it always
-returns the plain Lebesgue matrix. A method must still name the arguments in
-its signature, because S7 requires a method's formals to contain the
-generic's.
+It is symmetric and positive semidefinite by construction. At \code{order = 0}
+it is positive definite for a basis of linearly independent functions. At
+any \code{order >= 1} it is singular, the constant differentiating to zero, and
+its null space has dimension \code{order} for a family that contains the
+polynomials of that degree.
 }
+
+\section{Three measures}{
+The default is Lebesgue measure on the basis interval, computed from a
+closed form by every shipped family.
+
+\code{at} replaces it with the empirical measure of the points given,
+\eqn{B^{(d)\top} B^{(d)} / n}. That is the matrix a design matrix
+produces, and the one to diagonalize against when the construction should
+depend on where the data lie; \code{\link[=dr_basis]{dr_basis()}} uses it.
+
+\code{weight} takes a weighted Lebesgue measure \eqn{\int B B^\top w}, by
+composite Gauss-Legendre over 50 panels of 12 nodes. A weight is an
+arbitrary function, so no family has a closed form and the quadrature is
+always run. Measured against the closed forms with \eqn{w \equiv 1}: 5e-15
+for Fourier and Legendre at order 0, and 2e-11 at order 2; for a cubic
+B-spline 5e-12 at order 0 and 2e-6 relative at order 2, where the second
+derivative has kinks at knots that the panel breaks do not line up with.
+Give at most one of \code{at} and \code{weight}; both together throws.
+}
+
+\section{Where the arguments are handled}{
+\code{at} and \code{weight} are dealt with in the body of the generic, before
+dispatch, so a method never sees either and returns the plain Lebesgue
+matrix alone. A method must still carry both names in its signature, S7
+requiring a method's formals to contain the generic's.
+}
+
 \examples{
 b <- fourier_basis(dimension = 5)
-round(basis_gram(b), 6) # diagonal, by orthogonality
+
+# Diagonal at order 0, the Fourier functions being orthogonal.
+round(basis_gram(b), 6)
 round(basis_gram(b, order = 1), 4)
 
-# against the empirical measure of a sample instead
+# The order-2 matrix is the penalty matrix: beta' G beta is the integrated
+# squared second derivative, which a fine trapezoid rule confirms to 6e-11.
+p <- poly_basis(dimension = 5)
+beta <- c(0.2, 1.1, -0.4, 0.8, 0.1)
+tt <- seq(0, 1, length.out = 200001)
+fpp <- drop(basis_deriv(p, tt, order = 2) \%*\% beta)^2
+c(quadratic_form = drop(t(beta) \%*\% basis_gram(p, order = 2) \%*\% beta),
+  quadrature = sum(head(fpp, -1) + tail(fpp, -1)) / 2 * (tt[2] - tt[1]))
+
+# Singular from order 1 up: order d leaves exactly d zero eigenvalues,
+# the polynomials of degree below d differentiating away.
+bs <- bspline_basis(dimension = 8)
+vapply(0:3, function(d) {
+  ev <- eigen(basis_gram(bs, order = d), only.values = TRUE)$values
+  sum(abs(ev) < 1e-8 * max(abs(ev)))
+}, integer(1))
+
+# Against the empirical measure of a sample instead of the interval.
 set.seed(1)
 round(basis_gram(b, at = runif(2000)), 3)
 
+# And against a weighted Lebesgue measure.
+round(basis_gram(b, weight = function(x) dbeta(x, 2, 5)), 4)
+
 }
 \seealso{
-\code{\link[=basis_deriv]{basis_deriv()}}
+\code{\link[=basis_deriv]{basis_deriv()}}, whose columns it takes the inner products of;
+\code{\link[=orthonorm_basis]{orthonorm_basis()}}, which makes the \code{order = 0} matrix the identity;
+\code{\link[=dr_basis]{dr_basis()}}, which diagonalizes one against the other.
 }

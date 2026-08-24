@@ -7,44 +7,93 @@
 basis_deriv(basis, x, order = 1L, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{x}{A numeric vector of evaluation points inside the basis interval.}
+\item{x}{Evaluation points inside the basis interval: a numeric vector for
+a basis of one variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a
+basis of several.}
 
-\item{order}{The derivative order, a non-negative integer.}
+\item{order}{The derivative order. A single non-negative whole number for a
+basis of one variable, default \code{1}; a vector of \code{\link[=basis_nvar]{basis_nvar()}} such
+numbers for a basis of several, or a single \code{0}. A negative, fractional
+or missing order throws.}
 
-\item{...}{Passed to methods.}
+\item{...}{Passed to methods. No shipped family and no fallback reads
+anything from it.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix of \code{n} rows and \code{basis@dimension} columns, with
+column names \code{\link[=basis_colnames]{basis_colnames()}}. All zero above the smoothness of the
+family.
 }
 \description{
 Returns the \code{order}-th derivative of every basis function at the given
-points, as a matrix of the same shape as \code{\link[=basis_eval]{basis_eval()}}.
+points, as a matrix of the same shape \code{\link[=basis_eval]{basis_eval()}} returns. Since an
+expansion is linear in its coefficients, this matrix times \eqn{\beta} is
+the \code{order}-th derivative of the fitted function, so a derivative of a fit
+needs no refitting.
 }
-\details{
-Derivative order is an argument rather than a family of generics because it
-is unbounded: a Fourier basis is differentiable to any order, and a spline
-of degree \eqn{k} has \eqn{k} non-trivial derivatives followed by zeros.
-An order beyond what the family supports returns the zero matrix rather than
-raising, which is the value of the derivative and not an omission.
+\section{Order is an argument}{
+Derivative order is an argument, not a family of generics, because it is
+unbounded: a Fourier basis is differentiable to any order, and a spline of
+degree \eqn{k} has \eqn{k} non-trivial derivatives and zeros above that.
+An order beyond what the family carries returns the zero matrix, which is
+the value of the derivative; nothing is thrown, and the zeros are exact.
 
-\code{order = 0} returns \code{\link[=basis_eval]{basis_eval()}}, so that a loop over
-orders needs no special case.
-
-A subclass that registers no method for this generic gets the numerical one
-of the \code{\link[=basis]{basis()}} class, which applies a single central difference
-stencil to \code{\link[=basis_eval]{basis_eval()}}.
+\code{order = 0} short-circuits to \code{\link[=basis_eval]{basis_eval()}} in the generic body, so a loop
+over orders needs no special case and pays nothing for the zero.
 }
+
+\section{A basis of several variables takes a multi-index}{
+For a product basis \code{order} has one entry per variable and names a mixed
+partial: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
+\eqn{\partial^2/\partial x_1 \partial x_2}. A single non-zero number is
+refused, having two readings; \code{0} alone is accepted, meaning no derivative
+under either. See \code{\link[=check_order]{check_order()}}.
+}
+
+\section{The numerical fallback}{
+A subclass registering no method gets the one on the abstract \link{basis}
+class, which applies \strong{one} stencil of the order asked for to
+\code{\link[=basis_eval]{basis_eval()}}, never a composition of lower-order differences. The
+offsets, weights and step come from \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}},
+\code{\link[numericals7:fd_weights]{numericals7::fd_weights()}} and \code{\link[numericals7:fd_step]{numericals7::fd_step()}}, and the stencil
+is shifted to one side near an endpoint so that no node leaves the
+interval. \code{\link[=basis_is_numerical]{basis_is_numerical()}} says whether this is the route in use, and
+\code{\link[=check_basis]{check_basis()}} measures the agreement.
+
+For a basis of several variables the fallback differentiates one coordinate
+at a time, so a mixed partial such as \code{c(1, 1)} throws there: a stencil in
+the plane has the product of two errors, and the one family that needs
+mixed partials, \code{\link[=tensor_basis]{tensor_basis()}}, computes them exactly from its margins.
+}
+
 \examples{
 b <- bspline_basis(dimension = 6, degree = 3)
 round(basis_deriv(b, c(0.25, 0.5, 0.75), order = 1), 3)
 
-# a cubic spline has no fourth derivative
+# A cubic spline has three derivatives and then exact zeros.
 all(basis_deriv(b, 0.5, order = 4) == 0)
+
+# Order 0 is the evaluation itself.
+identical(basis_deriv(b, 0.5, order = 0), basis_eval(b, 0.5))
+
+# The derivative of a fit is the derivative of the basis times the same
+# coefficients, so no refitting is involved.
+beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
+h <- 1e-5
+fp <- (drop(basis_eval(b, 0.4 + h) \%*\% beta) -
+       drop(basis_eval(b, 0.4 - h) \%*\% beta)) / (2 * h)
+c(exact = drop(basis_deriv(b, 0.4, order = 1) \%*\% beta), difference = fp)
+
+# On a product basis the order is a multi-index, one entry per variable.
+tb <- tensor_basis(bspline_basis(dimension = 4), poly_basis(dimension = 3))
+round(basis_deriv(tb, cbind(0.5, 0.5), order = c(1, 1)), 4)
+try(basis_deriv(tb, cbind(0.5, 0.5), order = 1))
 
 }
 \seealso{
-\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
+\code{\link[=basis_eval]{basis_eval()}}, which is \code{order = 0}; \code{\link[=basis_int]{basis_int()}} for the
+opposite direction; \code{\link[=basis_is_numerical]{basis_is_numerical()}} to learn whether a family
+answers this from a formula or a stencil.
 }

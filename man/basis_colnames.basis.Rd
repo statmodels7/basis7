@@ -4,15 +4,28 @@
 \alias{basis_colnames.basis}
 \title{Default Column Names}
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
 \value{
 A character vector of length \code{basis@dimension}.
 }
 \description{
-Numbers the basis functions after the family name, as in \code{bs1},
-\code{bs2}, and so on.
+Numbers the basis functions after the family, taking the first two
+characters of \verb{@basis_name} and appending \code{1} to \verb{@dimension}: \verb{bs1 ... bs6}
+for a B-spline, \verb{on1 ... on5} for an orthonormalized basis. The method
+every class inherits unless it registers one of its own, as
+\code{\link[=fourier_basis]{fourier_basis()}}, \code{\link[=poly_basis]{poly_basis()}} and \code{\link[=tensor_basis]{tensor_basis()}} do.
+}
+\details{
+Two characters is enough to tell the families apart at a glance in a
+coefficient table without making the names long. Nothing depends on the
+names being distinct across bases, and a model combining two B-spline
+blocks will see \code{bs1} twice unless whatever assembles the design
+disambiguates them.
+}
+\seealso{
+\code{\link[=basis_colnames]{basis_colnames()}} for the generic.
 }
 \keyword{internal}

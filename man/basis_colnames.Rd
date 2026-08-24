@@ -7,23 +7,53 @@
 basis_colnames(basis, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{...}{Passed to methods.}
+\item{...}{Passed to methods. No shipped family reads anything from it.}
 }
 \value{
 A character vector of length \code{basis@dimension}.
 }
 \description{
-The names every matrix the basis produces carries. The default numbers the
-functions after the family name; a subclass whose functions have their own
-identities overrides it.
+Returns the names every matrix the basis produces carries, so that the
+evaluation, the derivatives of every order, the anchored integral and the
+Gram matrix of one basis agree on their columns. The default numbers the
+functions after the family; a family whose functions have identities of
+their own overrides it.
+}
+\details{
+The default method takes the first two characters of \verb{@basis_name} and
+appends \code{1} to \verb{@dimension}, giving \verb{bs1 ... bs6} for a B-spline.
+\code{\link[=fourier_basis]{fourier_basis()}} and \code{\link[=poly_basis]{poly_basis()}} override it with names carrying
+meaning: \code{const}, \code{sin1}, \code{cos1}, \code{sin2} for the first, \code{P0}, \code{P1}, \code{P2}
+for the second.
+
+A wrapper numbers its own columns under a short prefix, so an
+orthonormalized basis reads \verb{on1 ... on5}. A \code{\link[=tensor_basis]{tensor_basis()}} pastes its
+margins' names, one term per pair, as \code{bs1.const}, \code{bs1.sin1},
+\code{bs2.const}, so a coefficient's name says which marginal function it
+belongs to in each variable.
+
+Overriding it is how a subclass gives its columns meaning. The method must
+return exactly \code{basis@dimension} strings; \code{\link[=name_columns]{name_columns()}} sets them
+without checking, so a shorter vector is recycled by R and silently
+mislabels.
 }
 \examples{
+# The default numbers the functions after the family name.
 basis_colnames(bspline_basis(dimension = 4))
+
+# Fourier and Legendre name theirs instead.
 basis_colnames(fourier_basis(dimension = 5))
+basis_colnames(poly_basis(dimension = 4))
+
+# Every matrix the basis produces carries the same names.
+b <- bspline_basis(dimension = 4)
+identical(colnames(basis_eval(b, 0.5)), basis_colnames(b))
+identical(colnames(basis_gram(b, order = 2)), basis_colnames(b))
 
 }
 \seealso{
-\code{\link[=basis_nvar]{basis_nvar()}}, \code{\link[=basis_is_numerical]{basis_is_numerical()}}
+\code{\link[=basis_eval]{basis_eval()}}, whose columns these name, and \code{\link[=print.basis]{print.basis()}} for
+the object's summary.
 }

@@ -7,42 +7,81 @@
 basis_int(basis, x, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{x}{A numeric vector of evaluation points inside the basis interval.}
+\item{x}{Evaluation points inside the basis interval, the upper limits of
+the integrals: a numeric vector for a basis of one variable, or a matrix
+of \code{\link[=basis_nvar]{basis_nvar()}} columns for a basis of several.}
 
-\item{...}{Passed to methods.}
+\item{...}{Passed to methods. The numerical fallback reads \code{nodes} from it,
+the number of Gauss-Legendre nodes per panel, default \code{12}.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns.
+A numeric matrix of \code{n} rows and \code{basis@dimension} columns, with
+column names \code{\link[=basis_colnames]{basis_colnames()}}. The row at \code{basis@lower} is exactly
+zero.
 }
 \description{
 Returns the definite integral of every basis function from the lower
-endpoint of the basis interval up to each evaluation point.
+endpoint of the basis interval up to each evaluation point, as a matrix of
+the same shape \code{\link[=basis_eval]{basis_eval()}} returns. Times a coefficient vector it gives
+the antiderivative of the fitted function that vanishes at the lower
+endpoint.
 }
-\details{
+\section{The anchored integral}{
 Column \eqn{j} of the result is
 
-\deqn{\int_{a}^{x} \phi_j(t)\,\mathrm{d}t,}
+\deqn{\int_{a}^{x} \varphi_j(t)\,\mathrm{d}t,}
 
-with \eqn{a} the basis interval's lower endpoint, so that the integral of
-an expansion is the expansion of the integral:
-\eqn{\int_a^x \sum_j \beta_j \phi_j = \sum_j \beta_j} times column
-\eqn{j}.
-
-The convention is fixed and is part of the contract: the value at
-\code{basis@lower} is exactly zero, for every basis and every column. Any
-antiderivative would satisfy the differentiation check, so without a fixed
-constant of integration two bases could disagree while both being right,
-and a sum of them would be wrong in a way nothing would report.
+with \eqn{a} the lower endpoint of the basis interval, so the integral of
+an expansion is the expansion against the same coefficients:
+\eqn{\int_a^x \sum_j \beta_j \varphi_j = \sum_j \beta_j I_j(x)}.
+The integral over the whole interval is the row at \code{basis@upper}, and the
+integral over \eqn{[u, v]} is the difference of two rows.
 }
+
+\section{Why the anchor is fixed}{
+The value at \code{basis@lower} is exactly zero, for every basis and every
+column, and that is part of the contract every implementation owes. Any
+antiderivative satisfies the differentiation check, so with the constant of
+integration left free two bases could disagree while both being right, and
+a sum of them would be wrong with nothing to report it.
+}
+
+\section{A basis of several variables}{
+The integral is taken over the box from the lower corner to the point, one
+iterated integral per variable, so on two variables column \eqn{j} is
+\eqn{\int_{a_1}^{x_1}\int_{a_2}^{x_2} \varphi_j}.
+}
+
+\section{The numerical fallback}{
+A subclass registering no method gets the one on the abstract \link{basis}
+class: composite Gauss-Legendre from the lower endpoint to each point,
+\code{nodes = 12} per panel by default. Exact for a polynomial integrand of
+degree up to \code{2 * nodes - 1}, and accurate to the panel width elsewhere.
+}
+
 \examples{
 b <- fourier_basis(dimension = 5)
-basis_int(b, b@lower) # exactly zero, by the convention above
+
+# Zero at the lower endpoint, by the convention above.
+basis_int(b, b@lower)
 round(basis_int(b, c(0.25, 0.5, 1)), 4)
+
+# Differentiating the integral returns the basis.
+bs <- bspline_basis(dimension = 6)
+x <- c(0.2, 0.55, 0.9)
+h <- 1e-6
+fd <- (basis_int(bs, x + h) - basis_int(bs, x - h)) / (2 * h)
+max(abs(fd - basis_eval(bs, x)))
+
+# The integral of a fitted curve, and the integral over a subinterval.
+beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
+drop(basis_int(bs, 1) \%*\% beta)
+drop((basis_int(bs, 0.75) - basis_int(bs, 0.25)) \%*\% beta)
 
 }
 \seealso{
-\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}
+\code{\link[=basis_eval]{basis_eval()}} and \code{\link[=basis_deriv]{basis_deriv()}} for the other direction, and
+\code{\link[=basis_gram]{basis_gram()}} for integrals of products of basis functions.
 }

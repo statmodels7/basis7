@@ -7,22 +7,34 @@
 check_order(order, nvar = 1L)
 }
 \arguments{
-\item{order}{The value supplied by the caller.}
+\item{order}{The value supplied by the caller: a single non-negative whole
+number, or a vector of \code{nvar} of them.}
 
-\item{nvar}{The number of variables the basis takes.}
+\item{nvar}{The number of variables the basis takes, from \code{\link[=basis_nvar]{basis_nvar()}}.
+Default \code{1}.}
 }
 \value{
-\code{order}, as an integer vector of length \code{nvar}.
+\code{order} as an integer vector of length \code{nvar}.
 }
 \description{
-A single non-negative integer for a basis of one variable, and one per
-variable for a basis of several.
+Checks that \code{order} is a non-negative whole number, or a vector of them of
+length \code{nvar}, and returns it as an integer vector of length \code{nvar}. Called
+from the bodies of \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_gram]{basis_gram()}}, so both report the
+same errors in the same words.
 }
 \details{
-A multi-index is required rather than recycled from a scalar, because a
-scalar has two plausible readings for a product basis -- that order in every
-coordinate, or that total order -- and guessing between them would be a
-silent choice. The single exception is zero, which means no derivative under
-either reading.
+Anything failing the first test throws
+\verb{'order' must be a non-negative integer.}; that covers a negative value, a
+fraction, an infinity, an \code{NA} and a non-numeric.
+
+A vector of length \code{nvar} is returned as it stands, and a single \code{0} is
+repeated to that length. For a basis of several variables a single
+\strong{non-zero} order throws with a longer message, because a scalar has two
+readings there: that order in every coordinate, or that total order.
+Choosing one silently would fit a different model from the one the caller
+wrote. Zero is exempt, meaning no derivative under either reading.
+}
+\seealso{
+\code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_gram]{basis_gram()}}, its two callers.
 }
 \keyword{internal}

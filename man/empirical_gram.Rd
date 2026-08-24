@@ -7,19 +7,37 @@
 empirical_gram(basis, order, at)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{The derivative order.}
+\item{order}{The derivative order, already validated by \code{\link[=check_order]{check_order()}}.}
 
-\item{at}{A numeric vector of points.}
+\item{at}{A numeric vector of points, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}}
+columns. Not range-checked here; \code{\link[=basis_deriv]{basis_deriv()}} does that and throws for
+a point outside the interval.}
 }
 \value{
-A symmetric numeric matrix with \code{basis@dimension} rows and
-columns.
+A symmetric numeric matrix of \code{basis@dimension} rows and columns,
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-\eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner products a
-design matrix produces, rather than those of the functions on their
-interval.
+Computes \eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner
+products a design matrix produces, in place of those of the functions on
+their interval. Called from the body of \code{\link[=basis_gram]{basis_gram()}} when \code{at} is
+supplied, so no method ever sees this case.
+}
+\details{
+Missing points are dropped \strong{before} the basis is evaluated. A basis is
+entitled to refuse a vector that is entirely missing, and its refusal would
+name the wrong thing here, so \code{at} with no usable point throws
+\verb{'at' has no usable points.} instead. For a basis of several variables \code{at}
+is coerced to a matrix and rows with any missing entry are dropped whole.
+
+The result is symmetrized as \code{(G + t(G))/2} before it is returned, the two
+triangles of a crossproduct differing in their last bits, and given
+\code{\link[=basis_colnames]{basis_colnames()}} on both margins.
+}
+\seealso{
+\code{\link[=basis_gram]{basis_gram()}}, its only caller, and \code{\link[=weighted_gram]{weighted_gram()}} for the
+other alternative measure.
 }
 \keyword{internal}

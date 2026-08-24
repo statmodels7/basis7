@@ -7,46 +7,82 @@
 basis_eval(basis, x, ...)
 }
 \arguments{
-\item{basis}{An object inheriting from class \code{basis}.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{x}{A numeric vector of evaluation points inside the basis interval.}
+\item{x}{Evaluation points inside the basis interval: a numeric vector for
+a basis of one variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a
+basis of several, where a plain vector is taken by row. \code{NA} is allowed
+and produces a missing row. A point outside the interval throws.}
 
-\item{...}{Passed to methods.}
+\item{...}{Passed to methods. No shipped family reads anything from it.}
 }
 \value{
-A numeric matrix with \code{length(x)} rows and
-\code{basis@dimension} columns, with the column names the basis declares.
+A numeric matrix of \code{n} rows and \code{basis@dimension} columns, \code{n}
+being \code{length(x)} for one variable and \code{nrow(x)} for several, with column
+names \code{\link[=basis_colnames]{basis_colnames()}}.
 }
 \description{
-Returns the design matrix of the basis at the given points: one row per
-evaluation point, one column per basis function.
+Returns the design matrix of a basis at the given points: one row per
+evaluation point, one column per basis function, entry \eqn{(i, j)} equal
+to \eqn{\varphi_j(x_i)}. This is the matrix a regression on the basis is
+fitted against, and the one every other generic in the package is defined
+in terms of.
 }
-\details{
-Entry \eqn{(i, j)} of the result is \eqn{\phi_j(x_i)}, so an expansion
-with coefficients \eqn{\beta} is evaluated as
+\section{The design matrix}{
+An expansion with coefficients \eqn{\beta} is evaluated as
 
-\deqn{f(x) = \sum_{j=1}^{d} \beta_j \phi_j(x) = B(x)\,\beta,}
+\deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\,\beta,}
 
-and the matrix is the design block a regression on the basis uses.
-
-This is the only generic a basis must implement. Everything else in the
-package has a numerical method registered on the \code{\link[=basis]{basis()}} class
-and is therefore available from this one alone.
-
-The generic validates the evaluation points before dispatching, so every
-method, including one written outside the package, rejects a point outside
-the basis interval and receives points that are endpoints up to rounding
-already clamped onto them.
+so \code{basis_eval(b, x) \%*\% beta} is the fitted function at \code{x}, and the
+matrix is the design block a linear model on the basis uses. Its columns
+carry the names \code{\link[=basis_colnames]{basis_colnames()}} declares, and every other matrix the
+basis produces carries the same ones in the same order.
 }
+
+\section{The one generic a basis must implement}{
+\code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} all have numerical
+methods registered on the abstract \link{basis} class, computed from this one,
+so a subclass supplying its evaluation alone answers all four. Registering
+a closed form for any of the three later takes over through dispatch;
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which are still on the fallback.
+}
+
+\section{What the generic does before dispatching}{
+The generic body validates \code{x} through \code{\link[=check_eval_points]{check_eval_points()}} and passes
+the validated version on, so every method, including one written outside
+the package, gets the same guarantees without writing them: a point outside
+the interval throws, a point that is an endpoint up to a relative \code{1e-8}
+arrives clamped exactly onto that endpoint, and a basis of several
+variables receives a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns whatever shape the
+caller passed.
+
+\code{NA} is neither checked nor clamped and flows through arithmetic, so a
+missing evaluation point gives a row of \code{NA}.
+}
+
 \examples{
 b <- bspline_basis(dimension = 6)
 round(basis_eval(b, c(0, 0.5, 1)), 4)
 
-# a B-spline basis is a partition of unity
+# A B-spline basis is a partition of unity: every row sums to one.
 rowSums(basis_eval(b, seq(0, 1, length.out = 5)))
+
+# Evaluating an expansion is one matrix product.
+beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
+drop(basis_eval(b, c(0.3, 0.7)) \%*\% beta)
+
+# Outside the interval it throws; an endpoint up to rounding is clamped.
+try(basis_eval(b, 1.5))
+all.equal(basis_eval(b, 1 + 5e-9), basis_eval(b, 1))
+
+# A basis of several variables takes one column per variable.
+tb <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
+dim(basis_eval(tb, cbind(c(0.1, 0.5), c(0.2, 0.6))))
 
 }
 \seealso{
-\code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}},
-\code{\link[=basis_gram]{basis_gram()}}
+\code{\link[=basis_deriv]{basis_deriv()}} for its derivatives, \code{\link[=basis_int]{basis_int()}} for its
+anchored integral, \code{\link[=basis_gram]{basis_gram()}} for its inner products, and
+\code{\link[=basis_contract]{basis_contract()}} to get \eqn{B(x)\beta} without forming \eqn{B(x)}
+for a product basis.
 }
