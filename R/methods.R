@@ -5,16 +5,76 @@ NULL
 #' Print a Basis
 #'
 #' @name print.basis
+#'
 #' @description
-#' Reports the family, the number of functions, the interval, any parameters
-#' the family carries, and which of the derived quantities are computed
-#' numerically.
-#' @param x An object inheriting from class `basis`.
-#' @param ... Unused.
+#' Prints a four- or five-line summary of a basis object: the family it comes
+#' from, how many functions it holds and over how many variables, the interval
+#' each variable runs over, the parameters the family carries, and which of
+#' the three derived quantities are computed by finite differences instead of
+#' from a formula. Called for that output, and returns the object invisibly.
+#'
+#' @details
+#' # The lines
+#'
+#' `Basis:` is `@basis_name`, which records how the object was built. A
+#' wrapper or a product names its parents, so an orthonormalized B-spline
+#' reads `orthonorm(bspline)` and a two-way product reads
+#' `tensor(bspline, fourier)`.
+#'
+#' `Functions:` is `@dimension`, the number of columns [basis_eval()] returns,
+#' and `Variables:` is [basis_nvar()], the number of columns of `x` it
+#' expects. Every family here has one variable except [tensor_basis()].
+#'
+#' `Domain:` is `@lower` and `@upper` as a closed interval per variable,
+#' separated by `x` for a product. It is the interval every generic checks its
+#' evaluation points against: a point outside throws, naming how many of the
+#' points were outside and what the interval is.
+#'
+#' `Parameters:` appears only when `@basis_params` is non-empty, and prints
+#' one line per entry. A numeric entry of more than four values is abbreviated
+#' to its length, so a B-spline over many knots reads `<8 values>` and leaves
+#' the knots to `b@basis_params$knots`.
+#'
+#' `Numerical:` reads [basis_is_numerical()] and names those of `basis_deriv`,
+#' `basis_int` and `basis_gram` that have no method registered for this class
+#' and so fall through to the finite-difference route. All three shipped
+#' families, and every wrapper over them, report `none`. A basis defined from
+#' its evaluation alone reports all three, and that is the line to read when a
+#' derivative looks noisier than expected.
+#'
+#' @param x A basis object, of any class inheriting from [basis].
+#' @param ... Unused, and accepted so that the signature matches the `print()`
+#'   generic's.
+#'
 #' @return `x`, invisibly.
+#'
+#' @seealso [basis_is_numerical()] for the last line as a named logical vector,
+#'   [plot.basis()] to see the functions themselves, and [check_basis()] for a
+#'   verification of the components this summary only names.
+#'
 #' @examples
+#' # The parameter block differs by family: knots and a degree for a B-spline,
+#' # a frequency and a pair count for Fourier, a degree alone for Legendre.
 #' bspline_basis(dimension = 6)
 #' fourier_basis(dimension = 5)
+#' poly_basis(dimension = 4)
+#'
+#' # A product names its margins and reports one interval per variable.
+#' tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
+#'
+#' # More than four values in a parameter are abbreviated to a count. The
+#' # values themselves stay reachable on the object.
+#' b <- bspline_basis(dimension = 12)
+#' b
+#' b@basis_params$knots
+#'
+#' # A basis defined from its evaluation alone reports all three quantities
+#' # as numerical, where every shipped family reports none.
+#' Bumps <- S7::new_class("Bumps", parent = basis)
+#' S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
+#'   exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension), "-")^2 / 0.12^2)
+#' }
+#' Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
 S7::method(print, basis) <- function(x, ...) {
   cat("Basis: ", x@basis_name, "\n", sep = "")
   cat("Functions: ", x@dimension, "   Variables: ", basis_nvar(x), "\n",
@@ -58,20 +118,89 @@ S7::method(print, basis) <- function(x, ...) {
 #' Plot a Basis
 #'
 #' @name plot.basis
+#'
 #' @description
-#' Draws every basis function over the interval, or its derivative or integral.
-#' @param x An object inheriting from class `basis`.
-#' @param order What to draw: `0` for the basis functions, a positive
-#'   integer for that derivative, `-1` for the integral from the lower
-#'   endpoint.
-#' @param n The number of points at which to evaluate.
-#' @param ... Passed to [graphics::matplot()].
-#' @return `x`, invisibly.
+#' Draws all `@dimension` functions of a basis on one panel, over an equally
+#' spaced grid covering the whole interval. `order` selects what is drawn: the
+#' functions themselves, a derivative of any order, or the integral anchored
+#' at the lower endpoint. One line per basis function, no legend, with the
+#' family name as the title.
+#'
+#' @details
+#' # What is drawn
+#'
+#' The grid is `n` equally spaced points from `@lower` to `@upper`, endpoints
+#' included, and the curves are whichever of [basis_eval()], [basis_deriv()]
+#' or [basis_int()] `order` names. The vertical axis is labeled to match:
+#' \eqn{B(x)} at order `0`, \eqn{B'(x)} at order `1`, \eqn{B^{(k)}(x)} above
+#' that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
+#'
+#' Nothing distinguishes one curve from another beyond its position:
+#' `matplot()` cycles its default colors and the columns carry no legend, so
+#' [basis_colnames()] is where a column's identity comes from.
+#'
+#' # Which graphical arguments reach `matplot()`
+#'
+#' The method supplies `type`, `lty`, `xlab`, `ylab` and `main` itself, so
+#' passing any of those five through `...` gives them to `matplot()` twice and
+#' R throws `formal argument "main" matched by multiple actual arguments`
+#' before anything is drawn. Everything else reaches it: `col`, `lwd`, `pch`,
+#' `cex`, `xlim`, `ylim`, `log`, `add`, `bty`, `las` and `axes` were all
+#' checked. To retitle a panel, draw it and call [graphics::title()] after.
+#'
+#' # Only one variable
+#'
+#' A basis of several variables throws. A product of two bases is a surface
+#' over a rectangle and has no picture of this shape; plot a margin, which is
+#' `tb@marginals[[1]]` for a [tensor_basis()], or draw one column of the
+#' product as a surface.
+#'
+#' # A derivative the family has run out of
+#'
+#' An order above the smoothness of the family is legal and draws a flat line
+#' at zero: the fourth derivative of a piecewise cubic is zero away from the
+#' knots, and the method reports that instead of refusing.
+#'
+#' @param x A basis object of one variable, of any class inheriting from
+#'   [basis]. A basis of several variables throws an error naming the
+#'   alternatives.
+#' @param order What to draw. `0`, the default, draws the basis functions; a
+#'   positive whole number draws that derivative; `-1` draws the integral from
+#'   the lower endpoint. Anything else throws, including a fraction, a value
+#'   below `-1` and a vector of length other than one.
+#' @param n The number of grid points, default `200`. Raise it for a basis
+#'   with many knots or a high frequency, where 200 points leave a curve
+#'   visibly polygonal. The cost is one evaluation on `n` points.
+#' @param ... Passed to [graphics::matplot()]. See the section above for the
+#'   five arguments that throw because the method supplies them already.
+#'
+#' @return `x`, invisibly. Called for the plot.
+#'
+#' @seealso [basis_eval()], [basis_deriv()] and [basis_int()] for the numbers
+#'   behind the three cases of `order`, and [print.basis()] for the object's
+#'   summary.
+#'
 #' @examples
 #' b <- bspline_basis(dimension = 6)
+#'
+#' # The six cubic B-splines, their first derivative, and their integrals.
 #' plot(b)
 #' plot(b, order = 1)
 #' plot(b, order = -1)
+#'
+#' # Every curve in the third panel starts at zero, which is what anchoring
+#' # the integral at the lower endpoint means.
+#' basis_int(b, 0)
+#'
+#' # Graphical arguments the method does not set itself reach matplot().
+#' plot(b, col = "grey40", lwd = 2)
+#'
+#' # A title is added afterwards, main being one of the five that throw.
+#' plot(b)
+#' graphics::title(sub = "six cubic B-splines on [0, 1]")
+#'
+#' # A Fourier basis at a high frequency needs a finer grid than the default.
+#' plot(fourier_basis(dimension = 21), n = 1000)
 S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
   if (basis_nvar(x) > 1L) {
     stop(

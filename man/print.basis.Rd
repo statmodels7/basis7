@@ -4,19 +4,75 @@
 \alias{print.basis}
 \title{Print a Basis}
 \arguments{
-\item{x}{An object inheriting from class \code{basis}.}
+\item{x}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{...}{Unused.}
+\item{...}{Unused, and accepted so that the signature matches the \code{print()}
+generic's.}
 }
 \value{
 \code{x}, invisibly.
 }
 \description{
-Reports the family, the number of functions, the interval, any parameters
-the family carries, and which of the derived quantities are computed
-numerically.
+Prints a four- or five-line summary of a basis object: the family it comes
+from, how many functions it holds and over how many variables, the interval
+each variable runs over, the parameters the family carries, and which of
+the three derived quantities are computed by finite differences instead of
+from a formula. Called for that output, and returns the object invisibly.
 }
+\section{The lines}{
+\verb{Basis:} is \verb{@basis_name}, which records how the object was built. A
+wrapper or a product names its parents, so an orthonormalized B-spline
+reads \code{orthonorm(bspline)} and a two-way product reads
+\code{tensor(bspline, fourier)}.
+
+\verb{Functions:} is \verb{@dimension}, the number of columns \code{\link[=basis_eval]{basis_eval()}} returns,
+and \verb{Variables:} is \code{\link[=basis_nvar]{basis_nvar()}}, the number of columns of \code{x} it
+expects. Every family here has one variable except \code{\link[=tensor_basis]{tensor_basis()}}.
+
+\verb{Domain:} is \verb{@lower} and \verb{@upper} as a closed interval per variable,
+separated by \code{x} for a product. It is the interval every generic checks its
+evaluation points against: a point outside throws, naming how many of the
+points were outside and what the interval is.
+
+\verb{Parameters:} appears only when \verb{@basis_params} is non-empty, and prints
+one line per entry. A numeric entry of more than four values is abbreviated
+to its length, so a B-spline over many knots reads \verb{<8 values>} and leaves
+the knots to \code{b@basis_params$knots}.
+
+\verb{Numerical:} reads \code{\link[=basis_is_numerical]{basis_is_numerical()}} and names those of \code{basis_deriv},
+\code{basis_int} and \code{basis_gram} that have no method registered for this class
+and so fall through to the finite-difference route. All three shipped
+families, and every wrapper over them, report \code{none}. A basis defined from
+its evaluation alone reports all three, and that is the line to read when a
+derivative looks noisier than expected.
+}
+
 \examples{
+# The parameter block differs by family: knots and a degree for a B-spline,
+# a frequency and a pair count for Fourier, a degree alone for Legendre.
 bspline_basis(dimension = 6)
 fourier_basis(dimension = 5)
+poly_basis(dimension = 4)
+
+# A product names its margins and reports one interval per variable.
+tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
+
+# More than four values in a parameter are abbreviated to a count. The
+# values themselves stay reachable on the object.
+b <- bspline_basis(dimension = 12)
+b
+b@basis_params$knots
+
+# A basis defined from its evaluation alone reports all three quantities
+# as numerical, where every shipped family reports none.
+Bumps <- S7::new_class("Bumps", parent = basis)
+S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
+  exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension), "-")^2 / 0.12^2)
+}
+Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
+}
+\seealso{
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} for the last line as a named logical vector,
+\code{\link[=plot.basis]{plot.basis()}} to see the functions themselves, and \code{\link[=check_basis]{check_basis()}} for a
+verification of the components this summary only names.
 }

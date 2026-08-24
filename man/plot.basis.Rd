@@ -4,25 +4,90 @@
 \alias{plot.basis}
 \title{Plot a Basis}
 \arguments{
-\item{x}{An object inheriting from class \code{basis}.}
+\item{x}{A basis object of one variable, of any class inheriting from
+\link{basis}. A basis of several variables throws an error naming the
+alternatives.}
 
-\item{order}{What to draw: \code{0} for the basis functions, a positive
-integer for that derivative, \code{-1} for the integral from the lower
-endpoint.}
+\item{order}{What to draw. \code{0}, the default, draws the basis functions; a
+positive whole number draws that derivative; \code{-1} draws the integral from
+the lower endpoint. Anything else throws, including a fraction, a value
+below \code{-1} and a vector of length other than one.}
 
-\item{n}{The number of points at which to evaluate.}
+\item{n}{The number of grid points, default \code{200}. Raise it for a basis
+with many knots or a high frequency, where 200 points leave a curve
+visibly polygonal. The cost is one evaluation on \code{n} points.}
 
-\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}.}
+\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. See the section above for the
+five arguments that throw because the method supplies them already.}
 }
 \value{
-\code{x}, invisibly.
+\code{x}, invisibly. Called for the plot.
 }
 \description{
-Draws every basis function over the interval, or its derivative or integral.
+Draws all \verb{@dimension} functions of a basis on one panel, over an equally
+spaced grid covering the whole interval. \code{order} selects what is drawn: the
+functions themselves, a derivative of any order, or the integral anchored
+at the lower endpoint. One line per basis function, no legend, with the
+family name as the title.
 }
+\section{What is drawn}{
+The grid is \code{n} equally spaced points from \verb{@lower} to \verb{@upper}, endpoints
+included, and the curves are whichever of \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}
+or \code{\link[=basis_int]{basis_int()}} \code{order} names. The vertical axis is labeled to match:
+\eqn{B(x)} at order \code{0}, \eqn{B'(x)} at order \code{1}, \eqn{B^{(k)}(x)} above
+that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
+
+Nothing distinguishes one curve from another beyond its position:
+\code{matplot()} cycles its default colors and the columns carry no legend, so
+\code{\link[=basis_colnames]{basis_colnames()}} is where a column's identity comes from.
+}
+
+\section{Which graphical arguments reach \code{matplot()}}{
+The method supplies \code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main} itself, so
+passing any of those five through \code{...} gives them to \code{matplot()} twice and
+R throws \verb{formal argument "main" matched by multiple actual arguments}
+before anything is drawn. Everything else reaches it: \code{col}, \code{lwd}, \code{pch},
+\code{cex}, \code{xlim}, \code{ylim}, \code{log}, \code{add}, \code{bty}, \code{las} and \code{axes} were all
+checked. To retitle a panel, draw it and call \code{\link[graphics:title]{graphics::title()}} after.
+}
+
+\section{Only one variable}{
+A basis of several variables throws. A product of two bases is a surface
+over a rectangle and has no picture of this shape; plot a margin, which is
+\code{tb@marginals[[1]]} for a \code{\link[=tensor_basis]{tensor_basis()}}, or draw one column of the
+product as a surface.
+}
+
+\section{A derivative the family has run out of}{
+An order above the smoothness of the family is legal and draws a flat line
+at zero: the fourth derivative of a piecewise cubic is zero away from the
+knots, and the method reports that instead of refusing.
+}
+
 \examples{
 b <- bspline_basis(dimension = 6)
+
+# The six cubic B-splines, their first derivative, and their integrals.
 plot(b)
 plot(b, order = 1)
 plot(b, order = -1)
+
+# Every curve in the third panel starts at zero, which is what anchoring
+# the integral at the lower endpoint means.
+basis_int(b, 0)
+
+# Graphical arguments the method does not set itself reach matplot().
+plot(b, col = "grey40", lwd = 2)
+
+# A title is added afterwards, main being one of the five that throw.
+plot(b)
+graphics::title(sub = "six cubic B-splines on [0, 1]")
+
+# A Fourier basis at a high frequency needs a finer grid than the default.
+plot(fourier_basis(dimension = 21), n = 1000)
+}
+\seealso{
+\code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_int]{basis_int()}} for the numbers
+behind the three cases of \code{order}, and \code{\link[=print.basis]{print.basis()}} for the object's
+summary.
 }
