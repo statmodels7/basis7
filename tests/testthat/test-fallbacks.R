@@ -178,3 +178,75 @@ test_that("the numerical derivative does not label its rows after the stencil", 
   }
   expect_null(rownames(basis_int(nb, x)))
 })
+test_that("a family says which route its own methods take", {
+  # basis_is_numerical() used to answer by reading which class each method is
+  # registered on, which says where a method came from and not what it does.
+  # basis_gram.FourierBasis() calls the fallback whenever the period is not the
+  # interval width, and was reported as exact.
+  full <- fourier_basis(dimension = 5)
+  part <- fourier_basis(dimension = 5, omega = 0.7)
+
+  expect_false(basis_is_numerical(full)[["basis_gram"]])
+  expect_true(basis_is_numerical(part)[["basis_gram"]])
+
+  # only the Gram matrix moves: the evaluation, the derivatives and the
+  # anchored integral are closed form at any period
+  expect_false(basis_is_numerical(part)[["basis_deriv"]])
+  expect_false(basis_is_numerical(part)[["basis_int"]])
+
+  # the owner test cannot see it, which is why the generic exists
+  expect_false(basis7:::route_by_owner(part)[["basis_gram"]])
+
+  # and it reaches the two wrappers without either of them changing: one
+  # delegates to its parent and the other takes any over its margins
+  expect_true(basis_is_numerical(orthonorm_basis(part))[["basis_gram"]])
+  expect_true(
+    basis_is_numerical(tensor_basis(bspline_basis(dimension = 4),
+                                    part))[["basis_gram"]]
+  )
+  expect_false(basis_is_numerical(orthonorm_basis(full))[["basis_gram"]])
+
+  # check_basis() then holds the matrix to what a quadrature deserves, which
+  # is the treatment the deriv and integral branches already gave one
+  expect_identical(attr(check_basis(part, verbose = FALSE), "numerical"),
+                   c(basis_deriv = FALSE, basis_int = FALSE,
+                     basis_gram = TRUE))
+})
+
+
+test_that("a basis written outside the package can answer for itself", {
+  # The generic is exported for this. A family whose route depends on its own
+  # parameters takes the default through S7::super() and sets what its own
+  # branching decides.
+  Split <- S7::new_class("Split", parent = basis,
+                         properties = list(exact = S7::class_logical))
+  S7::method(basis_eval, Split) <- function(basis, x, ...) {
+    out <- outer(x, seq_len(basis@dimension) - 1L, "^")
+    colnames(out) <- basis_colnames(basis)
+    out
+  }
+  S7::method(basis_gram, Split) <- function(basis, order = 0L, at = NULL,
+                                            weight = NULL, ...) {
+    numerical_gram(basis, order, ...)
+  }
+  S7::method(basis_numerical_route, Split) <- function(basis, ...) {
+    out <- basis_numerical_route(S7::super(basis, basis7::basis))
+    out[["basis_gram"]] <- !basis@exact
+    out
+  }
+
+  mk <- function(exact) {
+    Split(basis_name = "split", dimension = 3L, lower = 0, upper = 1,
+          exact = exact)
+  }
+
+  # the owner test reads Split for the Gram matrix and answers FALSE either
+  # way; the family is believed over it
+  expect_false(basis7:::route_by_owner(mk(TRUE))[["basis_gram"]])
+  expect_false(basis_is_numerical(mk(TRUE))[["basis_gram"]])
+  expect_true(basis_is_numerical(mk(FALSE))[["basis_gram"]])
+
+  # the two orders it does not register still read as numerical, so S7::super()
+  # really did supply the default rather than a constant
+  expect_true(all(basis_is_numerical(mk(TRUE))[c("basis_deriv", "basis_int")]))
+})

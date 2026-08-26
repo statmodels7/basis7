@@ -31,6 +31,7 @@ order below it, and the log link's fourth derivative came back wrong by a
 factor of 900 while the whole five-platform check matrix stayed green.
 }
 \seealso{
-\code{\link[=basis_is_numerical]{basis_is_numerical()}}, its only caller.
+\code{\link[=route_by_owner]{route_by_owner()}}, its only caller, and
+\code{\link[=basis_is_numerical]{basis_is_numerical()}}, which that answers for.
 }
 \keyword{internal}

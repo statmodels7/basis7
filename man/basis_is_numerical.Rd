@@ -30,10 +30,11 @@ arithmetic twice, agreeing however wrong the basis is, so the \code{deriv} and
 }
 
 \section{How it is answered}{
-For an ordinary class, by asking which class each method is registered on
-through \code{attr(m, "signature")[[1]]} and testing it with
-\code{\link[=is_base_basis_class]{is_base_basis_class()}}. A generic with no method at all counts as
-numerical.
+For an ordinary class, by asking the family through
+\code{\link[=basis_numerical_route]{basis_numerical_route()}}, whose default method is the owner test:
+which class each method is registered on, through
+\code{attr(m, "signature")[[1]]}, tested with \code{\link[=is_base_basis_class]{is_base_basis_class()}}. A
+generic with no method at all counts as numerical.
 
 Two classes are answered by delegation instead. A \link{TransformedBasis}
 reports its parent's: all three of its methods are registered, but each one
@@ -43,13 +44,14 @@ is numerical in \strong{any} margin, every one of its methods being a product of
 its margins'.
 }
 
-\section{What it cannot see}{
-The question asked is which class the method is registered on. It says
-nothing about which branch that method takes. A method registered on a concrete class
-that itself calls the fallback is reported as exact:
-\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does that when the period is not the interval
-width, and \code{basis_is_numerical()} reports \code{FALSE} for its Gram matrix
-either way.
+\section{A method that branches}{
+The owner test says where a method came from and not what it does, so a
+method registered on a concrete class that itself calls the fallback would
+be reported as exact. \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does that when the period
+is not the interval width, and it is why \code{\link[=basis_numerical_route]{basis_numerical_route()}} is a
+generic: a family whose route depends on its own parameters registers a
+method and is believed over the owner test. A basis written outside the
+package does the same.
 }
 
 \examples{

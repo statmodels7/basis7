@@ -98,10 +98,11 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #' Any other positive period is accepted and every generic still answers, but
 #' the interval is no longer a whole number of periods, the orthogonality
 #' fails, and the Gram matrix is computed by composite Gauss-Legendre instead.
-#' `basis_params$full_period` records which case the object is in. Note that
-#' [basis_is_numerical()] still reports `FALSE` for `basis_gram` there: it
-#' reads which class the method is registered on, which is `FourierBasis`
-#' either way.
+#' `basis_params$full_period` records which case the object is in, and
+#' [basis_is_numerical()] reports `basis_gram` as `TRUE` there: the family
+#' says so itself through [basis_numerical_route.FourierBasis()], where
+#' reading which class the method is registered on would answer `FALSE`,
+#' the owner being `FourierBasis` either way.
 #'
 #' # Periodic by construction
 #'
@@ -373,11 +374,11 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #' [numerical_gram()], composite Gauss-Legendre over the interval, and the
 #' result is a full matrix.
 #'
-#' Note that [basis_is_numerical()] still reports `FALSE` for `basis_gram` on
-#' such a basis: it reads the class the method is registered on, which is
+#' [basis_is_numerical()] reports `basis_gram` as `TRUE` on such a basis,
+#' the family answering through [basis_numerical_route.FourierBasis()]
+#' rather than through the class the method is registered on, which is
 #' `FourierBasis` in both branches. [check_basis()] reads the same predicate,
-#' so it holds the quadrature to the tolerance meant for a closed form; the
-#' quadrature is accurate enough that this passes.
+#' so it holds this matrix to the tolerance a quadrature deserves.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param order The derivative order, a single non-negative whole number,
@@ -465,5 +466,36 @@ fourier_trig <- function(basis, x, d) {
     out[, 2L * j - 1L] <- sin(j * z + shift) * scale
     out[, 2L * j] <- cos(j * z + shift) * scale
   }
+  out
+}
+
+
+#' @title The Gram Route of a Fourier Basis
+#' @name basis_numerical_route.FourierBasis
+#' @description
+#' Reports `basis_gram` as `TRUE` when `basis_params$full_period` is `FALSE`,
+#' where the owner test would read `FourierBasis` and answer `FALSE`.
+#' [basis_gram.FourierBasis()] delegates to [numerical_gram()] in that case, so
+#' the matrix is a composite Gauss-Legendre quadrature and carries its error.
+#' The evaluation, the derivatives and the anchored integral are closed form at
+#' any period and are left as the owner test finds them.
+#'
+#' What this buys is that [check_basis()] holds the Gram matrix to the tolerance
+#' a quadrature deserves rather than the one meant for a closed form, and that
+#' [print.basis()] names the route in use.
+#'
+#' @param basis A [FourierBasis] object.
+#' @param ... Unused, and accepted so the signature matches the generic's.
+#'
+#' @return The named logical vector [basis_numerical_route()] describes, with
+#'   `basis_gram` `TRUE` for a basis whose period is not the interval width.
+#'
+#' @seealso [basis_gram.FourierBasis()] for the two branches, and
+#'   [basis_numerical_route.basis()] for the default this starts from.
+#'
+#' @keywords internal
+S7::method(basis_numerical_route, FourierBasis) <- function(basis, ...) {
+  out <- route_by_owner(basis)
+  out[["basis_gram"]] <- out[["basis_gram"]] || !basis@basis_params$full_period
   out
 }

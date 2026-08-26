@@ -45,11 +45,11 @@ When \code{basis_params$full_period} is \code{FALSE} the method delegates to
 \code{\link[=numerical_gram]{numerical_gram()}}, composite Gauss-Legendre over the interval, and the
 result is a full matrix.
 
-Note that \code{\link[=basis_is_numerical]{basis_is_numerical()}} still reports \code{FALSE} for \code{basis_gram} on
-such a basis: it reads the class the method is registered on, which is
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram} as \code{TRUE} on such a basis,
+the family answering through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}
+rather than through the class the method is registered on, which is
 \code{FourierBasis} in both branches. \code{\link[=check_basis]{check_basis()}} reads the same predicate,
-so it holds the quadrature to the tolerance meant for a closed form; the
-quadrature is accurate enough that this passes.
+so it holds this matrix to the tolerance a quadrature deserves.
 }
 
 \seealso{

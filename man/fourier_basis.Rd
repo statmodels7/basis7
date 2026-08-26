@@ -57,10 +57,11 @@ of pair \eqn{j}, written in closed form.
 Any other positive period is accepted and every generic still answers, but
 the interval is no longer a whole number of periods, the orthogonality
 fails, and the Gram matrix is computed by composite Gauss-Legendre instead.
-\code{basis_params$full_period} records which case the object is in. Note that
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} still reports \code{FALSE} for \code{basis_gram} there: it
-reads which class the method is registered on, which is \code{FourierBasis}
-either way.
+\code{basis_params$full_period} records which case the object is in, and
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram} as \code{TRUE} there: the family
+says so itself through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}, where
+reading which class the method is registered on would answer \code{FALSE},
+the owner being \code{FourierBasis} either way.
 }
 
 \section{Periodic by construction}{

@@ -527,7 +527,8 @@ numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
 #'
 #' @return A single `TRUE` or `FALSE`.
 #'
-#' @seealso [basis_is_numerical()], its only caller.
+#' @seealso [route_by_owner()], its only caller, and
+#'   [basis_is_numerical()], which that answers for.
 #'
 #' @keywords internal
 is_base_basis_class <- function(cls) {
@@ -557,10 +558,11 @@ is_base_basis_class <- function(cls) {
 #'
 #' # How it is answered
 #'
-#' For an ordinary class, by asking which class each method is registered on
-#' through `attr(m, "signature")[[1]]` and testing it with
-#' [is_base_basis_class()]. A generic with no method at all counts as
-#' numerical.
+#' For an ordinary class, by asking the family through
+#' [basis_numerical_route()], whose default method is the owner test:
+#' which class each method is registered on, through
+#' `attr(m, "signature")[[1]]`, tested with [is_base_basis_class()]. A
+#' generic with no method at all counts as numerical.
 #'
 #' Two classes are answered by delegation instead. A [TransformedBasis]
 #' reports its parent's: all three of its methods are registered, but each one
@@ -569,14 +571,15 @@ is_base_basis_class <- function(cls) {
 #' is numerical in **any** margin, every one of its methods being a product of
 #' its margins'.
 #'
-#' # What it cannot see
+#' # A method that branches
 #'
-#' The question asked is which class the method is registered on. It says
-#' nothing about which branch that method takes. A method registered on a concrete class
-#' that itself calls the fallback is reported as exact:
-#' [basis_gram.FourierBasis()] does that when the period is not the interval
-#' width, and `basis_is_numerical()` reports `FALSE` for its Gram matrix
-#' either way.
+#' The owner test says where a method came from and not what it does, so a
+#' method registered on a concrete class that itself calls the fallback would
+#' be reported as exact. [basis_gram.FourierBasis()] does that when the period
+#' is not the interval width, and it is why [basis_numerical_route()] is a
+#' generic: a family whose route depends on its own parameters registers a
+#' method and is believed over the owner test. A basis written outside the
+#' package does the same.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
 #'
@@ -623,6 +626,125 @@ basis_is_numerical <- function(basis) {
     return(apply(matrix(flags, nrow = 3L), 1L, any) |>
       stats::setNames(c("basis_deriv", "basis_int", "basis_gram")))
   }
+  basis_numerical_route(basis)
+}
+
+
+#' Which Route a Basis's Methods Take
+#'
+#' @description
+#' Reports, for each of [basis_deriv()], [basis_int()] and [basis_gram()],
+#' whether this basis computes the quantity numerically. It is what
+#' [basis_is_numerical()] asks once it has dealt with the two wrapper classes,
+#' and it is the generic a family overrides when its route depends on its own
+#' parameters rather than on which class its method is registered on.
+#'
+#' @details
+#' # Why it is a generic
+#'
+#' The default answer reads which class each method is registered on, and that
+#' says where a method came from rather than what it does. A method registered
+#' on a concrete class may still call the fallback: [basis_gram.FourierBasis()]
+#' does, whenever the period is not the interval width, and the owner is
+#' `FourierBasis` in both branches. Such a family answers for itself by
+#' registering a method here.
+#'
+#' \pkg{distributions7} met the same defect in its expected information and
+#' resolved it the same way. What differs is that this generic is exported,
+#' because a basis written outside the package is an ordinary thing to write
+#' and has the same need.
+#'
+#' # Writing one
+#'
+#' Take the default through [S7::super()] and set the entries your own
+#' branching decides:
+#'
+#' ```r
+#' S7::method(basis_numerical_route, MyBasis) <- function(basis, ...) {
+#'   out <- basis_numerical_route(S7::super(basis, basis7::basis))
+#'   out[["basis_gram"]] <- !my_closed_form_applies(basis)
+#'   out
+#' }
+#' ```
+#'
+#' The package's own override calls [route_by_owner()] instead, which is that
+#' default under a name: inside a method the formal `basis` shadows the class
+#' of the same name, so reaching the class through `S7::super()` would mean
+#' naming its own package.
+#'
+#' @param basis A basis object, of any class inheriting from [basis].
+#' @param ... Unused, and accepted so a method's signature can match.
+#'
+#' @return A named logical vector of length 3, with elements `basis_deriv`,
+#'   `basis_int` and `basis_gram`, `TRUE` where the quantity is computed
+#'   numerically.
+#'
+#' @seealso [basis_is_numerical()], the predicate consumers call;
+#'   [route_by_owner()] for the default computation; and
+#'   [basis_numerical_route.FourierBasis()] for the one family that overrides.
+#'
+#' @examples
+#' # Every shipped family answers through the default method.
+#' basis_numerical_route(bspline_basis(dimension = 5))
+#'
+#' # A Fourier basis whose period is not the interval width computes its Gram
+#' # matrix by quadrature, and says so, where reading the owner would not.
+#' basis_numerical_route(fourier_basis(dimension = 5, omega = 0.7))
+#'
+#' @export
+basis_numerical_route <- S7::new_generic(
+  "basis_numerical_route", "basis",
+  function(basis, ...) S7::S7_dispatch()
+)
+
+
+#' @title The Owner Test, Which Is the Default Route
+#' @name basis_numerical_route.basis
+#' @description
+#' Answers with [route_by_owner()]: which class each of [basis_deriv()],
+#' [basis_int()] and [basis_gram()] is registered on. That is right for every
+#' family whose methods take one route, which is all of them but
+#' [basis_gram.FourierBasis()].
+#' @param basis A basis object.
+#' @param ... Unused, and accepted so the signature matches the generic's.
+#' @return The named logical vector [basis_numerical_route()] describes.
+#' @seealso [basis_numerical_route.FourierBasis()], the one family that needs
+#'   more than this.
+#' @keywords internal
+S7::method(basis_numerical_route, basis) <- function(basis, ...) {
+  route_by_owner(basis)
+}
+
+
+#' The Owner Test Behind the Default Route
+#'
+#' @description
+#' Reports which of [basis_deriv()], [basis_int()] and [basis_gram()] this
+#' basis takes from the numerical fallback, by asking which class each method
+#' is registered on through `attr(m, "signature")[[1]]` and testing it with
+#' [is_base_basis_class()]. A generic with no method at all counts as
+#' numerical, the base class being where the fallback lives.
+#'
+#' @details
+#' It is the body of [basis_numerical_route.basis()], kept under a name so that
+#' the package's own override can start from it. Inside a method the formal
+#' `basis` shadows the class of the same name, so reaching that default
+#' through `S7::super()` would mean naming the package inside itself; a basis
+#' written elsewhere has no such difficulty and does use `S7::super()`.
+#'
+#' What it cannot see is which branch a method takes once it has been reached:
+#' that is the question [basis_numerical_route()] exists to let a family answer.
+#'
+#' @param basis A basis object, of any class inheriting from [basis].
+#'
+#' @return A named logical vector of length 3, elements `basis_deriv`,
+#'   `basis_int` and `basis_gram`.
+#'
+#' @seealso [basis_numerical_route()], the generic it is the default of, and
+#'   [is_base_basis_class()], which it tests each owner with.
+#'
+#' @keywords internal
+route_by_owner <- function(basis) {
   cls <- S7::S7_class(basis)
   gens <- list(
     basis_deriv = basis_deriv,

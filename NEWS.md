@@ -1,3 +1,35 @@
+# basis7 0.5.0
+
+* `basis_numerical_route()` is a new exported generic, and it is what
+  `basis_is_numerical()` now asks. The predicate answered by reading which
+  class each method is registered on, which says where a method came from
+  and not what it does: a method registered on a concrete class that then
+  calls the fallback was reported as exact. `basis_gram.FourierBasis()`
+  does exactly that whenever the period is not the interval width, so a
+  Fourier basis built with `omega = 0.7` reported all three routes exact
+  while its Gram matrix came from composite Gauss-Legendre.
+
+* A family whose route depends on its own parameters registers a method and
+  is believed over the owner test, which stays the default method. The
+  generic is exported because a basis written outside the package has the
+  same need; take the default through
+  `basis_numerical_route(S7::super(basis, basis7::basis))` and set what
+  your own branching decides. `route_by_owner()` is that default under a
+  name, for the package's own override, whose formal `basis` shadows the
+  class of the same name.
+
+* The correction reaches the two wrapper classes without either of them
+  changing: `orthonorm_basis()` of such a Fourier basis reports its Gram
+  matrix numerical, since a transformed basis delegates to its parent, and
+  so does a `tensor_basis()` carrying one, taking any over its margins.
+
+* `check_basis()` therefore stops comparing that Gram matrix against a
+  finer quadrature, which is the treatment its `deriv` and `integral`
+  branches already gave a numerical quantity, and holds it to symmetry and
+  positive semidefiniteness instead. What was measured is that the two
+  agreed to 2.6e-14, both being `numerical_gram()` at different settings.
+  `print()` names the route on its `Numerical:` line.
+
 # basis7 0.4.1
 
 * The finite-difference step comes from `numericals7::fd_step()` as the
