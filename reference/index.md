@@ -74,6 +74,8 @@ rest have numerical methods on the base class.
   : Validate a Basis
 - [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
   : Which of a Basis's Methods Are Numerical
+- [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
+  : Which Route a Basis's Methods Take
 
 ## Internals
 

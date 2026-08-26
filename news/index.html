@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,20 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.6.0" id="basis7-060">basis7 0.6.0<a class="anchor" aria-label="anchor" href="#basis7-060"></a></h2>
+<ul><li>
+<p><code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a basis accepts every argument <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">matplot()</a></code> does. The method named <code>type</code>, <code>lty</code>, <code>xlab</code>, <code>ylab</code> and <code>main</code> in its call, so passing any of the five through <code>...</code> matched the same formal twice and R threw <code>formal argument "main" matched by multiple actual arguments</code> before anything was drawn. <code>main</code> and <code>xlab</code> are the two a reader reaches for first, and the error named neither the plot method nor where the argument came from.</p>
+<p>The five are defaults now, replaced by a value the caller gives, so <code>plot(b, main = "my title")</code> retitles the panel and <code>plot(b, type = "p", pch = 16)</code> draws points. Nothing else changes: with none of the five given the device output is byte-identical to what it was, which the suite asserts.</p>
+</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.5.0" id="basis7-050">basis7 0.5.0<a class="anchor" aria-label="anchor" href="#basis7-050"></a></h2>
+<ul><li><p><code><a href="../reference/basis_numerical_route.html">basis_numerical_route()</a></code> is a new exported generic, and it is what <code><a href="../reference/basis_is_numerical.html">basis_is_numerical()</a></code> now asks. The predicate answered by reading which class each method is registered on, which says where a method came from and not what it does: a method registered on a concrete class that then calls the fallback was reported as exact. <code><a href="../reference/basis_gram.FourierBasis.html">basis_gram.FourierBasis()</a></code> does exactly that whenever the period is not the interval width, so a Fourier basis built with <code>omega = 0.7</code> reported all three routes exact while its Gram matrix came from composite Gauss-Legendre.</p></li>
+<li><p>A family whose route depends on its own parameters registers a method and is believed over the owner test, which stays the default method. The generic is exported because a basis written outside the package has the same need; take the default through <code>basis_numerical_route(S7::super(basis, basis7::basis))</code> and set what your own branching decides. <code><a href="../reference/route_by_owner.html">route_by_owner()</a></code> is that default under a name, for the package’s own override, whose formal <code>basis</code> shadows the class of the same name.</p></li>
+<li><p>The correction reaches the two wrapper classes without either of them changing: <code><a href="../reference/orthonorm_basis.html">orthonorm_basis()</a></code> of such a Fourier basis reports its Gram matrix numerical, since a transformed basis delegates to its parent, and so does a <code><a href="../reference/tensor_basis.html">tensor_basis()</a></code> carrying one, taking any over its margins.</p></li>
+<li><p><code><a href="../reference/check_basis.html">check_basis()</a></code> therefore stops comparing that Gram matrix against a finer quadrature, which is the treatment its <code>deriv</code> and <code>integral</code> branches already gave a numerical quantity, and holds it to symmetry and positive semidefiniteness instead. What was measured is that the two agreed to 2.6e-14, both being <code><a href="../reference/numerical_gram.html">numerical_gram()</a></code> at different settings. <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> names the route on its <code>Numerical:</code> line.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.4.1" id="basis7-041">basis7 0.4.1<a class="anchor" aria-label="anchor" href="#basis7-041"></a></h2>
 <ul><li>The finite-difference step comes from <code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code> as the offsets and the weights already did, instead of restating its formula.</li>

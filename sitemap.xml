@@ -51,6 +51,9 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_int.basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_int.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_is_numerical.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/basis_numerical_route.basis.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/basis_numerical_route.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_nvar.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_partitions_unity.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/bspline_basis.html</loc></url>
@@ -87,6 +90,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/print_basis_checks.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/quad_rule.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/rel_close.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/route_by_owner.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/tensor_basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/tensor_design.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/weighted_gram.html</loc></url>

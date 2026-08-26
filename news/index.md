@@ -1,5 +1,66 @@
 # Changelog
 
+## basis7 0.6.0
+
+- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on a basis
+  accepts every argument
+  [`matplot()`](https://rdrr.io/r/graphics/matplot.html) does. The
+  method named `type`, `lty`, `xlab`, `ylab` and `main` in its call, so
+  passing any of the five through `...` matched the same formal twice
+  and R threw
+  `formal argument "main" matched by multiple actual arguments` before
+  anything was drawn. `main` and `xlab` are the two a reader reaches for
+  first, and the error named neither the plot method nor where the
+  argument came from.
+
+  The five are defaults now, replaced by a value the caller gives, so
+  `plot(b, main = "my title")` retitles the panel and
+  `plot(b, type = "p", pch = 16)` draws points. Nothing else changes:
+  with none of the five given the device output is byte-identical to
+  what it was, which the suite asserts.
+
+## basis7 0.5.0
+
+- [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
+  is a new exported generic, and it is what
+  [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+  now asks. The predicate answered by reading which class each method is
+  registered on, which says where a method came from and not what it
+  does: a method registered on a concrete class that then calls the
+  fallback was reported as exact.
+  [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
+  does exactly that whenever the period is not the interval width, so a
+  Fourier basis built with `omega = 0.7` reported all three routes exact
+  while its Gram matrix came from composite Gauss-Legendre.
+
+- A family whose route depends on its own parameters registers a method
+  and is believed over the owner test, which stays the default method.
+  The generic is exported because a basis written outside the package
+  has the same need; take the default through
+  `basis_numerical_route(S7::super(basis, basis7::basis))` and set what
+  your own branching decides.
+  [`route_by_owner()`](https://statmodels7.github.io/basis7/reference/route_by_owner.md)
+  is that default under a name, for the package’s own override, whose
+  formal `basis` shadows the class of the same name.
+
+- The correction reaches the two wrapper classes without either of them
+  changing:
+  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
+  of such a Fourier basis reports its Gram matrix numerical, since a
+  transformed basis delegates to its parent, and so does a
+  [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
+  carrying one, taking any over its margins.
+
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+  therefore stops comparing that Gram matrix against a finer quadrature,
+  which is the treatment its `deriv` and `integral` branches already
+  gave a numerical quantity, and holds it to symmetry and positive
+  semidefiniteness instead. What was measured is that the two agreed to
+  2.6e-14, both being
+  [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
+  at different settings. [`print()`](https://rdrr.io/r/base/print.html)
+  names the route on its `Numerical:` line.
+
 ## basis7 0.4.1
 
 - The finite-difference step comes from

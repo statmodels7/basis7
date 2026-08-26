@@ -1,12 +1,16 @@
 # basis7: An S7 Framework for Basis Expansions
 
-Implements basis expansions using the S7 object-oriented system. Bases
-are objects that can be evaluated, differentiated to any order,
-integrated, and asked for the Gram matrices of their derivatives, which
-is what a smoothness penalty integrates. Exact formulas are used
-wherever they exist, with numerical fallbacks that make a user-defined
-basis work from its evaluation alone, and a diagnostic that verifies
-every component.
+Basis expansions as objects, built on the S7 object-oriented system. A
+basis carries an interval and a number of functions, and answers with
+its design matrix at any points, its derivative of any order, its
+integral anchored at the lower endpoint, and the Gram matrix of any
+derivative against a chosen measure, which is the matrix of a roughness
+penalty. B-spline, Fourier and orthogonal polynomial families ship with
+exact formulas; one wrapper orthonormalizes a basis, imposes linear
+constraints or rotates it to the Demmler-Reinsch form, and a tensor
+product builds a basis of several variables. Numerical fallbacks make a
+user-defined basis work from its evaluation alone, and a diagnostic
+verifies every component against an independent route.
 
 ## See also
 

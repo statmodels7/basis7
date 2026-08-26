@@ -13,7 +13,7 @@ likeliest mistake."><meta property="og:image" content="https://statmodels7.githu
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.4.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -59,30 +59,41 @@ likeliest mistake.</p>
 
 
 <dl><dt id="arg-basis">basis<a class="anchor" aria-label="anchor" href="#arg-basis"></a></dt>
-<dd><p>An object inheriting from class <code>basis</code>.</p></dd>
+<dd><p>A basis object, of any class inheriting from <a href="basis.html">basis</a>.</p></dd>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>The number of points at which to test.</p></dd>
+<dd><p>The number of points to test at, default <code>41</code>. They are equally
+spaced across the interval with five per cent trimmed off each end,
+because a one-sided stencil at an endpoint carries a larger error that
+would read as a failure of the basis. Passed through <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code>.</p></dd>
 
 
 <dt id="arg-orders">orders<a class="anchor" aria-label="anchor" href="#arg-orders"></a></dt>
-<dd><p>The derivative orders to check.</p></dd>
+<dd><p>The derivative orders to check, default <code>1:2</code>. Each is
+compared against one differentiation of the order below it, never against
+a chain of lower-order differences. Raising it tests more and costs one
+pass per order.</p></dd>
 
 
 <dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
-<dd><p>The relative tolerance for the derivative and integral checks.</p></dd>
+<dd><p>The relative tolerance for the derivative and integral checks,
+default <code>1e-6</code>. Relative to the values themselves, with the denominator
+taken from them; see <code><a href="rel_close.html">rel_close()</a></code>. The Gram comparison uses
+<code>1e-6</code> regardless.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
-<dd><p>Whether to print the outcome.</p></dd>
+<dd><p>Whether to print the table, default <code>TRUE</code>. The result is
+returned invisibly either way.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A named logical vector, invisibly, with <code>NA</code> for a check that
-was not run. The attribute <code>"numerical"</code> records which generics fell
-back.</p>
+    <p>Invisibly, a named logical vector of length 6, in the order
+<code>shape</code>, <code>deriv</code>, <code>integral</code>, <code>partition</code>, <code>gram</code>, <code>missing</code>, with <code>NA</code>
+for a check that was not run. It carries the attribute <code>"numerical"</code>, the
+named logical vector <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> returns.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -109,33 +120,50 @@ that have that property;</p></li>
 independent quadrature;</p></li>
 <li><p><strong>missing values</strong>: a missing evaluation point gives a missing
 row and nothing else.</p></li>
-</ol><p>An order whose value comes from the numerical fallback is reported as
-<code>[numerical]</code> rather than as passed. Checking such a value against a
+</ol></div>
+    <div class="section level2">
+    <h2 id="what-is-skipped-and-what-is-weakened">What is skipped, and what is weakened<a class="anchor" aria-label="anchor" href="#what-is-skipped-and-what-is-weakened"></a></h2>
+    <p>Where a quantity comes from the numerical fallback, checking it against a
 numerical reference would be the same arithmetic twice, agreeing however
-wrong the basis is, and a validator that reports agreement in that case is
-worse than one that reports nothing: it says a thing was verified when it
-was not.</p>
-<p>The Gram check is run against a rule the basis does not itself use, so that
-a basis whose own method is quadrature is still compared with something
-independent.</p>
-<p>The derivative and integral checks allow for the accuracy of their own
-reference. A central difference assumes derivatives the function may not
-have: at a knot a spline's third derivative jumps, and a stencil straddling
-it returns the jump rather than the truncation error, which would read as a
-failure of the basis. Each reference is therefore computed twice, at a step
-and at half of it, and the gap between them bounds its uncertainty; the
-comparison is allowed that much slack, point by point. A deliberate error of
-five per cent is still caught by four orders of magnitude, which is the
-check that the allowance has not blunted anything.</p>
+wrong the basis is. The <code>deriv</code> and <code>integral</code> checks are therefore not run
+at all in that case: they report <code>NA</code> and print <code>[numerical]</code>.</p>
+<p>The <code>gram</code> check is <strong>weakened, not skipped</strong>. Symmetry and positive
+semidefiniteness are properties of the matrix whatever produced it, so they
+are still tested and the row still prints <code>[PASSED]</code>; what is dropped is the
+comparison against an independent quadrature. The <code>shape</code> and <code>missing</code>
+checks read nothing about the fallback and always run.</p>
+<p>The independent quadrature is 401 panels of 7 nodes, a rule no basis in the
+package uses for its own answer, so a family whose own Gram matrix is a
+quadrature is still compared against different arithmetic.</p>
+<p><code>partition</code> is <code>NA</code> and prints <code>[not claimed]</code> for a family that is not a
+partition of unity. That is a different thing from <code>[numerical]</code>, and the
+printout distinguishes them: a property the family never claimed was not
+applicable, where a numerical value was simply not verified.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="how-the-reference-s-own-error-is-allowed-for">How the reference's own error is allowed for<a class="anchor" aria-label="anchor" href="#how-the-reference-s-own-error-is-allowed-for"></a></h2>
+    <p>A central difference assumes derivatives the function may not have. At a
+knot a spline's third derivative jumps, and a stencil straddling it returns
+a number of the order of the jump, which compared against an exact value
+reads as a failure of the basis. Each reference is therefore computed
+twice, at a step and at half of it, and the gap between them bounds its own
+uncertainty; the comparison is allowed that much slack point by point, so
+each point contributes exactly the accuracy its reference supports. See
+<code><a href="fd_reference.html">fd_reference()</a></code>.</p>
+<p>A deliberate error of five per cent is still caught by four orders of
+magnitude, which is the check that the allowance has not blunted anything.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="basis_is_numerical.html">basis_is_numerical</a></code></p></div>
+    <div class="dont-index"><p><code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> for the attribute and which route each
+quantity takes; <code><a href="../articles/defining-a-basis.html">vignette("defining-a-basis")</a></code>, which uses this function
+to develop one.</p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">check_basis</span><span class="op">(</span><span class="fu"><a href="bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># Every shipped family passes all six checks.</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">check_basis</span><span class="op">(</span><span class="fu"><a href="bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> check_basis: bspline (6 functions)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   shape       shapes and column names                        [PASSED]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   deriv       derivatives against finite differences         [PASSED]</span>
@@ -149,6 +177,58 @@ check that the allowance has not blunted anything.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   deriv       derivatives against finite differences         [PASSED]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   integral    integral differentiates back, zero at lower    [PASSED]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   partition   partition of unity                             [not claimed]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   missing     missing values give missing rows               [PASSED]</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># The result is a logical vector, and the attribute says which quantities</span></span></span>
+<span class="r-in"><span><span class="co"># were computed from a formula.</span></span></span>
+<span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">check_basis</span><span class="op">(</span><span class="fu"><a href="poly_basis.html">poly_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, verbose <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">r</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     shape     deriv  integral partition      gram   missing </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      TRUE      TRUE      TRUE        NA      TRUE      TRUE </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> attr(,"numerical")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> basis_deriv   basis_int  basis_gram </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       FALSE       FALSE       FALSE </span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">r</span>, <span class="st">"numerical"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> basis_deriv   basis_int  basis_gram </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       FALSE       FALSE       FALSE </span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A basis defined from its evaluation alone: the two checks that would</span></span></span>
+<span class="r-in"><span><span class="co"># compare a difference against a difference are not run, and the Gram check</span></span></span>
+<span class="r-in"><span><span class="co"># keeps its symmetry and definiteness half.</span></span></span>
+<span class="r-in"><span><span class="va">Bumps</span> <span class="op">&lt;-</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Bumps"</span>, parent <span class="op">=</span> <span class="va">basis</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_eval</span>, <span class="va">Bumps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">out</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Log.html" class="external-link">exp</a></span><span class="op">(</span><span class="op">-</span><span class="fl">0.5</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/base/outer.html" class="external-link">outer</a></span><span class="op">(</span><span class="va">x</span>, <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="va">basis</span><span class="op">@</span><span class="va">dimension</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>                          <span class="st">"-"</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span> <span class="op">/</span> <span class="fl">0.12</span><span class="op">^</span><span class="fl">2</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">out</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="basis_colnames.html">basis_colnames</a></span><span class="op">(</span><span class="va">basis</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">out</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Overwriting method basis_eval(&lt;Bumps&gt;)</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">check_basis</span><span class="op">(</span><span class="fu">Bumps</span><span class="op">(</span>basis_name <span class="op">=</span> <span class="st">"bumps"</span>, dimension <span class="op">=</span> <span class="fl">4L</span>,</span></span>
+<span class="r-in"><span>                            lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> check_basis: bumps (4 functions)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   shape       shapes and column names                        [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   deriv       derivatives against finite differences         [numerical]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   integral    integral differentiates back, zero at lower    [numerical]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   partition   partition of unity                             [not claimed]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   missing     missing values give missing rows               [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   computed numerically: basis_deriv, basis_int, basis_gram</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A derivative five per cent wrong is caught.</span></span></span>
+<span class="r-in"><span><span class="va">Wrong</span> <span class="op">&lt;-</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Wrong"</span>, parent <span class="op">=</span> <span class="va">BsplineBasis</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_deriv</span>, <span class="va">Wrong</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, <span class="va">order</span> <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="fl">1.05</span> <span class="op">*</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_deriv</span>, <span class="va">BsplineBasis</span><span class="op">)</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, order <span class="op">=</span> <span class="va">order</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">6</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">check_basis</span><span class="op">(</span><span class="fu">Wrong</span><span class="op">(</span>basis_name <span class="op">=</span> <span class="st">"wrong"</span>, dimension <span class="op">=</span> <span class="va">b</span><span class="op">@</span><span class="va">dimension</span>,</span></span>
+<span class="r-in"><span>                            lower <span class="op">=</span> <span class="fl">0</span>, upper <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                            basis_params <span class="op">=</span> <span class="va">b</span><span class="op">@</span><span class="va">basis_params</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> check_basis: wrong (6 functions)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   shape       shapes and column names                        [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   deriv       derivatives against finite differences         [FAILED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   integral    integral differentiates back, zero at lower    [PASSED]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   partition   partition of unity                             [PASSED]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   missing     missing values give missing rows               [PASSED]</span>
 <span class="r-in"><span></span></span>
