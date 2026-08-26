@@ -1,3 +1,19 @@
+# basis7 0.6.0
+
+* `plot()` on a basis accepts every argument `matplot()` does. The method
+  named `type`, `lty`, `xlab`, `ylab` and `main` in its call, so passing any
+  of the five through `...` matched the same formal twice and R threw
+  `formal argument "main" matched by multiple actual arguments` before
+  anything was drawn. `main` and `xlab` are the two a reader reaches for
+  first, and the error named neither the plot method nor where the argument
+  came from.
+
+  The five are defaults now, replaced by a value the caller gives, so
+  `plot(b, main = "my title")` retitles the panel and `plot(b, type = "p",
+  pch = 16)` draws points. Nothing else changes: with none of the five given
+  the device output is byte-identical to what it was, which the suite
+  asserts.
+
 # basis7 0.5.0
 
 * `basis_numerical_route()` is a new exported generic, and it is what

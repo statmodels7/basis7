@@ -17,8 +17,9 @@ below \code{-1} and a vector of length other than one.}
 with many knots or a high frequency, where 200 points leave a curve
 visibly polygonal. The cost is one evaluation on \code{n} points.}
 
-\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. See the section above for the
-five arguments that throw because the method supplies them already.}
+\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. A value given for \code{type},
+\code{lty}, \code{xlab}, \code{ylab} or \code{main} replaces the method's own choice; see the
+section above for what those choices are.}
 }
 \value{
 \code{x}, invisibly. Called for the plot.
@@ -43,12 +44,15 @@ Nothing distinguishes one curve from another beyond its position:
 }
 
 \section{Which graphical arguments reach \code{matplot()}}{
-The method supplies \code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main} itself, so
-passing any of those five through \code{...} gives them to \code{matplot()} twice and
-R throws \verb{formal argument "main" matched by multiple actual arguments}
-before anything is drawn. Everything else reaches it: \code{col}, \code{lwd}, \code{pch},
-\code{cex}, \code{xlim}, \code{ylim}, \code{log}, \code{add}, \code{bty}, \code{las} and \code{axes} were all
-checked. To retitle a panel, draw it and call \code{\link[graphics:title]{graphics::title()}} after.
+All of them. The method chooses \code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main},
+and a value given for any of the five replaces the choice rather than
+colliding with it, so \code{plot(b, main = "my title")} retitles the panel and
+\code{plot(b, type = "p", pch = 16)} draws points. Everything else is passed
+through untouched: \code{col}, \code{lwd}, \code{pch}, \code{cex}, \code{xlim}, \code{ylim}, \code{log},
+\code{add}, \code{bty}, \code{las} and \code{axes} were all checked.
+
+The defaults are \code{type = "l"}, \code{lty = 1}, \code{xlab = "x"}, \code{main} the basis's
+\verb{@basis_name}, and \code{ylab} the expression matching \code{order}.
 }
 
 \section{Only one variable}{
@@ -79,9 +83,9 @@ basis_int(b, 0)
 # Graphical arguments the method does not set itself reach matplot().
 plot(b, col = "grey40", lwd = 2)
 
-# A title is added afterwards, main being one of the five that throw.
-plot(b)
-graphics::title(sub = "six cubic B-splines on [0, 1]")
+# The five arguments the method chooses itself may be overridden.
+plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
+plot(b, type = "p", pch = 16, cex = 0.4)
 
 # A Fourier basis at a high frequency needs a finer grid than the default.
 plot(fourier_basis(dimension = 21), n = 1000)

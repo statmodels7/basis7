@@ -137,3 +137,56 @@ test_that("plot draws without error for every order it accepts", {
   expect_silent(plot(b, order = -1))
   expect_error(plot(b, order = -2), "must be -1")
 })
+
+test_that("every graphical argument reaches matplot", {
+  # The method chooses type, lty, xlab, ylab and main; a value given for any
+  # of them replaces the choice rather than matching the same formal twice.
+  b <- bspline_basis(dimension = 6)
+  f <- tempfile(fileext = ".pdf")
+  grDevices::pdf(f)
+  on.exit({
+    grDevices::dev.off()
+    unlink(f)
+  })
+
+  # the five the method sets itself
+  expect_silent(plot(b, main = "a title"))
+  expect_silent(plot(b, xlab = "u"))
+  expect_silent(plot(b, ylab = "v"))
+  expect_silent(plot(b, type = "p"))
+  expect_silent(plot(b, lty = 2))
+
+  # the ones it never set, which worked before and still do
+  for (a in list(list(col = "grey40"), list(lwd = 2), list(pch = 16),
+                 list(cex = 0.5), list(xlim = c(0, 1)), list(ylim = c(-1, 2)),
+                 list(bty = "n"), list(las = 1), list(axes = TRUE))) {
+    expect_silent(do.call(plot, c(list(b), a)))
+  }
+
+  # several at once, beside the method's own arguments
+  expect_silent(plot(b, order = 1, main = "d", ylab = "y", type = "p",
+                     pch = 3))
+  expect_silent(plot(b, order = -1, col = 2:4))
+
+  # and the refusals are untouched
+  expect_error(plot(b, order = 1.5), "must be -1")
+})
+
+test_that("overriding nothing draws exactly the picture it drew before", {
+  # The control for the change: passing the method's own defaults explicitly
+  # must give the same device output as passing none of them.
+  b <- bspline_basis(dimension = 6)
+  f1 <- tempfile(fileext = ".pdf")
+  f2 <- tempfile(fileext = ".pdf")
+  on.exit(unlink(c(f1, f2)))
+
+  grDevices::pdf(f1)
+  plot(b)
+  grDevices::dev.off()
+
+  grDevices::pdf(f2)
+  plot(b, type = "l", lty = 1, xlab = "x", main = b@basis_name)
+  grDevices::dev.off()
+
+  expect_identical(readBin(f1, "raw", 1e6L), readBin(f2, "raw", 1e6L))
+})

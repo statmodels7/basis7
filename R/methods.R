@@ -144,12 +144,15 @@ S7::method(print, basis) <- function(x, ...) {
 #'
 #' # Which graphical arguments reach `matplot()`
 #'
-#' The method supplies `type`, `lty`, `xlab`, `ylab` and `main` itself, so
-#' passing any of those five through `...` gives them to `matplot()` twice and
-#' R throws `formal argument "main" matched by multiple actual arguments`
-#' before anything is drawn. Everything else reaches it: `col`, `lwd`, `pch`,
-#' `cex`, `xlim`, `ylim`, `log`, `add`, `bty`, `las` and `axes` were all
-#' checked. To retitle a panel, draw it and call [graphics::title()] after.
+#' All of them. The method chooses `type`, `lty`, `xlab`, `ylab` and `main`,
+#' and a value given for any of the five replaces the choice rather than
+#' colliding with it, so `plot(b, main = "my title")` retitles the panel and
+#' `plot(b, type = "p", pch = 16)` draws points. Everything else is passed
+#' through untouched: `col`, `lwd`, `pch`, `cex`, `xlim`, `ylim`, `log`,
+#' `add`, `bty`, `las` and `axes` were all checked.
+#'
+#' The defaults are `type = "l"`, `lty = 1`, `xlab = "x"`, `main` the basis's
+#' `@basis_name`, and `ylab` the expression matching `order`.
 #'
 #' # Only one variable
 #'
@@ -174,8 +177,9 @@ S7::method(print, basis) <- function(x, ...) {
 #' @param n The number of grid points, default `200`. Raise it for a basis
 #'   with many knots or a high frequency, where 200 points leave a curve
 #'   visibly polygonal. The cost is one evaluation on `n` points.
-#' @param ... Passed to [graphics::matplot()]. See the section above for the
-#'   five arguments that throw because the method supplies them already.
+#' @param ... Passed to [graphics::matplot()]. A value given for `type`,
+#'   `lty`, `xlab`, `ylab` or `main` replaces the method's own choice; see the
+#'   section above for what those choices are.
 #'
 #' @return `x`, invisibly. Called for the plot.
 #'
@@ -198,9 +202,9 @@ S7::method(print, basis) <- function(x, ...) {
 #' # Graphical arguments the method does not set itself reach matplot().
 #' plot(b, col = "grey40", lwd = 2)
 #'
-#' # A title is added afterwards, main being one of the five that throw.
-#' plot(b)
-#' graphics::title(sub = "six cubic B-splines on [0, 1]")
+#' # The five arguments the method chooses itself may be overridden.
+#' plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
+#' plot(b, type = "p", pch = 16, cex = 0.4)
 #'
 #' # A Fourier basis at a high frequency needs a finer grid than the default.
 #' plot(fourier_basis(dimension = 21), n = 1000)
@@ -237,9 +241,14 @@ S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
 
   old <- graphics::par(mar = c(4.5, 5, 3, 1))
   on.exit(graphics::par(old))
-  graphics::matplot(grid, y,
-    type = "l", lty = 1, xlab = "x", ylab = ylab,
-    main = x@basis_name, ...
+  # The five the method chooses are defaults rather than fixed arguments:
+  # naming one of them in the call to matplot() alongside a value in `...`
+  # matches the same formal twice and throws before anything is drawn.
+  dots <- list(...)
+  defaults <- list(
+    type = "l", lty = 1, xlab = "x", ylab = ylab, main = x@basis_name
   )
+  keep <- setdiff(names(defaults), names(dots))
+  do.call(graphics::matplot, c(list(grid, y), dots, defaults[keep]))
   invisible(x)
 }
