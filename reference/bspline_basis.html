@@ -15,7 +15,7 @@ conditioning does not deteriorate as the dimension grows."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -172,7 +172,7 @@ penalized fit uses; <code><a href="basis_gram.html">basis_gram()</a></code> for 
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lmfit.html" class="external-link">lm.fit</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">x</span><span class="op">)</span>, <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">fitted.values</span> <span class="op">-</span> <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.745023e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.389027e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Degree 0 gives indicators of the knot intervals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="fu">bspline_basis</span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">4</span>, degree <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">0.9</span><span class="op">)</span><span class="op">)</span></span></span>

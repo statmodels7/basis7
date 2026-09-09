@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,10 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.8.3" id="basis7-083">basis7 0.8.3<a class="anchor" aria-label="anchor" href="#basis7-083"></a></h2>
+<ul><li>The reapplication test asserts the ROUTE as well as the numbers. A tolerance carries the claim that the two agree and cannot carry the claim the test is named for – that the block is reapplied and not rebuilt – since a rebuild that happened to land close would pass it. The route is asserted structurally instead: with the empirical Gram and the reparametrization mocked to raise, <code><a href="../reference/smoother_apply.html">smoother_apply()</a></code> completes, so it reaches neither. The mock is proven live in the same test by <code><a href="../reference/smoother_build.html">smoother_build()</a></code> raising under it, without which the assertion would pass whether or not the bindings were ever replaced.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.2" id="basis7-082">basis7 0.8.2<a class="anchor" aria-label="anchor" href="#basis7-082"></a></h2>
 <ul><li>The four tests comparing a reapplied block against the block it came from ask a tolerance rather than an identity, through the new <code>expect_reapplied()</code> test helper. Both routes end in the same product on the same basis object, so they perform the same operations; what differs is the shape, the build multiplying a matrix with one row per observation and the reapplication one with a row per new point, and a BLAS is free to block, vectorize and accumulate a product differently by shape. Measured: bit-identical under the reference BLAS here and under R release and oldrel-1 on the continuous integration’s Ubuntu image, and two ulps apart under R-devel on that same image, where it separated three of nine numbers of one comparison. The tolerance is chosen so the defect the check exists for still fails it. That defect is a basis rebuilt from the new points rather than reapplied, which carries different knots, a different empirical Gram and a different rotation: measured, it sits 3.025 from a block whose largest entry is 2.1, twelve orders above the threshold, while the platform’s last bits are four orders below it. Injection-checked in both directions – two ulps and a thousand ulps pass, a relative perturbation of 1e-11, a rebuilt basis and a block of the wrong width are each rejected – with the control reading the threshold from the helper’s own default rather than from a copy of it. One of the four sites had gone red; the other three carry the same shape and were repaired with it.</li>

@@ -15,7 +15,7 @@ always used, named as an object."><meta property="og:image" content="https://sta
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -195,7 +195,7 @@ the four decisions it carries, <code><a href="bspline_basis.html">bspline_basis(
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html" class="external-link">cor</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">x</span><span class="op">)</span>, <span class="fl">12</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span>, <span class="va">out</span><span class="op">$</span><span class="va">X</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.198242e-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.551115e-15</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Dropping the null space removes it.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="smoother_build.html">smoother_build</a></span><span class="op">(</span><span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, null_space <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span>, <span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">X</span><span class="op">)</span></span></span>

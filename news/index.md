@@ -1,5 +1,20 @@
 # Changelog
 
+## basis7 0.8.3
+
+- The reapplication test asserts the ROUTE as well as the numbers. A
+  tolerance carries the claim that the two agree and cannot carry the
+  claim the test is named for – that the block is reapplied and not
+  rebuilt – since a rebuild that happened to land close would pass it.
+  The route is asserted structurally instead: with the empirical Gram
+  and the reparametrization mocked to raise,
+  [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
+  completes, so it reaches neither. The mock is proven live in the same
+  test by
+  [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+  raising under it, without which the assertion would pass whether or
+  not the bindings were ever replaced.
+
 ## basis7 0.8.2
 
 - The four tests comparing a reapplied block against the block it came
