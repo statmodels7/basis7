@@ -97,6 +97,31 @@ test_that("the reapplied check refuses a rebuilt basis", {
   expect_reapplied(ref * (1 + 2 * .Machine$double.eps), ref)
 })
 
+test_that("smoother_apply reaches no part of the construction", {
+  # THE ROUTING HALF, WHICH A TOLERANCE CANNOT CARRY. The test above says
+  # the numbers agree; this says the route is the stored blueprint, and a
+  # rebuild that happened to land close would pass the first and must not
+  # pass this. Both halves together are what the identity used to assert
+  # before a BLAS's shape-dependence made the identity unavailable.
+  set.seed(4)
+  x <- sort(runif(300, -1, 4))
+  sm <- bspline_smooth(k = 15, degree = 5, order = 3)
+  o <- smoother_build(sm, x)
+
+  # the two steps the CONSTRUCTION goes through and the reapplication must
+  # not: the empirical Gram, which depends on every observation, and the
+  # reparametrization built from it
+  local_mocked_bindings(
+    smoother_gram = function(...) stop("reached the Gram", call. = FALSE),
+    smoother_reparam = function(...) stop("reached the reparam", call. = FALSE)
+  )
+  expect_no_error(smoother_apply(sm, o$blueprint, x[c(5L, 44L, 200L)]))
+
+  # AND THE MOCK IS PROVEN LIVE, or the assertion above passes vacuously
+  # whether or not the bindings were ever replaced
+  expect_error(smoother_build(sm, x), "reached the")
+})
+
 test_that("constrain must contain the null space and may exceed it", {
   set.seed(9)
   x <- sort(runif(400, -2, 2))
