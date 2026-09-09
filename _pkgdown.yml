@@ -32,6 +32,26 @@ reference:
   - dr_basis
   - TransformedBasis
 
+- title: Smoothers
+  desc: >
+    A smoother carries the four decisions a penalized smooth is made of --
+    the basis, the penalty, the null space and the reparametrization -- as
+    one object, because the null space is a property of the basis and the
+    penalty together rather than of either alone. Built at the covariate, it
+    returns the block and the penalty matrix.
+  contents:
+  - smoother
+  - bspline_smooth
+  - fourier_smooth
+  - legendre_smooth
+  - smoother_build
+  - smoother_apply
+  - smoother_basis
+  - smoother_span
+  - BsplineSmoother
+  - FourierSmoother
+  - LegendreSmoother
+
 - title: Several variables
   desc: >
     A product of bases, and the contraction that computes what a fit needs
@@ -100,6 +120,19 @@ reference:
   - check_basis_args
   - check_eval_points
   - check_order
+  - smoother_interval
+  - check_smoother_x
+  - check_whole
+  - check_interval
+  - check_available
+  - check_measure
+  - check_constrain
+  - smoother_gram
+  - poly_free
+  - poly_free_apply
+  - free_names
+  - shrink_weight
+  - smoother_reparam
   - name_columns
   - basis_partitions_unity
   - rel_close

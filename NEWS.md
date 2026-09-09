@@ -1,3 +1,181 @@
+# basis7 0.8.1
+
+* `smoother_gram()` is exported. It is the roughness matrix a smoother
+  penalizes with, at the order and the measure the smoother carries, and a
+  tensor product needs it: what `modelterms7::te()` reads from a margin is
+  the basis and this matrix, the constraint and the coordinates being the
+  product's own.
+
+# basis7 0.8.0
+
+* **`fourier_smooth()`**, the periodic family, and the reason the smoother
+  exists. Handed a Fourier basis, the construction `modelterms7::s()` runs
+  today loses the property the basis was chosen for: measured on a periodic
+  truth at 300 observations, the fitted curve has **`f(0) - f(1) = 2.2125`**,
+  and it does so quietly, being neither an error nor a correct fit. Through
+  `fourier_smooth(k = 9, lower = 0, upper = 1)` the same data give
+  **2.2e-16**, and the fit is better by a factor of seven, rmse 0.0294
+  against 0.2038. Every column of the block is itself periodic, so any fit
+  built on it is.
+
+* Nine functions give **eight** coordinates rather than seven. The default
+  construction removes the constant and the linear function; a periodic
+  basis contains no linear function, so removing one costs a degree of
+  freedom and buys nothing. `smoother_span()` is the generic where a family
+  says what it removes and what it gives back, and the Fourier method
+  answers with the constant alone at every order, which is measured: the
+  null function of its Gram matrix has a standard deviation of exactly zero
+  at orders 1, 2 and 3.
+
+* **`legendre_smooth()`**, the global polynomial family. Its null space is
+  the polynomials of degree below `order`, as a B-spline's is, so it needs
+  no `smoother_span()` method of its own -- which is the test of whether
+  the seam is in the right place.
+
+* **`order`** is built, and it says what a strongly penalized fit contracts
+  toward. Measured at `k = 20`, `degree = 5` and a smoothing parameter of
+  1e12: at `order = 1` the fitted values have a standard deviation of
+  4.8e-11, which is a constant; at 2 they lie on a straight line to an
+  R-squared of 1.0000000; at 3 on a parabola to 1.0000000 while a line
+  explains only 0.974. The free columns follow the order rather than a
+  fixed count -- one at order 2, **two** at order 3, named `lin` and
+  `poly2` -- and `order` may not exceed `degree`, above which the roughness
+  matrix is identically zero.
+
+* **`constrain`** is built: the directions the smooth is made orthogonal to,
+  which may exceed the penalty's null space and may not fall short of it.
+  Measured on `y ~ 1 + x + x^2 + s(x)` at `k = 20`, the largest correlation
+  between a column of the block and `x^2` is 0.995 at the default and
+  **1.9e-15** at `constrain = 2`, which is exact by construction, and the
+  standard error of the quadratic coefficient falls with it by more than an
+  order of magnitude, at the cost of one dimension. A constraint below the
+  null space is rejected where the two numbers were written: a direction
+  neither penalized nor identified is an error several frames down
+  otherwise.
+
+* **`measure`** is built: `"lebesgue"`, `"empirical"`, or a weight function.
+  It is a different penalty and not a detail -- on a cubic B-spline of
+  twelve functions at order 2, the correlation between the Lebesgue Gram
+  matrix and the one weighted by a Gaussian of standard deviation 0.25 is
+  0.11.
+
+* ⚠️ **The default construction is unchanged, bit for bit.** The pipeline
+  was rewritten to consume the new hooks, and the identity gate of 0.7.0 --
+  56 comparisons against `term_build.SmoothTerm()` over seven shapes -- is
+  still 56 identities and no difference. Passing the roughness matrix and
+  the constraint to `dr_basis()` explicitly gives what it builds for itself
+  at order 2, and the first free column is written as
+  `(x - mean(x)) / sd(x)` rather than as the general regression it is a
+  case of, because a change of arithmetic there would move fits that are
+  not being asked to move.
+
+* **`reparam`** is built, in all three coordinate systems. `"dr"` is the
+  Demmler-Reinsch rotation, where the penalty is the identity; `"none"`
+  leaves the constrained basis as it stands and the penalty is the
+  congruence of the roughness matrix, which is not diagonal; `"orthonorm"`
+  rotates so that \eqn{X'X = I} over the observed covariate, against the
+  **empirical** measure, `orthonorm_basis()` being the \eqn{L^2} one. The
+  three describe the same space, and that is how it is checked: an
+  unpenalized fit cannot tell them apart, the fitted values of the three
+  agreeing to 1.8e-15 at `k = 12` over 300 observations. It is the
+  reparametrized part that is orthonormal -- with a free column prepended
+  the whole block is not, and `null_space = "drop"` gives \eqn{X'X = I} for
+  the block itself, at 3.1e-15.
+
+* ⚠️ **The block is evaluated from the basis object `smoother_apply()`
+  evaluates, so the two are the same arithmetic and not the same formula.**
+  Built as a local matrix product instead, the orthonormal route reapplied
+  to something that was not identical to the block: `new_transformed()`
+  flattens a nested transform, so a later evaluation computes
+  \eqn{B(T_1T_2)} where building it in two steps computes \eqn{(BT_1)T_2},
+  and the two agree in exact arithmetic and not in the last bit. The
+  penalty is read off that same object's transform for the same reason.
+
+* **`null_space = "shrink"`** is built, at a weight of 0.1. It is
+  \pkg{mgcv}'s rule translated rather than a number chosen here: measured
+  on `mgcv::s(bs = "ts")`, the shrinkage construction leaves the positive
+  eigenvalues of the penalty exactly as they were, 7708.76 down to 20.82,
+  and replaces each zero with 2.082, a tenth of the smallest positive one.
+  In Demmler-Reinsch coordinates every penalized direction has eigenvalue
+  exactly 1, so the rule is that single number. ⚠️ Both 0.1 and 1 let the
+  term leave the model -- the fitted values reach a standard deviation
+  under 1e-6 at a large smoothing parameter, against 0.31 when the null
+  space is kept -- and they differ in rate: on a genuinely linear truth at
+  a smoothing parameter of 100, the error against that truth is 0.0723 at
+  0.1 and 0.4049 at 1, so the heavier weight destroys a real linear trend
+  at a smoothing parameter chosen to smooth the wiggles.
+
+* ⚠️ **A penalty factory is the one setting still rejected**, that being a
+  lot of its own.
+
+* ⚠️ **The guard that a constraint must leave something to smooth is
+  reachable only through `constrain`**, which was found by writing its
+  test: with the default, `k` is at least `degree + 1` and `order` is at
+  most `degree`, so `k` always exceeds the number of directions removed.
+  The guard is kept because a caller can write a large `constrain`, and the
+  test reaches it that way.
+
+# basis7 0.7.0
+
+* A **smoother** is a new class: the four decisions a penalized smooth is
+  made of, carried as one object. Which functions span the space, what
+  counts as roughness, which directions the penalty leaves alone and what
+  becomes of them, and which coordinates the coefficients live in. They are
+  independent of one another and a basis determines none of them but the
+  first, which is why they travel together rather than as separate
+  arguments at a call site: the null space is a property of the basis and
+  the penalty TOGETHER, so a basis and a penalty chosen separately can be
+  an illegal pair. The second-derivative Gram matrix of a cubic B-spline
+  has a two-dimensional null space, that of a Fourier basis is
+  one-dimensional at every order because the basis contains no linear
+  function, and the Gram matrix of a B-spline of degree m at an order above
+  m is identically zero, which penalizes nothing.
+
+* `bspline_smooth()` is the first family, and `smoother_build(sm, x)`
+  resolves it at a covariate and returns the pair `(X, S)` of
+  `solve(X'X + lambda * S, X'y)`, with the count of leading columns the
+  penalty does not cover, the names of the coordinates, and a blueprint.
+  `smoother_apply(sm, blueprint, newx)` reapplies the recorded construction
+  at new values rather than rebuilding it: a rebuild is a basis over
+  another interval and a rotation of another Gram matrix, hence a different
+  function of the covariate, which the suite pins by measuring that the two
+  disagree.
+
+* It is a recipe rather than a built object because two of the four
+  decisions need the data: the Demmler-Reinsch rotation diagonalizes the
+  pencil of the empirical Gram matrix against the penalty, and the default
+  interval is read from the covariate.
+
+* ⚠️ **The construction is the one `modelterms7::s()` has always run, and
+  what says so is an identity rather than a tolerance.** Against
+  `term_build.SmoothTerm()` on seven shapes -- with and without `by`,
+  factor and numeric, sparse and dense, the null space kept and dropped,
+  and a non-default `k` and `degree` -- the block, the penalty object, the
+  coefficient names and the block at new rows are `identical()`, 56
+  comparisons and no difference. The gate was written against a reference
+  captured from the installed packages before any of this code existed, and
+  it was injection-checked: five defects make it red in the places they
+  belong, and the sharpest, the lower endpoint of the interval moved by ONE
+  ULP, turns 28 comparisons red. ⚠️ A sixth injection changed nothing and
+  is recorded because it looked like a blind spot and is not: adding one
+  more `.Machine$double.eps` to the PAD is half an ulp of the endpoint, so
+  the subtraction rounds to the same double and the perturbation is not an
+  injection at all.
+
+* ⚠️ **A setting this version does not build is rejected rather than
+  ignored.** `order`, `measure`, `constrain`, `null_space = "shrink"`,
+  `reparam` and a penalty factory are on the constructor because they are
+  part of its interface, and each reaches arithmetic that is not written
+  yet. An argument accepted and ignored would report a fit of a model the
+  caller did not ask for. What is built is `order = 2`, the Lebesgue
+  measure, the null space of the basis and the penalty as the constraint,
+  `null_space` in `"keep"` and `"drop"`, the Demmler-Reinsch coordinates
+  and the quadratic roughness penalty.
+
+* `order` may not exceed `degree`, and the constructor says so where the
+  two numbers were written: above the degree the roughness matrix is
+  identically zero, so the penalty would leave every direction free.
+
 # basis7 0.6.0
 
 * `plot()` on a basis accepts every argument `matplot()` does. The method
