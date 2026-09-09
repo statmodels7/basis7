@@ -102,7 +102,7 @@ test_that("smoother_apply reapplies the transform and does not rebuild it", {
   i <- c(3L, 17L, 40L, 91L, 150L, 233L)
 
   # REAPPLIED, the rows are the rows of the block, exactly
-  expect_identical(smoother_apply(sm, out$blueprint, x[i]), out$X[i, ])
+  expect_reapplied(smoother_apply(sm, out$blueprint, x[i]), out$X[i, ])
 
   # REBUILT on the same rows, they are NOT: the interval is the range of
   # the subset and the rotation diagonalizes a different Gram matrix, so a

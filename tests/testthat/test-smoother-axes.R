@@ -66,7 +66,35 @@ test_that("the free columns are reapplied and not rebuilt", {
   sm <- bspline_smooth(k = 15, degree = 5, order = 3)
   o <- smoother_build(sm, x)
   i <- c(5L, 44L, 200L)
-  expect_identical(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
+  expect_reapplied(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
+})
+
+test_that("the reapplied check refuses a rebuilt basis", {
+  # THE POSITIVE CONTROL for expect_reapplied(). A tolerance nothing can
+  # fail is not a check, so the defect the helper exists for is put to it:
+  # a basis REBUILT from the new points carries different knots, a
+  # different empirical Gram and a different rotation, and must be
+  # rejected. The other edge is asserted beside it -- a perturbation of the
+  # size the platforms were measured to differ by must still pass, so the
+  # tolerance cannot be tightened back into redness without a test saying
+  # so.
+  set.seed(4)
+  x <- sort(runif(300, -1, 4))
+  sm <- bspline_smooth(k = 15, degree = 5, order = 3)
+  o <- smoother_build(sm, x)
+  i <- c(5L, 44L, 200L)
+  ref <- o$X[i, ]
+
+  rebuilt <- smoother_build(sm, x[i])$X
+  expect_identical(dim(rebuilt), dim(ref))
+  # of the size of the quantity itself, not of its last bits
+  expect_gt(max(abs(rebuilt - ref)) / max(abs(ref)), 0.1)
+  # and above the helper own threshold, READ FROM THE DEFAULT rather than
+  # copied, so the control cannot drift from the rule it controls
+  tol <- eval(formals(expect_reapplied)[["tolerance"]])
+  expect_gt(max(abs(rebuilt - ref)), tol * max(abs(ref)))
+
+  expect_reapplied(ref * (1 + 2 * .Machine$double.eps), ref)
 })
 
 test_that("constrain must contain the null space and may exceed it", {

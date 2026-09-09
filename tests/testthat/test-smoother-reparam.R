@@ -54,7 +54,7 @@ test_that("every coordinate system is reapplied, not rebuilt", {
   for (r in c("dr", "none", "orthonorm")) {
     sm <- bspline_smooth(k = 12, reparam = r)
     o <- smoother_build(sm, x)
-    expect_identical(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
+    expect_reapplied(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
   }
 })
 
@@ -106,5 +106,5 @@ test_that("the axes compose", {
   expect_identical(ncol(o$X), 14L)
   expect_identical(o$unpenalized, 0L)
   expect_identical(diag(o$S)[1:2], c(0.1, 0.1))
-  expect_identical(smoother_apply(sm, o$blueprint, x[1:5]), o$X[1:5, ])
+  expect_reapplied(smoother_apply(sm, o$blueprint, x[1:5]), o$X[1:5, ])
 })

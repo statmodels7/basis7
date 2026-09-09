@@ -1,3 +1,27 @@
+# basis7 0.8.2
+
+* The four tests comparing a reapplied block against the block it came from
+  ask a tolerance rather than an identity, through the new
+  `expect_reapplied()` test helper. Both routes end in the same product on
+  the same basis object, so they perform the same operations; what differs
+  is the shape, the build multiplying a matrix with one row per observation
+  and the reapplication one with a row per new point, and a BLAS is free to
+  block, vectorize and accumulate a product differently by shape. Measured:
+  bit-identical under the reference BLAS here and under R release and
+  oldrel-1 on the continuous integration's Ubuntu image, and two ulps apart
+  under R-devel on that same image, where it separated three of nine numbers
+  of one comparison. The tolerance is chosen so the defect the check exists
+  for still fails it. That defect is a basis rebuilt from the new points
+  rather than reapplied, which carries different knots, a different
+  empirical Gram and a different rotation: measured, it sits 3.025 from a
+  block whose largest entry is 2.1, twelve orders above the threshold, while
+  the platform's last bits are four orders below it. Injection-checked in
+  both directions -- two ulps and a thousand ulps pass, a relative
+  perturbation of 1e-11, a rebuilt basis and a block of the wrong width are
+  each rejected -- with the control reading the threshold from the helper's
+  own default rather than from a copy of it. One of the four sites had gone
+  red; the other three carry the same shape and were repaired with it.
+
 # basis7 0.8.1
 
 * `smoother_gram()` is exported. It is the roughness matrix a smoother
