@@ -27,6 +27,38 @@ share one class.
 - [`TransformedBasis()`](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
   : Linearly Transformed Basis
 
+## Smoothers
+
+A smoother carries the four decisions a penalized smooth is made of –
+the basis, the penalty, the null space and the reparametrization – as
+one object, because the null space is a property of the basis and the
+penalty together rather than of either alone. Built at the covariate, it
+returns the block and the penalty matrix.
+
+- [`smoother()`](https://statmodels7.github.io/basis7/reference/smoother.md)
+  : A Smoother: the Four Decisions of a Penalized Smooth
+- [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
+  : A B-Spline Smoother
+- [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  : A Fourier Smoother
+- [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
+  : A Legendre Smoother
+- [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+  : Build a Smoother at Data
+- [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
+  : A Smoother's Block at New Values
+- [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
+  : The Basis a Smoother Builds On
+- [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
+  [`smoother_span_apply()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
+  : What a Smoother Removes and What It Gives Back
+- [`BsplineSmoother()`](https://statmodels7.github.io/basis7/reference/BsplineSmoother.md)
+  : The B-Spline Smoother Class
+- [`FourierSmoother()`](https://statmodels7.github.io/basis7/reference/FourierSmoother.md)
+  : The Fourier Smoother Class
+- [`LegendreSmoother()`](https://statmodels7.github.io/basis7/reference/LegendreSmoother.md)
+  : The Legendre Smoother Class
+
 ## Several variables
 
 A product of bases, and the contraction that computes what a fit needs
@@ -131,6 +163,32 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Validate Evaluation Points Against a Basis
 - [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md)
   : Validate a Derivative Order
+- [`smoother_interval()`](https://statmodels7.github.io/basis7/reference/smoother_interval.md)
+  : The Interval a Smoother Expands Over
+- [`check_smoother_x()`](https://statmodels7.github.io/basis7/reference/check_smoother_x.md)
+  : Check a Smoother's Covariate
+- [`check_whole()`](https://statmodels7.github.io/basis7/reference/check_whole.md)
+  : Check a Whole-Number Argument
+- [`check_interval()`](https://statmodels7.github.io/basis7/reference/check_interval.md)
+  : Check a Smoother's Interval Arguments
+- [`check_available()`](https://statmodels7.github.io/basis7/reference/check_available.md)
+  : Check What a Smoother Asks For Against What Is Built
+- [`check_measure()`](https://statmodels7.github.io/basis7/reference/check_measure.md)
+  : Check a Smoother's Measure
+- [`check_constrain()`](https://statmodels7.github.io/basis7/reference/check_constrain.md)
+  : Check a Polynomial Family's Constraint Argument
+- [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
+  : The Roughness Matrix a Smoother Penalizes With
+- [`poly_free()`](https://statmodels7.github.io/basis7/reference/poly_free.md)
+  : The Free Columns of a Polynomial Null Space
+- [`poly_free_apply()`](https://statmodels7.github.io/basis7/reference/poly_free_apply.md)
+  : The Free Columns of a Polynomial Null Space at New Values
+- [`free_names()`](https://statmodels7.github.io/basis7/reference/free_names.md)
+  : The Names of the Free Columns
+- [`shrink_weight()`](https://statmodels7.github.io/basis7/reference/shrink_weight.md)
+  : The Weight a Shrunk Null Space Carries
+- [`smoother_reparam()`](https://statmodels7.github.io/basis7/reference/smoother_reparam.md)
+  : The Coordinates a Smoother's Coefficients Live In
 - [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
   : Name the Columns of a Basis Matrix
 - [`basis_partitions_unity()`](https://statmodels7.github.io/basis7/reference/basis_partitions_unity.md)

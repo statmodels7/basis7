@@ -8,7 +8,10 @@ derivative against a chosen measure, which is the matrix of a roughness
 penalty. B-spline, Fourier and orthogonal polynomial families ship with
 exact formulas; one wrapper orthonormalizes a basis, imposes linear
 constraints or rotates it to the Demmler-Reinsch form, and a tensor
-product builds a basis of several variables. Numerical fallbacks make a
+product builds a basis of several variables. A smoother carries the
+basis, the roughness penalty, the null space and the reparametrization
+of a penalized smooth as one object, and returns the design block and
+the penalty matrix at a covariate. Numerical fallbacks make a
 user-defined basis work from its evaluation alone, and a diagnostic
 verifies every component against an independent route.
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.6.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -101,6 +101,92 @@
 
         </dt>
         <dd>Linearly Transformed Basis</dd>
+      </dl></div><div class="section level2">
+      <h2 id="smoothers">Smoothers<a class="anchor" aria-label="anchor" href="#smoothers"></a></h2>
+
+      <div class="section-desc"><p>A smoother carries the four decisions a penalized smooth is made of – the basis, the penalty, the null space and the reparametrization – as one object, because the null space is a property of the basis and the penalty together rather than of either alone. Built at the covariate, it returns the block and the penalty matrix.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="smoother.html">smoother()</a></code>
+
+        </dt>
+        <dd>A Smoother: the Four Decisions of a Penalized Smooth</dd>
+
+        <dt>
+
+          <code><a href="bspline_smooth.html">bspline_smooth()</a></code>
+
+        </dt>
+        <dd>A B-Spline Smoother</dd>
+
+        <dt>
+
+          <code><a href="fourier_smooth.html">fourier_smooth()</a></code>
+
+        </dt>
+        <dd>A Fourier Smoother</dd>
+
+        <dt>
+
+          <code><a href="legendre_smooth.html">legendre_smooth()</a></code>
+
+        </dt>
+        <dd>A Legendre Smoother</dd>
+
+        <dt>
+
+          <code><a href="smoother_build.html">smoother_build()</a></code>
+
+        </dt>
+        <dd>Build a Smoother at Data</dd>
+
+        <dt>
+
+          <code><a href="smoother_apply.html">smoother_apply()</a></code>
+
+        </dt>
+        <dd>A Smoother's Block at New Values</dd>
+
+        <dt>
+
+          <code><a href="smoother_basis.html">smoother_basis()</a></code>
+
+        </dt>
+        <dd>The Basis a Smoother Builds On</dd>
+
+        <dt>
+
+          <code><a href="smoother_span.html">smoother_span()</a></code> <code><a href="smoother_span.html">smoother_span_apply()</a></code>
+
+        </dt>
+        <dd>What a Smoother Removes and What It Gives Back</dd>
+
+        <dt>
+
+          <code><a href="BsplineSmoother.html">BsplineSmoother()</a></code>
+
+        </dt>
+        <dd>The B-Spline Smoother Class</dd>
+
+        <dt>
+
+          <code><a href="FourierSmoother.html">FourierSmoother()</a></code>
+
+        </dt>
+        <dd>The Fourier Smoother Class</dd>
+
+        <dt>
+
+          <code><a href="LegendreSmoother.html">LegendreSmoother()</a></code>
+
+        </dt>
+        <dd>The Legendre Smoother Class</dd>
       </dl></div><div class="section level2">
       <h2 id="several-variables">Several variables<a class="anchor" aria-label="anchor" href="#several-variables"></a></h2>
 
@@ -426,6 +512,97 @@
 
         </dt>
         <dd>Validate a Derivative Order</dd>
+
+        <dt>
+
+          <code><a href="smoother_interval.html">smoother_interval()</a></code>
+
+        </dt>
+        <dd>The Interval a Smoother Expands Over</dd>
+
+        <dt>
+
+          <code><a href="check_smoother_x.html">check_smoother_x()</a></code>
+
+        </dt>
+        <dd>Check a Smoother's Covariate</dd>
+
+        <dt>
+
+          <code><a href="check_whole.html">check_whole()</a></code>
+
+        </dt>
+        <dd>Check a Whole-Number Argument</dd>
+
+        <dt>
+
+          <code><a href="check_interval.html">check_interval()</a></code>
+
+        </dt>
+        <dd>Check a Smoother's Interval Arguments</dd>
+
+        <dt>
+
+          <code><a href="check_available.html">check_available()</a></code>
+
+        </dt>
+        <dd>Check What a Smoother Asks For Against What Is Built</dd>
+
+        <dt>
+
+          <code><a href="check_measure.html">check_measure()</a></code>
+
+        </dt>
+        <dd>Check a Smoother's Measure</dd>
+
+        <dt>
+
+          <code><a href="check_constrain.html">check_constrain()</a></code>
+
+        </dt>
+        <dd>Check a Polynomial Family's Constraint Argument</dd>
+
+        <dt>
+
+          <code><a href="smoother_gram.html">smoother_gram()</a></code>
+
+        </dt>
+        <dd>The Roughness Matrix a Smoother Penalizes With</dd>
+
+        <dt>
+
+          <code><a href="poly_free.html">poly_free()</a></code>
+
+        </dt>
+        <dd>The Free Columns of a Polynomial Null Space</dd>
+
+        <dt>
+
+          <code><a href="poly_free_apply.html">poly_free_apply()</a></code>
+
+        </dt>
+        <dd>The Free Columns of a Polynomial Null Space at New Values</dd>
+
+        <dt>
+
+          <code><a href="free_names.html">free_names()</a></code>
+
+        </dt>
+        <dd>The Names of the Free Columns</dd>
+
+        <dt>
+
+          <code><a href="shrink_weight.html">shrink_weight()</a></code>
+
+        </dt>
+        <dd>The Weight a Shrunk Null Space Carries</dd>
+
+        <dt>
+
+          <code><a href="smoother_reparam.html">smoother_reparam()</a></code>
+
+        </dt>
+        <dd>The Coordinates a Smoother's Coefficients Live In</dd>
 
         <dt>
 
