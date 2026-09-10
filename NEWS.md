@@ -1,3 +1,87 @@
+# basis7 0.12.0
+
+* **`adaptive_smooth()`, a difference penalty whose weight varies along the
+  covariate**, so a function may be smoothed hard where it is quiet and left
+  free where it is not. Each difference carries a weight
+  \eqn{w = \sum_i \lambda_i v_i} with \eqn{v_1, \ldots, v_m} a B-spline basis
+  over the coefficient INDEX, and because `diag` is linear the penalty is the
+  sum \eqn{\sum_i \lambda_i D' \mathrm{diag}(v_i) D}. The weight profile is
+  itself a spline, and its coefficients are the smoothing parameters.
+
+  **At equal smoothing parameters it IS a P-spline.** The weight functions
+  are a B-spline basis, hence a partition of unity, so \eqn{\sum_i v_i = 1}
+  and \eqn{\sum_i S_i = D'D} exactly -- measured at 8.9e-16 to 2.7e-15 for
+  `m` from 2 to 12, with the design block `identical()` to
+  `pspline_smooth()`'s. That makes the sibling family the interior point of
+  this one rather than a different construction, and it is the gate the
+  family is held to.
+
+  **What it buys, measured through an implementation neither of us wrote.**
+  Against a single-lambda P-spline under \pkg{mgcv}'s REML, 400 observations
+  at `k = 40`, eight seeds: on a truth of variable roughness the adaptive
+  wins on 8 seeds of 8 at a median root mean square error of 0.0357 against
+  0.0443, and at FEWER effective degrees of freedom, 17.4 against 23.6. On a
+  truth of constant roughness it wins on 0 of 8, 0.0315 against 0.0310 --
+  1.6 per cent worse, which is what the extra smoothing parameters cost
+  where there is nothing to adapt to. The second is the control, without
+  which the first would show only that more parameters fit better.
+
+  ⚠️ Where the gain comes from is not where it is first looked for. Split by
+  region, the adaptive is better on the quiet left (0.0242 against 0.0305)
+  and on the smooth right (0.0437 against 0.0476) and slightly WORSE at the
+  feature itself (0.0553 against 0.0503). What it buys is not a sharper peak
+  but less noise chasing where the function is quiet.
+
+  ⚠️ The construction carries NO arbitrary constant. The index basis is
+  built over the index's own range, so an affine relabelling of the index --
+  \eqn{1, \ldots, n}, or \eqn{i/n}, or \pkg{mgcv}'s \eqn{i/k} -- gives the
+  identical profile, measured to 1e-16.
+
+  ⚠️ `reparam = "dr"` is rejected, and by construction rather than by
+  choice: Demmler-Reinsch diagonalizes the pencil of the Gram matrix against
+  a SINGLE penalty, and here there are `m`. The default is `"none"`, which
+  the measurement prefers on both axes it can be judged on: at a spread of
+  smoothing parameters an adaptive really reaches (1.3e8, measured) the
+  condition number of the system solved is 3.4e3 raw against 4.7e4
+  orthonormalized, and the components' scales spread by 1.7 against 2.8.
+  `null_space = "shrink"` and a `penalty` factory are rejected too, each
+  with the reason and the remedy.
+
+  ⚠️ Our weight profile is not \pkg{mgcv}'s, and the cost is stated rather
+  than hidden. Its P-spline basis extends its knots past the index range
+  (measured -1.37 to 2.34 over an index in [0, 1]) where a basis7 B-spline
+  clamps them, so the profiles differ in shape though not in support, and at
+  its own best the fit is 2.4 per cent behind on this truth. Padding the
+  interval was measured and does not recover it (0.0461 to 0.0465), so no
+  padding is applied. The assembly itself IS mgcv's: rebuilt from its
+  constructor's own lines and compared against
+  `smoothCon(scale.penalty = FALSE)`, the components agree at 0.000e+00 on
+  six configurations.
+
+* **A smoother's penalty may be a LIST**, which is what the family above
+  needs and what `smoother_build()` now carries through. `smoother_gram()`
+  may answer with one matrix or with several; `over_penalty()` applies each
+  step -- the congruence of a reparametrization, the border a kept null
+  space adds, the removal of the dimnames -- to one or to each, and
+  `smoother_reparam()` rejects a list under `"dr"` with the reason, which is
+  what makes the guard hold for a family written later. The number of
+  unpenalized leading columns is read off the SUM of the components, a
+  coordinate being free only where no component touches it.
+
+  ⚠️ For `adaptive_smooth()` the sum and any single component give the same
+  answer, and saying why is worth more than the line: its components are
+  localized in RANK and not in sparsity once the constraint has been
+  applied. Measured at `k = 30`, `m = 4`, the raw components are 15 per cent
+  nonzero with one or two zero columns each and the built ones 93.2 per cent
+  nonzero with exactly one zero column, the free border. Reading the sum is
+  correct by definition rather than measurably better here.
+
+* **`print()` says what the penalty IS.** A difference penalty integrates
+  nothing, so the line no longer names a measure for a family that has none:
+  `pspline_smooth()` prints `difference of order 2 on the coefficients`
+  where it printed `derivative of order 2, lebesgue measure`, which was
+  false of both halves. A family that does integrate is unchanged.
+
 # basis7 0.11.0
 
 * **`pspline_smooth()`, the Eilers-Marx smoother.** A B-spline basis of `k`

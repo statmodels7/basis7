@@ -46,6 +46,7 @@ reference:
   - legendre_smooth
   - cyclic_smooth
   - pspline_smooth
+  - adaptive_smooth
   - smoother_build
   - smoother_apply
   - smoother_basis
@@ -55,6 +56,7 @@ reference:
   - LegendreSmoother
   - CyclicSmoother
   - PsplineSmoother
+  - AdaptiveSmoother
 
 - title: Several variables
   desc: >
@@ -137,6 +139,7 @@ reference:
   - free_names
   - shrink_weight
   - smoother_reparam
+  - over_penalty
   - name_columns
   - basis_partitions_unity
   - rel_close

@@ -608,7 +608,9 @@ poly_free_apply <- function(params, newx) {
 #' @param x The covariate, for the empirical measure.
 #' @param ... Passed to methods.
 #'
-#' @return A symmetric numeric matrix of `b@dimension` rows and columns.
+#' @return A symmetric numeric matrix of `b@dimension` rows and columns, or a
+#'   list of them where the family's roughness is a sum of components with a
+#'   smoothing parameter each, as [adaptive_smooth()]'s is.
 #'
 #' @seealso [smoother_build()], which calls it, and [basis_gram()], the
 #'   generic it reads.
@@ -672,7 +674,9 @@ S7::method(smoother_gram, smoother) <- function(sm, b, x, ...) {
 #'   \describe{
 #'     \item{`X`}{The design block, a numeric matrix of `length(x)` rows and
 #'       one column per coordinate, with no dimnames.}
-#'     \item{`S`}{The penalty matrix, square of `ncol(X)`.}
+#'     \item{`S`}{The penalty: a matrix square of `ncol(X)`, or, for a family
+#'       whose roughness is a sum of components carrying a smoothing
+#'       parameter each ([adaptive_smooth()]), a list of such matrices.}
 #'     \item{`unpenalized`}{The number of leading columns the penalty does
 #'       not cover, as an integer.}
 #'     \item{`blueprint`}{What [smoother_apply()] needs to reapply the
@@ -736,23 +740,42 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
     # can leave the model. See shrink_weight() for the number and where it
     # comes from.
     w <- if (identical(sm@null_space, "shrink")) shrink_weight() else 0
-    s_pen <- rbind(
-      cbind(diag(w, nfree), matrix(0, nfree, ncol(s_pen))),
-      cbind(matrix(0, ncol(s_pen), nfree), s_pen)
+    border <- function(P) rbind(
+      cbind(diag(w, nfree), matrix(0, nfree, ncol(P))),
+      cbind(matrix(0, ncol(P), nfree), P)
     )
+    s_pen <- over_penalty(s_pen, border)
   } else {
     nfree <- 0L
   }
 
   dimnames(z) <- NULL
-  dimnames(s_pen) <- NULL
+  s_pen <- over_penalty(s_pen, function(P) {
+    dimnames(P) <- NULL
+    P
+  })
+  # WHERE THERE ARE SEVERAL COMPONENTS THE QUESTION IS ASKED OF THEIR SUM,
+  # because a coordinate is unpenalized only where NO component touches it.
+  # For one matrix the sum is that matrix.
+  #
+  # ⚠️ For adaptive_smooth() the two readings coincide, and saying why is
+  # worth more than the line itself. Its components are localized in RANK
+  # and not in sparsity once the constraint has been applied: measured at
+  # k = 30, m = 4, the raw components are 15 per cent nonzero with one or
+  # two zero columns each, and the built ones 93.2 per cent nonzero with
+  # exactly one zero column, the free border. The constraint's transform is
+  # dense, so a component that sees only one stretch of the covariate still
+  # has an entry in every coordinate. The sum is therefore the right
+  # question rather than a measurably different one, and a later family
+  # whose components keep their zeros is what it is here for.
+  s_tot <- if (is.list(s_pen)) Reduce(`+`, s_pen) else s_pen
   list(
     X = z,
     S = s_pen,
     # the LEADING columns no entry of the penalty touches. Counted from the
     # matrix rather than from the branch that built it, so the two cannot
     # disagree; cumprod stops at the first column that is penalized.
-    unpenalized = as.integer(sum(cumprod(colSums(abs(s_pen)) == 0))),
+    unpenalized = as.integer(sum(cumprod(colSums(abs(s_tot)) == 0))),
     blueprint = list(kind = sm@reparam, basis = rp$basis, nfree = nfree,
                      span = sp$params),
     names = nm
@@ -840,6 +863,19 @@ shrink_weight <- function() 0.1
 #' @keywords internal
 smoother_reparam <- function(sm, b, x, g, cons) {
   if (identical(sm@reparam, "dr")) {
+    # DEMMLER-REINSCH DIAGONALIZES ONE PENCIL, and a family whose roughness
+    # is a sum of localized components carries several. A rotation that
+    # makes one of them the identity leaves the others arbitrary, so the
+    # coordinates would be named after whichever component was chosen.
+    if (is.list(g)) {
+      stop(paste0(
+        "reparam = \"dr\" needs one roughness matrix and this family",
+        " carries several.\n  Demmler-Reinsch diagonalizes the pencil of",
+        " the Gram matrix against a single\n  penalty; with several there",
+        " is no one pencil to diagonalize. Use\n  reparam = \"none\" or",
+        " reparam = \"orthonorm\"."
+      ), call. = FALSE)
+    }
     d <- dr_basis(b, x, penalty = g,
                   constraints = if (is.null(cons)) NULL else t(cons))
     # the penalty IS the identity there, by the construction; forming the
@@ -873,8 +909,38 @@ smoother_reparam <- function(sm, b, x, g, cons) {
   # arithmetic and not in the last bit, and taking both from one object is
   # what makes smoother_apply() reproduce the block exactly.
   tm <- out@transform
-  s <- crossprod(tm, g %*% tm)
-  list(S = (s + t(s)) / 2, basis = out)
+  cong <- function(P) {
+    s <- crossprod(tm, P %*% tm)
+    (s + t(s)) / 2
+  }
+  list(S = over_penalty(g, cong), basis = out)
+}
+
+
+#' One Operation on a Penalty, However Many Components It Has
+#'
+#' @description
+#' Applies `f` to a roughness matrix, or to each component of a list of them,
+#' and returns the same shape it was given.
+#'
+#' @details
+#' [smoother_gram()] answers with a matrix for every family whose roughness
+#' is one quadratic form, and with a list for one whose roughness is a sum of
+#' localized components -- [adaptive_smooth()], whose components carry a
+#' smoothing parameter each. Every step between that answer and the built
+#' penalty is the same operation on each component: the congruence of a
+#' reparametrization, the border a kept null space adds, the removal of the
+#' dimnames. Writing the branch once here is what keeps those steps from
+#' each growing one of their own.
+#'
+#' @param s A numeric matrix, or a list of them.
+#' @param f A function of one matrix.
+#'
+#' @return What `f` returns, or a list of what it returns for each component.
+#'
+#' @keywords internal
+over_penalty <- function(s, f) {
+  if (is.list(s)) lapply(s, f) else f(s)
 }
 
 
@@ -1223,10 +1289,17 @@ S7::method(print, smoother) <- function(x, ...) {
   } else {
     sprintf("[%g, %g]", x@lower, x@upper)
   }
-  cat(sprintf(
-    "  penalty: derivative of order %d, %s measure\n", x@order,
-    if (is.character(x@measure)) x@measure else "supplied"
-  ))
+  # WHAT THE PENALTY IS DIFFERS BY FAMILY, and the line says which. A
+  # difference penalty integrates nothing, so naming a measure there would
+  # report a construction the smoother does not run.
+  cat(sprintf("  penalty: %s\n", if (S7::S7_inherits(x, AdaptiveSmoother)) {
+    sprintf("difference of order %d, weighted by %d components", x@diff, x@m)
+  } else if (S7::S7_inherits(x, PsplineSmoother)) {
+    sprintf("difference of order %d on the coefficients", x@diff)
+  } else {
+    sprintf("derivative of order %d, %s measure", x@order,
+            if (is.character(x@measure)) x@measure else "supplied")
+  }))
   cat(sprintf(
     "  null space: %s     coordinates: %s\n", x@null_space, x@reparam
   ))

@@ -18,7 +18,9 @@ A list of five elements:
 \describe{
 \item{\code{X}}{The design block, a numeric matrix of \code{length(x)} rows and
 one column per coordinate, with no dimnames.}
-\item{\code{S}}{The penalty matrix, square of \code{ncol(X)}.}
+\item{\code{S}}{The penalty: a matrix square of \code{ncol(X)}, or, for a family
+whose roughness is a sum of components carrying a smoothing
+parameter each (\code{\link[=adaptive_smooth]{adaptive_smooth()}}), a list of such matrices.}
 \item{\code{unpenalized}}{The number of leading columns the penalty does
 not cover, as an integer.}
 \item{\code{blueprint}}{What \code{\link[=smoother_apply]{smoother_apply()}} needs to reapply the

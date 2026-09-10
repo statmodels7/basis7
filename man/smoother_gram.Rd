@@ -16,7 +16,9 @@ smoother_gram(sm, b, x, ...)
 \item{...}{Passed to methods.}
 }
 \value{
-A symmetric numeric matrix of \code{b@dimension} rows and columns.
+A symmetric numeric matrix of \code{b@dimension} rows and columns, or a
+list of them where the family's roughness is a sum of components with a
+smoothing parameter each, as \code{\link[=adaptive_smooth]{adaptive_smooth()}}'s is.
 }
 \description{
 The Gram matrix of the derivative of order \code{sm@order}, integrated against
