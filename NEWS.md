@@ -1,3 +1,41 @@
+# basis7 0.13.1
+
+* **`cyclic_smooth()` builds at every `reparam`**, where `"none"` and
+  `"orthonorm"` raised "non-conformable arguments" at every `k` and were
+  reachable end to end through a model formula. `"dr"` was unaffected.
+  The defect dates from the family's arrival in 0.10.0.
+
+  The cause is that a cyclic basis is **itself a transformed basis** --
+  twelve periodic functions built from fifteen B-splines -- and
+  [new_transformed()] flattens a nested transform, so the constrained
+  object carries a transform against that parent, 15 by 11 rather than 12
+  by 11. The congruence that carries the roughness matrix onto the
+  reparametrized block was reading it off the object, and the roughness
+  matrix is defined on the twelve. `"dr"` escaped because
+  [dr_basis()] builds its own transform against the basis it is given
+  rather than reading a stored one.
+
+  The local transform is now computed where it is needed, by the new
+  internal `constraint_null()`, which `constrain_basis()` also calls so
+  that the two cannot drift. The object goes on carrying the flattened
+  transform, which is what a later evaluation must compute.
+
+  ⚠️ **Nothing else moves, and by construction rather than by tolerance**:
+  the flattening only happens where the parent is already transformed, so
+  for every other family the local transform IS the stored one. Measured
+  against the previous release over seventeen configurations -- five
+  families, three coordinate systems, a constraint and a whole order --
+  fifteen are `identical()` on the block, the penalty, the unpenalized
+  count, the names and the block reapplied at held-out rows, and the two
+  that differ are the two that used to raise.
+
+* ⚠️ **The coverage gap that let it ship is closed.** `reparam` was
+  exercised on a B-spline alone, and a construction that works for a root
+  basis and not for a transformed one cannot be seen from there. Every
+  family is now built at every coordinate system, with the block
+  reapplied at new values, and the two periodic families are asserted to
+  stay periodic under all three.
+
 # basis7 0.13.0
 
 * **Linear differential operators**, the general form of what a penalty

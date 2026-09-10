@@ -462,6 +462,49 @@ orthonorm_basis <- function(basis, order = 0L) {
 }
 
 
+#' The Null Basis of a Constraint
+#'
+#' @description
+#' An orthonormal basis of the null space of `cm`, the columns a
+#' constrained basis is built from. It is the transform **relative to the
+#' basis being constrained**, which is not always the one the resulting
+#' object stores.
+#'
+#' @details
+#' [new_transformed()] flattens a nested transform, so a basis that is
+#' itself transformed comes back carrying the product against its own
+#' parent: constraining a cyclic smoother's twelve periodic functions,
+#' which are a transform of fifteen B-splines, gives an object whose
+#' transform is 15 by 11 and not 12 by 11. That is right for evaluating
+#' it and wrong for carrying a matrix defined on the twelve, which is why
+#' the local transform is available here rather than read off the object.
+#'
+#' @param cm The constraint, one row per direction removed and one column
+#'   per basis function.
+#' @param dimension The number of basis functions.
+#' @param tol The relative tolerance at which a singular value counts as
+#'   zero.
+#'
+#' @return A numeric matrix of `dimension` rows and one column per
+#'   direction that survives the constraint.
+#'
+#' @seealso [constrain_basis()] and [smoother_reparam()], the two callers.
+#'
+#' @keywords internal
+constraint_null <- function(cm, dimension, tol = 1e-10) {
+  s <- svd(cm, nu = 0L, nv = dimension)
+  rank <- sum(s$d > tol * max(s$d, 0))
+  if (rank >= dimension) {
+    stop(
+      "The constraint leaves no functions: its rank equals the dimension of ",
+      "the basis.",
+      call. = FALSE
+    )
+  }
+  s$v[, seq.int(rank + 1L, dimension), drop = FALSE]
+}
+
+
 #' Restrict a Basis to a Linear Constraint
 #'
 #' @description
@@ -547,16 +590,8 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
   }
   if (anyNA(cm)) stop("'constraint' must not contain missing values.", call. = FALSE)
 
-  s <- svd(cm, nu = 0L, nv = basis@dimension)
-  rank <- sum(s$d > tol * max(s$d, 0))
-  if (rank >= basis@dimension) {
-    stop(
-      "The constraint leaves no functions: its rank equals the dimension of ",
-      "the basis.",
-      call. = FALSE
-    )
-  }
-  tm <- s$v[, seq.int(rank + 1L, basis@dimension), drop = FALSE]
+  tm <- constraint_null(cm, basis@dimension, tol)
+  rank <- basis@dimension - ncol(tm)
   new_transformed(
     basis, tm, paste0("constrained(", basis@basis_name, ")"), "cn",
     params = list(constraint_rank = rank)

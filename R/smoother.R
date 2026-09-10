@@ -1065,7 +1065,16 @@ smoother_reparam <- function(sm, b, x, g, cons) {
   # the constraint in COEFFICIENT space: C'B beta = 0 says the fitted
   # function is orthogonal to C over the observed covariate, which is the
   # same condition dr_basis() imposes in its first step
-  cb <- constrain_basis(b, crossprod(cons, basis_eval(b, x)))
+  cmat <- crossprod(cons, basis_eval(b, x))
+  # THE TRANSFORM THE CONGRUENCE NEEDS IS THE LOCAL ONE, relative to b,
+  # and it is not always the one the constrained object stores: where b
+  # is itself a transformed basis, as a cyclic smoother's is,
+  # new_transformed() flattens against b's own parent and the stored
+  # transform has the parent's row count. The roughness matrix is
+  # defined on b, so the two do not conform and every reparam other
+  # than "dr" raised "non-conformable arguments" on that family.
+  tloc <- constraint_null(cmat, b@dimension)
+  cb <- constrain_basis(b, cmat)
 
   out <- if (identical(sm@reparam, "none")) {
     cb
@@ -1077,7 +1086,9 @@ smoother_reparam <- function(sm, b, x, g, cons) {
         " cannot be\n  orthonormalized. Reduce 'k'."
       ), call. = FALSE)
     }
-    new_transformed(cb, backsolve(r, diag(nrow(r))),
+    rinv <- backsolve(r, diag(nrow(r)))
+    tloc <- tloc %*% rinv
+    new_transformed(cb, rinv,
                     paste0("orthonorm(", cb@basis_name, ")"), "on")
   }
 
@@ -1087,9 +1098,11 @@ smoother_reparam <- function(sm, b, x, g, cons) {
   # what building it here in two steps would; the two agree in exact
   # arithmetic and not in the last bit, and taking both from one object is
   # what makes smoother_apply() reproduce the block exactly.
-  tm <- out@transform
+  # ...and the object goes on carrying the FLATTENED transform, which is
+  # what a later evaluation must compute. The two agree wherever b is a
+  # root basis, which is every family but the cyclic one.
   cong <- function(P) {
-    s <- crossprod(tm, P %*% tm)
+    s <- crossprod(tloc, P %*% tloc)
     (s + t(s)) / 2
   }
   list(S = over_penalty(g, cong), basis = out)

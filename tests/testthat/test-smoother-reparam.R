@@ -6,6 +6,65 @@ n <- 300L
 x <- sort(runif(n, -2, 2))
 y <- sin(3 * x) + rnorm(n, sd = 0.3)
 
+test_that("every family builds at every coordinate system", {
+  # ⚠️ THE COVERAGE GAP THAT LET A DEFECT SHIP. Everything else in this
+  # file exercises reparam on a B-spline, and cyclic_smooth() built under
+  # "dr" and raised "non-conformable arguments" under the other two from
+  # the day the family was added, reachable end to end through a model
+  # formula. The cause was that a cyclic basis is ITSELF a transformed
+  # basis -- twelve periodic functions built from fifteen B-splines --
+  # and the congruence was reading the transform the constrained object
+  # stores, which new_transformed() has flattened against that parent.
+  #
+  # Asserting it family by family is what makes the next such defect
+  # visible: a construction that works for a root basis and not for a
+  # transformed one cannot be seen from a B-spline.
+  set.seed(19)
+  xx <- sort(runif(220))
+  fams <- list(
+    bspline  = function(rp) bspline_smooth(k = 12, reparam = rp),
+    legendre = function(rp) legendre_smooth(k = 10, reparam = rp),
+    fourier  = function(rp) fourier_smooth(k = 11, lower = 0, upper = 1,
+                                           reparam = rp),
+    cyclic   = function(rp) cyclic_smooth(k = 12, lower = 0, upper = 1,
+                                          reparam = rp),
+    pspline  = function(rp) pspline_smooth(k = 14, reparam = rp)
+  )
+  n_built <- 0L
+  for (nm in names(fams)) {
+    for (rp in c("dr", "none", "orthonorm")) {
+      o <- smoother_build(fams[[nm]](rp), xx)
+      expect_true(is.matrix(o$X))
+      expect_identical(nrow(o$X), length(xx))
+      expect_true(all(is.finite(o$X)))
+      # and the block is reapplied at new values, which is where a
+      # transform recorded against the wrong parent would show
+      i <- c(4L, 77L, 200L)
+      expect_equal(smoother_apply(fams[[nm]](rp), o$blueprint, xx[i]),
+                   o$X[i, , drop = FALSE], tolerance = 1e-10,
+                   ignore_attr = TRUE)
+      n_built <- n_built + 1L
+    }
+  }
+  # the count, so the loop cannot pass by building nothing
+  expect_identical(n_built, 15L)
+})
+
+test_that("a periodic family keeps its periodicity at every reparam", {
+  # the property the two periodic families exist for, which a block built
+  # through a wrongly addressed transform would not have
+  set.seed(20)
+  xx <- sort(runif(220))
+  for (rp in c("dr", "none", "orthonorm")) {
+    for (sm in list(fourier_smooth(k = 11, lower = 0, upper = 1, reparam = rp),
+                    cyclic_smooth(k = 12, lower = 0, upper = 1, reparam = rp))) {
+      o <- smoother_build(sm, xx)
+      ends <- smoother_apply(sm, o$blueprint, c(0, 1))
+      expect_lt(max(abs(ends[1L, ] - ends[2L, ])), 1e-8)
+    }
+  }
+})
+
 test_that("the three coordinate systems describe the same space", {
   o <- lapply(c("dr", "none", "orthonorm"), function(r) {
     smoother_build(bspline_smooth(k = 12, reparam = r), x)
