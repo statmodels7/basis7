@@ -124,23 +124,33 @@ test_that("a cyclic smoother declares only what means something to it", {
   expect_error(cyclic_smooth(k = 10, constrain = 1), "unused argument")
   # and the contradictory pair the smoother class refuses
   expect_error(
-    cyclic_smooth(k = 10, penalty = penalties7::lasso_penalty,
+    cyclic_smooth(k = 10, penalty = function(n_coef) NULL,
                   null_space = "shrink"),
     "cannot both be given"
   )
 })
 
 test_that("a penalty factory is stored on a cyclic smoother and never called", {
+  # basis7 sits at the bottom of the dependency graph and cannot name
+  # penalties7, so a factory here is any function of a coefficient count.
+  # This one RAISES, so "never called" is enforced by the construction and
+  # not only counted.
   called <- 0L
   fac <- function(n_coef) {
     called <<- called + 1L
-    penalties7::lasso_penalty(n_coef = n_coef)
+    stop("the smoother must not call this")
   }
   sm <- cyclic_smooth(k = 10, penalty = fac, lower = 0, upper = 1)
+  expect_identical(sm@penalty, fac)
   expect_identical(called, 0L)
   # building the block does not call it either: basis7 stores the factory
   # and modelterms7 is what calls it
-  out <- smoother_build(sm, sort(runif(60)))
+  x <- sort(stats::runif(60))
+  out <- smoother_build(sm, x)
   expect_identical(called, 0L)
-  expect_identical(ncol(out$X), 9L)
+  # and the construction is the one it would have been without the factory
+  ref <- smoother_build(cyclic_smooth(k = 10, lower = 0, upper = 1), x)
+  expect_identical(out$X, ref$X)
+  expect_identical(out$S, ref$S)
+  expect_identical(out$unpenalized, ref$unpenalized)
 })
