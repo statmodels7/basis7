@@ -23,10 +23,14 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 
 - order:
 
-  The derivative order whose inner products are wanted. A single
-  non-negative whole number, default `0`, giving the inner products of
-  the basis functions themselves; `2` is the usual roughness penalty.
-  One entry per variable for a basis of several.
+  What the inner products are taken of. A single non-negative whole
+  number, default `0`, giving the inner products of the basis functions
+  themselves; `2` is the usual roughness penalty; one entry per variable
+  for a basis of several. A
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  instead gives \\\int (Lb)(Lb)^\top\\, the roughness matrix of that
+  operator, and routes to
+  [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md).
 
 - at:
 

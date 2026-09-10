@@ -44,7 +44,20 @@ cyclic_smooth(
 
 - order:
 
-  The order of derivative the penalty integrates, at most `degree`.
+  What the penalty measures: a
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  from
+  [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
+  [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
+  [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+  or
+  [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
+  or a whole number `m` as the shorthand for `deriv_operator(m)`. It
+  says what a strongly penalized fit contracts toward, which for `m` is
+  a constant at 1, a straight line at 2 and a parabola at 3, and for any
+  operator is
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
+  Its order is at most `degree`.
 
 - measure:
 
@@ -184,7 +197,7 @@ dim(out$X)
 # the block takes the same value at the two ends of the period
 ends <- smoother_apply(sm, out$blueprint, c(0, 365))
 max(abs(ends[1, ] - ends[2, ]))
-#> [1] 0
+#> [1] 1.110223e-16
 
 # 'order' may not exceed the degree.
 try(cyclic_smooth(k = 10, degree = 3, order = 4))

@@ -21,7 +21,7 @@ quadrature error enters a penalized fit."><meta property="og:image" content="htt
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -75,10 +75,12 @@ quadrature error enters a penalized fit.</p>
 
 
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
-<dd><p>The derivative order whose inner products are wanted. A single
-non-negative whole number, default <code>0</code>, giving the inner products of the
-basis functions themselves; <code>2</code> is the usual roughness penalty. One entry
-per variable for a basis of several.</p></dd>
+<dd><p>What the inner products are taken of. A single non-negative
+whole number, default <code>0</code>, giving the inner products of the basis
+functions themselves; <code>2</code> is the usual roughness penalty; one entry per
+variable for a basis of several. A <a href="LinearOperator.html">LinearOperator</a> instead gives
+\(\int (Lb)(Lb)^\top\), the roughness matrix of that operator, and
+routes to <code><a href="basis_operator_gram.html">basis_operator_gram()</a></code>.</p></dd>
 
 
 <dt id="arg-at">at<a class="anchor" aria-label="anchor" href="#arg-at"></a></dt>

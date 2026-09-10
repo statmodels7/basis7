@@ -13,7 +13,7 @@ degree below `order`, as a B-spline's is, so it inherits the default
 LegendreSmoother(
   smoother_name = character(0),
   dimension = integer(0),
-  order = integer(0),
+  order = NULL,
   measure = NULL,
   constrain = NULL,
   null_space = character(0),
@@ -41,9 +41,19 @@ LegendreSmoother(
 
 - order:
 
-  The order of derivative the penalty integrates, a single positive
-  integer. It says what a strongly penalized fit contracts toward: a
-  constant at 1, a straight line at 2, a parabola at 3.
+  What the penalty measures: a
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  from
+  [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
+  [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
+  [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+  or
+  [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
+  or a whole number `m` as the shorthand for `deriv_operator(m)`. It
+  says what a strongly penalized fit contracts toward, which for `m` is
+  a constant at 1, a straight line at 2 and a parabola at 3, and for any
+  operator is
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
 
 - measure:
 

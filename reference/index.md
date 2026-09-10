@@ -85,6 +85,33 @@ from the marginal evaluations without forming the product.
 - [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
   : How Many Variables a Basis Takes
 
+## Differential operators
+
+What a penalty measures. A smoother’s `order` takes one of these in
+place of a whole number, and the operator carries its own null space:
+the functions a maximal penalty leaves untouched.
+
+- [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md)
+  : The Derivative Operator
+- [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
+  : The Harmonic Acceleration Operator
+- [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+  : The Oscillator Operator
+- [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md)
+  : A Linear Differential Operator From Its Weights
+- [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+  : The Null Space of a Differential Operator
+- [`operator_null_design()`](https://statmodels7.github.io/basis7/reference/operator_null_design.md)
+  : The Null-Space Functions Evaluated
+- [`operator_order()`](https://statmodels7.github.io/basis7/reference/operator_order.md)
+  : The Order of a Differential Operator
+- [`operator_weights()`](https://statmodels7.github.io/basis7/reference/operator_weights.md)
+  : The Weights of a Differential Operator
+- [`operator_resolve()`](https://statmodels7.github.io/basis7/reference/operator_resolve.md)
+  : Fill In an Operator's Period From an Interval
+- [`LinearOperator()`](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  : The Linear Differential Operator Class
+
 ## The interface
 
 What every basis answers. A subclass must implement only the first; the
@@ -98,6 +125,8 @@ rest have numerical methods on the base class.
   : Integrate a Basis
 - [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
   : Gram Matrix of a Basis
+- [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md)
+  : The Roughness Matrix of a Differential Operator
 - [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
   : Column Names of a Basis Matrix
 - [`basis()`](https://statmodels7.github.io/basis7/reference/basis.md) :
@@ -134,6 +163,8 @@ machinery the fallbacks are built from, documented rather than hidden.
   : Numerically Differentiate a Matrix-Valued Function
 - [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
   : Gram Matrix by Composite Quadrature
+- [`numerical_operator_gram()`](https://statmodels7.github.io/basis7/reference/numerical_operator_gram.md)
+  : The Roughness Matrix of an Operator by Quadrature
 - [`gauss_legendre()`](https://statmodels7.github.io/basis7/reference/gauss_legendre.md)
   : Gauss-Legendre Nodes and Weights
 - [`quad_rule()`](https://statmodels7.github.io/basis7/reference/quad_rule.md)

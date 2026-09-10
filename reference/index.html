@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -267,6 +267,85 @@
         </dt>
         <dd>How Many Variables a Basis Takes</dd>
       </dl></div><div class="section level2">
+      <h2 id="differential-operators">Differential operators<a class="anchor" aria-label="anchor" href="#differential-operators"></a></h2>
+
+      <div class="section-desc"><p>What a penalty measures. A smoother’s <code>order</code> takes one of these in place of a whole number, and the operator carries its own null space: the functions a maximal penalty leaves untouched.</p></div>
+
+      <dl></dl></div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="deriv_operator.html">deriv_operator()</a></code>
+
+        </dt>
+        <dd>The Derivative Operator</dd>
+
+        <dt>
+
+          <code><a href="harmonic_operator.html">harmonic_operator()</a></code>
+
+        </dt>
+        <dd>The Harmonic Acceleration Operator</dd>
+
+        <dt>
+
+          <code><a href="oscillator_operator.html">oscillator_operator()</a></code>
+
+        </dt>
+        <dd>The Oscillator Operator</dd>
+
+        <dt>
+
+          <code><a href="linear_operator.html">linear_operator()</a></code>
+
+        </dt>
+        <dd>A Linear Differential Operator From Its Weights</dd>
+
+        <dt>
+
+          <code><a href="operator_null.html">operator_null()</a></code>
+
+        </dt>
+        <dd>The Null Space of a Differential Operator</dd>
+
+        <dt>
+
+          <code><a href="operator_null_design.html">operator_null_design()</a></code>
+
+        </dt>
+        <dd>The Null-Space Functions Evaluated</dd>
+
+        <dt>
+
+          <code><a href="operator_order.html">operator_order()</a></code>
+
+        </dt>
+        <dd>The Order of a Differential Operator</dd>
+
+        <dt>
+
+          <code><a href="operator_weights.html">operator_weights()</a></code>
+
+        </dt>
+        <dd>The Weights of a Differential Operator</dd>
+
+        <dt>
+
+          <code><a href="operator_resolve.html">operator_resolve()</a></code>
+
+        </dt>
+        <dd>Fill In an Operator's Period From an Interval</dd>
+
+        <dt>
+
+          <code><a href="LinearOperator.html">LinearOperator()</a></code>
+
+        </dt>
+        <dd>The Linear Differential Operator Class</dd>
+      </dl></div><div class="section level2">
       <h2 id="the-interface">The interface<a class="anchor" aria-label="anchor" href="#the-interface"></a></h2>
 
       <div class="section-desc"><p>What every basis answers. A subclass must implement only the first; the rest have numerical methods on the base class.</p></div>
@@ -303,6 +382,13 @@
 
         </dt>
         <dd>Gram Matrix of a Basis</dd>
+
+        <dt>
+
+          <code><a href="basis_operator_gram.html">basis_operator_gram()</a></code>
+
+        </dt>
+        <dd>The Roughness Matrix of a Differential Operator</dd>
 
         <dt>
 
@@ -414,6 +500,13 @@
 
         </dt>
         <dd>Gram Matrix by Composite Quadrature</dd>
+
+        <dt>
+
+          <code><a href="numerical_operator_gram.html">numerical_operator_gram()</a></code>
+
+        </dt>
+        <dd>The Roughness Matrix of an Operator by Quadrature</dd>
 
         <dt>
 

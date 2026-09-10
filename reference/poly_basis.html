@@ -15,7 +15,7 @@ being diagonal where the raw powers' is a Hilbert matrix."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -138,12 +138,12 @@ periodic one; <code><a href="orthonorm_basis.html">orthonorm_basis()</a></code> 
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span>legendre <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/kappa.html" class="external-link">kappa</a></span><span class="op">(</span><span class="fu"><a href="basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="fu">poly_basis</span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, exact <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>  raw_powers <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/kappa.html" class="external-link">kappa</a></span><span class="op">(</span><span class="va">H</span>, exact <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     legendre   raw_powers </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1.900000e+01 1.602498e+13 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1.900000e+01 1.602442e+13 </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># It spans the same space as the raw powers, so a cubic is fitted exactly.</span></span></span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lmfit.html" class="external-link">lm.fit</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">x</span><span class="op">)</span>, <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">fitted.values</span> <span class="op">-</span> <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.270252e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.193503e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">p</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>

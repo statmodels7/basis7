@@ -7,7 +7,7 @@ space, so a degree below `order - 1` is rejected.
 ## Usage
 
 ``` r
-check_constrain(constrain, order)
+check_constrain(constrain, op)
 ```
 
 ## Arguments
@@ -16,9 +16,9 @@ check_constrain(constrain, order)
 
   The value given, `NULL` or a whole number.
 
-- order:
+- op:
 
-  The penalty's derivative order.
+  The penalty's operator.
 
 ## Value
 

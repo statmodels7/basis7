@@ -38,7 +38,21 @@ bspline_smooth(
 
 - order:
 
-  The order of derivative the penalty integrates. See the section above.
+  What the penalty measures: a
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  from
+  [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
+  [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
+  [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+  or
+  [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
+  or a whole number `m` as the shorthand for `deriv_operator(m)`. It
+  says what a strongly penalized fit contracts toward, which for `m` is
+  a constant at 1, a straight line at 2 and a parabola at 3, and for any
+  operator is
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
+  A spline of degree `d` has no derivative above `d`, so an operator of
+  order above `degree` is rejected.
 
 - measure:
 
@@ -168,7 +182,7 @@ out$unpenalized
 round(cor(out$X[, 1], x), 12)
 #> [1] 1
 max(abs(crossprod(out$X[, 1], out$X[, -1])))
-#> [1] 5.551115e-15
+#> [1] 2.198242e-14
 
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
