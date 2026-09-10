@@ -89,6 +89,29 @@ identically zero, which penalizes nothing. Passing a basis and a penalty
 separately would leave the caller to satisfy that compatibility at every
 call site. A smoother is one object, so each constructor validates its own
 arguments where the caller wrote them.
+}
+
+\section{A penalty of your own}{
+\code{penalty} replaces the roughness matrix with a penalty built by a factory
+of the coefficient count: \code{bspline_smooth(penalty = penalties7::lasso_penalty)}. It is a factory and not a built penalty
+because how many coefficients a smooth has is settled by the data, the
+constraint and the null space moving with them.
+
+A smoother \strong{stores the function and never calls it}. This package sits
+at the bottom of the dependency graph and imports \pkg{numericals7}
+alone, so it cannot name \pkg{penalties7} and cannot ask whether what the
+function returns is a penalty; \code{\link[=check_penalty]{check_penalty()}} asks only that it be a
+function of one argument. Whichever layer builds the term calls it, at
+the count only the data settle, and checks the result there.
+
+The construction is unaffected. \code{\link[=smoother_build]{smoother_build()}} returns the roughness
+matrix in \code{S} whether or not a factory is given, because the
+reparametrization reads that matrix: it is what orders the coordinates
+from the smoothest to the most wiggly and makes the penalty on them the
+identity, and that ordering is the reason a penalty of another shape is
+worth reaching for. \code{unpenalized} counts the columns the roughness leaves
+free, which a caller building a separable penalty needs, since such a
+penalty has no zero row with which to leave a column alone.
 
 \code{smoother} is abstract: construct one through a family, of which
 \code{\link[=bspline_smooth]{bspline_smooth()}} is the first.

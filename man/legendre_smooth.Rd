@@ -32,7 +32,9 @@ for the null space of the penalty.}
 
 \item{reparam}{The coordinates the coefficients live in.}
 
-\item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory.}
+\item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
+building a penalty from a coefficient count. See the section on the
+smoother's own page.}
 
 \item{lower, upper}{The interval, \code{NULL} to read it from the data.}
 }

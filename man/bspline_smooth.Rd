@@ -41,7 +41,8 @@ see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
 default, is the Demmler-Reinsch rotation.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
-building one from a coefficient count.}
+building a penalty from a coefficient count. See the section on the
+smoother's own page.}
 
 \item{lower, upper}{The interval. \code{NULL}, the default for each, reads it
 from the data at build; give both to fix it, which is what a prediction
@@ -113,6 +114,17 @@ max(abs(crossprod(out$X[, 1], out$X[, -1])))
 
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
+
+# A penalty factory is STORED AND NEVER CALLED here: one that raises
+# still builds, because it is the model layer that calls it.
+sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
+out2 <- smoother_build(sm2, x)
+identical(out2$S, out$S)
+
+# It must be a function of the count, and it cannot be combined with a
+# shrunk null space, which is a weight inside the matrix it replaces.
+try(bspline_smooth(k = 10, penalty = 3))
+try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
 
 # 'k' must leave something after the constraint.
 try(bspline_smooth(k = 2))

@@ -139,17 +139,57 @@ test_that("the covariate is checked", {
 
 test_that("a setting this version does not build is rejected, not ignored", {
   # An argument accepted and ignored would report a fit of a model the
-  # caller did not ask for. What remains unbuilt is the penalty factory,
-  # which is a lot of its own; `order`, `measure`, `constrain`,
-  # `null_space` and `reparam` are built and are tested in their own files.
-  expect_error(bspline_smooth(k = 10, penalty = function(n_coef) NULL),
-               "not built in this version")
+  # caller did not ask for. `order`, `measure`, `constrain`, `null_space`,
+  # `reparam` and `penalty` are all built, and each is tested where it
+  # belongs; what remains rejected is the ONE combination whose two halves
+  # contradict each other.
+  #
+  # A FACTORY AND A SHRUNK NULL SPACE. "shrink" is a weight written inside
+  # the roughness matrix -- a tenth of what a penalized direction carries,
+  # which is a ratio against that matrix's own eigenvalues -- and a factory
+  # replaces the matrix with a penalty that has no such eigenvalue. Each is
+  # accepted on its own, which is what says the rejection is of the pair.
+  expect_error(bspline_smooth(k = 10, penalty = function(n_coef) NULL,
+                              null_space = "shrink"),
+               "cannot both be given")
+  expect_silent(bspline_smooth(k = 10, penalty = function(n_coef) NULL))
   expect_silent(bspline_smooth(k = 10, null_space = "shrink"))
   expect_silent(bspline_smooth(k = 10, reparam = "none"))
   expect_silent(bspline_smooth(k = 10, order = 1))
   # and an unknown value is rejected by name before that
   expect_error(bspline_smooth(k = 10, null_space = "nope"), "arg")
   expect_error(bspline_smooth(k = 10, reparam = "nope"), "arg")
+})
+
+test_that("a penalty factory is stored and never called", {
+  # basis7 sits at the bottom of the dependency graph and cannot name
+  # penalties7, so it cannot ask whether what the function returns is a
+  # penalty. It stores the function; whichever layer builds the term calls
+  # it, at the coefficient count the data settle, and checks the result.
+  called <- 0L
+  fac <- function(n_coef) {
+    called <<- called + 1L
+    stop("the smoother must not call this")
+  }
+  sm <- bspline_smooth(k = 10, penalty = fac)
+  expect_identical(sm@penalty, fac)
+  x <- sort(stats::runif(120))
+  out <- smoother_build(sm, x)
+  expect_identical(called, 0L)
+  # and the construction is the one it would have been without the factory:
+  # the reparametrization reads the ROUGHNESS matrix, which the factory
+  # replaces only for whoever penalizes with it
+  ref <- smoother_build(bspline_smooth(k = 10), x)
+  expect_identical(out$X, ref$X)
+  expect_identical(out$S, ref$S)
+  expect_identical(out$unpenalized, ref$unpenalized)
+
+  # the shape is checked where it is written
+  expect_error(bspline_smooth(k = 10, penalty = 3), "must be NULL, or a")
+  expect_error(bspline_smooth(k = 10, penalty = function() 1),
+               "must be NULL, or a")
+  expect_error(fourier_smooth(k = 9, penalty = "lasso"), "must be NULL, or a")
+  expect_error(legendre_smooth(k = 8, penalty = list()), "must be NULL, or a")
 })
 
 test_that("(X, S) is what a penalized least-squares fit needs", {

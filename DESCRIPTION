@@ -1,6 +1,6 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.8.3
+Version: 0.9.0
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Basis expansions as objects, built on the S7 object-oriented

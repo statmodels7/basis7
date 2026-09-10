@@ -70,7 +70,9 @@ FourierSmoother <- S7::new_class(
 #'   argument is accepted for symmetry with the other families and changes
 #'   nothing.
 #' @param reparam The coordinates the coefficients live in.
-#' @param penalty `NULL` for the quadratic roughness penalty, or a factory.
+#' @param penalty `NULL` for the quadratic roughness penalty, or a factory
+#'   building a penalty from a coefficient count. See the section on the
+#'   smoother's own page.
 #' @param omega The period, `NULL` for the width of the interval.
 #' @param lower,upper The interval, which for a periodic basis is the period.
 #'   See the section above: give both.
@@ -114,6 +116,7 @@ fourier_smooth <- function(k = 9, order = 2, measure = "lebesgue",
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
   check_interval(lower, upper)
   measure <- check_measure(measure)
+  penalty <- check_penalty(penalty)
   if (!is.null(omega) && (!is.numeric(omega) || length(omega) != 1L ||
     !is.finite(omega) || omega <= 0)) {
     stop("'omega' must be NULL or a single positive number.", call. = FALSE)
@@ -213,7 +216,9 @@ LegendreSmoother <- S7::new_class("LegendreSmoother", parent = smoother)
 #'   for the null space of the penalty.
 #' @param null_space What becomes of the directions the penalty does not see.
 #' @param reparam The coordinates the coefficients live in.
-#' @param penalty `NULL` for the quadratic roughness penalty, or a factory.
+#' @param penalty `NULL` for the quadratic roughness penalty, or a factory
+#'   building a penalty from a coefficient count. See the section on the
+#'   smoother's own page.
 #' @param lower,upper The interval, `NULL` to read it from the data.
 #'
 #' @return An S7 object of class [LegendreSmoother], inheriting from
@@ -251,6 +256,7 @@ legendre_smooth <- function(k = 8, order = 2, measure = "lebesgue",
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
   check_interval(lower, upper)
   measure <- check_measure(measure)
+  penalty <- check_penalty(penalty)
   constrain <- check_constrain(constrain, order)
   ncon <- if (is.null(constrain)) order else constrain + 1L
   if (k <= ncon) {

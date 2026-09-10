@@ -32,6 +32,30 @@
 #' call site. A smoother is one object, so each constructor validates its own
 #' arguments where the caller wrote them.
 #'
+#' # A penalty of your own
+#'
+#' `penalty` replaces the roughness matrix with a penalty built by a factory
+#' of the coefficient count: `bspline_smooth(penalty =
+#' penalties7::lasso_penalty)`. It is a factory and not a built penalty
+#' because how many coefficients a smooth has is settled by the data, the
+#' constraint and the null space moving with them.
+#'
+#' A smoother **stores the function and never calls it**. This package sits
+#' at the bottom of the dependency graph and imports \pkg{numericals7}
+#' alone, so it cannot name \pkg{penalties7} and cannot ask whether what the
+#' function returns is a penalty; [check_penalty()] asks only that it be a
+#' function of one argument. Whichever layer builds the term calls it, at
+#' the count only the data settle, and checks the result there.
+#'
+#' The construction is unaffected. [smoother_build()] returns the roughness
+#' matrix in `S` whether or not a factory is given, because the
+#' reparametrization reads that matrix: it is what orders the coordinates
+#' from the smoothest to the most wiggly and makes the penalty on them the
+#' identity, and that ordering is the reason a penalty of another shape is
+#' worth reaching for. `unpenalized` counts the columns the roughness leaves
+#' free, which a caller building a separable penalty needs, since such a
+#' penalty has no zero row with which to leave a column alone.
+#'
 #' `smoother` is abstract: construct one through a family, of which
 #' [bspline_smooth()] is the first.
 #'
@@ -221,7 +245,8 @@ BsplineSmoother <- S7::new_class(
 #' @param reparam The coordinates the coefficients live in. `"dr"`, the
 #'   default, is the Demmler-Reinsch rotation.
 #' @param penalty `NULL` for the quadratic roughness penalty, or a factory
-#'   building one from a coefficient count.
+#'   building a penalty from a coefficient count. See the section on the
+#'   smoother's own page.
 #' @param lower,upper The interval. `NULL`, the default for each, reads it
 #'   from the data at build; give both to fix it, which is what a prediction
 #'   outside the observed range needs.
@@ -263,6 +288,17 @@ BsplineSmoother <- S7::new_class(
 #' # Dropping the null space removes it.
 #' dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
 #'
+#' # A penalty factory is STORED AND NEVER CALLED here: one that raises
+#' # still builds, because it is the model layer that calls it.
+#' sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
+#' out2 <- smoother_build(sm2, x)
+#' identical(out2$S, out$S)
+#'
+#' # It must be a function of the count, and it cannot be combined with a
+#' # shrunk null space, which is a weight inside the matrix it replaces.
+#' try(bspline_smooth(k = 10, penalty = 3))
+#' try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
+#'
 #' # 'k' must leave something after the constraint.
 #' try(bspline_smooth(k = 2))
 #' @export
@@ -298,6 +334,7 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
   check_interval(lower, upper)
   measure <- check_measure(measure)
+  penalty <- check_penalty(penalty)
   constrain <- check_constrain(constrain, order)
   # the constraint removes one direction per degree it spans, and a basis
   # with nothing left after it is an error several frames down
@@ -1011,11 +1048,11 @@ check_interval <- function(lower, upper) {
 #' Check What a Smoother Asks For Against What Is Built
 #'
 #' @description
-#' Signals an error for a smoother whose settings this version of the package
-#' does not build. The arguments are on the constructor because they are
-#' part of its interface; the values below reach arithmetic that is not
-#' written yet, and an argument accepted and ignored would report a fit of a
-#' model the caller did not ask for.
+#' Signals an error for a smoother whose settings contradict each other or
+#' reach arithmetic this version does not write. The arguments are on the
+#' constructor because they are part of its interface, and an argument
+#' accepted and ignored would report a fit of a model the caller did not ask
+#' for.
 #'
 #' @param sm A [smoother].
 #'
@@ -1023,16 +1060,53 @@ check_interval <- function(lower, upper) {
 #'
 #' @keywords internal
 check_available <- function(sm) {
-  ask <- function(what, instead) {
-    stop(sprintf(paste0(
-      "%s is not built in this version of basis7.\n  What is available:",
-      " %s."
-    ), what, instead), call. = FALSE)
-  }
-  if (!is.null(sm@penalty)) {
-    ask("a penalty factory", "penalty = NULL, the quadratic roughness penalty")
+  # A FACTORY AND A SHRUNK NULL SPACE CONTRADICT EACH OTHER, and the
+  # contradiction is in the arithmetic rather than in the vocabulary.
+  # "shrink" is a weight written INSIDE the roughness matrix -- one tenth of
+  # what a penalized direction carries, which is a ratio against that
+  # matrix's own eigenvalues -- and a factory replaces the matrix with a
+  # penalty that has no such eigenvalue to be a tenth of. The free columns
+  # would keep a weight in a matrix the fit no longer reads.
+  if (!is.null(sm@penalty) && identical(sm@null_space, "shrink")) {
+    stop(paste0(
+      "'penalty' and null_space = \"shrink\" cannot both be given: the",
+      " shrinkage is\n  a weight inside the roughness matrix, and a penalty",
+      " factory replaces that\n  matrix. Use null_space = \"keep\" to leave",
+      " the unpenalized directions free,\n  or \"drop\" to remove them."
+    ), call. = FALSE)
   }
   invisible(NULL)
+}
+
+
+#' Check a Smoother's Penalty Factory
+#'
+#' @description
+#' Validates the `penalty` argument of a smoother constructor: `NULL`, or a
+#' function of one argument.
+#'
+#' @details
+#' The check is deliberately weak, and the reason is the dependency graph.
+#' \pkg{basis7} sits at the bottom of it and imports \pkg{numericals7} alone,
+#' so it cannot name \pkg{penalties7} and cannot ask whether what the
+#' function returns is a penalty. It stores the function and never calls it.
+#' Whichever layer builds the term calls it, at the coefficient count only
+#' the data settle, and checks the result there.
+#'
+#' @param penalty The value given.
+#'
+#' @return `penalty`, unchanged.
+#'
+#' @keywords internal
+check_penalty <- function(penalty) {
+  if (is.null(penalty)) return(penalty)
+  if (is.function(penalty) && length(formals(args(penalty)))) return(penalty)
+  stop(paste0(
+    "'penalty' must be NULL, or a function of the number of coefficients",
+    " giving a\n  penalty. A penalties7 constructor passes bare --",
+    " penalty = penalties7::lasso_penalty\n  -- and anything else is",
+    " written out, as function(n_coef) my_penalty(n_coef)."
+  ), call. = FALSE)
 }
 
 
