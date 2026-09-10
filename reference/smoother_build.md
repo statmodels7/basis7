@@ -41,7 +41,10 @@ A list of five elements:
 
 - `S`:
 
-  The penalty matrix, square of `ncol(X)`.
+  The penalty: a matrix square of `ncol(X)`, or, for a family whose
+  roughness is a sum of components carrying a smoothing parameter each
+  ([`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)),
+  a list of such matrices.
 
 - `unpenalized`:
 

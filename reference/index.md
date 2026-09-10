@@ -47,6 +47,8 @@ returns the block and the penalty matrix.
   : A Cyclic Smoother
 - [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
   : A P-spline Smoother
+- [`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)
+  : An Adaptive Smoother
 - [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
   : Build a Smoother at Data
 - [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
@@ -66,6 +68,8 @@ returns the block and the penalty matrix.
   : The Cyclic Smoother Class
 - [`PsplineSmoother()`](https://statmodels7.github.io/basis7/reference/PsplineSmoother.md)
   : The P-spline Smoother Class
+- [`AdaptiveSmoother()`](https://statmodels7.github.io/basis7/reference/AdaptiveSmoother.md)
+  : The Adaptive Smoother Class
 
 ## Several variables
 
@@ -197,6 +201,8 @@ machinery the fallbacks are built from, documented rather than hidden.
   : The Weight a Shrunk Null Space Carries
 - [`smoother_reparam()`](https://statmodels7.github.io/basis7/reference/smoother_reparam.md)
   : The Coordinates a Smoother's Coefficients Live In
+- [`over_penalty()`](https://statmodels7.github.io/basis7/reference/over_penalty.md)
+  : One Operation on a Penalty, However Many Components It Has
 - [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
   : Name the Columns of a Basis Matrix
 - [`basis_partitions_unity()`](https://statmodels7.github.io/basis7/reference/basis_partitions_unity.md)

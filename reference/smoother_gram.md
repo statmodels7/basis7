@@ -34,7 +34,11 @@ smoother_gram(sm, b, x, ...)
 
 ## Value
 
-A symmetric numeric matrix of `b@dimension` rows and columns.
+A symmetric numeric matrix of `b@dimension` rows and columns, or a list
+of them where the family's roughness is a sum of components with a
+smoothing parameter each, as
+[`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)'s
+is.
 
 ## Details
 

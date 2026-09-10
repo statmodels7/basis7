@@ -15,7 +15,7 @@ arithmetic: what comes back is the pair \((X, S)\) of
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,9 @@ arithmetic: what comes back is the pair \((X, S)\) of
 one column per coordinate, with no dimnames.</p></dd>
 
 <dt><code>S</code></dt>
-<dd><p>The penalty matrix, square of <code>ncol(X)</code>.</p></dd>
+<dd><p>The penalty: a matrix square of <code>ncol(X)</code>, or, for a family
+whose roughness is a sum of components carrying a smoothing
+parameter each (<code><a href="adaptive_smooth.html">adaptive_smooth()</a></code>), a list of such matrices.</p></dd>
 
 <dt><code>unpenalized</code></dt>
 <dd><p>The number of leading columns the penalty does
