@@ -44,6 +44,7 @@ reference:
   - bspline_smooth
   - fourier_smooth
   - legendre_smooth
+  - cyclic_smooth
   - smoother_build
   - smoother_apply
   - smoother_basis
@@ -51,6 +52,7 @@ reference:
   - BsplineSmoother
   - FourierSmoother
   - LegendreSmoother
+  - CyclicSmoother
 
 - title: Several variables
   desc: >
