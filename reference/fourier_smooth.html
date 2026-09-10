@@ -13,7 +13,7 @@ takes the same value at the two ends of the interval."><meta property="og:image"
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -209,7 +209,7 @@ the non-periodic family, <code><a href="fourier_basis.html">fourier_basis()</a><
 <span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> <span class="va">out</span><span class="op">$</span><span class="va">S</span>, <span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ends</span> <span class="op">&lt;-</span> <span class="fu"><a href="smoother_apply.html">smoother_apply</a></span><span class="op">(</span><span class="va">sm</span>, <span class="va">out</span><span class="op">$</span><span class="va">blueprint</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">b</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">ends</span><span class="op">)</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-1.11e-16"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-2.78e-16"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># THE FUNDAMENTAL IS WHAT A STRONG PENALTY LEAVES. With the null space</span></span></span>
 <span class="r-in"><span><span class="co"># kept it is free, and the heavily penalized fit is a pure sinusoid.</span></span></span>

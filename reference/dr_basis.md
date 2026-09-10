@@ -141,9 +141,9 @@ z <- basis_eval(d, x)
 
 # Z'Z is diagonal, and Z is orthogonal to a constant and to x.
 max(abs(crossprod(z)[upper.tri(crossprod(z))]))
-#> [1] 8.650707e-14
+#> [1] 9.114426e-14
 max(abs(crossprod(cbind(1, x), z)))
-#> [1] 4.751755e-14
+#> [1] 1.953993e-14
 
 # The columns run from smoothest to wiggliest, and the recorded shares of
 # empirical variance are exactly the diagonal of Z'Z/n.
@@ -151,7 +151,7 @@ round(d@basis_params$empirical_variance, 6)
 #>  [1] 0.833632 0.115301 0.030148 0.011133 0.004913 0.002493 0.001384 0.000875
 #>  [9] 0.000077 0.000044
 max(abs(d@basis_params$empirical_variance - diag(crossprod(z)) / length(x)))
-#> [1] 2.498002e-16
+#> [1] 6.661338e-16
 
 # Scaled, the penalty is a multiple of the identity and the trace is one.
 P <- basis_gram(bspline_basis(dimension = 12), order = 2)
@@ -163,5 +163,5 @@ sum(diag(crossprod(z))) / length(x)
 # Unscaled, the penalty is the identity instead.
 du <- dr_basis(bspline_basis(dimension = 12), x, scale = FALSE)
 max(abs(crossprod(du@transform, P %*% du@transform) - diag(du@dimension)))
-#> [1] 3.308465e-14
+#> [1] 2.975398e-14
 ```

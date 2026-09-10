@@ -182,7 +182,7 @@ out$unpenalized
 round(cor(out$X[, 1], x), 12)
 #> [1] 1
 max(abs(crossprod(out$X[, 1], out$X[, -1])))
-#> [1] 2.198242e-14
+#> [1] 5.551115e-15
 
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)

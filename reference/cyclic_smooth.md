@@ -197,7 +197,7 @@ dim(out$X)
 # the block takes the same value at the two ends of the period
 ends <- smoother_apply(sm, out$blueprint, c(0, 365))
 max(abs(ends[1, ] - ends[2, ]))
-#> [1] 1.110223e-16
+#> [1] 0
 
 # 'order' may not exceed the degree.
 try(cyclic_smooth(k = 10, degree = 3, order = 4))

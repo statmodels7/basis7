@@ -193,7 +193,7 @@ dim(out$S[[1]])
 # and at equal smoothing parameters their sum is the P-spline penalty
 ps <- smoother_build(pspline_smooth(k = 30, reparam = "none"), x)
 max(abs(Reduce(`+`, out$S) - ps$S))
-#> [1] 3.552714e-15
+#> [1] 4.440892e-15
 
 # the coordinates cannot be Demmler-Reinsch: there are several pencils
 try(adaptive_smooth(k = 30, m = 4, reparam = "dr"))

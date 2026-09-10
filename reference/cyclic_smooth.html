@@ -21,7 +21,7 @@ it alone."><meta property="og:image" content="https://statmodels7.github.io/basi
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -217,7 +217,7 @@ period the observed range and is almost never what a periodic model means.</p>
 <span class="r-in"><span><span class="co"># the block takes the same value at the two ends of the period</span></span></span>
 <span class="r-in"><span><span class="va">ends</span> <span class="op">&lt;-</span> <span class="fu"><a href="smoother_apply.html">smoother_apply</a></span><span class="op">(</span><span class="va">sm</span>, <span class="va">out</span><span class="op">$</span><span class="va">blueprint</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">365</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">ends</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">-</span> <span class="va">ends</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.110223e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 'order' may not exceed the degree.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">cyclic_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, degree <span class="op">=</span> <span class="fl">3</span>, order <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>

@@ -87,14 +87,14 @@ round(basis_gram(o), 12)
 #> on5   0   0   0   0   1   0
 #> on6   0   0   0   0   0   1
 max(abs(basis_gram(o) - diag(6)))
-#> [1] 4.440892e-16
+#> [1] 2.220446e-16
 
 # The span is unchanged: a function the parent represents is fitted exactly.
 set.seed(1)
 x <- seq(0, 1, length.out = 100)
 f <- drop(basis_eval(b, x) %*% rnorm(6))
 max(abs(lm.fit(basis_eval(o, x), f)$residuals))
-#> [1] 5.533747e-16
+#> [1] 4.109154e-16
 
 # Orthonormalizing again changes nothing, and keeps one matrix.
 max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))

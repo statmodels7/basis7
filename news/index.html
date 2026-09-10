@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,16 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.13.1" id="basis7-0131">basis7 0.13.1<a class="anchor" aria-label="anchor" href="#basis7-0131"></a></h2>
+<ul><li>
+<p><strong><code><a href="../reference/cyclic_smooth.html">cyclic_smooth()</a></code> builds at every <code>reparam</code></strong>, where <code>"none"</code> and <code>"orthonorm"</code> raised “non-conformable arguments” at every <code>k</code> and were reachable end to end through a model formula. <code>"dr"</code> was unaffected. The defect dates from the family’s arrival in 0.10.0.</p>
+<p>The cause is that a cyclic basis is <strong>itself a transformed basis</strong> – twelve periodic functions built from fifteen B-splines – and [new_transformed()] flattens a nested transform, so the constrained object carries a transform against that parent, 15 by 11 rather than 12 by 11. The congruence that carries the roughness matrix onto the reparametrized block was reading it off the object, and the roughness matrix is defined on the twelve. <code>"dr"</code> escaped because [dr_basis()] builds its own transform against the basis it is given rather than reading a stored one.</p>
+<p>The local transform is now computed where it is needed, by the new internal <code><a href="../reference/constraint_null.html">constraint_null()</a></code>, which <code><a href="../reference/constrain_basis.html">constrain_basis()</a></code> also calls so that the two cannot drift. The object goes on carrying the flattened transform, which is what a later evaluation must compute.</p>
+<p>⚠️ <strong>Nothing else moves, and by construction rather than by tolerance</strong>: the flattening only happens where the parent is already transformed, so for every other family the local transform IS the stored one. Measured against the previous release over seventeen configurations – five families, three coordinate systems, a constraint and a whole order – fifteen are <code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code> on the block, the penalty, the unpenalized count, the names and the block reapplied at held-out rows, and the two that differ are the two that used to raise.</p>
+</li>
+<li><p>⚠️ <strong>The coverage gap that let it ship is closed.</strong> <code>reparam</code> was exercised on a B-spline alone, and a construction that works for a root basis and not for a transformed one cannot be seen from there. Every family is now built at every coordinate system, with the block reapplied at new values, and the two periodic families are asserted to stay periodic under all three.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13.0" id="basis7-0130">basis7 0.13.0<a class="anchor" aria-label="anchor" href="#basis7-0130"></a></h2>
 <ul><li>
