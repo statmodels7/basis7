@@ -419,6 +419,91 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 }
 
 
+#' The Roughness Matrix of an Operator on a Fourier Basis
+#'
+#' @name basis_operator_gram.FourierBasis
+#'
+#' @description
+#' Exact and diagonal, at any operator, whenever the interval is a full
+#' period. The diagonal entry of the pair at frequency \eqn{j} is
+#' \deqn{\lvert P(i\nu_j)\rvert^2 \, \frac{T}{2}, \qquad
+#'   \nu_j = \frac{2\pi j}{T},}
+#' with \eqn{P(r) = r^m + \sum_{k<m} w_k r^k} the operator's characteristic
+#' polynomial, and the entry of the constant column is \eqn{w_0^2 T}.
+#'
+#' @details
+#' The identity behind it is the phase shift: \eqn{D^k \sin(\nu_j t) =
+#' \nu_j^k \sin(\nu_j t + k\pi/2)}, so the even derivatives return a sine and
+#' the odd ones a cosine, and collecting them gives
+#' \deqn{L \sin(\nu_j t) = \mathrm{Re}\,P(i\nu_j)\,\sin(\nu_j t)
+#'   + \mathrm{Im}\,P(i\nu_j)\,\cos(\nu_j t),}
+#' with \eqn{L\cos} the same rotation the other way. The two have equal
+#' squared norms and are orthogonal to each other, and over a full period
+#' everything at one frequency is orthogonal to everything at another, so the
+#' matrix is diagonal.
+#'
+#' ⚠️ The book this operator comes from states that the harmonic penalty
+#' makes \eqn{R} structurally different and **more complex** than the
+#' diagonal matrix the derivative penalty gives. The first half is right and
+#' the second is not: measured on a nine-function basis, the largest
+#' off-diagonal entry is 1.7e-16 of the largest entry, and it stays that way
+#' for a two-harmonic operator and for a composed one. What changes is the
+#' null space, which goes from the constant alone to the constant and the
+#' harmonics the operator keeps.
+#'
+#' The operator's own period does not have to be the basis's. Only the
+#' basis's enters the orthogonality; the operator's enters through its
+#' weights, and an operator tuned to another cycle simply gives a diagonal
+#' with no exact zeros.
+#'
+#' @param basis A [basis].
+#' @param op A [LinearOperator], with its period resolved.
+#' @param at The covariate values, for the empirical measure, or `NULL`.
+#' @param weight A density to integrate against, or `NULL`.
+#' @param ... Passed on to the quadrature (`panels`, `nodes`).
+#'
+#' @return A diagonal numeric matrix of `basis@dimension` rows and columns.
+#'
+#' @seealso [basis_operator_gram()] for the generic and the numerical route,
+#'   [basis_gram.FourierBasis()] for the derivative case.
+#'
+#' @examples
+#' b <- fourier_basis(lower = 0, upper = 365, dimension = 9)
+#' g <- basis_gram(b, order = harmonic_operator(365))
+#'
+#' # diagonal, and zero on the constant and the fundamental
+#' max(abs(g - diag(diag(g)))) / max(abs(g))
+#' round(diag(g)[1:3], 10)
+#'
+#' # and it agrees with integrating (Lb)(Lb)' numerically
+#' gn <- basis7:::numerical_operator_gram(b, harmonic_operator(365),
+#'                                        panels = 200L)
+#' max(abs(g - gn)) / max(abs(g))
+#' @keywords internal
+S7::method(basis_operator_gram, FourierBasis) <- function(basis, op, at = NULL,
+                                                          weight = NULL, ...) {
+  check_operator(op)
+  p <- basis@basis_params
+  if (!p$full_period || !is.null(at) || !is.null(weight)) {
+    return(numerical_operator_gram(basis, op, at = at, weight = weight, ...))
+  }
+  w <- operator_weights(op)
+  m <- length(w)
+  period <- p$omega
+  j <- seq_len(p$n_pairs)
+  nu <- 2 * pi * j / period
+  # P(i nu) evaluated for every frequency at once, in increasing degree
+  pv <- vapply(nu, function(v) sum(c(w, 1) * (1i * v)^seq.int(0L, m)),
+               complex(1))
+  d <- c(w[[1L]]^2 * period, rep(Mod(pv)^2 * period / 2, each = 2L))
+
+  nm <- basis_colnames(basis)
+  matrix(diag(d, nrow = basis@dimension), basis@dimension, basis@dimension,
+    dimnames = list(nm, nm)
+  )
+}
+
+
 #' The Trigonometric Columns of a Fourier Basis
 #'
 #' @description

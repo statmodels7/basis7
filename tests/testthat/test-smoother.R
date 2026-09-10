@@ -14,7 +14,10 @@ test_that("a smoother is a recipe carrying the four decisions", {
   expect_true(S7::S7_inherits(sm, BsplineSmoother))
   expect_identical(sm@dimension, 10L)
   expect_identical(sm@degree, 3L)
-  expect_identical(sm@order, 2L)
+  # the property holds an OPERATOR since operators arrived; a whole
+  # number is the spelling and deriv_operator() is the object
+  expect_identical(sm@order, deriv_operator(2))
+  expect_identical(operator_order(sm@order), 2L)
   expect_identical(sm@null_space, "keep")
   expect_identical(sm@reparam, "dr")
   expect_null(sm@lower)

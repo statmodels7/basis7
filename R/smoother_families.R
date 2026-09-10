@@ -29,27 +29,69 @@ FourierSmoother <- S7::new_class(
 #'
 #' @description
 #' The periodic smoother: `k` Fourier functions over an interval, penalized
-#' by the integrated squared derivative of order `order`, rotated to the
-#' Demmler-Reinsch coordinates. Every column of the block is periodic, so a
-#' fit built on it takes the same value at the two ends of the interval.
+#' by a linear differential operator and rotated to the Demmler-Reinsch
+#' coordinates. Every column of the block is periodic, so a fit built on it
+#' takes the same value at the two ends of the interval.
 #'
 #' @details
+#' # The penalty is the harmonic acceleration operator
+#'
+#' The default `order` is [harmonic_operator()], not a derivative, and the
+#' period it uses is the interval's. The reason is what a strongly penalized
+#' fit contracts **to**: the derivative penalty asks for a straight line,
+#' which is not periodic and is not what a cyclic phenomenon simplifies to,
+#' while the harmonic operator leaves the level and the fundamental cycle
+#' alone and removes everything above them.
+#'
+#' Measured at `k = 21` over 200 observations with the smoothing parameter
+#' chosen by generalized cross-validation on eight samples: on a truth
+#' dominated by its fundamental the harmonic penalty reaches a root mean
+#' square error of 0.0596 against the derivative penalty's 0.0654 and wins on
+#' seven samples of eight, at 9.28 effective degrees of freedom against
+#' 10.72. On a truth with no periodic signal at all the two are level, 0.0110
+#' against 0.0121 at 1.16 degrees of freedom against 1.20, because
+#' `null_space = "shrink"` lets the fundamental leave the model.
+#'
+#' ⚠️ That second row is why the default null space is `"shrink"` here and
+#' `"keep"` elsewhere. With `"keep"` the fundamental is free, the fit
+#' contracts to a sinusoid exactly as the operator promises, and the two
+#' columns are spent whether or not the covariate carries a cycle: on that
+#' same flat truth `"keep"` reads 0.0281 at 3.00 degrees of freedom and wins
+#' on none of the eight. Use `"keep"` where the cycle is known to be there
+#' and is the thing being estimated, and `"shrink"` where it is a hypothesis.
+#'
+#' `order = 2` restores the integrated squared second derivative, in one
+#' argument, and gives the construction this family had before operators
+#' existed.
+#'
 #' # What it does not have, and why
 #'
 #' `degree` is a B-spline's, and a Fourier basis has none.
 #'
 #' `constrain` in the form "the polynomials up to degree c" has no reading
-#' here: a periodic basis contains no linear function, so its penalty's null
-#' space is the **constant at every order**, not a space growing with the
-#' order. Measured on the Gram matrix of a nine-function Fourier basis at
-#' orders 1, 2 and 3, the null function has a standard deviation of exactly
-#' zero, which is to say it is constant, and the null space is
-#' one-dimensional in all three.
+#' here: a periodic basis contains no linear function, so a derivative
+#' penalty's null space is the **constant at every order**, not a space
+#' growing with the order. Measured on the Gram matrix of a nine-function
+#' Fourier basis at orders 1, 2 and 3, the null function has a standard
+#' deviation of exactly zero, which is to say it is constant, and the null
+#' space is one-dimensional in all three.
 #'
-#' The constant is removed, so a model carrying an intercept spans the level
-#' and the smooth carries the shape. Nothing is restored as a free column,
-#' which is why `null_space` has no effect here and `k` functions give
-#' `k - 1` columns.
+#' # Which operators this family accepts
+#'
+#' The constant is always removed, so a model carrying an intercept spans
+#' the level and the smooth carries the shape. Every **other** function of
+#' the operator's null space is restored as a free column, and it must be
+#' periodic on the basis's own period, which means a pure sine or cosine at a
+#' whole multiple of the fundamental frequency. An operator whose null space
+#' holds \eqn{t}, or \eqn{e^{at}}, or a frequency that is not a multiple, is
+#' rejected: restoring such a column is what makes a fit on a periodic basis
+#' lose the property the basis was chosen for.
+#'
+#' So `harmonic_operator()` and `oscillator_operator()` are accepted at any
+#' number of harmonics the basis is wide enough to hold, `deriv_operator(m)`
+#' is accepted and restores nothing, and
+#' `deriv_operator(2) * oscillator_operator()` is rejected with the reason,
+#' being right for a B-spline and wrong here.
 #'
 #' # The interval is the period
 #'
@@ -63,26 +105,30 @@ FourierSmoother <- S7::new_class(
 #' @param k The number of basis functions, an **odd** whole number of at
 #'   least 3: a Fourier basis holds a constant plus complete sine-cosine
 #'   pairs.
-#' @param order The order of derivative the penalty integrates.
+#' @param order What the penalty measures: a [LinearOperator], or a whole
+#'   number `m` as the shorthand for `deriv_operator(m)`. The default is the
+#'   harmonic acceleration operator at the period of the interval.
 #' @param measure The measure the roughness is integrated against.
-#' @param null_space What becomes of the null space. It is the constant
-#'   alone here, and the constant is removed whatever this says, so the
-#'   argument is accepted for symmetry with the other families and changes
-#'   nothing.
+#' @param null_space What becomes of the directions the penalty does not
+#'   see, other than the constant, which is always removed. `NULL` takes
+#'   `"shrink"`, or `"keep"` where a `penalty` factory is given, the two
+#'   being refused together. See the section above for what the choice
+#'   costs.
 #' @param reparam The coordinates the coefficients live in.
 #' @param penalty `NULL` for the quadratic roughness penalty, or a factory
 #'   building a penalty from a coefficient count. See the section on the
 #'   smoother's own page.
-#' @param omega The period, `NULL` for the width of the interval.
+#' @param omega The period **of the basis**, `NULL` for the width of the
+#'   interval. It is not the operator's, which [harmonic_operator()] carries.
 #' @param lower,upper The interval, which for a periodic basis is the period.
 #'   See the section above: give both.
 #'
 #' @return An S7 object of class [FourierSmoother], inheriting from
 #'   [smoother].
 #'
-#' @seealso [smoother_build()] for what it produces at data,
-#'   [bspline_smooth()] for the non-periodic family, [fourier_basis()] for
-#'   the basis alone.
+#' @seealso [harmonic_operator()] for the default penalty,
+#'   [smoother_build()] for what it produces at data, [bspline_smooth()] for
+#'   the non-periodic family, [fourier_basis()] for the basis alone.
 #'
 #' @examples
 #' # A periodic covariate, and a truth that is periodic on [0, 1].
@@ -92,6 +138,7 @@ FourierSmoother <- S7::new_class(
 #' y <- f(x) + rnorm(300, sd = 0.2)
 #'
 #' sm <- fourier_smooth(k = 9, lower = 0, upper = 1)
+#' sm
 #' out <- smoother_build(sm, x)
 #' dim(out$X)
 #'
@@ -99,11 +146,40 @@ FourierSmoother <- S7::new_class(
 #' b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
 #' ends <- smoother_apply(sm, out$blueprint, c(0, 1)) %*% b
 #' format(diff(as.vector(ends)), digits = 3)
+#'
+#' # THE FUNDAMENTAL IS WHAT A STRONG PENALTY LEAVES. With the null space
+#' # kept it is free, and the heavily penalized fit is a pure sinusoid.
+#' sk <- fourier_smooth(k = 9, lower = 0, upper = 1, null_space = "keep")
+#' ok <- smoother_build(sk, x)
+#' ok$unpenalized
+#' bk <- solve(crossprod(ok$X) + 1e8 * ok$S, crossprod(ok$X, y - mean(y)))
+#' fv <- as.vector(ok$X %*% bk)
+#' round(sqrt(mean(resid(lm(fv ~ sin(2 * pi * x) + cos(2 * pi * x)))^2)), 8)
+#'
+#' # The old construction, in one argument.
+#' fourier_smooth(k = 9, order = 2, lower = 0, upper = 1)
+#'
+#' # Two harmonics left alone instead of one.
+#' fourier_smooth(k = 13, lower = 0, upper = 365,
+#'                order = harmonic_operator(harmonics = 2))
+#'
+#' # An operator whose null space a periodic basis cannot carry.
+#' try(smoother_build(
+#'   fourier_smooth(k = 9, lower = 0, upper = 1,
+#'                  order = deriv_operator(2) * oscillator_operator(1)), x))
 #' @export
-fourier_smooth <- function(k = 9, order = 2, measure = "lebesgue",
-                           null_space = "keep", reparam = "dr",
+fourier_smooth <- function(k = 9, order = harmonic_operator(),
+                           measure = "lebesgue",
+                           null_space = NULL, reparam = "dr",
                            penalty = NULL, omega = NULL,
                            lower = NULL, upper = NULL) {
+  # A PENALTY FACTORY AND "shrink" ARE REFUSED TOGETHER by check_available(),
+  # so the family's own default cannot be "shrink" unconditionally: it would
+  # turn fourier_smooth(penalty = f), which has always worked, into an
+  # error. The two arguments genuinely interact and the resolution says how.
+  if (is.null(null_space)) {
+    null_space <- if (is.null(penalty)) "shrink" else "keep"
+  }
   k <- check_whole(k, "k", 3L)
   if (k %% 2L == 0L) {
     stop(sprintf(paste0(
@@ -111,7 +187,7 @@ fourier_smooth <- function(k = 9, order = 2, measure = "lebesgue",
       " sine-cosine\n  pairs, so %d would leave half a pair. Use %d or %d."
     ), k, k - 1L, k + 1L), call. = FALSE)
   }
-  order <- check_whole(order, "order", 1L)
+  order <- as_operator(order)
   null_space <- match.arg(null_space, c("keep", "drop", "shrink"))
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
   check_interval(lower, upper)
@@ -153,17 +229,67 @@ S7::method(smoother_basis, FourierSmoother) <- function(sm, x, ...) {
 #' @name smoother_span
 #' @keywords internal
 S7::method(smoother_span, FourierSmoother) <- function(sm, x, ...) {
-  # THE CONSTANT AT EVERY ORDER, and nothing restored. A periodic basis
-  # contains no linear function, so the null space does not grow with the
-  # order the way a polynomial family's does; and the constant is removed
-  # because a model carrying an intercept already spans it. Restoring a
-  # non-periodic column here is what makes a fit on a periodic basis lose
-  # the property the basis was chosen for.
-  list(
-    constraint = matrix(1, length(x), 1L),
-    free = matrix(numeric(0), length(x), 0L),
-    params = list(steps = list())
-  )
+  op <- smoother_operator(sm, x)
+  if (is_deriv_operator(op)) {
+    # THE CONSTANT AT EVERY ORDER, and nothing restored. A periodic basis
+    # contains no linear function, so a derivative penalty's null space does
+    # not grow with the order the way a polynomial family's does; and the
+    # constant is removed because a model carrying an intercept already
+    # spans it.
+    return(list(
+      constraint = matrix(1, length(x), 1L),
+      free = matrix(numeric(0), length(x), 0L),
+      params = list(steps = list())
+    ))
+  }
+  check_periodic_null(sm, op, x)
+  operator_span(op, x)
+}
+
+
+#' Refuse an Operator Whose Null Space a Periodic Basis Cannot Carry
+#'
+#' @description
+#' Every function of the operator's null space other than the constant is
+#' restored as a free column of a periodic block, so each must itself be
+#' periodic on the basis's period: a pure sine or cosine at a whole multiple
+#' of the fundamental frequency, with no power of \eqn{t} and no exponential
+#' in front of it.
+#'
+#' @details
+#' Restoring anything else gives a block whose columns are not all periodic,
+#' and a fit on it no longer takes the same value at the two ends of the
+#' interval, which is the one property a Fourier basis is chosen for. The
+#' check is on the operator's own null space, read analytically, rather than
+#' on the rank of the assembled penalty: the two are different questions and
+#' the second gives an answer that moves with the tolerance.
+#'
+#' @param sm A [FourierSmoother].
+#' @param op A [LinearOperator], with its period resolved.
+#' @param x The covariate, from which the interval is taken where the
+#'   smoother does not fix it.
+#'
+#' @return `NULL`, invisibly; called for the error.
+#'
+#' @keywords internal
+check_periodic_null <- function(sm, op, x) {
+  int <- smoother_interval(sm, x)
+  period <- if (is.null(sm@omega)) int[[2L]] - int[[1L]] else sm@omega
+  nu <- 2 * pi / period
+  nl <- operator_null(op)
+  bad <- nl$degree > 0L | abs(nl$rate) > 1e-8 |
+    abs(nl$freq / nu - round(nl$freq / nu)) > 1e-6
+  if (any(bad)) {
+    stop(sprintf(paste0(
+      "a periodic basis cannot carry every function of this operator's null",
+      " space.\n  It would restore %s as free columns, and a column that is",
+      " not periodic on\n  the basis's period costs the fit the property",
+      " the basis was chosen for.\n  Use harmonic_operator() or",
+      " oscillator_operator() at this period, a whole\n  'order', or a",
+      " non-periodic family such as bspline_smooth()."
+    ), paste(nl$label[bad], collapse = ", ")), call. = FALSE)
+  }
+  invisible(NULL)
 }
 
 
@@ -209,8 +335,13 @@ LegendreSmoother <- S7::new_class("LegendreSmoother", parent = smoother)
 #'
 #' @param k The number of polynomials, a whole number of at least 2. The
 #'   highest degree is `k - 1`.
-#' @param order The order of derivative the penalty integrates, at most
-#'   `k - 1`.
+#' @param order What the penalty measures: a [LinearOperator] from
+#'   [deriv_operator()], [harmonic_operator()], [oscillator_operator()] or
+#'   [linear_operator()], or a whole number `m` as the shorthand for
+#'   `deriv_operator(m)`. It says what a strongly penalized fit contracts
+#'   toward, which for `m` is a constant at 1, a straight line at 2 and a
+#'   parabola at 3, and for any operator is [operator_null()].
+#'   Its order is at most `k - 1`, the highest degree the basis carries.
 #' @param measure The measure the roughness is integrated against.
 #' @param constrain The directions the smooth is made orthogonal to, `NULL`
 #'   for the null space of the penalty.
@@ -242,15 +373,16 @@ legendre_smooth <- function(k = 8, order = 2, measure = "lebesgue",
                             reparam = "dr", penalty = NULL,
                             lower = NULL, upper = NULL) {
   k <- check_whole(k, "k", 2L)
-  order <- check_whole(order, "order", 1L)
+  order <- as_operator(order)
   # ABOVE THE HIGHEST DEGREE the Gram matrix is identically zero, so the
   # penalty would penalize nothing
-  if (order > k - 1L) {
+  m_ord <- operator_order(order)
+  if (m_ord > k - 1L) {
     stop(sprintf(paste0(
       "'order' (%d) exceeds the highest degree the basis carries (%d): the",
       "\n  derivative of that order is zero, so the penalty would be the",
       " zero matrix."
-    ), order, k - 1L), call. = FALSE)
+    ), m_ord, k - 1L), call. = FALSE)
   }
   null_space <- match.arg(null_space, c("keep", "drop", "shrink"))
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
@@ -258,7 +390,7 @@ legendre_smooth <- function(k = 8, order = 2, measure = "lebesgue",
   measure <- check_measure(measure)
   penalty <- check_penalty(penalty)
   constrain <- check_constrain(constrain, order)
-  ncon <- if (is.null(constrain)) order else constrain + 1L
+  ncon <- if (is.null(constrain)) m_ord else constrain + 1L
   if (k <= ncon) {
     stop(sprintf(paste0(
       "'k' (%d) leaves nothing to smooth: the constraint removes %d",
@@ -415,8 +547,13 @@ CyclicSmoother <- S7::new_class(
 #' @param degree The degree of the underlying B-spline, `3` for a cubic. The
 #'   fit matches at the two ends in its value and its first `degree - 1`
 #'   derivatives.
-#' @param order The order of derivative the penalty integrates, at most
-#'   `degree`.
+#' @param order What the penalty measures: a [LinearOperator] from
+#'   [deriv_operator()], [harmonic_operator()], [oscillator_operator()] or
+#'   [linear_operator()], or a whole number `m` as the shorthand for
+#'   `deriv_operator(m)`. It says what a strongly penalized fit contracts
+#'   toward, which for `m` is a constant at 1, a straight line at 2 and a
+#'   parabola at 3, and for any operator is [operator_null()].
+#'   Its order is at most `degree`.
 #' @param measure The measure the roughness is integrated against.
 #' @param null_space What becomes of the directions the penalty does not see.
 #'   A periodic basis restores none, so the settings differ only in what they
@@ -459,13 +596,14 @@ cyclic_smooth <- function(k = 10, degree = 3, order = 2,
   # to 5 -- so nothing here is a guard against that.
   k <- check_whole(k, "k", 3L)
   degree <- check_whole(degree, "degree", 1L)
-  order <- check_whole(order, "order", 1L)
-  if (order > degree) {
+  order <- as_operator(order)
+  m_ord <- operator_order(order)
+  if (m_ord > degree) {
     stop(sprintf(paste0(
       "'order' (%d) exceeds 'degree' (%d): the derivative of that order of",
       " a\n  spline of degree m is zero, so the penalty would be the zero",
       " matrix."
-    ), order, degree), call. = FALSE)
+    ), m_ord, degree), call. = FALSE)
   }
   null_space <- match.arg(null_space, c("keep", "drop", "shrink"))
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
@@ -719,7 +857,7 @@ pspline_smooth <- function(k = 20, degree = 3, diff = 2, constrain = NULL,
   reparam <- match.arg(reparam, c("dr", "none", "orthonorm"))
   check_interval(lower, upper)
   penalty <- check_penalty(penalty)
-  constrain <- check_constrain(constrain, diff)
+  constrain <- check_constrain(constrain, deriv_operator(diff))
   ncon <- if (is.null(constrain)) diff else constrain + 1L
   if (k <= ncon) {
     stop(sprintf(paste0(
@@ -735,7 +873,7 @@ pspline_smooth <- function(k = 20, degree = 3, diff = 2, constrain = NULL,
     # is governed by and what smoother_span() reads: the null space of the
     # d-th difference is the polynomials of degree below d, the same one an
     # integrated d-th derivative has. Nothing here integrates anything.
-    order = diff,
+    order = deriv_operator(diff),
     measure = "lebesgue",
     constrain = constrain,
     null_space = null_space,
@@ -1018,7 +1156,7 @@ adaptive_smooth <- function(k = 40, degree = 3, diff = 2, m = 5,
     ), call. = FALSE)
   }
   check_interval(lower, upper)
-  constrain <- check_constrain(constrain, diff)
+  constrain <- check_constrain(constrain, deriv_operator(diff))
   ncon <- if (is.null(constrain)) diff else constrain + 1L
   if (k <= ncon) {
     stop(sprintf(paste0(
@@ -1034,7 +1172,7 @@ adaptive_smooth <- function(k = 40, degree = 3, diff = 2, m = 5,
     # it is what smoother_span() reads to build the constraint, and the null
     # space of the SUM of the components is the null space of the difference
     # operator, the weights being a partition of unity.
-    order = diff,
+    order = deriv_operator(diff),
     measure = "lebesgue",
     constrain = constrain,
     null_space = null_space,

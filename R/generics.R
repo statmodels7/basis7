@@ -323,10 +323,12 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' requiring a method's formals to contain the generic's.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
-#' @param order The derivative order whose inner products are wanted. A single
-#'   non-negative whole number, default `0`, giving the inner products of the
-#'   basis functions themselves; `2` is the usual roughness penalty. One entry
-#'   per variable for a basis of several.
+#' @param order What the inner products are taken of. A single non-negative
+#'   whole number, default `0`, giving the inner products of the basis
+#'   functions themselves; `2` is the usual roughness penalty; one entry per
+#'   variable for a basis of several. A [LinearOperator] instead gives
+#'   \eqn{\int (Lb)(Lb)^\top}, the roughness matrix of that operator, and
+#'   routes to [basis_operator_gram()].
 #' @param at An optional numeric vector of points, or a matrix of
 #'   [basis_nvar()] columns. When given, the inner products are taken against
 #'   the empirical measure of those points and divided by their number.
@@ -382,6 +384,15 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 basis_gram <- S7::new_generic(
   "basis_gram", "basis",
   function(basis, order = 0L, at = NULL, weight = NULL, ...) {
+    # AN OPERATOR IS A SPELLING OF 'order', not a second argument beside it:
+    # the question both answer is what the penalty differentiates, and a
+    # whole number is the shorthand for deriv_operator() of it.
+    if (is_operator(order)) {
+      if (!is.null(at) && !is.null(weight)) {
+        stop("Give at most one of 'at' and 'weight'.", call. = FALSE)
+      }
+      return(basis_operator_gram(basis, order, at = at, weight = weight, ...))
+    }
     order <- check_order(order, basis_nvar(basis))
     if (!is.null(at) && !is.null(weight)) {
       stop("Give at most one of 'at' and 'weight'.", call. = FALSE)
@@ -390,6 +401,45 @@ basis_gram <- S7::new_generic(
     if (!is.null(weight)) return(weighted_gram(basis, order, weight, ...))
     S7::S7_dispatch()
   }
+)
+
+
+#' The Roughness Matrix of a Differential Operator
+#'
+#' @description
+#' The Gram matrix of \eqn{Lb}, that is
+#' \deqn{R = \int_a^b (Lb)(Lb)^\top \, \mathrm{d}\mu,}
+#' the matrix for which \eqn{\lVert Lx \rVert^2 = c^\top R c} when
+#' \eqn{x = b^\top c}. It is what [basis_gram()] returns when its `order` is
+#' a [LinearOperator], and the generic exists so that a family with a closed
+#' form can declare one.
+#'
+#' @details
+#' The base method integrates numerically, evaluating \eqn{Lb} through
+#' [operator_eval()] at Gauss-Legendre nodes, at the covariate values for the
+#' empirical measure, or against a weight function. A [FourierBasis] over a
+#' full period overrides it with an exact diagonal form; see
+#' [basis_operator_gram.FourierBasis()].
+#'
+#' @param basis A [basis].
+#' @param op A [LinearOperator], with its period resolved.
+#' @param at The covariate values, for the empirical measure, or `NULL`.
+#' @param weight A density to integrate against, or `NULL`.
+#' @param ... Passed to methods, and on to the quadrature (`panels`,
+#'   `nodes`).
+#'
+#' @return A symmetric numeric matrix of `basis@dimension` rows and columns.
+#'
+#' @seealso [basis_gram()], the generic that routes to it;
+#'   [operator_eval()] for \eqn{Lb}.
+#'
+#' @examples
+#' b <- fourier_basis(lower = 0, upper = 365, dimension = 7)
+#' round(diag(basis_gram(b, order = harmonic_operator(365))), 6)
+#' @export
+basis_operator_gram <- S7::new_generic(
+  "basis_operator_gram", "basis",
+  function(basis, op, at = NULL, weight = NULL, ...) S7::S7_dispatch()
 )
 
 

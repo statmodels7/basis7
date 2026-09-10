@@ -20,8 +20,13 @@ legendre_smooth(
 \item{k}{The number of polynomials, a whole number of at least 2. The
 highest degree is \code{k - 1}.}
 
-\item{order}{The order of derivative the penalty integrates, at most
-\code{k - 1}.}
+\item{order}{What the penalty measures: a \link{LinearOperator} from
+\code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
+\code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
+\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
+toward, which for \code{m} is a constant at 1, a straight line at 2 and a
+parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.
+Its order is at most \code{k - 1}, the highest degree the basis carries.}
 
 \item{measure}{The measure the roughness is integrated against.}
 

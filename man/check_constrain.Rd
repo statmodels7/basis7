@@ -4,12 +4,12 @@
 \alias{check_constrain}
 \title{Check a Polynomial Family's Constraint Argument}
 \usage{
-check_constrain(constrain, order)
+check_constrain(constrain, op)
 }
 \arguments{
 \item{constrain}{The value given, \code{NULL} or a whole number.}
 
-\item{order}{The penalty's derivative order.}
+\item{op}{The penalty's operator.}
 }
 \value{
 \code{constrain} as a length-one integer, or \code{NULL}.

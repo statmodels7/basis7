@@ -64,9 +64,12 @@
 #' @param dimension The number of basis functions before any constraint or
 #'   reparametrization, a single positive integer. Must be of storage mode
 #'   integer.
-#' @param order The order of derivative the penalty integrates, a single
-#'   positive integer. It says what a strongly penalized fit contracts
-#'   toward: a constant at 1, a straight line at 2, a parabola at 3.
+#' @param order What the penalty measures: a [LinearOperator] from
+#'   [deriv_operator()], [harmonic_operator()], [oscillator_operator()] or
+#'   [linear_operator()], or a whole number `m` as the shorthand for
+#'   `deriv_operator(m)`. It says what a strongly penalized fit contracts
+#'   toward, which for `m` is a constant at 1, a straight line at 2 and a
+#'   parabola at 3, and for any operator is [operator_null()].
 #' @param measure The measure the roughness is integrated against.
 #'   `"lebesgue"` is the length measure on the interval.
 #' @param constrain The directions the smooth is made orthogonal to, or
@@ -107,7 +110,7 @@ smoother <- S7::new_class(
   properties = list(
     smoother_name = S7::class_character,
     dimension = S7::class_integer,
-    order = S7::class_integer,
+    order = S7::class_any,
     measure = S7::class_any,
     constrain = S7::class_any,
     null_space = S7::class_character,
@@ -125,8 +128,11 @@ smoother <- S7::new_class(
       self@dimension < 1L) {
       return("@dimension must be a single positive integer")
     }
-    if (length(self@order) != 1L || is.na(self@order) || self@order < 1L) {
-      return("@order must be a single positive integer")
+    # THE PROPERTY HOLDS AN OPERATOR, ALWAYS. A whole number is a spelling
+    # of one and is normalized by as_operator() at the constructor, so
+    # nothing downstream has to ask which of the two it was given.
+    if (!is_operator(self@order)) {
+      return("@order must be a LinearOperator, from as_operator()")
     }
     if (length(self@null_space) != 1L ||
       !self@null_space %in% c("keep", "drop", "shrink")) {
@@ -234,8 +240,14 @@ BsplineSmoother <- S7::new_class(
 #'   nothing to smooth.
 #' @param degree The degree of the B-spline pieces, a whole number of at
 #'   least 1. `3`, the default, is the cubic spline.
-#' @param order The order of derivative the penalty integrates. See the
-#'   section above.
+#' @param order What the penalty measures: a [LinearOperator] from
+#'   [deriv_operator()], [harmonic_operator()], [oscillator_operator()] or
+#'   [linear_operator()], or a whole number `m` as the shorthand for
+#'   `deriv_operator(m)`. It says what a strongly penalized fit contracts
+#'   toward, which for `m` is a constant at 1, a straight line at 2 and a
+#'   parabola at 3, and for any operator is [operator_null()].
+#'   A spline of degree `d` has no derivative above `d`, so an operator of
+#'   order above `degree` is rejected.
 #' @param measure The measure the roughness is integrated against.
 #' @param constrain The directions the smooth is made orthogonal to. `NULL`,
 #'   the default, is the null space of the basis and the penalty together.
@@ -311,7 +323,8 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
   # is made below, once both are settled
   k <- check_whole(k, "k", 2L)
   degree <- check_whole(degree, "degree", 1L)
-  order <- check_whole(order, "order", 1L)
+  order <- as_operator(order)
+  m_ord <- operator_order(order)
 
   if (k < degree + 1L) {
     stop(sprintf(paste0(
@@ -319,15 +332,18 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
       " m\n  needs at least m + 1 functions."
     ), k, degree), call. = FALSE)
   }
-  # ABOVE THE DEGREE THE GRAM MATRIX IS IDENTICALLY ZERO, so the penalty
-  # would penalize nothing and every direction would be free. Reported here,
-  # where the caller wrote the two numbers, rather than at build.
-  if (order > degree) {
+  # ABOVE THE DEGREE THE LEADING DERIVATIVE IS IDENTICALLY ZERO. For a
+  # plain derivative the whole Gram matrix is then zero and nothing is
+  # penalized at all; for any other operator the leading term simply
+  # disappears and what is left is a different operator with a different
+  # null space, which is worse for being silent. Reported here, where the
+  # caller wrote the two numbers, rather than at build.
+  if (m_ord > degree) {
     stop(sprintf(paste0(
-      "'order' (%d) exceeds 'degree' (%d): the derivative of that order of",
-      " a\n  spline of degree m is zero, so the penalty would be the zero",
-      " matrix."
-    ), order, degree), call. = FALSE)
+      "'order' (%d) exceeds 'degree' (%d): D^%d of a spline of degree %d",
+      " is\n  zero, so the penalty would be the zero matrix, or the operator",
+      " with its\n  leading term deleted. Raise 'degree'."
+    ), m_ord, degree, m_ord, degree), call. = FALSE)
   }
 
   null_space <- match.arg(null_space, c("keep", "drop", "shrink"))
@@ -338,7 +354,7 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
   constrain <- check_constrain(constrain, order)
   # the constraint removes one direction per degree it spans, and a basis
   # with nothing left after it is an error several frames down
-  ncon <- if (is.null(constrain)) order else constrain + 1L
+  ncon <- if (is.null(constrain)) m_ord else constrain + 1L
   if (k <= ncon) {
     stop(sprintf(paste0(
       "'k' (%d) leaves nothing to smooth: the constraint removes %d",
@@ -486,12 +502,80 @@ smoother_span <- S7::new_generic(
 #' @name smoother_span
 #' @keywords internal
 S7::method(smoother_span, smoother) <- function(sm, x, ...) {
-  ncon <- if (is.null(sm@constrain)) sm@order else sm@constrain + 1L
-  # the raw powers, which at order 2 are cbind(1, x): the constraint
-  # dr_basis() builds for itself when it is given none
-  cons <- outer(x, seq.int(0L, ncon - 1L), "^")
-  free <- poly_free(x, sm@order - 1L)
-  list(constraint = cons, free = free$free, params = free$params)
+  op <- smoother_operator(sm, x)
+  if (is_deriv_operator(op)) {
+    m <- operator_order(op)
+    ncon <- if (is.null(sm@constrain)) m else sm@constrain + 1L
+    # the raw powers, which at order 2 are cbind(1, x): the constraint
+    # dr_basis() builds for itself when it is given none
+    cons <- outer(x, seq.int(0L, ncon - 1L), "^")
+    free <- poly_free(x, m - 1L)
+    return(list(constraint = cons, free = free$free, params = free$params))
+  }
+  if (!is.null(sm@constrain)) {
+    stop(paste0(
+      "'constrain' says the polynomials up to a degree, and this operator's",
+      " null\n  space is not the polynomials. Removing both would be two",
+      " constraints with\n  no stated relation; give one or the other."
+    ), call. = FALSE)
+  }
+  operator_span(op, x)
+}
+
+
+#' The Constraint and the Free Columns of an Operator's Null Space
+#'
+#' @description
+#' Splits the null space of a general operator into what is constrained away
+#' and what is restored as free columns: the constraint is the whole null
+#' space, and the free columns are all of it except the constant.
+#'
+#' @details
+#' The rule is the one the polynomial families have always followed, read for
+#' an arbitrary operator. The penalized part is made orthogonal to every
+#' direction the penalty does not see, because a direction that is neither
+#' penalized nor constrained is one the pencil cannot separate; and the
+#' constant is not restored, a model carrying an intercept already spanning
+#' it.
+#'
+#' Each free column is divided by its root mean square over the covariate and
+#' is **not centered**. Scaling by a positive constant is what a badly scaled
+#' column such as \eqn{t^3} over \eqn{[0, 365]} needs, and it preserves every
+#' property the function has; centering does not. A periodic family restores
+#' sines and cosines here, and subtracting a constant from a sine gives a
+#' column that is no longer periodic, which is the property the basis was
+#' chosen for.
+#'
+#' @param op A [LinearOperator], with its period resolved.
+#' @param x The covariate, a numeric vector.
+#'
+#' @return A list of `constraint`, `free` and `params`, as [smoother_span()]
+#'   returns.
+#'
+#' @seealso [smoother_span()], which calls it, and [operator_null()] for the
+#'   functions involved.
+#'
+#' @keywords internal
+operator_span <- function(op, x) {
+  nl <- operator_null(op)
+  n <- operator_null_design(op, x)
+  keep <- !(nl$degree == 0L & abs(nl$rate) < 1e-12 & abs(nl$freq) < 1e-12)
+  free <- n[, keep, drop = FALSE]
+  sc <- sqrt(colMeans(free^2))
+  if (any(sc <= 0)) {
+    stop(paste0(
+      "a function of the operator's null space is identically zero over",
+      " these\n  covariate values, so it cannot be restored as a free",
+      " column. The interval\n  or the period is wrong for this data."
+    ), call. = FALSE)
+  }
+  free <- sweep(free, 2L, sc, "/")
+  dimnames(free) <- NULL
+  list(
+    constraint = n, free = free,
+    free_names = operator_free_names(nl$label[keep]),
+    params = list(op = op, keep = keep, scale = sc)
+  )
 }
 
 #' @name smoother_span
@@ -504,7 +588,67 @@ smoother_span_apply <- S7::new_generic(
 #' @name smoother_span
 #' @keywords internal
 S7::method(smoother_span_apply, smoother) <- function(sm, params, newx, ...) {
+  # THE PARAMS SAY WHICH SHAPE THEY ARE, rather than the smoother's class
+  # saying it: one family builds both, according to the operator it carries,
+  # so a test on the class would answer for the wrong one.
+  if (!is.null(params$op)) return(operator_span_apply(params, newx))
   poly_free_apply(params, newx)
+}
+
+
+#' Column Names for an Operator's Restored Columns
+#'
+#' @description
+#' Turns the labels [operator_null()] gives into names a design matrix
+#' can carry: `sin(0.0172 t)` becomes `sin1`, `cos(0.0344 t)` becomes
+#' `cos2`, and anything else keeps a syntactically safe form of its label.
+#'
+#' @details
+#' The number is the rank of the frequency among those restored, not the
+#' frequency itself, so the columns of a two-harmonic smooth read `sin1`,
+#' `cos1`, `sin2`, `cos2` and match what a reader of a Fourier basis
+#' expects. A column from a real root keeps its label, `t` and `t^2`
+#' passing through [make.names()] as they stand.
+#'
+#' @param labels The `label` column of [operator_null()], subset to the
+#'   functions that were restored.
+#'
+#' @return A character vector of one name per label.
+#'
+#' @keywords internal
+operator_free_names <- function(labels) {
+  kind <- sub("\\(.*", "", labels)
+  arg <- suppressWarnings(as.numeric(sub(".*\\(([^ ]+) t\\).*", "\\1",
+                                         labels)))
+  trig <- kind %in% c("sin", "cos") & !is.na(arg)
+  out <- make.names(labels, unique = TRUE)
+  if (any(trig)) {
+    rank <- match(arg[trig], sort(unique(arg[trig])))
+    out[trig] <- paste0(kind[trig], rank)
+  }
+  out
+}
+
+
+#' The Free Columns of an Operator's Null Space at New Values
+#'
+#' @description
+#' Rebuilds what [operator_span()] produced, at new covariate values, from
+#' the operator and the scales recorded there. Nothing is recomputed from
+#' `newx` except the functions themselves.
+#'
+#' @param params The `params` element of an [operator_span()] result.
+#' @param newx The new covariate values, a numeric vector.
+#'
+#' @return A numeric matrix of `length(newx)` rows and one column per free
+#'   direction.
+#'
+#' @keywords internal
+operator_span_apply <- function(params, newx) {
+  n <- operator_null_design(params$op, newx)
+  out <- sweep(n[, params$keep, drop = FALSE], 2L, params$scale, "/")
+  dimnames(out) <- NULL
+  out
 }
 
 
@@ -636,12 +780,42 @@ smoother_gram <- S7::new_generic(
 #' @name smoother_gram
 #' @keywords internal
 S7::method(smoother_gram, smoother) <- function(sm, b, x, ...) {
+  op <- smoother_operator(sm, x)
+  # AN OPERATOR IS PASSED AS 'order' AND SO IS A NUMBER: basis_gram() routes
+  # on which it was given, so the three measures are written once here and
+  # not twice.
+  ord <- if (is_deriv_operator(op)) operator_order(op) else op
   ms <- sm@measure
-  if (is.function(ms)) return(basis_gram(b, order = sm@order, weight = ms))
+  if (is.function(ms)) return(basis_gram(b, order = ord, weight = ms))
   if (identical(ms, "empirical")) {
-    return(basis_gram(b, order = sm@order, at = x))
+    return(basis_gram(b, order = ord, at = x))
   }
-  basis_gram(b, order = sm@order)
+  basis_gram(b, order = ord)
+}
+
+
+#' The Operator a Smoother Penalizes With, Resolved
+#'
+#' @description
+#' Returns `sm@order` with its period filled in from the smoother's
+#' interval where it was left `NULL`, which is what makes
+#' `fourier_smooth(lower = 0, upper = 365)` penalize on a cycle of 365
+#' without the period being written twice.
+#'
+#' @param sm A [smoother].
+#' @param x The covariate, from which the interval is taken where the
+#'   smoother does not fix it.
+#'
+#' @return An S7 object of class [LinearOperator], with numeric weights.
+#'
+#' @seealso [operator_resolve()], which it calls.
+#'
+#' @keywords internal
+smoother_operator <- function(sm, x) {
+  op <- sm@order
+  if (operator_resolved(op)) return(op)
+  int <- smoother_interval(sm, x)
+  operator_resolve(op, int[[1L]], int[[2L]])
 }
 
 
@@ -734,7 +908,12 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
 
   if (sm@null_space %in% c("keep", "shrink") && nfree > 0L) {
     z <- cbind(free, z)
-    nm <- c(free_names(nfree), nm)
+    # THE SPAN NAMES ITS OWN COLUMNS where it has names to give. A
+    # polynomial null space has none of its own and takes free_names()'s
+    # 'lin' and 'poly2', which say what those columns are; a periodic
+    # one restores a sine and a cosine, and calling either of them 'lin'
+    # would put a wrong word into every coefficient table downstream.
+    nm <- c(sp$free_names %||% free_names(nfree), nm)
     # SHRINK gives the free directions a weight of their own rather than
     # zero, so a strongly penalized fit contracts to nothing and the term
     # can leave the model. See shrink_weight() for the number and where it
@@ -995,14 +1174,37 @@ S7::method(smoother_apply, smoother) <- function(sm, blueprint, newx, ...) {
 }
 
 
+#' The Left Value Unless It Is NULL
+#' @name null-default
+#'
+#' @description
+#' Returns `a` unless it is `NULL`, in which case `b`. Written here rather
+#' than imported: this package depends on \pkg{numericals7} alone, and the
+#' operator reached base R only in 4.4.0, later than the version
+#' \file{DESCRIPTION} requires.
+#'
+#' @param a,b Any two objects.
+#'
+#' @return `a`, or `b` where `a` is `NULL`.
+#'
+#' @keywords internal
+`%||%` <- function(a, b) if (is.null(a)) b else a
+
+
 #' The Names of the Free Columns
 #'
 #' @description
-#' Names the columns `null_space = "keep"` restores: `lin` for the linear
-#' one, which is the only one at `order = 2`, and `poly2`, `poly3` and so on
-#' for the higher powers an order above 2 leaves unpenalized.
+#' Names the columns `null_space = "keep"` restores where the null space is
+#' the polynomials: `lin` for the linear one, which is the only one at
+#' `order = 2`, and `poly2`, `poly3` and so on for the higher powers an
+#' order above 2 leaves unpenalized.
 #'
-#' @param n How many.
+#' @details
+#' A smoother whose null space is not the polynomials names its own columns
+#' instead, through the `free_names` element of [smoother_span()]; see
+#' [operator_free_names()], which a periodic null space uses.
+#'
+#' @param n How many columns were restored.
 #'
 #' @return A character vector of length `n`.
 #'
@@ -1240,13 +1442,24 @@ check_measure <- function(measure) {
 #' with it by more than an order of magnitude. The cost is one dimension.
 #'
 #' @param constrain The value given, `NULL` or a whole number.
-#' @param order The penalty's derivative order.
+#' @param op The penalty's operator.
 #'
 #' @return `constrain` as a length-one integer, or `NULL`.
 #'
 #' @keywords internal
-check_constrain <- function(constrain, order) {
+check_constrain <- function(constrain, op) {
   if (is.null(constrain)) return(NULL)
+  # 'constrain' NAMES THE POLYNOMIALS UP TO A DEGREE, and only a
+  # derivative penalty has a null space of that shape. With any other
+  # operator the two would be constraints with no stated relation.
+  if (!is_deriv_operator(op)) {
+    stop(paste0(
+      "'constrain' says the polynomials up to a degree, and this",
+      " operator's null\n  space is not the polynomials. Give one or the",
+      " other."
+    ), call. = FALSE)
+  }
+  order <- operator_order(op)
   constrain <- check_whole(constrain, "constrain", 0L)
   if (constrain < order - 1L) {
     stop(sprintf(paste0(
@@ -1296,8 +1509,12 @@ S7::method(print, smoother) <- function(x, ...) {
     sprintf("difference of order %d, weighted by %d components", x@diff, x@m)
   } else if (S7::S7_inherits(x, PsplineSmoother)) {
     sprintf("difference of order %d on the coefficients", x@diff)
+  } else if (is_deriv_operator(x@order)) {
+    sprintf("derivative of order %d, %s measure", operator_order(x@order),
+            if (is.character(x@measure)) x@measure else "supplied")
   } else {
-    sprintf("derivative of order %d, %s measure", x@order,
+    sprintf("%s operator of order %d, %s measure", x@order@operator_name,
+            operator_order(x@order),
             if (is.character(x@measure)) x@measure else "supplied")
   }))
   cat(sprintf(

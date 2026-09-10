@@ -25,8 +25,14 @@ nothing to smooth.}
 \item{degree}{The degree of the B-spline pieces, a whole number of at
 least 1. \code{3}, the default, is the cubic spline.}
 
-\item{order}{The order of derivative the penalty integrates. See the
-section above.}
+\item{order}{What the penalty measures: a \link{LinearOperator} from
+\code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
+\code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
+\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
+toward, which for \code{m} is a constant at 1, a straight line at 2 and a
+parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.
+A spline of degree \code{d} has no derivative above \code{d}, so an operator of
+order above \code{degree} is rejected.}
 
 \item{measure}{The measure the roughness is integrated against.}
 

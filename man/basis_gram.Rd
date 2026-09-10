@@ -9,10 +9,12 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 \arguments{
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{The derivative order whose inner products are wanted. A single
-non-negative whole number, default \code{0}, giving the inner products of the
-basis functions themselves; \code{2} is the usual roughness penalty. One entry
-per variable for a basis of several.}
+\item{order}{What the inner products are taken of. A single non-negative
+whole number, default \code{0}, giving the inner products of the basis
+functions themselves; \code{2} is the usual roughness penalty; one entry per
+variable for a basis of several. A \link{LinearOperator} instead gives
+\eqn{\int (Lb)(Lb)^\top}, the roughness matrix of that operator, and
+routes to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.}
 
 \item{at}{An optional numeric vector of points, or a matrix of
 \code{\link[=basis_nvar]{basis_nvar()}} columns. When given, the inner products are taken against

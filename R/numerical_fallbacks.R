@@ -503,6 +503,87 @@ numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
 }
 
 
+#' @name basis_operator_gram
+#' @keywords internal
+S7::method(basis_operator_gram, basis) <- function(basis, op, at = NULL,
+                                                   weight = NULL, ...) {
+  numerical_operator_gram(basis, op, at = at, weight = weight, ...)
+}
+
+
+#' The Roughness Matrix of an Operator by Quadrature
+#'
+#' @description
+#' Integrates \eqn{(Lb)(Lb)^\top} numerically: over Gauss-Legendre panels for
+#' the length measure, over the covariate values for the empirical measure,
+#' and against a density where one is given. It is the base method of
+#' [basis_operator_gram()] and the route a family with no closed form takes.
+#'
+#' @details
+#' The nodes are the same rule [numerical_gram()] uses, and the only
+#' difference is what is evaluated at them: \eqn{Lb} from [operator_eval()]
+#' rather than one derivative. A piecewise polynomial basis therefore gets
+#' an approximation here where its own derivative Gram matrix is exact, and
+#' the accuracy is the quadrature's.
+#'
+#' @param basis A [basis] of one variable.
+#' @param op A [LinearOperator], with its period resolved.
+#' @param at The covariate values for the empirical measure, or `NULL`.
+#' @param weight A density to integrate against, or `NULL`.
+#' @param panels,nodes The quadrature: how many equal panels the interval is
+#'   split into and how many Gauss-Legendre nodes each carries.
+#' @param ... Ignored.
+#'
+#' @return A symmetric numeric matrix of `basis@dimension` rows and columns.
+#'
+#' @seealso [basis_operator_gram()], the generic.
+#'
+#' @keywords internal
+numerical_operator_gram <- function(basis, op, at = NULL, weight = NULL,
+                                    panels = 50L, nodes = 12L, ...) {
+  check_operator(op)
+  if (basis_nvar(basis) > 1L) {
+    stop(paste0(
+      "a differential operator is not defined for a basis of several",
+      " variables:\n  which variable it differentiates is not said. Give",
+      " a whole 'order' instead."
+    ), call. = FALSE)
+  }
+  nm <- basis_colnames(basis)
+
+  if (!is.null(at)) {
+    if (!is.numeric(at)) stop("'at' must be numeric.", call. = FALSE)
+    at <- at[!is.na(at)]
+    if (!length(at)) stop("'at' has no usable points.", call. = FALSE)
+    lb <- operator_eval(basis, at, op)
+    g <- crossprod(lb) / nrow(lb)
+  } else {
+    breaks <- seq(basis@lower, basis@upper, length.out = panels + 1L)
+    r <- quad_rule(breaks, nodes)
+    w <- r$weights
+    if (!is.null(weight)) {
+      if (!is.function(weight)) {
+        stop("'weight' must be a function of one numeric vector.",
+          call. = FALSE
+        )
+      }
+      wv <- weight(r$nodes)
+      if (length(wv) != length(r$nodes) || anyNA(wv) || any(wv < 0)) {
+        stop("'weight' must return one non-negative value per point.",
+          call. = FALSE
+        )
+      }
+      w <- w * wv
+    }
+    lb <- operator_eval(basis, r$nodes, op)
+    g <- crossprod(sqrt(w) * lb)
+  }
+  g <- (g + t(g)) / 2
+  dimnames(g) <- list(nm, nm)
+  g
+}
+
+
 #' Is This the Package's Own Base Class?
 #'
 #' @description

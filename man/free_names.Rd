@@ -7,14 +7,20 @@
 free_names(n)
 }
 \arguments{
-\item{n}{How many.}
+\item{n}{How many columns were restored.}
 }
 \value{
 A character vector of length \code{n}.
 }
 \description{
-Names the columns \code{null_space = "keep"} restores: \code{lin} for the linear
-one, which is the only one at \code{order = 2}, and \code{poly2}, \code{poly3} and so on
-for the higher powers an order above 2 leaves unpenalized.
+Names the columns \code{null_space = "keep"} restores where the null space is
+the polynomials: \code{lin} for the linear one, which is the only one at
+\code{order = 2}, and \code{poly2}, \code{poly3} and so on for the higher powers an
+order above 2 leaves unpenalized.
+}
+\details{
+A smoother whose null space is not the polynomials names its own columns
+instead, through the \code{free_names} element of \code{\link[=smoother_span]{smoother_span()}}; see
+\code{\link[=operator_free_names]{operator_free_names()}}, which a periodic null space uses.
 }
 \keyword{internal}

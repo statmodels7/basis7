@@ -166,13 +166,24 @@ test_that("a Fourier smoother is periodic, which is what it is for", {
   f <- function(u) sin(2 * pi * u) + 0.4 * cos(4 * pi * u)
   y <- f(x) + rnorm(300, sd = 0.2)
 
+  # THE DEFAULT PENALTY IS THE HARMONIC OPERATOR since operators
+  # arrived, so the constant AND the fundamental leave the penalized
+  # part; 'shrink' then gives the fundamental a weight of its own rather
+  # than leaving it free, and no column is unpenalized.
   sm <- fourier_smooth(k = 9, lower = 0, upper = 1)
   o <- smoother_build(sm, x)
 
-  # nine functions, one constant removed, nothing restored
   expect_identical(ncol(o$X), 8L)
   expect_identical(o$unpenalized, 0L)
-  expect_identical(o$names, paste0("z", 1:8))
+  expect_identical(head(o$names, 2L), c("sin1", "cos1"))
+
+  # and the derivative penalty is the construction this family had
+  # before: one constant removed, nothing restored
+  od <- smoother_build(fourier_smooth(k = 9, order = 2, lower = 0,
+                                      upper = 1), x)
+  expect_identical(ncol(od$X), 8L)
+  expect_identical(od$unpenalized, 0L)
+  expect_identical(od$names, paste0("z", 1:8))
 
   # EVERY COLUMN is periodic, hence so is any fit built on them
   ends <- smoother_apply(sm, o$blueprint, c(0, 1))

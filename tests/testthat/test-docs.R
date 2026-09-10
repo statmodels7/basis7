@@ -41,7 +41,7 @@ rd_info <- function(dir) {
 documentable <- function() {
   ns <- asNamespace("basis7")
   nms <- setdiff(ls(ns, all.names = FALSE),
-                 c("print", "plot", "summary", "mean", "simulate",
+                 c("print", "plot", "summary", "mean", "simulate", "*",
                    "coef", "confint", "logLik", "vcov",
                    "predict", "fitted", "residuals", "nobs", "formula",
                    "family", "weights", "df.residual", "sigma",

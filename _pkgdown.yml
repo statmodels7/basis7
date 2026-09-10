@@ -68,6 +68,23 @@ reference:
   - TensorBasis
   - basis_nvar
 
+- title: Differential operators
+  desc: >
+    What a penalty measures. A smoother's `order` takes one of these in
+    place of a whole number, and the operator carries its own null space:
+    the functions a maximal penalty leaves untouched.
+  contents:
+  - deriv_operator
+  - harmonic_operator
+  - oscillator_operator
+  - linear_operator
+  - operator_null
+  - operator_null_design
+  - operator_order
+  - operator_weights
+  - operator_resolve
+  - LinearOperator
+
 - title: The interface
   desc: >
     What every basis answers. A subclass must implement only the first;
@@ -77,6 +94,7 @@ reference:
   - basis_deriv
   - basis_int
   - basis_gram
+  - basis_operator_gram
   - basis_colnames
   - basis
 
@@ -101,11 +119,13 @@ reference:
   - starts_with("basis_deriv.")
   - starts_with("basis_int.")
   - starts_with("basis_gram.")
+  - starts_with("basis_operator_gram.")
   - starts_with("basis_colnames.")
   - starts_with("print.")
   - starts_with("plot.")
   - numerical_deriv_matrix
   - numerical_gram
+  - numerical_operator_gram
   - gauss_legendre
   - quad_rule
   - bspline_design

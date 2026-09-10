@@ -1,3 +1,99 @@
+# basis7 0.13.0
+
+* **Linear differential operators**, the general form of what a penalty
+  measures: \eqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1}D^{m-1}x + D^m x},
+  with the roughness matrix \eqn{R = \int (Lb)(Lb)^\top}. Four
+  constructors -- `deriv_operator()`, `harmonic_operator()`,
+  `oscillator_operator()` and `linear_operator()` -- with `*` composing two
+  by multiplying their characteristic polynomials, and `operator_null()`,
+  `operator_null_design()`, `operator_order()`, `operator_weights()` and
+  `operator_resolve()` as the accessors.
+
+  They go in the **`order` argument every smoother family already has**, a
+  whole number `m` being the shorthand for `deriv_operator(m)` rather than a
+  second way of saying the same thing. `basis_gram(b, order = op)` answers
+  for a basis alone, routing to the new generic `basis_operator_gram()`.
+
+  **The null space comes from the operator and never from the rank of the
+  assembled matrix**, being read off the roots of the characteristic
+  polynomial. The two are different questions and give different answers:
+  the same two-harmonic operator has a penalty of null dimension 5 on a
+  Fourier basis and 3 on a cubic B-spline at a relative tolerance of 1e-10,
+  because a spline represents a sine only approximately, while the
+  operator's own null space is five-dimensional in both cases.
+
+* **`fourier_smooth()` now penalizes with the harmonic acceleration
+  operator, and shrinks its null space**, where it integrated the squared
+  second derivative and kept it. A derivative penalty asks a fit to contract
+  toward a straight line, which is not periodic and is not what a cyclic
+  phenomenon simplifies to; the harmonic operator leaves the level and the
+  fundamental cycle alone and removes everything above them.
+
+  ⚠️ **Every Fourier smooth therefore moves.** `order = 2` restores the old
+  construction in one argument and gives it back bit for bit. Measured at
+  `k = 21` over 200 observations with the smoothing parameter chosen by
+  generalized cross-validation on eight samples: on a truth dominated by
+  its fundamental the harmonic penalty reaches a root mean square error of
+  0.0596 against 0.0654 and wins on seven samples of eight, at 9.28
+  effective degrees of freedom against 10.72.
+
+  ⚠️ **The default null space is `"shrink"` here and `"keep"` elsewhere**,
+  and the control is what decided it. On a truth with no periodic signal at
+  all, `"shrink"` is level with the derivative penalty -- 0.0110 against
+  0.0121 at 1.16 effective degrees of freedom against 1.20 -- because the
+  fundamental can leave the model, while `"keep"` reads 0.0281 at 3.00 and
+  wins on none of the eight. Use `"keep"` where the cycle is known to be
+  there and is the thing being estimated. It resolves to `"keep"` where a
+  `penalty` factory is given, the two being refused together.
+
+  ⚠️ **An explicit `null_space = "keep"` gives a different block too**,
+  and "the default moves" does not say so. The argument did not change
+  meaning: the penalty under it did. The harmonic operator's null space
+  is three-dimensional against the second derivative's one -- it
+  annihilates the constant AND the fundamental where \eqn{D^2}
+  annihilates the constant alone -- and the constraint removes the
+  constant either way, which is why nine functions still give eight
+  columns. So "keep everything the penalty does not see" frees TWO
+  coordinates where it freed none, and a coefficient table that read
+  `z1 ... z8` now reads `sin1`, `cos1`, `z1 ... z6`. That is what to
+  look at first if the names in an existing model's summary have
+  changed. `order = 2` restores both the penalty and the count.
+
+  ⚠️ **A periodic family refuses a null function it cannot carry.** Every
+  function of the null space other than the constant is restored as a free
+  column, so each must be periodic on the basis's period; an operator whose
+  null space holds \eqn{t} is rejected with the reason, being right for a
+  B-spline and wrong here.
+
+* On a **Fourier basis over a full period the roughness matrix of any
+  operator is exactly diagonal**, with the entry of the pair at frequency
+  \eqn{j} equal to \eqn{|P(i\nu_j)|^2 T/2} for \eqn{P} the characteristic
+  polynomial. ⚠️ The book this operator comes from states that the harmonic
+  penalty makes \eqn{R} structurally different and **more complex** than
+  the diagonal matrix of the derivative penalty. The first half is right --
+  the null space goes from one dimension to three -- and the second is not:
+  measured, the largest off-diagonal entry is 1.7e-16 of the largest entry,
+  for the harmonic operator, for two harmonics and for a composed one.
+
+* On a **B-spline basis the operator's roughness matrix is exact**,
+  integrated knot interval by knot interval as the derivative one is, since
+  \eqn{Lb} is piecewise polynomial with the same breakpoints. The base
+  method's evenly spaced panels do not line up with the knots and differ
+  from the derivative route by 5e-8 relative, where this one differs by
+  3e-15. An operator of order above the spline's degree is **rejected**
+  rather than integrated, its leading term being identically zero there, so
+  what would be measured is the operator with its highest derivative
+  deleted.
+
+* ⚠️ **`smoother@order` holds a `LinearOperator` and no longer an integer.**
+  A whole number is normalized by `as_operator()` at the constructor, so
+  nothing downstream has to ask which of the two it was given;
+  `operator_order(sm@order)` is the integer. Every construction written
+  before operators existed is unchanged: measured against a battery
+  captured before the change, fourteen smoother shapes and eight Gram
+  matrices are `identical()`, and the three that move are the Fourier
+  default, deliberately.
+
 # basis7 0.12.0
 
 * **`adaptive_smooth()`, a difference penalty whose weight varies along the

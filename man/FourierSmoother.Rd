@@ -7,7 +7,7 @@
 FourierSmoother(
   smoother_name = character(0),
   dimension = integer(0),
-  order = integer(0),
+  order = NULL,
   measure = NULL,
   constrain = NULL,
   null_space = character(0),
@@ -27,9 +27,12 @@ FourierSmoother(
 reparametrization, a single positive integer. Must be of storage mode
 integer.}
 
-\item{order}{The order of derivative the penalty integrates, a single
-positive integer. It says what a strongly penalized fit contracts
-toward: a constant at 1, a straight line at 2, a parabola at 3.}
+\item{order}{What the penalty measures: a \link{LinearOperator} from
+\code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
+\code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
+\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
+toward, which for \code{m} is a constant at 1, a straight line at 2 and a
+parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.}
 
 \item{measure}{The measure the roughness is integrated against.
 \code{"lebesgue"} is the length measure on the interval.}

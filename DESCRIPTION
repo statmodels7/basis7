@@ -1,6 +1,6 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.12.0
+Version: 0.13.0
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Basis expansions as objects, built on the S7 object-oriented
@@ -51,6 +51,7 @@ Collate:
     'check_basis.R'
     'fourier_basis.R'
     'methods.R'
+    'operator.R'
     'poly_basis.R'
     'smoother.R'
     'smoother_families.R'

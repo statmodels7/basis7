@@ -9,7 +9,10 @@ test_that("an adaptive smoother carries one component per smoothing parameter", 
   expect_identical(sm@m, 4L)
   expect_identical(sm@diff, 2L)
   # ORDER RECORDS THE DIFFERENCE ORDER, which is what smoother_span() reads
-  expect_identical(sm@order, 2L)
+  # the property holds an OPERATOR since operators arrived; a whole
+  # number is the spelling and deriv_operator() is the object
+  expect_identical(sm@order, deriv_operator(2))
+  expect_identical(operator_order(sm@order), 2L)
 
   # the basis is an ordinary B-spline, the same object the sibling families
   # build, so nothing about the basis is particular to this construction
