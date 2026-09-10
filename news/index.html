@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,13 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.9.0" id="basis7-090">basis7 0.9.0<a class="anchor" aria-label="anchor" href="#basis7-090"></a></h2>
+<ul><li><p><strong>A smoother may carry a penalty of its own.</strong> The <code>penalty</code> argument of <code><a href="../reference/bspline_smooth.html">bspline_smooth()</a></code>, <code><a href="../reference/fourier_smooth.html">fourier_smooth()</a></code> and <code><a href="../reference/legendre_smooth.html">legendre_smooth()</a></code> has been on the constructors and documented on their pages since 0.7.0, and a non-NULL value was refused; it is now stored. It is a FACTORY and not a built penalty, because how many coefficients a smooth has is settled by the data: the constraint, the null space and the reparametrization all move with them, and a smoother is a recipe for exactly that reason.</p></li>
+<li><p>The validation is deliberately weak, and the dependency graph is why.  sits at the bottom of it and imports  alone, so it cannot name  and cannot ask whether what the function returns is a penalty. <code><a href="../reference/check_penalty.html">check_penalty()</a></code> asks only that it be a function of one argument. The smoother stores it and NEVER CALLS IT, which a test asserts with a factory that raises: whichever layer builds the term calls it, at the count the data settle, and checks the result there.</p></li>
+<li><p>The construction a factory produces is the construction it would have produced without one, asserted by identity on the block, the roughness matrix and the unpenalized count. The reparametrization reads the ROUGHNESS matrix, which is what orders the coordinates from the smoothest to the most wiggly and makes the penalty on them the identity; the factory replaces that matrix only for whoever penalizes with it. That ordering is what a penalty of another shape is reached for.</p></li>
+<li><p>⚠️ <code>penalty</code> and <code>null_space = "shrink"</code> are refused TOGETHER, and each is accepted alone. The shrinkage is a weight written inside the roughness matrix – a tenth of what a penalized direction carries, which is a ratio against that matrix’s own eigenvalues – and a factory replaces the matrix with a penalty that has no such eigenvalue to be a tenth of. The free columns would keep a weight in a matrix the fit no longer reads, which is an argument accepted and ignored.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.8.3" id="basis7-083">basis7 0.8.3<a class="anchor" aria-label="anchor" href="#basis7-083"></a></h2>
 <ul><li>The reapplication test asserts the ROUTE as well as the numbers. A tolerance carries the claim that the two agree and cannot carry the claim the test is named for – that the block is reapplied and not rebuilt – since a rebuild that happened to land close would pass it. The route is asserted structurally instead: with the empirical Gram and the reparametrization mocked to raise, <code><a href="../reference/smoother_apply.html">smoother_apply()</a></code> completes, so it reaches neither. The mock is proven live in the same test by <code><a href="../reference/smoother_build.html">smoother_build()</a></code> raising under it, without which the assertion would pass whether or not the bindings were ever replaced.</li>

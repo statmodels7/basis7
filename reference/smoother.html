@@ -39,7 +39,7 @@ recorded there at new values."><meta property="og:image" content="https://statmo
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -178,6 +178,27 @@ identically zero, which penalizes nothing. Passing a basis and a penalty
 separately would leave the caller to satisfy that compatibility at every
 call site. A smoother is one object, so each constructor validates its own
 arguments where the caller wrote them.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="a-penalty-of-your-own">A penalty of your own<a class="anchor" aria-label="anchor" href="#a-penalty-of-your-own"></a></h2>
+    <p><code>penalty</code> replaces the roughness matrix with a penalty built by a factory
+of the coefficient count: <code>bspline_smooth(penalty = penalties7::lasso_penalty)</code>. It is a factory and not a built penalty
+because how many coefficients a smooth has is settled by the data, the
+constraint and the null space moving with them.</p>
+<p>A smoother <strong>stores the function and never calls it</strong>. This package sits
+at the bottom of the dependency graph and imports <span class="pkg">numericals7</span>
+alone, so it cannot name <span class="pkg">penalties7</span> and cannot ask whether what the
+function returns is a penalty; <code><a href="check_penalty.html">check_penalty()</a></code> asks only that it be a
+function of one argument. Whichever layer builds the term calls it, at
+the count only the data settle, and checks the result there.</p>
+<p>The construction is unaffected. <code><a href="smoother_build.html">smoother_build()</a></code> returns the roughness
+matrix in <code>S</code> whether or not a factory is given, because the
+reparametrization reads that matrix: it is what orders the coordinates
+from the smoothest to the most wiggly and makes the penalty on them the
+identity, and that ordering is the reason a penalty of another shape is
+worth reaching for. <code>unpenalized</code> counts the columns the roughness leaves
+free, which a caller building a separable penalty needs, since such a
+penalty has no zero row with which to leave a column alone.</p>
 <p><code>smoother</code> is abstract: construct one through a family, of which
 <code><a href="bspline_smooth.html">bspline_smooth()</a></code> is the first.</p>
     </div>

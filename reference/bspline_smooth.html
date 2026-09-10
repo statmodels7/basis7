@@ -15,7 +15,7 @@ always used, named as an object."><meta property="og:image" content="https://sta
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.8.3</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,7 +110,8 @@ default, is the Demmler-Reinsch rotation.</p></dd>
 
 <dt id="arg-penalty">penalty<a class="anchor" aria-label="anchor" href="#arg-penalty"></a></dt>
 <dd><p><code>NULL</code> for the quadratic roughness penalty, or a factory
-building one from a coefficient count.</p></dd>
+building a penalty from a coefficient count. See the section on the
+smoother's own page.</p></dd>
 
 
 <dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
@@ -200,6 +201,25 @@ the four decisions it carries, <code><a href="bspline_basis.html">bspline_basis(
 <span class="r-in"><span><span class="co"># Dropping the null space removes it.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="fu"><a href="smoother_build.html">smoother_build</a></span><span class="op">(</span><span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, null_space <span class="op">=</span> <span class="st">"drop"</span><span class="op">)</span>, <span class="va">x</span><span class="op">)</span><span class="op">$</span><span class="va">X</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 200   8</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># A penalty factory is STORED AND NEVER CALLED here: one that raises</span></span></span>
+<span class="r-in"><span><span class="co"># still builds, because it is the model layer that calls it.</span></span></span>
+<span class="r-in"><span><span class="va">sm2</span> <span class="op">&lt;-</span> <span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, penalty <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">n_coef</span><span class="op">)</span> <span class="kw"><a href="https://rdrr.io/r/base/stop.html" class="external-link">stop</a></span><span class="op">(</span><span class="st">"not here"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">out2</span> <span class="op">&lt;-</span> <span class="fu"><a href="smoother_build.html">smoother_build</a></span><span class="op">(</span><span class="va">sm2</span>, <span class="va">x</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical</a></span><span class="op">(</span><span class="va">out2</span><span class="op">$</span><span class="va">S</span>, <span class="va">out</span><span class="op">$</span><span class="va">S</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># It must be a function of the count, and it cannot be combined with a</span></span></span>
+<span class="r-in"><span><span class="co"># shrunk null space, which is a weight inside the matrix it replaces.</span></span></span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, penalty <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error : 'penalty' must be NULL, or a function of the number of coefficients giving a</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   penalty. A penalties7 constructor passes bare -- penalty = penalties7::lasso_penalty</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -- and anything else is written out, as function(n_coef) my_penalty(n_coef).</span>
+<span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, penalty <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">n</span><span class="op">)</span> <span class="va">n</span>, null_space <span class="op">=</span> <span class="st">"shrink"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Error : 'penalty' and null_space = "shrink" cannot both be given: the shrinkage is</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   a weight inside the roughness matrix, and a penalty factory replaces that</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   matrix. Use null_space = "keep" to leave the unpenalized directions free,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   or "drop" to remove them.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 'k' must leave something after the constraint.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">bspline_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>

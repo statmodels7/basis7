@@ -119,6 +119,34 @@ separately would leave the caller to satisfy that compatibility at every
 call site. A smoother is one object, so each constructor validates its
 own arguments where the caller wrote them.
 
+## A penalty of your own
+
+`penalty` replaces the roughness matrix with a penalty built by a
+factory of the coefficient count:
+`bspline_smooth(penalty = penalties7::lasso_penalty)`. It is a factory
+and not a built penalty because how many coefficients a smooth has is
+settled by the data, the constraint and the null space moving with them.
+
+A smoother **stores the function and never calls it**. This package sits
+at the bottom of the dependency graph and imports numericals7 alone, so
+it cannot name penalties7 and cannot ask whether what the function
+returns is a penalty;
+[`check_penalty()`](https://statmodels7.github.io/basis7/reference/check_penalty.md)
+asks only that it be a function of one argument. Whichever layer builds
+the term calls it, at the count only the data settle, and checks the
+result there.
+
+The construction is unaffected.
+[`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+returns the roughness matrix in `S` whether or not a factory is given,
+because the reparametrization reads that matrix: it is what orders the
+coordinates from the smoothest to the most wiggly and makes the penalty
+on them the identity, and that ordering is the reason a penalty of
+another shape is worth reaching for. `unpenalized` counts the columns
+the roughness leaves free, which a caller building a separable penalty
+needs, since such a penalty has no zero row with which to leave a column
+alone.
+
 `smoother` is abstract: construct one through a family, of which
 [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
 is the first.

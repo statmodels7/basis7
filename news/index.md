@@ -1,5 +1,46 @@
 # Changelog
 
+## basis7 0.9.0
+
+- **A smoother may carry a penalty of its own.** The `penalty` argument
+  of
+  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md),
+  [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  and
+  [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
+  has been on the constructors and documented on their pages since
+  0.7.0, and a non-NULL value was refused; it is now stored. It is a
+  FACTORY and not a built penalty, because how many coefficients a
+  smooth has is settled by the data: the constraint, the null space and
+  the reparametrization all move with them, and a smoother is a recipe
+  for exactly that reason.
+
+- The validation is deliberately weak, and the dependency graph is why.
+  sits at the bottom of it and imports alone, so it cannot name and
+  cannot ask whether what the function returns is a penalty.
+  [`check_penalty()`](https://statmodels7.github.io/basis7/reference/check_penalty.md)
+  asks only that it be a function of one argument. The smoother stores
+  it and NEVER CALLS IT, which a test asserts with a factory that
+  raises: whichever layer builds the term calls it, at the count the
+  data settle, and checks the result there.
+
+- The construction a factory produces is the construction it would have
+  produced without one, asserted by identity on the block, the roughness
+  matrix and the unpenalized count. The reparametrization reads the
+  ROUGHNESS matrix, which is what orders the coordinates from the
+  smoothest to the most wiggly and makes the penalty on them the
+  identity; the factory replaces that matrix only for whoever penalizes
+  with it. That ordering is what a penalty of another shape is reached
+  for.
+
+- ⚠️ `penalty` and `null_space = "shrink"` are refused TOGETHER, and
+  each is accepted alone. The shrinkage is a weight written inside the
+  roughness matrix – a tenth of what a penalized direction carries,
+  which is a ratio against that matrix’s own eigenvalues – and a factory
+  replaces the matrix with a penalty that has no such eigenvalue to be a
+  tenth of. The free columns would keep a weight in a matrix the fit no
+  longer reads, which is an argument accepted and ignored.
+
 ## basis7 0.8.3
 
 - The reapplication test asserts the ROUTE as well as the numbers. A

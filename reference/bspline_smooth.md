@@ -62,8 +62,9 @@ bspline_smooth(
 
 - penalty:
 
-  `NULL` for the quadratic roughness penalty, or a factory building one
-  from a coefficient count.
+  `NULL` for the quadratic roughness penalty, or a factory building a
+  penalty from a coefficient count. See the section on the smoother's
+  own page.
 
 - lower, upper:
 
@@ -172,6 +173,25 @@ max(abs(crossprod(out$X[, 1], out$X[, -1])))
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
 #> [1] 200   8
+
+# A penalty factory is STORED AND NEVER CALLED here: one that raises
+# still builds, because it is the model layer that calls it.
+sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
+out2 <- smoother_build(sm2, x)
+identical(out2$S, out$S)
+#> [1] TRUE
+
+# It must be a function of the count, and it cannot be combined with a
+# shrunk null space, which is a weight inside the matrix it replaces.
+try(bspline_smooth(k = 10, penalty = 3))
+#> Error : 'penalty' must be NULL, or a function of the number of coefficients giving a
+#>   penalty. A penalties7 constructor passes bare -- penalty = penalties7::lasso_penalty
+#>   -- and anything else is written out, as function(n_coef) my_penalty(n_coef).
+try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
+#> Error : 'penalty' and null_space = "shrink" cannot both be given: the shrinkage is
+#>   a weight inside the roughness matrix, and a penalty factory replaces that
+#>   matrix. Use null_space = "keep" to leave the unpenalized directions free,
+#>   or "drop" to remove them.
 
 # 'k' must leave something after the constraint.
 try(bspline_smooth(k = 2))

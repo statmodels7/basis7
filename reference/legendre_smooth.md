@@ -52,7 +52,9 @@ legendre_smooth(
 
 - penalty:
 
-  `NULL` for the quadratic roughness penalty, or a factory.
+  `NULL` for the quadratic roughness penalty, or a factory building a
+  penalty from a coefficient count. See the section on the smoother's
+  own page.
 
 - lower, upper:
 
