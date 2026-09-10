@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.9.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,21 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.10.0" id="basis7-0100">basis7 0.10.0<a class="anchor" aria-label="anchor" href="#basis7-0100"></a></h2>
+<ul><li>
+<p><strong><code><a href="../reference/cyclic_smooth.html">cyclic_smooth()</a></code>, the local periodic smoother.</strong> <code>k</code> B-spline functions over one period, constrained so that the fit and its first <code>degree - 1</code> derivatives take the same value at the two ends. It is to <code><a href="../reference/fourier_smooth.html">fourier_smooth()</a></code> what <code><a href="../reference/bspline_smooth.html">bspline_smooth()</a></code> is to <code><a href="../reference/legendre_smooth.html">legendre_smooth()</a></code>: a local basis where the other is global, so a feature at one point of the cycle leaves the rest of it alone.</p>
+<p>Nothing outside this package was touched. A family declares a class, a <code><a href="../reference/smoother_basis.html">smoother_basis()</a></code> method and a constructor, and <code>modelterms7::s()</code> reads it through <code><a href="../reference/smoother_build.html">smoother_build()</a></code> like any other – which is the property the separation of 0.7.0 was for, tested rather than asserted.</p>
+</li>
+<li>
+<p><strong>The construction is a constraint and not a fold, and that is what makes every quantity exact.</strong> A spline of degree  is periodic exactly when its value and its first  derivatives agree at the two ends, which is  linear conditions, so the periodic splines are the null space of those conditions inside an ordinary spline space of dimension <code>k + degree</code>. <code><a href="../reference/constrain_basis.html">constrain_basis()</a></code> already built exactly that.</p>
+<p>The parent therefore lives on the period <strong>itself</strong>, so its Gram matrix integrates over one period and the roughness matrix is  with  the parent’s own exact Gram: no widened interval, no numerical fallback, and evaluation and derivatives of every order exact for free. A folded knot sequence puts its parent on a widened interval, and its Gram then integrates over more than one period.</p>
+</li>
+<li><p>Measured on a cubic with <code>k = 9</code> over . The basis agrees at the two ends to 5.6e-17 in value, 7.1e-15 in the first derivative and 8.5e-14 in the second, where an ordinary B-spline of the same <code>k</code> disagrees by 4.12; a fitted block agrees to 1.1e-16 at every smoothing parameter tried. The roughness matrix agrees with a knot-aligned trapezoid of the second derivatives over one period with the gap falling by exactly <strong>4.00</strong> at each halving of the step – the reference’s own order of convergence, so the residual is the trapezoid’s and not the matrix’s – while integrating over 99 per cent of the period instead moves that matrix by 167.6 against a size of 2820.4.</p></li>
+<li><p>⚠️ The null space of the pair is the <strong>constant at every order</strong>, not a space growing with it: a non-constant periodic function is never a polynomial. Measured at orders 1, 2 and 3 it is one-dimensional in all three and its function is constant to 2.7e-15, where the non-periodic family of the same degree has a null space of dimension 3 at order 3. So <code>constrain</code> is not an argument here, for the reason it is not one on <code><a href="../reference/fourier_smooth.html">fourier_smooth()</a></code>, and a block carries <code>k - 1</code> columns.</p></li>
+<li><p>⚠️ <strong>The constraints never lose rank, and the guard that would have been written for that is not there.</strong> Measured, the rank is exactly <code>degree</code> at every <code>k</code> from 1 to 12 and every <code>degree</code> from 1 to 5, so the bound <code>k &gt;= 3</code> is the sibling periodic family’s floor – the constant is removed, so <code>k = 2</code> leaves one column – and nothing else. What the construction does assert is the resulting <strong>dimension</strong>, because <code><a href="../reference/constrain_basis.html">constrain_basis()</a></code> removes one direction per unit of rank and a constraint that lost rank would return a basis wider than the caller asked for, silently, and the whole block with it.</p></li>
+<li><p>⚠️ <strong><code>lower</code> and <code>upper</code> are the period, and they are a property of the problem rather than of the sample.</strong> Left <code>NULL</code> they are read from the data, which makes the fitted period the observed range and is almost never what a periodic model means. The page says so.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.9.0" id="basis7-090">basis7 0.9.0<a class="anchor" aria-label="anchor" href="#basis7-090"></a></h2>
 <ul><li><p><strong>A smoother may carry a penalty of its own.</strong> The <code>penalty</code> argument of <code><a href="../reference/bspline_smooth.html">bspline_smooth()</a></code>, <code><a href="../reference/fourier_smooth.html">fourier_smooth()</a></code> and <code><a href="../reference/legendre_smooth.html">legendre_smooth()</a></code> has been on the constructors and documented on their pages since 0.7.0, and a non-NULL value was refused; it is now stored. It is a FACTORY and not a built penalty, because how many coefficients a smooth has is settled by the data: the constraint, the null space and the reparametrization all move with them, and a smoother is a recipe for exactly that reason.</p></li>

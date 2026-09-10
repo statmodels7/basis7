@@ -121,5 +121,5 @@ dim(out$X)
 b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
 ends <- smoother_apply(sm, out$blueprint, c(0, 1)) %*% b
 format(diff(as.vector(ends)), digits = 3)
-#> [1] "-3.33e-16"
+#> [1] "-2.22e-16"
 ```

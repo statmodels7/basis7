@@ -1,5 +1,80 @@
 # Changelog
 
+## basis7 0.10.0
+
+- **[`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md),
+  the local periodic smoother.** `k` B-spline functions over one period,
+  constrained so that the fit and its first `degree - 1` derivatives
+  take the same value at the two ends. It is to
+  [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  what
+  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
+  is to
+  [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md):
+  a local basis where the other is global, so a feature at one point of
+  the cycle leaves the rest of it alone.
+
+  Nothing outside this package was touched. A family declares a class, a
+  [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
+  method and a constructor, and `modelterms7::s()` reads it through
+  [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+  like any other – which is the property the separation of 0.7.0 was
+  for, tested rather than asserted.
+
+- **The construction is a constraint and not a fold, and that is what
+  makes every quantity exact.** A spline of degree is periodic exactly
+  when its value and its first derivatives agree at the two ends, which
+  is linear conditions, so the periodic splines are the null space of
+  those conditions inside an ordinary spline space of dimension
+  `k + degree`.
+  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
+  already built exactly that.
+
+  The parent therefore lives on the period **itself**, so its Gram
+  matrix integrates over one period and the roughness matrix is with the
+  parent’s own exact Gram: no widened interval, no numerical fallback,
+  and evaluation and derivatives of every order exact for free. A folded
+  knot sequence puts its parent on a widened interval, and its Gram then
+  integrates over more than one period.
+
+- Measured on a cubic with `k = 9` over . The basis agrees at the two
+  ends to 5.6e-17 in value, 7.1e-15 in the first derivative and 8.5e-14
+  in the second, where an ordinary B-spline of the same `k` disagrees by
+  4.12; a fitted block agrees to 1.1e-16 at every smoothing parameter
+  tried. The roughness matrix agrees with a knot-aligned trapezoid of
+  the second derivatives over one period with the gap falling by exactly
+  **4.00** at each halving of the step – the reference’s own order of
+  convergence, so the residual is the trapezoid’s and not the matrix’s –
+  while integrating over 99 per cent of the period instead moves that
+  matrix by 167.6 against a size of 2820.4.
+
+- ⚠️ The null space of the pair is the **constant at every order**, not
+  a space growing with it: a non-constant periodic function is never a
+  polynomial. Measured at orders 1, 2 and 3 it is one-dimensional in all
+  three and its function is constant to 2.7e-15, where the non-periodic
+  family of the same degree has a null space of dimension 3 at order 3.
+  So `constrain` is not an argument here, for the reason it is not one
+  on
+  [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md),
+  and a block carries `k - 1` columns.
+
+- ⚠️ **The constraints never lose rank, and the guard that would have
+  been written for that is not there.** Measured, the rank is exactly
+  `degree` at every `k` from 1 to 12 and every `degree` from 1 to 5, so
+  the bound `k >= 3` is the sibling periodic family’s floor – the
+  constant is removed, so `k = 2` leaves one column – and nothing else.
+  What the construction does assert is the resulting **dimension**,
+  because
+  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
+  removes one direction per unit of rank and a constraint that lost rank
+  would return a basis wider than the caller asked for, silently, and
+  the whole block with it.
+
+- ⚠️ **`lower` and `upper` are the period, and they are a property of
+  the problem rather than of the sample.** Left `NULL` they are read
+  from the data, which makes the fitted period the observed range and is
+  almost never what a periodic model means. The page says so.
+
 ## basis7 0.9.0
 
 - **A smoother may carry a penalty of its own.** The `penalty` argument

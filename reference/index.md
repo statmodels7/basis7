@@ -43,6 +43,8 @@ returns the block and the penalty matrix.
   : A Fourier Smoother
 - [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
   : A Legendre Smoother
+- [`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md)
+  : A Cyclic Smoother
 - [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
   : Build a Smoother at Data
 - [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
@@ -58,6 +60,8 @@ returns the block and the penalty matrix.
   : The Fourier Smoother Class
 - [`LegendreSmoother()`](https://statmodels7.github.io/basis7/reference/LegendreSmoother.md)
   : The Legendre Smoother Class
+- [`CyclicSmoother()`](https://statmodels7.github.io/basis7/reference/CyclicSmoother.md)
+  : The Cyclic Smoother Class
 
 ## Several variables
 

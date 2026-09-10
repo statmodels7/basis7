@@ -9,6 +9,7 @@
 <url><loc>https://statmodels7.github.io/basis7/news/index.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/BsplineBasis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/BsplineSmoother.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/CyclicSmoother.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/FourierBasis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/FourierSmoother.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/LegendreSmoother.html</loc></url>
@@ -78,6 +79,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/constrain_basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/contract_cp.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/coord.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/cyclic_smooth.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/dr_basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/empirical_gram.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/fd_reference.html</loc></url>
@@ -98,6 +100,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/numerical_deriv_matrix.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/numerical_gram.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/orthonorm_basis.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/periodic_constraint.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/plot.basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/poly_basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/poly_free.html</loc></url>

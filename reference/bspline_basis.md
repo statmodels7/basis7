@@ -142,7 +142,7 @@ length(p@basis_params$knots)
 #> [1] 0
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 5.389027e-16
+#> [1] 1.745023e-16
 
 # Degree 0 gives indicators of the knot intervals.
 basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
