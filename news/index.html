@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,13 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.10.1" id="basis7-0101">basis7 0.10.1<a class="anchor" aria-label="anchor" href="#basis7-0101"></a></h2>
+<ul><li>
+<p>⚠️ <strong>The cyclic smoother’s tests named <code>penalties7::</code>, which this package may not.</strong> basis7 sits at the bottom of the dependency graph – it is the reason its validation of a penalty factory is deliberately weak, checking that the argument is a function of a count and nothing about what the function returns – so naming that package in a test is the one thing the arrangement forbids. Both places now use a plain function of <code>n_coef</code>, and the factory of the “stored and never called” test RAISES when called, so the claim is enforced by the construction rather than counted, which is the idiom <code>test-smoother.R</code> already used.</p>
+<p>⚠️ <strong>A local suite could not have caught it and did not</strong>: penalties7 is installed here, so the tests passed locally at 941 and failed on all five CI platforms with <code>there is no package called 'penalties7'</code>. Five of five is what says it is deterministic rather than platform arithmetic, and the failing step was the test run rather than <code>setup-r</code>, which is what separates it from an infrastructure outage. Nothing about the family itself moved: 944 passing, 0 failures, 0 skips.</p>
+</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.10.0" id="basis7-0100">basis7 0.10.0<a class="anchor" aria-label="anchor" href="#basis7-0100"></a></h2>
 <ul><li>

@@ -1,5 +1,27 @@
 # Changelog
 
+## basis7 0.10.1
+
+- ⚠️ **The cyclic smoother’s tests named `penalties7::`, which this
+  package may not.** basis7 sits at the bottom of the dependency graph –
+  it is the reason its validation of a penalty factory is deliberately
+  weak, checking that the argument is a function of a count and nothing
+  about what the function returns – so naming that package in a test is
+  the one thing the arrangement forbids. Both places now use a plain
+  function of `n_coef`, and the factory of the “stored and never called”
+  test RAISES when called, so the claim is enforced by the construction
+  rather than counted, which is the idiom `test-smoother.R` already
+  used.
+
+  ⚠️ **A local suite could not have caught it and did not**: penalties7
+  is installed here, so the tests passed locally at 941 and failed on
+  all five CI platforms with `there is no package called 'penalties7'`.
+  Five of five is what says it is deterministic rather than platform
+  arithmetic, and the failing step was the test run rather than
+  `setup-r`, which is what separates it from an infrastructure outage.
+  Nothing about the family itself moved: 944 passing, 0 failures, 0
+  skips.
+
 ## basis7 0.10.0
 
 - **[`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md),
