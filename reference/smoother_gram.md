@@ -8,7 +8,7 @@ interval for `"lebesgue"`, the empirical measure of the covariate for
 ## Usage
 
 ``` r
-smoother_gram(sm, b, x)
+smoother_gram(sm, b, x, ...)
 ```
 
 ## Arguments
@@ -27,6 +27,10 @@ smoother_gram(sm, b, x)
 - x:
 
   The covariate, for the empirical measure.
+
+- ...:
+
+  Passed to methods.
 
 ## Value
 

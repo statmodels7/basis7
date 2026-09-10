@@ -126,7 +126,7 @@ head(basis_contract(b, x, g))
 # And agrees with the array it stands for.
 full <- outer(g[[1]][, 1], g[[2]][, 1]) + outer(g[[1]][, 2], g[[2]][, 2])
 max(abs(basis_contract(b, x, g) - basis_contract(b, x, full)))
-#> [1] 1.110223e-16
+#> [1] 1.665335e-16
 
 # On an ordinary basis it is the design matrix times the coefficients.
 p <- poly_basis(dimension = 4)

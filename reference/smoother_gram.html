@@ -13,7 +13,7 @@ and the density a function gives otherwise.'><meta property="og:image" content="
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@ and the density a function gives otherwise.'><meta property="og:image" content="
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="../logo.png" class="logo" alt=""><h1>The Roughness Matrix a Smoother Penalizes With</h1>
-      <small class="dont-index">Source: <a href="https://github.com/statmodels7/basis7/blob/master/R/smoother.R" class="external-link"><code>R/smoother.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/statmodels7/basis7/blob/master/R/smoother.R" class="external-link"><code>R/smoother.R</code></a>, <a href="https://github.com/statmodels7/basis7/blob/master/R/smoother_families.R" class="external-link"><code>R/smoother_families.R</code></a></small>
       <div class="d-none name"><code>smoother_gram.Rd</code></div>
     </div>
 
@@ -51,7 +51,7 @@ and the density a function gives otherwise.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">smoother_gram</span><span class="op">(</span><span class="va">sm</span>, <span class="va">b</span>, <span class="va">x</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">smoother_gram</span><span class="op">(</span><span class="va">sm</span>, <span class="va">b</span>, <span class="va">x</span>, <span class="va">...</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -68,6 +68,10 @@ and the density a function gives otherwise.</p>
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
 <dd><p>The covariate, for the empirical measure.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Passed to methods.</p></dd>
 
 </dl></div>
     <div class="section level2">

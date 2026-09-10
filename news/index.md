@@ -1,5 +1,69 @@
 # Changelog
 
+## basis7 0.11.0
+
+- **[`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
+  the Eilers-Marx smoother.** A B-spline basis of `k` functions
+  penalized by the sum of squared `diff`-th differences of its
+  coefficients rather than by an integrated squared derivative: a rich
+  basis and a cheap penalty, `k` chosen large enough not to matter and
+  the smoothing parameter doing the rest.
+
+  It declares no `measure` and no `order`, because nothing is integrated
+  – there is no measure to integrate against and no derivative whose
+  order to name. That is also why `diff` belongs to this family and not
+  to every one: a difference penalty reads the coefficients as an
+  ordered sequence in which neighbours are comparable, which a
+  B-spline’s are and a Fourier basis’s are not.
+
+- **[`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
+  is a generic**, so a family may declare a roughness matrix that is not
+  a Gram matrix of its own derivatives. Its base method is what the
+  function was, character for character.
+
+  ⚠️ **The change is inert, and by an identity rather than a
+  tolerance.** Every shipped family – B-spline, Fourier, Legendre and
+  cyclic – over three measures, three null-space settings, three
+  reparametrizations and two covariates: **216 cases of which 180 build
+  a block, and every element of every one is
+  [`identical()`](https://rdrr.io/r/base/identical.html) before and
+  after** – the block, the penalty, the unpenalized count, the
+  coefficient names, the free-column count and the reapplied rows.
+
+- ⚠️ **The null space of a difference penalty is only APPROXIMATELY the
+  polynomials on a clamped knot sequence, and the construction removes
+  the difference.** Marsden’s identity gives `sum_j xi_j B_j(x) = x`
+  with `xi_j` the Greville abscissae, so coefficients affine in the
+  index give a straight line exactly where `xi_j` is affine in `j` –
+  which fails at the ends, whose boundary knots are repeated. Measured,
+  the R-squared of `xi_j` against `j` is 0.9893, 0.9979 and 0.9997 at
+  `k` of 10, 20 and 40, and the functions spanning the null space are
+  the polynomials of degree below `diff` to 1.0000000000, 0.9994 and
+  0.9957 at `diff` of 1, 2 and 3.
+
+  It costs nothing because
+  [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
+  constrains the block against the EXACT polynomials, so the
+  Demmler-Reinsch rotation runs on their complement, where the
+  difference penalty is positive definite: the built penalty is the
+  identity to 1.0000000000 on every one of its 23 penalized directions,
+  exactly as
+  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)’s
+  is, and a strongly penalized fit contracts to a straight line with an
+  R-squared against `(1, x)` of 1.0000000000 at a smoothing parameter of
+  1e10 for both.
+
+- ⚠️ **The two penalties differ by four orders and their smoothing
+  parameters do not**, which is the reparametrization doing what it is
+  for. At `k = 25` over 300 observations the raw roughness matrices
+  correlate at 0.5075 and their scales are 6 against 2.556e+05, the
+  difference operator carrying no factor of the knot spacing; but at
+  matched effective degrees of freedom of 5, 8 and 12 the two smoothing
+  parameters stand in a ratio of 1.0, 0.9 and 0.8, because after the
+  rotation both penalties are the identity. The fitted functions differ
+  by a root mean square of 0.0135, 0.0243 and 0.0180 against a signal
+  whose own standard deviation is 0.7061.
+
 ## basis7 0.10.1
 
 - ⚠️ **The cyclic smoother’s tests named `penalties7::`, which this

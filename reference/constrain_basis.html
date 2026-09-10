@@ -13,7 +13,7 @@ intercept, and how a smooth term is made identifiable."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.10.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.11.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -129,7 +129,7 @@ returning a basis of zero columns.</p>
 <span class="r-in"><span><span class="va">cs</span><span class="op">@</span><span class="va">basis_params</span><span class="op">$</span><span class="va">constraint_rank</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">cs</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.034527e-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.915655e-14</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Two constraints take two columns: sum to zero and orthogonal to x.</span></span></span>
 <span class="r-in"><span><span class="va">C</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">x</span><span class="op">)</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/colSums.html" class="external-link">colSums</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">x</span><span class="op">)</span> <span class="op">*</span> <span class="va">x</span><span class="op">)</span><span class="op">)</span></span></span>

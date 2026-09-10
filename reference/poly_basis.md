@@ -107,12 +107,12 @@ H <- outer(0:9, 0:9, function(a, b) 1 / (a + b + 1))
 c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
   raw_powers = kappa(H, exact = TRUE))
 #>     legendre   raw_powers 
-#> 1.900000e+01 1.602442e+13 
+#> 1.900000e+01 1.602498e+13 
 
 # It spans the same space as the raw powers, so a cubic is fitted exactly.
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 1.193503e-16
+#> [1] 2.270252e-16
 
 # P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.
 basis_eval(p, c(0, 1))
