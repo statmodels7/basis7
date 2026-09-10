@@ -606,6 +606,7 @@ poly_free_apply <- function(params, newx) {
 #' @param sm A [smoother].
 #' @param b The basis [smoother_basis()] returned.
 #' @param x The covariate, for the empirical measure.
+#' @param ... Passed to methods.
 #'
 #' @return A symmetric numeric matrix of `b@dimension` rows and columns.
 #'
@@ -625,7 +626,14 @@ poly_free_apply <- function(params, newx) {
 #' round(cor(as.vector(g),
 #'           as.vector(smoother_gram(sme, smoother_basis(sme, x), x))), 3)
 #' @export
-smoother_gram <- function(sm, b, x) {
+smoother_gram <- S7::new_generic(
+  "smoother_gram", "sm",
+  function(sm, b, x, ...) S7::S7_dispatch()
+)
+
+#' @name smoother_gram
+#' @keywords internal
+S7::method(smoother_gram, smoother) <- function(sm, b, x, ...) {
   ms <- sm@measure
   if (is.function(ms)) return(basis_gram(b, order = sm@order, weight = ms))
   if (identical(ms, "empirical")) {
