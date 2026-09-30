@@ -29,7 +29,7 @@ test_that("an adaptive smoother carries one component per smoothing parameter", 
 test_that("the components sum to the difference penalty exactly", {
   # THE IDENTITY THAT MAKES THIS FAMILY A P-SPLINE AT EQUAL SMOOTHING
   # PARAMETERS. The weight functions are a B-spline basis, hence a partition
-  # of unity, so sum_i diag(v_i) is the identity and sum_i S_i is D'D. It
+  # of unity, so sum_i diag(v_i) is the identity and sum_i S_i is the P-spline penalty. It
   # holds for every m, including the two smallest, where the weight basis
   # falls to a quadratic and then to a linear one -- and where mgcv's own
   # two-component case, cbind(1, index), is NOT a partition of unity.
@@ -40,9 +40,10 @@ test_that("the components sum to the difference penalty exactly", {
       sm <- adaptive_smooth(k = k, diff = dd, m = m, lower = 0, upper = 1)
       g <- smoother_gram(sm, smoother_basis(sm, x), x)
       expect_length(g, m)
-      d <- base::diff(diag(1, k), differences = dd)
+      ps <- pspline_smooth(k = k, diff = dd, lower = 0, upper = 1)
+      pd <- smoother_gram(ps, smoother_basis(ps, x), x)
       tot <- Reduce(`+`, g)
-      expect_lt(max(abs(tot - crossprod(d))), 1e-10 * max(abs(crossprod(d))))
+      expect_lt(max(abs(tot - pd)), 1e-10 * max(abs(pd)))
     }
   }
 })
@@ -54,7 +55,8 @@ test_that("one component alone is not the difference penalty", {
   k <- 24L
   sm <- adaptive_smooth(k = k, diff = 2, m = 5, lower = 0, upper = 1)
   g <- smoother_gram(sm, smoother_basis(sm, x), x)
-  d <- crossprod(base::diff(diag(1, k), differences = 2L))
+  ps <- pspline_smooth(k = k, diff = 2, lower = 0, upper = 1)
+  d <- smoother_gram(ps, smoother_basis(ps, x), x)
   for (i in seq_along(g)) {
     expect_gt(max(abs(g[[i]] * length(g) - d)), 1e-3 * max(abs(d)))
   }

@@ -1,3 +1,28 @@
+# basis7 0.14.0
+
+* **`pspline_smooth()` takes its differences on the Eilers-Marx
+  coefficients.** The basis is still the clamped B-spline basis, and the
+  difference penalty is computed on the coefficients of the same function on
+  the basis whose knots are equally spaced beyond the interval as well as
+  inside it (Eilers and Marx, 1996), then carried back by the new internal
+  `pspline_map()`. The two bases span the same splines, so only the
+  coordinates of the penalty change. On clamped coefficients the null space
+  was only approximately the polynomials of degree below `diff` (an
+  \eqn{R^2} of 0.9994 at `diff = 2`); it is now exact. The penalty is the one
+  of mgcv's `bs = "ps"`: on `MASS::Boston`, `medv ~ s(lstat)` has 6.98906,
+  8.75744 and 9.41421 effective degrees of freedom at `k` of 10, 20 and 40
+  against mgcv's 6.98927, 8.75783 and 9.41421, where before it had 8.29 at
+  `k = 20` against 8.76.
+
+* `adaptive_smooth()` takes its differences in the same coordinates, so at
+  equal smoothing parameters it is still exactly `pspline_smooth()`, and it
+  is the adaptive P-spline of mgcv's `bs = "ad"`: on `MASS::mcycle` at
+  `k = 40`, `m = 5`, 10.3352 effective degrees of freedom against 10.3343 and
+  fitted values 0.002 apart, where before they were 0.84 apart.
+
+* Every fit with a P-spline or an adaptive smooth moves. `splines` joins
+  Imports for `splines::splineDesign()`.
+
 # basis7 0.13.1
 
 * **`cyclic_smooth()` builds at every `reparam`**, where `"none"` and

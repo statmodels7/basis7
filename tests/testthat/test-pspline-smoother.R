@@ -18,24 +18,44 @@ test_that("a P-spline is a B-spline basis with a difference penalty", {
                                 check.attributes = FALSE)))
 })
 
-test_that("the roughness matrix is exactly the difference operator", {
-  # The check is EXACT and does not restate the formula: D_d c = 0 holds
-  # exactly when c is a polynomial of degree below d in the INDEX, so the
-  # null space in coefficient space is a Vandermonde in 1..k.
+test_that("the roughness matrix is the difference operator on the Eilers-Marx coefficients", {
+  # The Eilers-Marx basis is built here with splines::splineDesign on knots
+  # equally spaced beyond the interval, a route that shares nothing with the
+  # package's clamped basis. The clamped coefficients c of a function are
+  # carried to its Eilers-Marx coefficients a = M c, and the penalty on c is
+  # the difference penalty on a.
   x <- sort(runif(120))
+  xs <- seq(0, 1, length.out = 401)
   for (dd in 1:3) {
     k <- 20L
     sm <- pspline_smooth(k = k, degree = 3, diff = dd, lower = 0, upper = 1)
-    g <- smoother_gram(sm, smoother_basis(sm, x), x)
+    b <- smoother_basis(sm, x)
+    g <- smoother_gram(sm, b, x)
     expect_identical(dim(g), c(k, k))
+    h <- 1 / (k - 3)
+    be <- splines::splineDesign(h * seq(-3, k), xs, ord = 4, outer.ok = TRUE)
+    M <- qr.solve(be, as.matrix(basis_eval(b, xs)))
+    D <- base::diff(diag(k), differences = dd)
+    expect_lt(max(abs(g - crossprod(D %*% M))), 1e-10 * max(abs(g)))
     ev <- eigen(g, symmetric = TRUE, only.values = TRUE)$values
     expect_identical(sum(ev <= 1e-8 * max(ev)), as.integer(dd))
-    # every polynomial of degree below dd in the index is annihilated
-    V <- outer(seq_len(k), seq.int(0L, dd - 1L), "^")
-    expect_lt(max(abs(g %*% V)), 1e-8 * max(abs(g)) * max(abs(V)))
-    # and one of degree dd is NOT, which is what makes the line above a claim
-    Vd <- as.matrix(seq_len(k)^dd)
-    expect_gt(max(abs(g %*% Vd)), 1e-3 * max(abs(g)))
+  }
+})
+
+test_that("the null space of a P-spline is exactly the polynomials", {
+  # On the Eilers-Marx knots the Greville abscissae are equally spaced, so
+  # coefficients polynomial in the index give a polynomial in x. On clamped
+  # coefficients (basis7 <= 0.13.1) the R^2 below was 0.9994 at diff = 2.
+  x <- seq(0, 1, length.out = 300)
+  for (dd in 2:3) {
+    sm <- pspline_smooth(k = 20, diff = dd, lower = 0, upper = 1)
+    b <- smoother_basis(sm, x)
+    e <- eigen(smoother_gram(sm, b, x), symmetric = TRUE)
+    N <- e$vectors[, e$values <= 1e-8 * max(e$values), drop = FALSE]
+    fn <- as.matrix(basis_eval(b, x)) %*% N
+    Q <- outer(x, seq.int(0L, dd - 1L), "^")
+    res <- fn - Q %*% qr.solve(Q, fn)
+    expect_lt(max(abs(res)), 1e-10 * max(abs(fn)))
   }
 })
 
@@ -44,8 +64,6 @@ test_that("the built penalty is the identity and the fit contracts to a line", {
   x <- sort(runif(300))
   sm <- pspline_smooth(k = 25, degree = 3, diff = 2, lower = 0, upper = 1)
   out <- smoother_build(sm, x)
-  # the null space of the penalty is only approximately polynomial on a
-  # clamped knot sequence, and the construction removes the difference:
   # smoother_span() constrains against the exact polynomials, so what the
   # Demmler-Reinsch rotation sees is positive definite
   ev <- eigen(out$S, symmetric = TRUE, only.values = TRUE)$values

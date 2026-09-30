@@ -105,6 +105,13 @@ region on one sample, the adaptive is better on the quiet left (0.0242
 against 0.0305) and on the smooth right (0.0437 against 0.0476) and
 slightly WORSE at the feature itself (0.0553 against 0.0503). What it buys
 is not a sharper peak but less noise chasing where the function is quiet.
+
+The differences are taken in the Eilers-Marx coordinates of
+\code{\link[=pspline_smooth]{pspline_smooth()}}, so the fit is the adaptive P-spline of \pkg{mgcv}'s
+\code{bs = "ad"}: on \code{MASS::mcycle} at \code{k = 40}, \code{m = 5}, 10.3352 effective
+degrees of freedom against 10.3343, the fitted values 0.002 apart on a
+response whose standard deviation is 48. Up to basis7 0.13.1 they were
+taken on the clamped coefficients and the two fits were 0.84 apart.
 }
 
 \section{The coordinates}{
