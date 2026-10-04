@@ -17,7 +17,7 @@ Description: Basis expansions as objects, built on the S7 object-oriented
     penalty matrix at a covariate. Numerical fallbacks make a user-defined
     basis work from its evaluation alone, and a diagnostic verifies every
     component against an independent route.
-License: MIT + file LICENSE
+License: GPL (>= 2)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 URL: https://statmodels7.github.io/basis7/,
