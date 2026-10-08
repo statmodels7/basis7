@@ -17,7 +17,7 @@ rest."><meta property="og:image" content="https://statmodels7.github.io/basis7/l
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -136,40 +136,37 @@ next sine, and their difference means nothing.</p>
 below \(d\) in their index, and the null space of the roughness matrix
 has dimension exactly <code>diff</code>: measured at <code>k = 20</code>, <code>degree = 3</code>, it is 1,
 2 and 3 at <code>diff</code> of 1, 2 and 3.</p>
-<p>That null space is only APPROXIMATELY the polynomials, and the reason is
-the boundary knots. Marsden's identity gives
-\(\sum_j \xi_j B_j(x) = x\) with \(\xi_j\) the Greville abscissae, so
-coefficients affine in the index give a straight line exactly where
-\(\xi_j\) is itself affine in \(j\) – which fails at the ends of a
-clamped sequence, whose boundary knots are repeated. Measured, the
-\(R^2\) of \(\xi_j\) against \(j\) is 0.9893, 0.9979 and 0.9997 at
-<code>k</code> of 10, 20 and 40, the departure being a fixed number of knots out of
-<code>k</code>; and the functions spanning the null space are the polynomials of
-degree below <code>diff</code> to an \(R^2\) of 1.0000000000, 0.9994 and 0.9957.</p>
-<p>⚠️ It costs the construction nothing, which is the measurement that
-matters rather than the one above. <code><a href="smoother_span.html">smoother_span()</a></code> constrains the block
-against the exact polynomials, so the Demmler-Reinsch rotation runs on
-their complement, where the difference penalty is positive definite: the
-built penalty is the identity to 1.0000000000 on every one of its 23
-penalized directions, exactly as <code><a href="bspline_smooth.html">bspline_smooth()</a></code>'s is, and a strongly
-penalized fit contracts to a straight line with an \(R^2\) against
-\((1, x)\) of 1.0000000000 at \(\lambda = 10^{10}\) for both.</p>
+<p>The differences are taken on the coefficients of the basis of Eilers and
+Marx, whose knots are equally spaced with the same step beyond the
+interval as inside it, and the penalty is carried onto the clamped basis
+the package evaluates (the two span the same splines on the interval, so
+only the coordinates change). On those knots the Greville abscissae are
+equally spaced, and Marsden's identity makes the null space exactly the
+polynomials of degree below <code>diff</code>: measured at <code>k = 20</code> over 300 points,
+the functions spanning it are those polynomials to an \(R^2\) of 1 at
+<code>diff</code> of 2 and 3. It is also the penalty of <span class="pkg">mgcv</span>'s <code>bs = "ps"</code>:
+on <code><a href="https://rdrr.io/pkg/MASS/man/Boston.html" class="external-link">MASS::Boston</a></code>, <code>medv ~ s(lstat)</code> has 6.98906, 8.75744 and 9.41421
+effective degrees of freedom at <code>k</code> of 10, 20 and 40 against
+<span class="pkg">mgcv</span>'s 6.98927, 8.75783 and 9.41421.</p>
+<p>Up to basis7 0.13.1 the differences were taken on the clamped
+coefficients, whose Greville abscissae are not equally spaced near the
+ends, so the null space was only approximately the polynomials and the
+fit differed from <span class="pkg">mgcv</span>'s (8.29 effective degrees of freedom against
+8.76 in the example above).</p>
     </div>
     <div class="section level2">
     <h2 id="against-the-integrated-penalty-on-the-same-basis">Against the integrated penalty on the same basis<a class="anchor" aria-label="anchor" href="#against-the-integrated-penalty-on-the-same-basis"></a></h2>
     <p>The two are different penalties and neither contains the other. Measured
-at <code>k = 25</code>, <code>degree = 3</code> over 300 observations, the raw roughness
-matrices correlate at 0.5075 and their scales differ by four orders –
-6 against 2.556e+05 – the difference operator carrying no factor of the
-knot spacing.</p>
-<p>⚠️ The smoothing parameters nevertheless mean the same thing, and that is
-the reparametrization doing what it is for. At matched effective degrees
-of freedom of 5, 8 and 12 the two smoothing parameters stand in a ratio
-of 1.0, 0.9 and 0.8, not the four orders the raw matrices differ by,
-because after the Demmler-Reinsch rotation both penalties are the
-identity. The fitted functions differ by a root mean square of 0.0135,
-0.0243 and 0.0180 against a signal whose own standard deviation is
-0.7061.</p>
+at <code>k = 25</code>, <code>degree = 3</code> over 300 uniform observations, the raw
+roughness matrices correlate at 0.987 and their scales differ by more
+than three orders (83 against 2.7e+05), the difference operator carrying
+no factor of the knot spacing.</p>
+<p>The smoothing parameters nevertheless mean nearly the same thing, since
+after the Demmler-Reinsch rotation both penalties are the identity. At
+matched effective degrees of freedom of 5, 8 and 12 the two smoothing
+parameters stand in a ratio of 0.92, 0.81 and 0.65, and the fitted
+functions differ by a root mean square of 0.0044, 0.0021 and 0.0027
+against a signal whose own standard deviation is 0.61.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

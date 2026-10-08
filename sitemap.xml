@@ -1,7 +1,5 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://statmodels7.github.io/basis7/404.html</loc></url>
-<url><loc>https://statmodels7.github.io/basis7/LICENSE-text.html</loc></url>
-<url><loc>https://statmodels7.github.io/basis7/LICENSE.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/articles/defining-a-basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/articles/index.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/authors.html</loc></url>
@@ -147,6 +145,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/print.basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/print.smoother.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/print_basis_checks.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/pspline_map.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/pspline_smooth.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/quad_rule.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/rel_close.html</loc></url>

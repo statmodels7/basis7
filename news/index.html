@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.13.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,12 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.14.0" id="basis7-0140">basis7 0.14.0<a class="anchor" aria-label="anchor" href="#basis7-0140"></a></h2>
+<ul><li><p><strong><code><a href="../reference/pspline_smooth.html">pspline_smooth()</a></code> takes its differences on the Eilers-Marx coefficients.</strong> The basis is still the clamped B-spline basis, and the difference penalty is computed on the coefficients of the same function on the basis whose knots are equally spaced beyond the interval as well as inside it (Eilers and Marx, 1996), then carried back by the new internal <code><a href="../reference/pspline_map.html">pspline_map()</a></code>. The two bases span the same splines, so only the coordinates of the penalty change. On clamped coefficients the null space was only approximately the polynomials of degree below <code>diff</code> (an  of 0.9994 at <code>diff = 2</code>); it is now exact. The penalty is the one of mgcv’s <code>bs = "ps"</code>: on <code><a href="https://rdrr.io/pkg/MASS/man/Boston.html" class="external-link">MASS::Boston</a></code>, <code>medv ~ s(lstat)</code> has 6.98906, 8.75744 and 9.41421 effective degrees of freedom at <code>k</code> of 10, 20 and 40 against mgcv’s 6.98927, 8.75783 and 9.41421, where before it had 8.29 at <code>k = 20</code> against 8.76.</p></li>
+<li><p><code><a href="../reference/adaptive_smooth.html">adaptive_smooth()</a></code> takes its differences in the same coordinates, so at equal smoothing parameters it is still exactly <code><a href="../reference/pspline_smooth.html">pspline_smooth()</a></code>, and it is the adaptive P-spline of mgcv’s <code>bs = "ad"</code>: on <code><a href="https://rdrr.io/pkg/MASS/man/mcycle.html" class="external-link">MASS::mcycle</a></code> at <code>k = 40</code>, <code>m = 5</code>, 10.3352 effective degrees of freedom against 10.3343 and fitted values 0.002 apart, where before they were 0.84 apart.</p></li>
+<li><p>Every fit with a P-spline or an adaptive smooth moves. <code>splines</code> joins Imports for <code><a href="https://rdrr.io/r/splines/splineDesign.html" class="external-link">splines::splineDesign()</a></code>.</p></li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.13.1" id="basis7-0131">basis7 0.13.1<a class="anchor" aria-label="anchor" href="#basis7-0131"></a></h2>
 <ul><li>

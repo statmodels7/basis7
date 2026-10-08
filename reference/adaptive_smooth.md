@@ -135,6 +135,15 @@ slightly WORSE at the feature itself (0.0553 against 0.0503). What it
 buys is not a sharper peak but less noise chasing where the function is
 quiet.
 
+The differences are taken in the Eilers-Marx coordinates of
+[`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
+so the fit is the adaptive P-spline of mgcv's `bs = "ad"`: on
+[`MASS::mcycle`](https://rdrr.io/pkg/MASS/man/mcycle.html) at `k = 40`,
+`m = 5`, 10.3352 effective degrees of freedom against 10.3343, the
+fitted values 0.002 apart on a response whose standard deviation is 48.
+Up to basis7 0.13.1 they were taken on the clamped coefficients and the
+two fits were 0.84 apart.
+
 ## The coordinates
 
 `reparam = "dr"` is rejected, and by construction rather than by choice:
@@ -193,7 +202,7 @@ dim(out$S[[1]])
 # and at equal smoothing parameters their sum is the P-spline penalty
 ps <- smoother_build(pspline_smooth(k = 30, reparam = "none"), x)
 max(abs(Reduce(`+`, out$S) - ps$S))
-#> [1] 3.552714e-15
+#> [1] 1.421085e-14
 
 # the coordinates cannot be Demmler-Reinsch: there are several pencils
 try(adaptive_smooth(k = 30, m = 4, reparam = "dr"))

@@ -93,45 +93,40 @@ below \\d\\ in their index, and the null space of the roughness matrix
 has dimension exactly `diff`: measured at `k = 20`, `degree = 3`, it is
 1, 2 and 3 at `diff` of 1, 2 and 3.
 
-That null space is only APPROXIMATELY the polynomials, and the reason is
-the boundary knots. Marsden's identity gives \\\sum_j \xi_j B_j(x) = x\\
-with \\\xi_j\\ the Greville abscissae, so coefficients affine in the
-index give a straight line exactly where \\\xi_j\\ is itself affine in
-\\j\\ – which fails at the ends of a clamped sequence, whose boundary
-knots are repeated. Measured, the \\R^2\\ of \\\xi_j\\ against \\j\\ is
-0.9893, 0.9979 and 0.9997 at `k` of 10, 20 and 40, the departure being a
-fixed number of knots out of `k`; and the functions spanning the null
-space are the polynomials of degree below `diff` to an \\R^2\\ of
-1.0000000000, 0.9994 and 0.9957.
+The differences are taken on the coefficients of the basis of Eilers and
+Marx, whose knots are equally spaced with the same step beyond the
+interval as inside it, and the penalty is carried onto the clamped basis
+the package evaluates (the two span the same splines on the interval, so
+only the coordinates change). On those knots the Greville abscissae are
+equally spaced, and Marsden's identity makes the null space exactly the
+polynomials of degree below `diff`: measured at `k = 20` over 300
+points, the functions spanning it are those polynomials to an \\R^2\\ of
+1 at `diff` of 2 and 3. It is also the penalty of mgcv's `bs = "ps"`: on
+[`MASS::Boston`](https://rdrr.io/pkg/MASS/man/Boston.html),
+`medv ~ s(lstat)` has 6.98906, 8.75744 and 9.41421 effective degrees of
+freedom at `k` of 10, 20 and 40 against mgcv's 6.98927, 8.75783 and
+9.41421.
 
-⚠️ It costs the construction nothing, which is the measurement that
-matters rather than the one above.
-[`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-constrains the block against the exact polynomials, so the
-Demmler-Reinsch rotation runs on their complement, where the difference
-penalty is positive definite: the built penalty is the identity to
-1.0000000000 on every one of its 23 penalized directions, exactly as
-[`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)'s
-is, and a strongly penalized fit contracts to a straight line with an
-\\R^2\\ against \\(1, x)\\ of 1.0000000000 at \\\lambda = 10^{10}\\ for
-both.
+Up to basis7 0.13.1 the differences were taken on the clamped
+coefficients, whose Greville abscissae are not equally spaced near the
+ends, so the null space was only approximately the polynomials and the
+fit differed from mgcv's (8.29 effective degrees of freedom against 8.76
+in the example above).
 
 ## Against the integrated penalty on the same basis
 
 The two are different penalties and neither contains the other. Measured
-at `k = 25`, `degree = 3` over 300 observations, the raw roughness
-matrices correlate at 0.5075 and their scales differ by four orders – 6
-against 2.556e+05 – the difference operator carrying no factor of the
-knot spacing.
+at `k = 25`, `degree = 3` over 300 uniform observations, the raw
+roughness matrices correlate at 0.987 and their scales differ by more
+than three orders (83 against 2.7e+05), the difference operator carrying
+no factor of the knot spacing.
 
-⚠️ The smoothing parameters nevertheless mean the same thing, and that
-is the reparametrization doing what it is for. At matched effective
-degrees of freedom of 5, 8 and 12 the two smoothing parameters stand in
-a ratio of 1.0, 0.9 and 0.8, not the four orders the raw matrices differ
-by, because after the Demmler-Reinsch rotation both penalties are the
-identity. The fitted functions differ by a root mean square of 0.0135,
-0.0243 and 0.0180 against a signal whose own standard deviation is
-0.7061.
+The smoothing parameters nevertheless mean nearly the same thing, since
+after the Demmler-Reinsch rotation both penalties are the identity. At
+matched effective degrees of freedom of 5, 8 and 12 the two smoothing
+parameters stand in a ratio of 0.92, 0.81 and 0.65, and the fitted
+functions differ by a root mean square of 0.0044, 0.0021 and 0.0027
+against a signal whose own standard deviation is 0.61.
 
 ## References
 
