@@ -274,9 +274,9 @@ and missing values traveling through.
 
 For a derivative or an integral that came from a fallback the check is
 not run and the row prints `[numerical]`, because comparing it with a
-numerical reference would repeat the same arithmetic. For a Gram matrix
-that came from a fallback only its symmetry and positive
-semidefiniteness are tested.
+numerical reference would repeat the same arithmetic. A Gram matrix that
+came from a fallback is compared with a finer quadrature, at the
+accuracy of a quadrature.
 
 ``` r
 invisible(check_basis(b))
@@ -293,7 +293,7 @@ invisible(check_basis(bumps))
 #>   deriv       derivatives against finite differences         [numerical]
 #>   integral    integral differentiates back, zero at lower    [numerical]
 #>   partition   partition of unity                             [not claimed]
-#>   gram        Gram symmetric and PSD                         [PASSED]
+#>   gram        Gram symmetric, PSD, matches quadrature        [PASSED]
 #>   missing     missing values give missing rows               [PASSED]
 #>   computed numerically: basis_deriv, basis_int, basis_gram
 ```

@@ -221,8 +221,9 @@ traveling through.
 
 For a derivative or an integral that came from a fallback the check is not
 run and the row prints `[numerical]`, because comparing it with a numerical
-reference would repeat the same arithmetic. For a Gram matrix that came from a
-fallback only its symmetry and positive semidefiniteness are tested.
+reference would repeat the same arithmetic. A Gram matrix that came from a
+fallback is compared with a finer quadrature, at the accuracy of a
+quadrature.
 
 ```{r}
 invisible(check_basis(b))

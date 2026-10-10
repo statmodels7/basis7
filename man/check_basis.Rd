@@ -77,15 +77,16 @@ numerical reference would repeat the same arithmetic, and the two would
 agree however wrong the basis is. The \code{deriv} and \code{integral} checks are
 therefore not run in that case: they report \code{NA} and print \verb{[numerical]}.
 
-When the Gram matrix comes from the numerical fallback, the \code{gram} check
-still tests symmetry and positive semidefiniteness, which are properties of
-the matrix whatever produced it, and omits the comparison against an
-independent quadrature. The \code{shape} and \code{missing} checks do not depend on
-the fallback and always run.
-
-The independent quadrature is 401 panels of 7 nodes, a rule no basis in the
-package uses for its own answer, so a family whose own Gram matrix is a
-quadrature is still compared against different arithmetic.
+The \code{gram} check always runs. The independent quadrature is 401 panels of
+7 nodes, a rule no basis in the package uses for its own result, so a
+family whose own Gram matrix is a quadrature is still compared against
+different arithmetic. When the Gram matrix is numerical, each entry is
+allowed, besides the relative tolerance, four times the difference
+between the package's own fallback (\code{\link[=numerical_gram]{numerical_gram()}} at its defaults)
+and the finer rule: a quadrature that is correct but limited by the kinks
+of a basis passes, and a matrix that is wrong by more than the quadrature
+error fails. The \code{shape} and \code{missing} checks do not depend on the
+fallback and always run.
 
 \code{partition} is \code{NA} and prints \verb{[not claimed]} for a family that is not a
 partition of unity. The printout distinguishes this from \verb{[numerical]},

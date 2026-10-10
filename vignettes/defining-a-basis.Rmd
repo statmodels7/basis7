@@ -137,8 +137,9 @@ computed numerically, and `basis_is_numerical()` reports it.
 that came from a fallback the check is not run and the row prints
 `[numerical]`, because comparing a finite difference against a finite
 difference repeats the same arithmetic, and the two agree however wrong the
-basis is. For a Gram matrix that came from a fallback only its symmetry and
-positive semidefiniteness are tested.
+basis is. A Gram matrix that came from a fallback is compared with a finer
+quadrature, each entry being allowed four times the error of the package's
+own quadrature.
 
 ```{r}
 invisible(check_basis(b))

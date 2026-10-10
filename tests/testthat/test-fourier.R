@@ -115,3 +115,11 @@ test_that("check_basis passes on the family and reports partition as not claimed
   expect_true(r[["gram"]])
   expect_true(is.na(r[["partition"]]))
 })
+
+test_that("the derivative method at order 0 is the evaluation", {
+  # called directly, it gave 0 in the constant column
+  f <- fourier_basis(dimension = 5)
+  x <- c(0.2, 0.7)
+  expect_equal(S7::method(basis_deriv, FourierBasis)(f, x, order = 0L),
+               basis_eval(f, x))
+})

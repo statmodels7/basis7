@@ -49,15 +49,16 @@ NULL
 #' agree however wrong the basis is. The `deriv` and `integral` checks are
 #' therefore not run in that case: they report `NA` and print `[numerical]`.
 #'
-#' When the Gram matrix comes from the numerical fallback, the `gram` check
-#' still tests symmetry and positive semidefiniteness, which are properties of
-#' the matrix whatever produced it, and omits the comparison against an
-#' independent quadrature. The `shape` and `missing` checks do not depend on
-#' the fallback and always run.
-#'
-#' The independent quadrature is 401 panels of 7 nodes, a rule no basis in the
-#' package uses for its own answer, so a family whose own Gram matrix is a
-#' quadrature is still compared against different arithmetic.
+#' The `gram` check always runs. The independent quadrature is 401 panels of
+#' 7 nodes, a rule no basis in the package uses for its own result, so a
+#' family whose own Gram matrix is a quadrature is still compared against
+#' different arithmetic. When the Gram matrix is numerical, each entry is
+#' allowed, besides the relative tolerance, four times the difference
+#' between the package's own fallback ([numerical_gram()] at its defaults)
+#' and the finer rule: a quadrature that is correct but limited by the kinks
+#' of a basis passes, and a matrix that is wrong by more than the quadrature
+#' error fails. The `shape` and `missing` checks do not depend on the
+#' fallback and always run.
 #'
 #' `partition` is `NA` and prints `[not claimed]` for a family that is not a
 #' partition of unity. The printout distinguishes this from `[numerical]`,
@@ -228,14 +229,16 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
   g <- basis_gram(basis, order = 0L)
   sym <- max(abs(g - t(g))) < 1e-10
   psd <- min(eigen(g, symmetric = TRUE, only.values = TRUE)$values) > -1e-8
+  # A different rule from any the package uses for its own answer, so the
+  # comparison is not the same arithmetic twice.
+  ref <- numerical_gram(basis, 0L, panels = 401L, nodes = 7L)
+  slack <- NULL
   if (num[["basis_gram"]]) {
-    res[["gram"]] <- sym && psd
-  } else {
-    # A different rule from any the package uses for its own answer, so the
-    # comparison is not the same arithmetic twice.
-    ref <- numerical_gram(basis, 0L, panels = 401L, nodes = 7L)
-    res[["gram"]] <- sym && psd && rel_close(g, ref, 1e-6)
+    # a quadrature is allowed four times the error of the package's own
+    # fallback against the finer rule, entry by entry
+    slack <- 4 * abs(numerical_gram(basis, 0L) - ref)
   }
+  res[["gram"]] <- sym && psd && rel_close(g, ref, 1e-6, slack)
 
   ## 6. missing values travel through
   xm <- if (nvar == 1L) {
@@ -479,8 +482,7 @@ fd_reference <- function(f, x, lower, upper) {
 #'
 #' Only `deriv`, `integral` and `partition` can be `NA`. The rows `shape`,
 #' `gram` and `missing` are assigned on every path, so their `[numerical]`
-#' label is never printed. The `gram` row omits "matches quadrature" when the
-#' Gram matrix is numerical, that comparison not being made.
+#' label is never printed.
 #'
 #' @param basis A basis object, of any class inheriting from [basis]. Read for
 #'   its `@basis_name` and `@dimension` only.
@@ -503,8 +505,6 @@ print_basis_checks <- function(basis, res, num) {
     gram = "Gram symmetric, PSD, matches quadrature",
     missing = "missing values give missing rows"
   )
-  # a numerical Gram matrix is not compared against a second quadrature
-  if (isTRUE(num[["basis_gram"]])) labels[["gram"]] <- "Gram symmetric and PSD"
   # A check can be skipped for two different reasons, and saying which matters:
   # a value that came from the numerical fallback was not verified, whereas a
   # property the family never claimed was not applicable in the first place.

@@ -245,10 +245,24 @@ test_that("a missing analytic derivative is reported as a failure", {
   expect_false(check_basis(nb, verbose = FALSE)[["deriv"]])
 })
 
-test_that("a numerical Gram matrix is not reported as compared with quadrature", {
-  out <- capture.output(check_basis(fourier_basis(dimension = 5, omega = 3)))
-  expect_true(any(grepl("Gram symmetric and PSD ", out)))
-  expect_false(any(grepl("matches quadrature", out)))
-  out2 <- capture.output(check_basis(bspline_basis(dimension = 6)))
-  expect_true(any(grepl("matches quadrature", out2)))
+test_that("a numerical Gram matrix is compared at the accuracy of a quadrature", {
+  # the comparison was skipped, and a method wrong by one percent passed
+  WF <- S7::new_class("WF", parent = FourierBasis)
+  S7::method(basis_gram, WF) <- function(basis, order = 0L, at = NULL,
+                                         weight = NULL, ...) {
+    1.01 * basis7:::numerical_gram(basis, order)
+  }
+  fb <- fourier_basis(dimension = 5, omega = 0.7)
+  w <- WF(basis_name = "wf", dimension = 5L, lower = 0, upper = 1,
+          basis_params = fb@basis_params)
+  expect_true(basis_is_numerical(w)[["basis_gram"]])
+  expect_false(check_basis(w, verbose = FALSE)[["gram"]])
+  expect_true(check_basis(fb, verbose = FALSE)[["gram"]])
+  # a correct fallback on a basis with kinks is allowed its quadrature error
+  Lin <- S7::new_class("Lin", parent = basis)
+  S7::method(basis_eval, Lin) <- function(basis, x, ...) {
+    basis_eval(bspline_basis(dimension = basis@dimension, degree = 1), x)
+  }
+  lin <- Lin(basis_name = "lin", dimension = 23L, lower = 0, upper = 1)
+  expect_true(check_basis(lin, verbose = FALSE)[["gram"]])
 })

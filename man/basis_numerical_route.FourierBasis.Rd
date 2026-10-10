@@ -20,9 +20,9 @@ the matrix is a composite Gauss-Legendre quadrature and carries its error.
 The evaluation, the derivatives and the anchored integral are closed form at
 any period, and their entries keep the value of the owner test.
 
-As a consequence \code{\link[=check_basis]{check_basis()}} tests this Gram matrix only for symmetry
-and positive semidefiniteness, and \code{\link[=print.basis]{print.basis()}} names the route in
-use.
+As a consequence \code{\link[=check_basis]{check_basis()}} compares this Gram matrix with a finer
+quadrature at the accuracy of a quadrature, and \code{\link[=print.basis]{print.basis()}} names the
+route in use.
 }
 \seealso{
 \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} for the two branches, and

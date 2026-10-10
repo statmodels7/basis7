@@ -1513,10 +1513,12 @@ S7::method(print, smoother) <- function(x, ...) {
     cat(sprintf(", degree %d", x@degree))
   }
   cat("\n")
-  int <- if (is.null(x@lower) || is.null(x@upper)) {
+  int <- if (is.null(x@lower) && is.null(x@upper)) {
     "from the data"
   } else {
-    sprintf("[%g, %g]", x@lower, x@upper)
+    sprintf("[%s, %s]",
+            if (is.null(x@lower)) "from the data" else format(x@lower),
+            if (is.null(x@upper)) "from the data" else format(x@upper))
   }
   # WHAT THE PENALTY IS DIFFERS BY FAMILY, and the line says which. A
   # difference penalty integrates nothing, so naming a measure there would

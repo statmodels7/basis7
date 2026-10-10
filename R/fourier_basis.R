@@ -265,7 +265,7 @@ S7::method(basis_eval, FourierBasis) <- function(basis, x, ...) {
 #' order, from the phase-shift identity of [FourierBasis]: differentiating
 #' \eqn{\sin(jz)} shifts its phase by \eqn{k\pi/2} and multiplies it by
 #' \eqn{(2\pi j/\omega)^{k}}. The constant column is zero at every order
-#' above 0. Order 0 is handled by the generic, which returns the evaluation.
+#' above 0, and 1 at order 0, where the method returns the evaluation.
 #'
 #' @details
 #' Reaching order \eqn{k} costs the same as reaching order 1: the shift and
@@ -292,7 +292,9 @@ S7::method(basis_eval, FourierBasis) <- function(basis, x, ...) {
 #'
 #' @keywords internal
 S7::method(basis_deriv, FourierBasis) <- function(basis, x, order = 1L, ...) {
-  out <- cbind(rep(0, length(x)), fourier_trig(basis, x, order))
+  # the constant differentiates to zero, and is itself at order 0
+  out <- cbind(rep(if (order == 0L) 1 else 0, length(x)),
+               fourier_trig(basis, x, order))
   out[is.na(x), ] <- NA_real_
   name_columns(out, basis)
 }
@@ -374,9 +376,8 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #' [basis_is_numerical()] reports `basis_gram` as `TRUE` on such a basis,
 #' through [basis_numerical_route.FourierBasis()], although the method is
 #' registered on `FourierBasis` in both branches. [check_basis()] reads the
-#' same predicate, and on this branch tests the matrix for symmetry and
-#' positive semidefiniteness without comparing it with a second
-#' quadrature.
+#' same predicate, and on this branch compares the matrix with a finer
+#' quadrature at the accuracy of a quadrature.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param order The derivative order, a single non-negative whole number,
@@ -568,9 +569,9 @@ fourier_trig <- function(basis, x, d) {
 #' The evaluation, the derivatives and the anchored integral are closed form at
 #' any period, and their entries keep the value of the owner test.
 #'
-#' As a consequence [check_basis()] tests this Gram matrix only for symmetry
-#' and positive semidefiniteness, and [print.basis()] names the route in
-#' use.
+#' As a consequence [check_basis()] compares this Gram matrix with a finer
+#' quadrature at the accuracy of a quadrature, and [print.basis()] names the
+#' route in use.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param ... Unused, and accepted so the signature matches the generic's.

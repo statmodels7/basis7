@@ -48,9 +48,8 @@ result is a full matrix.
 \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram} as \code{TRUE} on such a basis,
 through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}, although the method is
 registered on \code{FourierBasis} in both branches. \code{\link[=check_basis]{check_basis()}} reads the
-same predicate, and on this branch tests the matrix for symmetry and
-positive semidefiniteness without comparing it with a second
-quadrature.
+same predicate, and on this branch compares the matrix with a finer
+quadrature at the accuracy of a quadrature.
 }
 
 \seealso{

@@ -22,7 +22,7 @@ Returns the \code{order}-th derivative of every column, exactly and at any
 order, from the phase-shift identity of \link{FourierBasis}: differentiating
 \eqn{\sin(jz)} shifts its phase by \eqn{k\pi/2} and multiplies it by
 \eqn{(2\pi j/\omega)^{k}}. The constant column is zero at every order
-above 0. Order 0 is handled by the generic, which returns the evaluation.
+above 0, and 1 at order 0, where the method returns the evaluation.
 }
 \details{
 Reaching order \eqn{k} costs the same as reaching order 1: the shift and

@@ -34,8 +34,7 @@ not verified, the second a property that does not apply.
 
 Only \code{deriv}, \code{integral} and \code{partition} can be \code{NA}. The rows \code{shape},
 \code{gram} and \code{missing} are assigned on every path, so their \verb{[numerical]}
-label is never printed. The \code{gram} row omits "matches quadrature" when the
-Gram matrix is numerical, that comparison not being made.
+label is never printed.
 }
 \seealso{
 \code{\link[=check_basis]{check_basis()}}, its only caller.

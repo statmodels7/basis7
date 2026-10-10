@@ -247,3 +247,10 @@ test_that("print() reports a penalty factory", {
   expect_true(any(grepl("^  penalty: derivative of order 2", out0)))
   expect_false(any(grepl("factory", out0)))
 })
+
+test_that("print() shows a single fixed endpoint", {
+  out <- capture.output(print(bspline_smooth(k = 8, lower = -5)))
+  expect_true(any(grepl("interval: [-5, from the data]", out, fixed = TRUE)))
+  out2 <- capture.output(print(bspline_smooth(k = 8)))
+  expect_true(any(grepl("interval: from the data", out2, fixed = TRUE)))
+})

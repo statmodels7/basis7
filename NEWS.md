@@ -59,9 +59,17 @@
   `[numerical]` for a derivative that has a method. An entry whose
   reference is missing, and whose allowance is therefore infinite, is left
   out of the comparison, as the documentation of `fd_reference()` states.
-* `check_basis()` prints `Gram symmetric and PSD` when the Gram matrix is
-  numerical; the label claimed a comparison with quadrature that is not
-  made in that case.
+* `check_basis()` compares a numerical Gram matrix with the finer
+  quadrature of 401 panels of 7 nodes, allowing each entry four times the
+  difference between the package's own fallback and that rule. The
+  comparison was skipped, so a Gram method wrong by one percent on a
+  Fourier basis off a whole period passed; a correct fallback on a basis
+  with kinks, whose quadrature error is 6.6e-4, still passes.
+* `basis_deriv()` of a Fourier basis, with the method called at order 0,
+  gives the constant column 1; it gave 0. The generic returns the
+  evaluation at order 0 and was not affected.
+* `print()` of a smoother with one endpoint of the interval given shows it,
+  as in `[-5, from the data]`; it printed `from the data`.
 * The message for an order of the wrong length on a basis of one variable
   no longer describes a basis of several variables.
 * The internal `gauss_legendre()` rejects a number of nodes that is not a
