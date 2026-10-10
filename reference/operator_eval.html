@@ -9,7 +9,7 @@ the matrix whose Gram matrix is the roughness the penalty measures."><meta prope
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,8 @@ columns.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>It is one weighted sum of derivative evaluations,
 \(\sum_j w_j D^j b + D^m b\), and every term of it comes from
-<code><a href="basis_deriv.html">basis_deriv()</a></code>, so a basis that answers its derivatives answers this.
+<code><a href="basis_deriv.html">basis_deriv()</a></code>, so it is available for every basis whose derivatives
+are.
 Terms whose weight is exactly zero are skipped, which is why the pure
 derivative operator costs one call and not \(m + 1\).</p>
     </div>

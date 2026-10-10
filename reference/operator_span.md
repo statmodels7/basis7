@@ -24,18 +24,17 @@ operator_span(op, x)
 
 ## Value
 
-A list of `constraint`, `free` and `params`, as
-[`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-returns.
+A list of `constraint`, `free`, `free_names` and `params`, as described
+on the page of
+[`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md).
 
 ## Details
 
-The rule is the one the polynomial families have always followed, read
-for an arbitrary operator. The penalized part is made orthogonal to
-every direction the penalty does not see, because a direction that is
-neither penalized nor constrained is one the pencil cannot separate; and
-the constant is not restored, a model carrying an intercept already
-spanning it.
+The rule is that of the polynomial families, read for an arbitrary
+operator. The penalized part is made orthogonal to every direction the
+penalty does not see, because a direction that is neither penalized nor
+constrained is one the pencil cannot separate; and the constant is not
+restored, a model carrying an intercept already spanning it.
 
 Each free column is divided by its root mean square over the covariate
 and is **not centered**. Scaling by a positive constant is what a badly

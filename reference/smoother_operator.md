@@ -1,4 +1,4 @@
-# The Operator a Smoother Penalizes With, Resolved
+# The Resolved Penalty Operator of a Smoother
 
 Returns `sm@order` with its period filled in from the smoother's
 interval where it was left `NULL`, which is what makes

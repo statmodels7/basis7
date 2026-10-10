@@ -1,20 +1,20 @@
 # The Gram Route of a Fourier Basis
 
 Reports `basis_gram` as `TRUE` when `basis_params$full_period` is
-`FALSE`, where the owner test would read `FourierBasis` and answer
+`FALSE`, where the owner test would read `FourierBasis` and give
 `FALSE`.
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
 delegates to
 [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
 in that case, so the matrix is a composite Gauss-Legendre quadrature and
 carries its error. The evaluation, the derivatives and the anchored
-integral are closed form at any period and are left as the owner test
-finds them.
+integral are closed form at any period, and their entries keep the value
+of the owner test.
 
-What this buys is that
+As a consequence
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-holds the Gram matrix to the tolerance a quadrature deserves rather than
-the one meant for a closed form, and that
+compares this Gram matrix with a finer quadrature at the accuracy of a
+quadrature, and
 [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
 names the route in use.
 

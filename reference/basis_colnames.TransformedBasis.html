@@ -11,7 +11,7 @@ constrain_basis(), dr1 ... after dr_basis()."><meta property="og:image" content=
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,13 +66,12 @@ recorded: <code>on1 ... onk</code> after <code><a href="orthonorm_basis.html">or
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The parent's names cannot be carried over. Each new function is a
-combination of all the parent's, so no single one of them names it, and a
-constraint returns fewer functions than it consumed. The prefix at least
-records which transformation produced the column, which the default
-<code><a href="basis_colnames.basis.html">basis_colnames.basis()</a></code> would not: it takes the first two characters of
-<code>@basis_name</code>, and every name here begins with the transformation's, so a
-chain would give <code>or1</code> for both an orthonormalization and its
-re-orthonormalization.</p>
+combination of all the parent's, so none of the parent's names fits it,
+and a constraint returns fewer functions than it consumed. The prefix
+records which transformation produced the column. The default
+<code><a href="basis_colnames.basis.html">basis_colnames.basis()</a></code> takes the first two characters of <code>@basis_name</code>,
+which here begins with the name of the transformation, and would give
+<code>or1</code> for both an orthonormalization and its re-orthonormalization.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

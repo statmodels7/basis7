@@ -1,8 +1,8 @@
-# The Roughness Matrix a Smoother Penalizes With
+# The Roughness Matrix of a Smoother
 
 The Gram matrix of the derivative of order `sm@order`, integrated
-against the measure the smoother carries: the length measure on the
-interval for `"lebesgue"`, the empirical measure of the covariate for
+against the measure of the smoother: the length measure on the interval
+for `"lebesgue"`, the empirical measure of the covariate for
 `"empirical"`, and the density a function gives otherwise.
 
 ## Usage
@@ -20,9 +20,8 @@ smoother_gram(sm, b, x, ...)
 
 - b:
 
-  The basis
-  [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
-  returned.
+  The basis returned by
+  [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md).
 
 - x:
 
@@ -42,11 +41,9 @@ is.
 
 ## Details
 
-The measure is not decorative. Measured on a cubic B-spline of twelve
-functions over \\\[-2, 2\]\\ at order 2, the correlation between the
-Lebesgue Gram matrix and the one weighted by a Gaussian of standard
-deviation 0.25 is 0.11: they are different penalties, and a fit under
-one is not a fit under the other.
+The measure changes the penalty: the Gram matrices under two measures
+are different matrices, and a fit under one measure differs from a fit
+under another.
 
 ## See also
 
@@ -65,7 +62,7 @@ g <- smoother_gram(sm, smoother_basis(sm, x), x)
 dim(g)
 #> [1] 8 8
 
-# the measure is a different penalty, not a detail
+# another measure gives a different penalty
 sme <- bspline_smooth(k = 8, lower = -2, upper = 2,
                       measure = "empirical")
 round(cor(as.vector(g),

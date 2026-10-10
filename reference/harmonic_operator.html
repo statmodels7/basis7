@@ -19,7 +19,7 @@ Silverman, which is what fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,19 +83,15 @@ whole number of at least 1. The order of the operator is
     <p>An S7 object of class <a href="LinearOperator.html">LinearOperator</a>.</p>
     </div>
     <div class="section level2">
-    <h2 id="why-a-periodic-basis-wants-it">Why a periodic basis wants it<a class="anchor" aria-label="anchor" href="#why-a-periodic-basis-wants-it"></a></h2>
-    <p>The derivative operator asks a fit to contract toward a straight line,
-and a straight line is not what a cyclic phenomenon simplifies to: it is
-not even periodic. What a seasonal series contracts to is its fundamental
-harmonic, a constant level plus one sine and one cosine of the period, and
-this is the operator that leaves exactly that alone.</p>
-<p>The difference is visible in the fit rather than only in the algebra. On
-300 observations of a truth \(2 + 1.5\sin\nu t + \cos\nu t +
-0.35\sin 3\nu t\), at a smoothing parameter large enough to flatten the
-higher harmonics, the fit under \(D^2\) has fallen to a standard
-deviation of 0.745 and a fundamental amplitude of 1.053 against a true
-1.803, while the fit under this operator keeps 1.271 and 1.795 and is a
-pure sinusoid to 3.9e-08.</p>
+    <h2 id="use-with-periodic-data">Use with periodic data<a class="anchor" aria-label="anchor" href="#use-with-periodic-data"></a></h2>
+    <p>A penalty on the second derivative makes a fit contract toward a straight
+line, which is not periodic. The natural limit of a seasonal series is its
+fundamental harmonic, a constant level plus one sine and one cosine of the
+period, and this operator leaves exactly those functions unpenalized.</p>
+<p>The two penalties also give different fits. With a smoothing parameter
+large enough to flatten the higher harmonics, the fit under \(D^2\)
+loses much of the amplitude of the fundamental, whereas the fit under this
+operator keeps it and is a sinusoid.</p>
     </div>
     <div class="section level2">
     <h2 id="the-period">The period<a class="anchor" aria-label="anchor" href="#the-period"></a></h2>
@@ -103,10 +99,10 @@ pure sinusoid to 3.9e-08.</p>
 covariate: 365 for a day of the year, 12 for a month, 24 for an hour.
 It is <strong>not</strong> \(\nu = 2\pi/T\), which some of the literature also calls
 omega. <code>NULL</code> leaves it to be resolved from the interval of whichever
-smoother the operator is given to, which is what
-<code><a href="fourier_smooth.html">fourier_smooth()</a></code> does by default; <code><a href="operator_resolve.html">operator_resolve()</a></code> is what fills it
-in, and the accessors report an unresolved operator as such rather than
-guessing.</p>
+smoother the operator is given to, which is what <code><a href="fourier_smooth.html">fourier_smooth()</a></code> does
+by default; <code><a href="operator_resolve.html">operator_resolve()</a></code> fills it in. For an unresolved operator
+<code><a href="operator_weights.html">operator_weights()</a></code> returns <code>NA</code> and <code><a href="operator_null.html">operator_null()</a></code> signals an
+error.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>
@@ -128,10 +124,10 @@ the non-periodic one; <code><a href="operator_null.html">operator_null()</a></co
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the null space is the constant and the fundamental</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="operator_null.html">operator_null</a></span><span class="op">(</span><span class="fu">harmonic_operator</span><span class="op">(</span><span class="fl">365</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              label         rate       freq degree part</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1 0.000000e+00 0.00000000      0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              label rate       freq degree part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1    0 0.00000000      0     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 sin(0.0172142 t)    0 0.01721421      0  sin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 cos(0.0172142 t)    0 0.01721421      0  cos</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># two harmonics left free instead of one</span></span></span>
 <span class="r-in"><span><span class="fu">harmonic_operator</span><span class="op">(</span><span class="fl">365</span>, harmonics <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>

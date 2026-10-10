@@ -1,8 +1,9 @@
 # The Roughness Matrix of a Differential Operator
 
-The Gram matrix of \\Lb\\, that is \$\$R = \int_a^b (Lb)(Lb)^\top \\
-\mathrm{d}\mu,\$\$ the matrix for which \\\lVert Lx \rVert^2 = c^\top R
-c\\ when \\x = b^\top c\\. It is what
+The Gram matrix of \\L\varphi\\, with \\\varphi\\ the vector of basis
+functions, that is \$\$R = \int\_{\ell}^{u} (L\varphi)(L\varphi)^\top \\
+\mathrm{d}\mu,\$\$ the matrix for which \\\lVert Lf \rVert^2 = c^\top R
+c\\ when \\f = \varphi^\top c\\. It is what
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 returns when its `order` is a
 [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
@@ -25,7 +26,8 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved.
+  with its period resolved. An operator whose period is still `NULL`
+  signals an error.
 
 - at:
 

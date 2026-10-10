@@ -1,8 +1,8 @@
 # Defining a basis
 
-A basis that only worked for the three families the package ships would
-have solved nothing. This vignette adds one the package does not ship,
-and shows what the package guarantees about it at each step.
+The package ships three families of bases, and any other basis can be
+added by subclassing. This vignette adds one that the package does not
+ship, and shows what the package provides for it at each step.
 
 ## The minimum
 
@@ -49,7 +49,7 @@ b
 #> Numerical: basis_deriv, basis_int, basis_gram
 ```
 
-The object already answers all four generics.
+All four generics are already available for the object.
 
 ``` r
 
@@ -73,17 +73,21 @@ plot(b)
 
 ![](defining-a-basis_files/figure-html/unnamed-chunk-4-1.png)
 
-Two conventions the method has to keep. The column names come from
+The method has to keep two conventions. The column names come from
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
-rather than being written out, so that evaluation, derivatives and
-integrals always agree on them. And a missing evaluation point must give
-a missing row: here [`outer()`](https://rdrr.io/r/base/outer.html)
-propagates it for free, which is worth checking rather than assuming.
+instead of being written out, so that evaluation, derivatives and
+integrals agree on them. A missing evaluation point must give a missing
+row; here [`outer()`](https://rdrr.io/r/base/outer.html) propagates it,
+and
+[`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+tests it below.
 
-## What the fallbacks are, and what they are not
+## The numerical fallbacks
 
 The three derived generics have numerical methods registered on the
-`basis` class. The object says which ones it is using:
+`basis` class.
+[`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+reports which of them are in use:
 
 ``` r
 
@@ -92,13 +96,12 @@ basis_is_numerical(b)
 #>        TRUE        TRUE        TRUE
 ```
 
-The derivatives are one central-difference stencil, built from a
-Vandermonde solve and applied in a single step. That is not the same as
-composing first differences: each numerical differentiation multiplies
-the error of the one before it, so a third derivative reached by three
-nested first differences is noise. Near the interval endpoints the
-stencil becomes one-sided, because a symmetric one would ask for points
-outside the interval where the basis is not defined.
+The derivatives are one central-difference stencil of the requested
+order, applied in a single step. That is not the same as composing first
+differences, where each numerical differentiation adds its own error to
+that of the one before it. Near the interval endpoints the stencil is
+one-sided, because a symmetric one would need points outside the
+interval, where the basis is not defined.
 
 ``` r
 
@@ -113,9 +116,9 @@ max(abs(basis_deriv(b, x, order = 1) - exact))
 
 The integral is anchored: its value at the lower endpoint is exactly
 zero, for every basis. Any antiderivative satisfies a differentiation
-check, so leaving the constant free would let two bases disagree while
-both looked right, and a sum of them would be wrong with nothing to
-report it.
+check, so with the constant left free two bases could disagree while
+both looked correct, and a sum of them would be wrong without any sign
+of it.
 
 ``` r
 
@@ -127,8 +130,8 @@ basis_int(b, b@lower)
 ## Adding a closed form
 
 A closed form registered later takes over through dispatch, with no
-change to calling code. Here is the derivative, which is one line for
-this family:
+change to calling code. Here is the derivative of this family, from the
+Hermite polynomials:
 
 ``` r
 
@@ -158,10 +161,13 @@ reports it.
 ## Validating it
 
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-runs six numerical checks. It reports a quantity that came from a
-fallback as **unchecked** rather than as passed: comparing a finite
-difference against a finite difference would be the same arithmetic
-twice, agreeing however wrong the basis is.
+runs six numerical checks. For a derivative or an integral that came
+from a fallback the check is not run and the row prints `[numerical]`,
+because comparing a finite difference against a finite difference
+repeats the same arithmetic, and the two agree however wrong the basis
+is. A Gram matrix that came from a fallback is compared with a finer
+quadrature, each entry being allowed four times the error of the
+package’s own quadrature.
 
 ``` r
 
@@ -180,14 +186,14 @@ The derivative row is now checked, because the family supplies its own
 method, while the integral row is not, because it does not.
 
 The check allows for the accuracy of its own reference. Each reference
-is computed at a step and at half of it, and the gap between them bounds
-its uncertainty; the comparison is given that much slack, point by
-point. Without it, a spline would fail at its own knots, where the third
-derivative jumps and a central difference returns the jump rather than
-the truncation error.
+is computed at a step and at half of it, and four times the gap between
+the two is taken as a bound on its error; the comparison is allowed that
+bound, point by point. Without it, a spline would fail at its own knots,
+where the third derivative jumps and a central difference returns the
+jump instead of the truncation error.
 
-That allowance has to excuse the reference and nothing else, so it is
-worth confirming that a wrong derivative still fails:
+The allowance covers only the error of the reference, and a derivative
+that is wrong by five percent still fails:
 
 ``` r
 
@@ -225,8 +231,9 @@ c(
 ```
 
 The measure is an argument. The default is Lebesgue on the interval;
-`at` takes the empirical measure of a sample, which is the matrix a
-design matrix produces, and `weight` takes a weighted integral.
+`at` takes the empirical measure of a sample, which gives the
+cross-product of the design matrix divided by the number of points, and
+`weight` takes a weighted integral.
 
 ``` r
 
@@ -238,9 +245,10 @@ round(basis_gram(b, at = xs)[1:3, 1:3], 4)
 #> bu3 0.0132 0.1067 0.2227
 ```
 
-Both are handled in the body of the generic, before dispatch, so a
-method never sees them. A method must still name them in its signature,
-because S7 requires a method’s formals to contain the generic’s:
+For a whole `order` both are handled in the body of the generic, before
+dispatch, so a method does not receive them. A method must still name
+them in its signature, because S7 requires a method’s formals to contain
+the generic’s:
 
 ``` r
 
@@ -303,11 +311,13 @@ c(
   orthogonal_to_1_and_x = max(abs(crossprod(cbind(1, xd), z)))
 )
 #>          off_diagonal orthogonal_to_1_and_x 
-#>          7.815970e-14          1.501022e-13
+#>          1.125910e-13          7.593925e-14
 ```
 
-Transforms compose by multiplication rather than by nesting, so a chain
-of them costs one matrix product per evaluation however long it is:
+Transforms compose by multiplying their matrices instead of nesting, so
+a chain of them costs one matrix product per evaluation however long it
+is. The parent of a transformed transformed basis is therefore the
+original basis and not a `TransformedBasis`:
 
 ``` r
 
@@ -336,9 +346,9 @@ dim(basis_deriv(tb, xy, order = c(1, 2)))
 
 Everything about the product follows from the marginals, because the
 product separates. The Gram matrix in particular is the Kronecker
-product of the marginal ones, so it stays as exact as they are however
-many variables there are, where a quadrature over the box would degrade
-with every one:
+product of the marginal ones, so it is as exact as they are at any
+number of variables, where the cost and the error of a quadrature over
+the box grow with every variable:
 
 ``` r
 
@@ -377,9 +387,8 @@ head(basis_contract(tb, xy, gam), 3)
 #> [1] -0.9356725 -0.6649577 -0.6739005
 ```
 
-Choosing those factors is a modeling decision, and belongs to the layer
-that owns the parameters. Evaluating them is basis arithmetic, and
-belongs here.
+The factors are chosen by the layer that fits the model; this package
+evaluates the contraction for given factors.
 
 ## Summary
 
@@ -390,11 +399,12 @@ belongs here.
 - From the evaluation alone come the derivatives, the integral and the
   Gram matrix, and
   [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-  says which are which.
-- Register closed forms one at a time; each takes over through dispatch.
+  reports which are numerical.
+- Closed forms can be registered one at a time; each takes over through
+  dispatch.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-  verifies what can be verified and reports the rest as unchecked rather
-  than as passed.
+  verifies what can be verified, and marks the derivatives and the
+  integral that come from a fallback as `[numerical]`.
 - Every transform of a basis is one linear map, and it keeps the
   parent’s exactness.
 - A product of bases is a basis of several variables; its Gram matrix is

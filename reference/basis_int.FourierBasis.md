@@ -29,18 +29,19 @@ exactly zero in the row at `basis@lower`.
 
 ## Details
 
-The identity at \\k = -1\\ gives *an* antiderivative, which is not the
-one
-[`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-promises. The two differ by a constant that is not the same in every
-column: at the lower endpoint the sine columns of the raw antiderivative
-are \\-\omega/(2\pi j)\\ while the cosine columns are already zero.
+The identity at \\k = -1\\ gives an antiderivative that is not the one
+defined by
+[`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md).
+The two differ by a constant that is not the same in every column: at
+the lower endpoint the sine columns of the raw antiderivative are
+\\-\omega/(2\pi j)\\ while the cosine columns are already zero.
 Subtracting the row at the lower endpoint corrects every column at once
 and makes the anchoring exact.
 
 Over a full period every sinusoid integrates to zero, so the row at
-`basis@upper` is \\(\omega, 0, 0, \ldots)\\, which is the area under a
-fitted curve being the constant's coefficient times the period.
+`basis@upper` is \\(\omega, 0, 0, \ldots)\\, and the integral of a
+fitted curve over the period is the coefficient of the constant times
+the period.
 
 ## See also
 

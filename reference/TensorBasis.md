@@ -3,8 +3,8 @@
 The S7 class of tensor product bases: all products of the functions of
 several bases, one basis per variable, \$\$B(x_1, \ldots, x_D) =
 B_1(x_1) \otimes \cdots \otimes B_D(x_D).\$\$ It carries the marginals
-whole, and every quantity it answers with is built from theirs, so a
-product of exactly integrated marginals is itself exact at any number of
+whole, and every quantity it returns is built from theirs, so a product
+of exactly integrated marginals is itself exact at any number of
 variables. Constructed by
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md).
 
@@ -27,8 +27,9 @@ TensorBasis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -46,8 +47,8 @@ TensorBasis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.
@@ -55,8 +56,8 @@ TensorBasis(
 - marginals:
 
   The list of bases being multiplied, one per variable, each of one
-  variable itself. Kept whole, so each can still be evaluated and asked
-  what it is.
+  variable itself. Kept whole, so that each can still be evaluated and
+  inspected.
 
 ## Value
 
@@ -65,7 +66,7 @@ An object of class `TensorBasis`, inheriting from
 the five properties of a basis plus `marginals`, and `basis_params`
 holding `marginal_dimensions`.
 
-## Everything follows from the marginals
+## Reduction to the marginals
 
 The product separates, so each generic reduces to its marginals':
 
@@ -73,17 +74,17 @@ The product separates, so each generic reduces to its marginals':
   leaves the others alone, `order` being a multi-index;
 
 - the integral over the box from the lower corner is the product of the
-  marginal integrals, and the anchor survives, a product whose every
+  marginal integrals, and the anchoring is kept, a product whose every
   factor is zero at the corner being zero there;
 
 - the Gram matrix is the Kronecker product of the marginal Gram
   matrices, which is a product of one-dimensional integrals and never a
   quadrature over the box.
 
-That last point is what keeps the construction affordable. A quadrature
-over a box of \\D\\ variables costs a node count exponential in \\D\\
-and carries an error to match; a Kronecker product of exact marginal
-matrices is exact, and costs one marginal Gram matrix per variable.
+The last point keeps the construction affordable. A quadrature over a
+box of \\D\\ variables costs a node count exponential in \\D\\ and
+carries an error, whereas a Kronecker product of exact marginal matrices
+is exact and costs one marginal Gram matrix per variable.
 
 ## Column order
 
@@ -96,13 +97,14 @@ the names are `bs1.P0`, `bs1.P1`, `bs2.P0`, `bs2.P1`, `bs3.P0`,
 That order matters when coefficients are supplied as an array, R storing
 an array with its *first* index fastest.
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
-reverses the dimensions for you; a hand-written `as.numeric(coef)` does
-not, and pairs every coefficient with the wrong function.
+reverses the dimensions; a hand-written `as.numeric(coef)` does not, and
+pairs most coefficients with the wrong function.
 
 ## What the validator enforces
 
-`@marginals` must be non-empty and hold only bases, and `@dimension`
-must equal the product of their dimensions.
+`@marginals` must be non-empty and hold only bases of one variable each,
+`@lower` and `@upper` must be their endpoints in the same order, and
+`@dimension` must equal the product of their dimensions.
 
 ## See also
 

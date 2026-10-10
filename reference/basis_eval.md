@@ -2,9 +2,9 @@
 
 Returns the design matrix of a basis at the given points: one row per
 evaluation point, one column per basis function, entry \\(i, j)\\ equal
-to \\\varphi_j(x_i)\\. This is the matrix a regression on the basis is
-fitted against, and the one every other generic in the package is
-defined in terms of.
+to \\\varphi_j(x_i)\\. A regression on the basis is fitted against this
+matrix, and every other generic of the package is defined in terms of
+it.
 
 ## Usage
 
@@ -26,7 +26,7 @@ basis_eval(basis, x, ...)
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
   columns for a basis of several, where a plain vector is taken by row.
   `NA` is allowed and produces a missing row. A point outside the
-  interval throws.
+  interval signals an error.
 
 - ...:
 
@@ -46,13 +46,13 @@ An expansion with coefficients \\\beta\\ is evaluated as
 \$\$f(x) = \sum\_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\\\beta,\$\$
 
 so `basis_eval(b, x) %*% beta` is the fitted function at `x`, and the
-matrix is the design block a linear model on the basis uses. Its columns
+matrix is the design block of a linear model on the basis. Its columns
 carry the names
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
 declares, and every other matrix the basis produces carries the same
 ones in the same order.
 
-## The one generic a basis must implement
+## The method every basis implements
 
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
@@ -60,23 +60,24 @@ and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 all have numerical methods registered on the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class,
-computed from this one, so a subclass supplying its evaluation alone
-answers all four. Registering a closed form for any of the three later
-takes over through dispatch;
+computed from this one, so all four generics are available for a
+subclass that supplies its evaluation alone. A closed form registered
+later for any of the three takes over through dispatch;
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports which are still on the fallback.
+reports which are still numerical.
 
-## What the generic does before dispatching
+## Validation before dispatch
 
 The generic body validates `x` through
 [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
 and passes the validated version on, so every method, including one
-written outside the package, gets the same guarantees without writing
-them: a point outside the interval throws, a point that is an endpoint
-up to a relative `1e-8` arrives clamped exactly onto that endpoint, and
-a basis of several variables receives a matrix of
+written outside the package, receives points checked by the same rule: a
+point outside the interval signals an error, a point within `1e-8` times
+the width of the interval from an endpoint is clamped exactly onto that
+endpoint, and for a basis of several variables a plain vector is
+reshaped by row into a matrix of
 [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-columns whatever shape the caller passed.
+columns.
 
 `NA` is neither checked nor clamped and flows through arithmetic, so a
 missing evaluation point gives a row of `NA`.
@@ -111,7 +112,8 @@ beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
 drop(basis_eval(b, c(0.3, 0.7)) %*% beta)
 #> [1] 0.242525 0.421275
 
-# Outside the interval it throws; an endpoint up to rounding is clamped.
+# Outside the interval it signals an error; an endpoint up to rounding is
+# clamped.
 try(basis_eval(b, 1.5))
 #> Error : 1 of 1 evaluation points fall outside the basis interval [0, 1].
 all.equal(basis_eval(b, 1 + 5e-9), basis_eval(b, 1))

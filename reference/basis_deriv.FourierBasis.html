@@ -3,11 +3,11 @@
 order, from the phase-shift identity of FourierBasis: differentiating
 \(\sin(jz)\) shifts its phase by \(k\pi/2\) and multiplies it by
 \((2\pi j/\omega)^{k}\). The constant column is zero at every order
-above 0."><meta property="og:description" content="Returns the order-th derivative of every column, exactly and at any
+above 0, and 1 at order 0, where the method returns the evaluation."><meta property="og:description" content="Returns the order-th derivative of every column, exactly and at any
 order, from the phase-shift identity of FourierBasis: differentiating
 \(\sin(jz)\) shifts its phase by \(k\pi/2\) and multiplies it by
 \((2\pi j/\omega)^{k}\). The constant column is zero at every order
-above 0."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
+above 0, and 1 at order 0, where the method returns the evaluation."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -15,7 +15,7 @@ above 0."><meta property="og:image" content="https://statmodels7.github.io/basis
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -49,7 +49,7 @@ above 0."><meta property="og:image" content="https://statmodels7.github.io/basis
 order, from the phase-shift identity of <a href="FourierBasis.html">FourierBasis</a>: differentiating
 \(\sin(jz)\) shifts its phase by \(k\pi/2\) and multiplies it by
 \((2\pi j/\omega)^{k}\). The constant column is zero at every order
-above 0.</p>
+above 0, and 1 at order 0, where the method returns the evaluation.</p>
     </div>
 
 
@@ -83,13 +83,12 @@ columns, first column zero, with column names <code>const</code>, <code>sin1</co
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Reaching order \(k\) costs the same as reaching order 1: the shift and
 the scale are both computed directly from \(k\), with no recursion over
-the orders below it. A Fourier basis therefore has no order at which its
-derivatives stop being available, in contrast with a spline, whose
-derivatives run out at its degree.</p>
+the orders below it. Every derivative of a Fourier basis is therefore
+available, whereas the derivatives of a spline vanish above its degree.</p>
 <p>The scale grows as \(j^{k}\), so a high frequency differentiated many
-times is a large number: at <code>dimension = 21</code> and <code>order = 4</code> the largest
-entry is \((20\pi)^4\), about 1.6e+06 on the unit interval. That is the
-value, not a loss of accuracy.</p>
+times gives a large number: at <code>dimension = 21</code> and <code>order = 4</code> the largest
+entry is \((20\pi)^4\), about 1.6e+07 on the unit interval. This is the
+value of the derivative, with no loss of accuracy.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

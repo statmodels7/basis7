@@ -11,7 +11,7 @@ is a numerical fallback, from one a subclass supplied."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,20 +66,15 @@ is a numerical fallback, from one a subclass supplied.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Identity is tried first, being the usual case and costing nothing, and the
-name and package are compared when it fails. The second test is necessary:
-<code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code> on an S7 class is object identity, so it is <code>FALSE</code> for a
-class re-created from the same definition, and that is what happens
-whenever a package's code is evaluated instead of loaded. Coverage tools do exactly
-that, so an identity-only test passes every ordinary check and fails under
-<code>covr</code> alone.</p>
-<p>The same defect in <code>linkfunctions7</code> made every fallback differentiate the
-order below it, and the log link's fourth derivative came back wrong by a
-factor of 900 while the whole five-platform check matrix stayed green.</p>
+name and package are compared when it fails. The second test is needed
+because <code><a href="https://rdrr.io/r/base/identical.html" class="external-link">identical()</a></code> can return <code>FALSE</code> for a class re-created from the
+same definition, which happens when the code of a package is evaluated
+instead of loaded, as coverage tools do.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="route_by_owner.html">route_by_owner()</a></code>, its only caller, and
-<code><a href="basis_is_numerical.html">basis_is_numerical()</a></code>, which that answers for.</p></div>
+<code><a href="basis_is_numerical.html">basis_is_numerical()</a></code>, which relies on it.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

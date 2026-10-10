@@ -28,6 +28,7 @@ being a polynomial of low enough degree.
 - ...:
 
   Unused, and accepted so that the signature matches the generic's.
+  `panels` or `nodes` signals an error, the matrix being exact.
 
 ## Value
 
@@ -49,9 +50,8 @@ Derivatives of Legendre polynomials are not orthogonal, so the matrix is
 full. The integrand \\P_m^{(d)} P_n^{(d)}\\ is a polynomial of degree at
 most \\2(K - 1 - d)\\, and a \\K\\-node Gauss-Legendre rule is exact to
 degree \\2K - 1\\, which is larger for every \\d \ge 1\\. The quadrature
-is therefore exact to rounding, and the result is symmetrized as
-`(G + t(G))/2` because the two triangles of a crossproduct differ in
-their last bits.
+is therefore exact to rounding. The result is symmetrized as
+`(G + t(G))/2`.
 
 An `order` above `dimension - 1` returns the zero matrix, every
 derivative having vanished.

@@ -4,12 +4,11 @@ Wraps a basis in a
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md),
 collapsing the transform into the parent's when the parent is already
 one, so that a chain of transformations is stored as a single matrix.
-The one constructor
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
 and
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-all go through.
+all build their result through it.
 
 ## Usage
 
@@ -59,10 +58,10 @@ When `basis` is itself a `TransformedBasis`, the result holds
 of the result is `ncol(transform)`, and its interval is the parent's, a
 linear map of the functions leaving the domain alone.
 
-Nothing is validated. The callers have already checked the shape of
-their own matrix, and a `transform` whose row count disagrees with the
-parent's dimension gives R's own non-conformable-arguments error at the
-first evaluation.
+The function itself checks nothing. The validator of
+[TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
+rejects a `transform` whose row count differs from the parent's
+dimension when the object is built.
 
 ## See also
 

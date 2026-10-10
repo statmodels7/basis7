@@ -1,8 +1,7 @@
 # The Derivative Operator
 
 The operator \\L x = D^m x\\, whose penalty \\\int (D^m x)^2\\ is the
-integrated squared derivative every smoother in this package penalized
-with before operators existed. Writing `order = m` on a smoother is the
+integrated squared derivative. Writing `order = m` on a smoother is the
 shorthand for `order = deriv_operator(m)` and builds the identical
 construction.
 

@@ -11,7 +11,7 @@ this is the one thing to look at before choosing an operator."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,16 +60,17 @@ this is the one thing to look at before choosing an operator.</p>
 
 
 <dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
-<dd><p>The relative tolerance at which two roots count as one, a
-positive number.</p></dd>
+<dd><p>The tolerance at which two roots count as one, relative to the
+size of the roots, a positive number.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A data frame of one row per function in the null space, with
 columns <code>label</code> (how the function reads), <code>rate</code> (the real part of the
-root), <code>freq</code> (the imaginary part) and <code>degree</code> (the power of \(t\)
-multiplying it).</p>
+root), <code>freq</code> (the imaginary part), <code>degree</code> (the power of \(t\)
+multiplying it) and <code>part</code> (<code>"sin"</code> or <code>"cos"</code> for the two halves of a
+conjugate pair, <code>""</code> for a real root).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -80,13 +81,12 @@ contributes \(t^i e^{at}\) for \(i &lt; \mu\), and a complex pair
 \(a \pm bi\) of multiplicity \(\mu\) contributes both
 \(t^i e^{at}\cos(bt)\) and \(t^i e^{at}\sin(bt)\).</p>
 <p>The null space is a property of the <strong>operator</strong> and is computed from it,
-never from the rank of an assembled penalty matrix. The two are different
-questions and they give different answers: the same two-harmonic operator
-has a penalty of null dimension 5 on a Fourier basis and 3 on a cubic
-B-spline at a relative tolerance of 1e-10, because a spline represents a
-sine only approximately, while the operator's own null space is
-five-dimensional in both cases. Which of those functions a <strong>basis</strong> can
-carry is a separate question, and <code><a href="smoother_build.html">smoother_build()</a></code> is where it is asked.</p>
+never from the rank of an assembled penalty matrix, and the two differ:
+the one-harmonic operator has a penalty of null dimension 3 on a Fourier
+basis and 1 on a cubic B-spline at a relative tolerance of 1e-10, because
+a spline represents a sine only approximately, while the null space of the
+operator is three-dimensional in both cases. Whether a <strong>basis</strong> can carry
+those functions is a separate question, settled in <code><a href="smoother_build.html">smoother_build()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -105,19 +105,20 @@ instances.</p></div>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># a constant plus the fundamental of a yearly cycle</span></span></span>
 <span class="r-in"><span><span class="fu">operator_null</span><span class="op">(</span><span class="fu"><a href="harmonic_operator.html">harmonic_operator</a></span><span class="op">(</span><span class="fl">365</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              label         rate       freq degree part</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1 0.000000e+00 0.00000000      0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              label rate       freq degree part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1    0 0.00000000      0     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 sin(0.0172142 t)    0 0.01721421      0  sin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 cos(0.0172142 t)    0 0.01721421      0  cos</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># both at once</span></span></span>
+<span class="r-in"><span><span class="co"># the product: five functions, with t^2 because both factors hold the</span></span></span>
+<span class="r-in"><span><span class="co"># constant</span></span></span>
 <span class="r-in"><span><span class="fu">operator_null</span><span class="op">(</span><span class="fu"><a href="deriv_operator.html">deriv_operator</a></span><span class="op">(</span><span class="fl">2</span><span class="op">)</span> <span class="op">*</span> <span class="fu"><a href="harmonic_operator.html">harmonic_operator</a></span><span class="op">(</span><span class="fl">365</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>              label         rate       freq degree part</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1 0.000000e+00 0.00000000      0     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2                t 0.000000e+00 0.00000000      1     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3              t^2 0.000000e+00 0.00000000      2     </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>              label rate       freq degree part</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1                1    0 0.00000000      0     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2                t    0 0.00000000      1     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3              t^2    0 0.00000000      2     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 sin(0.0172142 t)    0 0.01721421      0  sin</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 cos(0.0172142 t)    0 0.01721421      0  cos</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the dimension is always the order</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="fu">operator_null</span><span class="op">(</span><span class="fu"><a href="harmonic_operator.html">harmonic_operator</a></span><span class="op">(</span><span class="fl">365</span>, harmonics <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>

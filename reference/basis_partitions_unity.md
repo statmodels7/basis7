@@ -1,9 +1,8 @@
-# Does This Basis Sum to One?
+# Whether a Basis Is a Partition of Unity
 
 Reports whether the family is a partition of unity, so that
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-tests the row sums only where the property is claimed. A family that is
-not one would fail a check it never promised to pass.
+tests the row sums only for the families that have the property.
 
 ## Usage
 
@@ -33,11 +32,10 @@ products of the row sums.
 
 `FALSE` for everything else, including a
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
-over a B-spline. That is deliberate: an orthonormalization or a
-constraint takes linear combinations of the columns, and the sum of the
-new columns is generally not one. It is also conservative, so a
-transformation that happens to preserve the property is untested rather
-than wrongly failed.
+over a B-spline: an orthonormalization or a constraint takes linear
+combinations of the columns, and the sum of the new columns is generally
+not one. A transformation that happens to preserve the property is
+therefore not tested.
 
 ## See also
 

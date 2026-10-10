@@ -6,7 +6,7 @@ returns. It adds no property to
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) and
 exists as the class the trigonometric methods dispatch on. A Fourier
 basis holds a constant function and pairs of sines and cosines of
-increasing frequency, and answers every derivative and its integral from
+increasing frequency, and its derivatives and integral all follow from
 one identity.
 
 ## Usage
@@ -27,8 +27,9 @@ FourierBasis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -46,8 +47,8 @@ FourierBasis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.
@@ -62,15 +63,15 @@ and `full_period`. Call
 instead of this class directly; it rejects an even dimension, defaults
 the period and records all three.
 
-## One identity for every order
+## The phase-shift identity
 
 Writing \\z = 2\pi (x - \ell)/\omega\\ for the phase and \\\omega\\ for
 the period, \$\$\frac{\mathrm{d}^{k}}{\mathrm{d}x^{k}} \sin(j z) =
 \left(\frac{2\pi j}{\omega}\right)^{k} \sin\\\left(j z +
 \frac{k\pi}{2}\right),\$\$ and the same for the cosine. Differentiating
 a sinusoid shifts its phase by a quarter turn and multiplies it by its
-frequency, so no order is a special case and the fourth derivative costs
-exactly what the first does.
+frequency, so every order follows the same rule and the fourth
+derivative costs what the first does.
 
 The identity holds for negative \\k\\, which is where the antiderivative
 comes from:
@@ -82,7 +83,9 @@ endpoint.
 
 Three entries. `omega` is the period, `n_pairs` is
 `(dimension - 1) %/% 2`, and `full_period` records whether `omega`
-equals the width of the interval. The last decides which route
+equals the width of the interval, up to the tolerance of
+[`all.equal()`](https://rdrr.io/r/base/all.equal.html). The last decides
+which route
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
 takes: a closed diagonal matrix when it is `TRUE`, a quadrature when it
 is not.

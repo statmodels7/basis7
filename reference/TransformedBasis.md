@@ -2,9 +2,9 @@
 
 The S7 class of bases obtained from another by a fixed linear map of its
 functions, \\\tilde{B}(x) = B(x)\\T\\. It carries the parent and the
-matrix, and it is itself a basis, so a constrained or rotated basis goes
-on answering every generic and nothing downstream has to know a
-transformation happened. Constructed by
+matrix, and it is itself a basis, so every generic applies to a
+constrained or rotated basis and code that receives it works in the same
+way as for the parent. Constructed by
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
 or
@@ -30,8 +30,9 @@ TransformedBasis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -49,8 +50,8 @@ TransformedBasis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.
@@ -59,7 +60,7 @@ TransformedBasis(
 
   The basis being transformed, any object inheriting from
   [basis](https://statmodels7.github.io/basis7/reference/basis.md). Kept
-  whole, so it can still be evaluated and asked what it is.
+  whole, so that it can still be evaluated and inspected.
 
 - transform:
 
@@ -72,7 +73,7 @@ An object of class `TransformedBasis`, inheriting from
 [basis](https://statmodels7.github.io/basis7/reference/basis.md), with
 the five properties of a basis plus `parent_basis` and `transform`.
 
-## Three operations, one class
+## Orthonormalization, constraints and rotations
 
 Orthonormalizing a basis, restricting it to satisfy a linear constraint,
 and rebuilding it so that it diagonalizes an inner product are the same
@@ -86,10 +87,11 @@ Differentiation and integration are linear and \\T\\ does not depend on
 by congruence. A parent with exact derivatives and an exact Gram matrix
 therefore passes its exactness on, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports the parent's answer in place of this class's own methods.
+reports the parent's flags in place of those of this class's own
+methods.
 
-The anchored integral survives too: a linear combination of columns that
-are all zero at the lower endpoint is zero there.
+The anchoring of the integral is kept as well: a linear combination of
+columns that are all zero at the lower endpoint is zero there.
 
 ## Fewer columns than rows
 

@@ -3,9 +3,9 @@
 Evaluates each margin at its own column of the points and takes the
 row-wise Kronecker product, so row \\i\\ of the result is \\B_1(x\_{i1})
 \otimes \cdots \otimes B_D(x\_{iD})\\. The matrix has \\\prod_j K_j\\
-columns, so at several variables it is worth avoiding, and
+columns, which is large at several variables;
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
-avoids it.
+evaluates a fit without forming it.
 
 ## Arguments
 
@@ -32,8 +32,8 @@ column names pasting the margins' with dots.
 ## Details
 
 Cost is one marginal evaluation per variable plus the products, and the
-result is `nrow(x)` by `basis@dimension`, which at four margins of eight
-functions and 20000 points is 625 MB. Nothing is cached.
+result is `nrow(x)` by `basis@dimension`. The method does not cache its
+result.
 
 ## See also
 

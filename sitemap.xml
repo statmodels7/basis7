@@ -81,6 +81,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/check_penalty.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/check_period.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/check_periodic_null.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/check_periodic_size.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/check_smoother_x.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/check_whole.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/chol_pd.html</loc></url>
@@ -148,6 +149,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/pspline_map.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/pspline_smooth.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/quad_rule.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/reject_quadrature.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/rel_close.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/route_by_owner.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/shrink_weight.html</loc></url>

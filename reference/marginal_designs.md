@@ -2,7 +2,7 @@
 
 Returns a list of the margins' design matrices, each evaluated at its
 own column of the points, and each differentiated or integrated as
-asked. The first step of
+`order` and `integral` specify. The first step of
 [`tensor_design()`](https://statmodels7.github.io/basis7/reference/tensor_design.md).
 
 ## Usage
@@ -30,7 +30,7 @@ marginal_designs(basis, x, order = NULL, integral = FALSE)
 
 - integral:
 
-  `TRUE` to ask each margin for its anchored integral.
+  `TRUE` to use the anchored integral of each margin.
 
 ## Value
 

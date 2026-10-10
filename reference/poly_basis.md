@@ -3,8 +3,9 @@
 Returns a basis of the polynomials of degree below `dimension` on
 \\\[\ell, u\]\\, written in the Legendre polynomials and not in raw
 powers. The two span the same space, so a fit through either gives the
-same curve; the Legendre form is the one that survives being fitted, its
-Gram matrix being diagonal where the raw powers' is a Hilbert matrix.
+same curve. The Legendre form is better conditioned, because its Gram
+matrix is diagonal, whereas the Gram matrix of the raw powers is a
+Hilbert matrix.
 
 ## Usage
 
@@ -17,7 +18,8 @@ poly_basis(lower = 0, upper = 1, dimension = 4)
 - lower, upper:
 
   The endpoints of the interval, each a single finite number with
-  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside throws.
+  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside the interval
+  signals an error.
 
 - dimension:
 
@@ -36,19 +38,19 @@ with `basis_name` `"legendre"`, `basis_params` holding
 
 Fitting \\1, x, x^2, \ldots\\ on \\\[0, 1\]\\ gives the Gram matrix
 \\H\_{mn} = 1/(m + n + 1)\\, the Hilbert matrix, whose condition number
-grows geometrically. The condition numbers of the two order-0 Gram
-matrices, measured on \\\[0, 1\]\\:
+grows geometrically. The 2-norm condition numbers of the two order-0
+Gram matrices on \\\[0, 1\]\\ are:
 
 |             |          |            |
 |-------------|----------|------------|
 | `dimension` | Legendre | raw powers |
 | 5           | 9        | 4.8e+05    |
 | 10          | 19       | 1.6e+13    |
-| 15          | 29       | 2.5e+17    |
+| 15          | 29       | 6.1e+20    |
 
-At ten raw powers a least-squares solve has already lost most of its
-digits; at fifteen the matrix is numerically singular. The Legendre
-condition number is \\2K - 1\\, growing linearly.
+At ten raw powers a least-squares solve has lost most of its digits, and
+at fifteen the matrix is numerically singular in double precision. The
+Legendre condition number is \\2K - 1\\, growing linearly.
 
 ## The Gram matrix
 
@@ -107,12 +109,12 @@ H <- outer(0:9, 0:9, function(a, b) 1 / (a + b + 1))
 c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
   raw_powers = kappa(H, exact = TRUE))
 #>     legendre   raw_powers 
-#> 1.900000e+01 1.602442e+13 
+#> 1.900000e+01 1.602498e+13 
 
 # It spans the same space as the raw powers, so a cubic is fitted exactly.
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 1.193503e-16
+#> [1] 2.270252e-16
 
 # P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.
 basis_eval(p, c(0, 1))

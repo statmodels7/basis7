@@ -13,7 +13,7 @@ basis_operator_gram() and the route a family with no closed form takes."><meta p
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,11 +97,11 @@ split into and how many Gauss-Legendre nodes each carries.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The nodes are the same rule <code><a href="numerical_gram.html">numerical_gram()</a></code> uses, and the only
+    <p>The nodes are those of the rule used by <code><a href="numerical_gram.html">numerical_gram()</a></code>, and the only
 difference is what is evaluated at them: \(Lb\) from <code><a href="operator_eval.html">operator_eval()</a></code>
-rather than one derivative. A piecewise polynomial basis therefore gets
-an approximation here where its own derivative Gram matrix is exact, and
-the accuracy is the quadrature's.</p>
+instead of one derivative. A piecewise polynomial basis therefore gets an
+approximation here where its own derivative Gram matrix is exact, with the
+accuracy of the quadrature.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

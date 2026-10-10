@@ -1,9 +1,9 @@
 # Construct a Fourier Basis
 
 Returns a basis of a constant function and \\(K-1)/2\\ sine-cosine pairs
-of increasing frequency on \\\[\ell, u\]\\. It is the basis to reach for
-when the function being modeled is periodic or nearly so: over a whole
-period the functions are mutually orthogonal, and stay orthogonal after
+of increasing frequency on \\\[\ell, u\]\\, \\K\\ being `dimension`. It
+suits a function that is periodic or nearly so: over a whole period the
+functions are mutually orthogonal, and stay orthogonal after
 differentiation, so the Gram matrix is diagonal at every order and a
 roughness penalty is one vector of numbers.
 
@@ -18,19 +18,20 @@ fourier_basis(lower = 0, upper = 1, dimension = 5, omega = NULL)
 - lower, upper:
 
   The endpoints of the interval, each a single finite number with
-  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside throws.
+  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside the interval
+  signals an error.
 
 - dimension:
 
   The number of basis functions, a single **odd** whole number of at
   least 1, default `5`. `1` is the constant alone, `5` is the constant
-  and two pairs. An even value throws.
+  and two pairs. An even value signals an error.
 
 - omega:
 
   The period, a single positive finite number. `NULL`, the default, uses
   `upper - lower`, the value that makes the basis orthogonal on its
-  interval. Anything not a single positive number throws.
+  interval. Any other value signals an error.
 
 ## Value
 
@@ -49,12 +50,10 @@ frequencies, named `const`, `sin1`, `cos1`, `sin2`, `cos2`.
 
 A sine without its cosine represents a wave at one phase but not at the
 next, so the fitted function would depend on where the interval was cut.
-An even dimension throws, naming the two odd numbers on either side. It
-is not adjusted silently: growing it would return a basis of a size the
-caller did not ask for, and the constructor is the only place the
-mismatch can be caught.
+An even dimension signals an error that names the two odd numbers on
+either side, and is not adjusted to one of them.
 
-## The period, and what changes when it is not the interval
+## A period other than the width of the interval
 
 `omega` defaults to `upper - lower`, so the interval is exactly one
 period and the functions are orthogonal on it. The order-\\d\\ Gram
@@ -62,24 +61,22 @@ matrix is then diagonal with entries \\\omega\\ for the constant at
 order 0, zero for it above, and \\(\omega/2)(2\pi j/\omega)^{2d}\\ for
 both members of pair \\j\\, written in closed form.
 
-Any other positive period is accepted and every generic still answers,
-but the interval is no longer a whole number of periods, the
-orthogonality fails, and the Gram matrix is computed by composite
-Gauss-Legendre instead. `basis_params$full_period` records which case
+Any other positive period is accepted and every generic remains
+available. The Gram matrix is then computed by composite Gauss-Legendre,
+the interval being in general no longer a whole number of periods and
+the orthogonality failing. `basis_params$full_period` records which case
 the object is in, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports `basis_gram` as `TRUE` there: the family says so itself through
-[`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md),
-where reading which class the method is registered on would answer
-`FALSE`, the owner being `FourierBasis` either way.
+reports `basis_gram` as `TRUE` in the second, through
+[`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md);
+the class on which the method is registered is `FourierBasis` in both
+cases.
 
-## Periodic by construction
+## Periodicity
 
-Every column except the constant takes the same value at both ends of a
-full period, so a fitted curve joins up. That is the property to want
-here, and the reason not to reach for
-[`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md),
-whose ends are free.
+Every column takes the same value at both ends of a full period, so a
+fitted curve joins up. A B-spline basis, whose ends are free, does not
+have this property.
 
 ## See also
 
@@ -131,8 +128,8 @@ max(abs(basis_eval(b, 0) - basis_eval(b, 1)))
 try(fourier_basis(dimension = 4))
 #> Error : 'dimension' must be odd: a Fourier basis holds a constant plus complete sine-cosine pairs, so 4 would leave half a pair. Use 3 or 5.
 
-# A period that is not the interval width gives up the orthogonality, and
-# the Gram matrix is then a quadrature and no longer diagonal.
+# With a period other than the interval width the basis is not
+# orthogonal, and the Gram matrix is a quadrature and no longer diagonal.
 f <- fourier_basis(dimension = 5, omega = 0.7)
 f@basis_params$full_period
 #> [1] FALSE

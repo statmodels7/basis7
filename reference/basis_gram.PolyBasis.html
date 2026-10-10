@@ -15,7 +15,7 @@ polynomial of low enough degree."><meta property="og:image" content="https://sta
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,8 @@ to contain the generic's.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
-<dd><p>Unused, and accepted so that the signature matches the generic's.</p></dd>
+<dd><p>Unused, and accepted so that the signature matches the
+generic's. <code>panels</code> or <code>nodes</code> signals an error, the matrix being exact.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -96,9 +97,8 @@ zero above <code>dimension - 1</code>.</p>
 full. The integrand \(P_m^{(d)} P_n^{(d)}\) is a polynomial of degree at
 most \(2(K - 1 - d)\), and a \(K\)-node Gauss-Legendre rule is exact
 to degree \(2K - 1\), which is larger for every \(d \ge 1\). The
-quadrature is therefore exact to rounding, and the result is symmetrized as
-<code>(G + t(G))/2</code> because the two triangles of a crossproduct differ in their
-last bits.</p>
+quadrature is therefore exact to rounding. The result is symmetrized as
+<code>(G + t(G))/2</code>.</p>
 <p>An <code>order</code> above <code>dimension - 1</code> returns the zero matrix, every derivative
 having vanished.</p>
     </div>

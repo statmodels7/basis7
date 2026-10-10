@@ -28,7 +28,7 @@ A character vector of one name per label.
 
 The number is the rank of the frequency among those restored, not the
 frequency itself, so the columns of a two-harmonic smooth read `sin1`,
-`cos1`, `sin2`, `cos2` and match what a reader of a Fourier basis
-expects. A column from a real root keeps its label, `t` and `t^2`
-passing through [`make.names()`](https://rdrr.io/r/base/make.names.html)
-as they stand.
+`cos1`, `sin2`, `cos2`, as the columns of a Fourier basis do. A column
+from a real root keeps its label after
+[`make.names()`](https://rdrr.io/r/base/make.names.html), so `t` stays
+`t` and `t^2` becomes `t.2`.

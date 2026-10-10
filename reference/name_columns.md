@@ -2,10 +2,11 @@
 
 Sets `colnames(m)` to
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
-of the basis and returns the matrix. Every method returning an `n` by
-`@dimension` matrix ends with a call to it, so the evaluation, the
-derivatives of every order, the integral and the Gram matrix of one
-basis all carry the same column names in the same order.
+of the basis and returns the matrix. The methods that return an `n` by
+`@dimension` matrix end with a call to it, so the evaluation, the
+derivatives of every order and the integral of one basis carry the same
+column names in the same order; the Gram methods set the same names on
+both margins.
 
 ## Usage
 
@@ -30,9 +31,9 @@ name_columns(m, basis)
 
 ## Details
 
-The names come from the basis, so a matrix with the wrong number of
-columns produces R's own recycling error instead of a silently
-mislabeled result. Nothing else is checked.
+A matrix with the wrong number of columns signals R's error that the
+length of the dimnames does not equal the extent of the array. The
+function checks nothing else.
 
 ## See also
 

@@ -1,11 +1,11 @@
-# A Finite-Difference Reference, and Where It Can Be Trusted
+# A Finite-Difference Reference and Its Uncertainty
 
 Differentiates `f` once numerically and returns both the estimate and a
-bound on its own error, entry by entry.
+bound on its error, entry by entry.
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-uses the second to decide how much slack the comparison at each point
-deserves, so a point where the reference is unreliable does not report
-the basis as wrong.
+uses the bound as the allowance of the comparison at each point, so a
+point where the reference is unreliable does not report the basis as
+wrong.
 
 ## Usage
 
@@ -44,23 +44,20 @@ there is unconstrained.
 
 ## Details
 
-A central difference is only valid where the function has the
-derivatives the stencil assumes. A spline does not: at a knot its third
-derivative jumps, so a stencil that straddles the knot returns a number
-of the order of the jump and not of the truncation error, and comparing
-an exact analytical value against it reports a failure of the
-*reference*.
+A central difference is valid only where the function has the
+derivatives the stencil assumes. At a knot the third derivative of a
+cubic spline jumps, so a stencil that straddles the knot returns a
+number of the order of the jump and not of the truncation error, and
+comparing an exact value against it would report a failure of the
+reference as one of the basis.
 
-Recomputing with the step halved says how much of the reference is
-error. For a smooth point the two differ by about three quarters of the
-truncation, so the gap between them bounds the reference's own
-uncertainty; at a knot it is large. Nothing is discarded: the gap
-becomes the slack allowed to the comparison, so each point contributes
-exactly the accuracy its reference supports. This is the same device
-used elsewhere in the toolkit for a parameter that is not
-differentiable, and it needs the same care: the two estimates are
-compared with each other, not against a denominator floored at one,
-since near a kink both are small and still differ by a factor.
+The estimate is therefore recomputed with the step halved. At a smooth
+point the two estimates differ by about three quarters of the truncation
+error of the first, so four times the gap bounds that error; at a knot
+the gap is large. The bound becomes the allowance of the comparison,
+point by point. The two estimates are compared with each other and not
+against a denominator floored at one, since near a kink both are small
+and still differ by a factor.
 
 ## See also
 

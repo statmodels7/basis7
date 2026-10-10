@@ -15,7 +15,7 @@ nor the coefficient array appears anywhere."><meta property="og:image" content="
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,12 +83,10 @@ columns \(F\).</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Each margin is evaluated once and multiplied by its own factor matrix,
 giving \(D\) matrices of size \(n \times F\); their elementwise
-product, summed across columns, is the answer. The cost is
-\(O(nF\sum_j K_j)\) in time and memory, linear in the number of variables
-where the array is exponential in it: measured at four margins of eight
-functions, 20000 points and \(F = 3\), 0.03 s against the blocked array
-route's 0.83 s.</p>
-<p>Against the array it stands for, the two routes agree to 1.7e-16.</p>
+product, summed across columns, is the result. The cost is
+\(O(nF\sum_j K_j)\) in time and memory, linear in the number of
+variables where the array is exponential in it. The result agrees with
+the contraction of the array that the factors define, up to rounding.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

@@ -3,8 +3,8 @@
 The integration method every basis inherits from the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class:
 composite Gauss-Legendre from the lower endpoint, accumulated over the
-sorted evaluation points, so the whole set costs one pass where a
-quadrature each would cost as many.
+sorted evaluation points, so the whole set costs one pass instead of one
+quadrature per point.
 
 ## Arguments
 
@@ -12,7 +12,7 @@ quadrature each would cost as many.
 
   A basis object of one variable, of any class inheriting from
   [basis](https://statmodels7.github.io/basis7/reference/basis.md). More
-  than one variable throws.
+  than one variable signals an error.
 
 - x:
 
@@ -40,7 +40,7 @@ exactly zero in the row at `basis@lower`.
 
 Numerical Integral of a Basis
 
-## How it is accumulated
+## Accumulation
 
 The points are sorted and made unique, the rule is placed on each
 segment between consecutive ones, and the segment integrals are
@@ -53,18 +53,17 @@ are computed once and matched back.
 ## Accuracy
 
 The `nodes`-point rule integrates a polynomial of degree up to
-`2 * nodes - 1` exactly on each segment, so on a polynomial family the
-result is exact to rounding: measured against the closed-form Legendre
-integrals at 21 points, 3.3e-16. On a family that is not polynomial the
-error is the rule's own on each segment, which shrinks with the spacing
-of the evaluation points; a single distant point is integrated by one
-rule over the whole span.
+`2 * nodes - 1` exactly on each segment, so on a polynomial family of
+lower degree the result is exact to rounding. On a family that is not
+polynomial the error is that of the rule on each segment, which shrinks
+with the spacing of the evaluation points; a single distant point is
+integrated by one rule over the whole span.
 
 ## One variable only
 
-A basis of several variables throws. The integral there is over a box,
-one iterated integral per variable, and a family that wants it supplies
-its own, as
+A basis of several variables signals an error. The integral there is
+over a box, one iterated integral per variable, and a family that needs
+it supplies its own, as
 [`basis_int.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_int.TensorBasis.md)
 does from its margins.
 

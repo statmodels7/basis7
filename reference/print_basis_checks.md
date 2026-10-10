@@ -38,16 +38,15 @@ print_basis_checks(basis, res, num)
 
 ## Details
 
-A verdict is `[PASSED]`, `[FAILED]`, or one of two things for an `NA`. A
-check not run because the quantity is a finite difference prints
-`[numerical]`; the partition-of-unity check on a family that is not one
-prints `[not claimed]`. Saying which matters: a value that was not
-verified is a gap, where a property never promised is not.
+A verdict is `[PASSED]`, `[FAILED]`, or one of two labels for an `NA`. A
+check that was not run because the quantity is numerical prints
+`[numerical]`; the partition-of-unity check on a family that is not a
+partition of unity prints `[not claimed]`. The first marks a value that
+was not verified, the second a property that does not apply.
 
-Only `deriv`, `integral` and `partition` can be `NA` today. The other
-three rows carry a `[numerical]` label in the table that nothing
-currently reaches, `shape`, `gram` and `missing` all being assigned on
-every path.
+Only `deriv`, `integral` and `partition` can be `NA`. The rows `shape`,
+`gram` and `missing` are assigned on every path, so their `[numerical]`
+label is never printed.
 
 ## See also
 

@@ -13,7 +13,7 @@ came from the numerical fallback."><meta property="og:image" content="https://st
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,14 +79,14 @@ as the closing line when any entry is <code>TRUE</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>A verdict is <code>[PASSED]</code>, <code>[FAILED]</code>, or one of two things for an <code>NA</code>. A
-check not run because the quantity is a finite difference prints
-<code>[numerical]</code>; the partition-of-unity check on a family that is not one
-prints <code>[not claimed]</code>. Saying which matters: a value that was not verified
-is a gap, where a property never promised is not.</p>
-<p>Only <code>deriv</code>, <code>integral</code> and <code>partition</code> can be <code>NA</code> today. The other three
-rows carry a <code>[numerical]</code> label in the table that nothing currently
-reaches, <code>shape</code>, <code>gram</code> and <code>missing</code> all being assigned on every path.</p>
+    <p>A verdict is <code>[PASSED]</code>, <code>[FAILED]</code>, or one of two labels for an <code>NA</code>. A
+check that was not run because the quantity is numerical prints
+<code>[numerical]</code>; the partition-of-unity check on a family that is not a
+partition of unity prints <code>[not claimed]</code>. The first marks a value that was
+not verified, the second a property that does not apply.</p>
+<p>Only <code>deriv</code>, <code>integral</code> and <code>partition</code> can be <code>NA</code>. The rows <code>shape</code>,
+<code>gram</code> and <code>missing</code> are assigned on every path, so their <code>[numerical]</code>
+label is never printed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

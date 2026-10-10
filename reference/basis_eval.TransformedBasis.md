@@ -1,9 +1,10 @@
 # Evaluate a Transformed Basis
 
 Evaluates the parent and multiplies by the transform, \\\tilde{B}(x) =
-B(x)\\T\\. Nothing is recomputed and no property of the parent is lost:
-the result spans a subspace of what the parent spans, and spans all of
-it when \\T\\ is square and invertible.
+B(x)\\T\\, with no further computation. The result spans a subspace of
+what the parent spans, and all of it when \\T\\ is square and
+invertible. Properties of the individual columns, such as the partition
+of unity of a B-spline, are in general not kept.
 
 ## Arguments
 

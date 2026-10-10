@@ -1,8 +1,8 @@
 # A Linear Differential Operator From Its Weights
 
-The general form: `linear_operator(w)` is \\L x = w_1 x + w_2 Dx +
-\cdots + w_m D^{m-1} x + D^m x\\, with the leading coefficient 1 and `w`
-given in increasing order of differentiation. It is the vector
+The general form: `linear_operator(w)` is \\L x = w_0 x + w_1 Dx +
+\cdots + w\_{m-1} D^{m-1} x + D^m x\\, with the leading coefficient 1
+and `w` given in increasing order of differentiation. It is the vector
 `fda::vec2Lfd()` takes.
 
 ## Usage
@@ -33,13 +33,14 @@ e^{at}\sin(bt)\\.
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
 reports it.
 
-Use
-[`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md)
-and
+Where they apply,
+[`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
-where they apply: they say what the operator is for, and they carry a
-period that can be resolved from a smoother's interval, which a bare
-weight vector cannot.
+and
+[`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+are preferable: they record what the operator is for, and the last two
+carry a period that can be resolved from the interval of a smoother,
+which a bare weight vector cannot.
 
 ## See also
 

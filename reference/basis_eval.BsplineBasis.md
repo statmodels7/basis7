@@ -3,7 +3,7 @@
 Returns the B-spline design matrix at the given points, evaluated by
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html)
 from the Cox-de Boor recurrence. At most `degree + 1` entries of any row
-are non-zero, and the row sums are one to 2.2e-16.
+are non-zero, and the row sums are one up to rounding.
 
 ## Arguments
 
@@ -31,9 +31,9 @@ with column names `bs1`, `bs2`, and so on.
 The call goes through
 [`bspline_design()`](https://statmodels7.github.io/basis7/reference/bspline_design.md)
 with `intercept = TRUE`, so all `dimension` functions are returned and
-none is dropped for identifiability. The result is stripped of the ten
-attributes splines2 attaches and of its `BSpline` class, leaving a plain
-matrix, so a consumer never has to know where the numbers came from.
+none is dropped for identifiability. The result is stripped of the
+attributes and of the `BSpline` class that splines2 attaches, leaving a
+plain matrix.
 
 ## See also
 

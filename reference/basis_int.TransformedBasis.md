@@ -1,9 +1,8 @@
 # Integral of a Transformed Basis
 
 Returns the parent's anchored integral multiplied by the transform. The
-anchoring survives without a correction: every column of the parent's
-integral is zero at the lower endpoint, and a linear combination of
-zeros is zero.
+anchoring needs no correction: every column of the parent's integral is
+zero at the lower endpoint, and a linear combination of zeros is zero.
 
 ## Arguments
 

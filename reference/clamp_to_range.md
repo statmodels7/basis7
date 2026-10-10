@@ -1,9 +1,9 @@
 # Reject Points Outside a Range, and Clamp Those On Its Edge
 
-Throws if any entry of `z` lies outside `[lo, hi]` by more than `1e-8`
-times the width of the range, and otherwise returns `z` with anything
-inside that tolerance moved onto the nearer endpoint. The one place the
-range rule of the package is written;
+Signals an error if any entry of `z` lies outside `[lo, hi]` by more
+than `1e-8` times the width of the range, and otherwise returns `z` with
+any entry inside that tolerance moved onto the nearer endpoint. The
+range rule of the package is written here only;
 [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
 calls it once per variable.
 
@@ -43,8 +43,8 @@ means the same on \\\[0, 1\]\\ and on \\\[0, 1000\]\\. Entries that are
 
 The error message names the count and the range, as in
 `2 of 5 evaluation points fall outside the basis interval [0, 1].`, and
-is raised with `call. = FALSE`, so the phrase `what` supplies is what a
-user sees in place of this function's name.
+is raised with `call. = FALSE`, so the message shows the phrase `what`
+and not this function's name.
 
 ## See also
 

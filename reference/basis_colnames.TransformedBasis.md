@@ -27,14 +27,13 @@ A character vector of length `basis@dimension`.
 ## Details
 
 The parent's names cannot be carried over. Each new function is a
-combination of all the parent's, so no single one of them names it, and
-a constraint returns fewer functions than it consumed. The prefix at
-least records which transformation produced the column, which the
-default
+combination of all the parent's, so none of the parent's names fits it,
+and a constraint returns fewer functions than it consumed. The prefix
+records which transformation produced the column. The default
 [`basis_colnames.basis()`](https://statmodels7.github.io/basis7/reference/basis_colnames.basis.md)
-would not: it takes the first two characters of `@basis_name`, and every
-name here begins with the transformation's, so a chain would give `or1`
-for both an orthonormalization and its re-orthonormalization.
+takes the first two characters of `@basis_name`, which here begins with
+the name of the transformation, and would give `or1` for both an
+orthonormalization and its re-orthonormalization.
 
 ## See also
 

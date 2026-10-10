@@ -13,7 +13,7 @@ departs at \(t^{10}\), returning 0.17889 against 0.18182."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,8 +60,9 @@ departs at \(t^{10}\), returning 0.17889 against 0.18182.</p>
 
 <dl><dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
 <dd><p>The number of nodes, a single positive whole number. <code>1</code> returns
-the midpoint rule directly. <code>n &lt; 1</code> throws
-<code>'n' must be a positive integer.</code></p></dd>
+the midpoint rule directly. Any other value signals an error, which
+reaches the user through the <code>nodes</code> argument of the quadrature
+routines.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -76,10 +77,9 @@ symmetric tridiagonal Jacobi matrix of the Legendre recurrence, with
 off-diagonal \(i/\sqrt{4i^2 - 1}\), and the weights are twice the square
 of the first component of each eigenvector. The weights sum to 2, the
 length of the interval.</p>
-<p>They are computed at call time, which keeps every node count available.
-That is what the exact spline rules need: one rule per knot interval, sized
-from the degree and the derivative order, where a table would offer only
-the counts someone thought to tabulate.</p>
+<p>They are computed at call time, so every node count is available. The
+exact spline rules need this, one rule per knot interval sized from the
+degree and the derivative order, which a fixed table could not cover.</p>
     </div>
     <div class="section level2">
     <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a></h2>

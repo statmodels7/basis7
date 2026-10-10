@@ -4,8 +4,8 @@ A difference penalty whose weight varies along the covariate, so that a
 function may be smoothed hard where it is quiet and left free where it
 is not. Where
 [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
-penalizes every difference alike under one smoothing parameter, this one
-carries `m` of them and lets the data say how the roughness is
+penalizes every difference alike under one smoothing parameter, this
+family carries `m` of them, and the data determine how the roughness is
 distributed.
 
 ## Usage
@@ -51,24 +51,26 @@ adaptive_smooth(
 
 - constrain:
 
-  The directions the smooth is made orthogonal to, `NULL` for the null
-  space of the penalty.
+  The directions to which the smooth is made orthogonal, `NULL` for the
+  null space of the penalty.
 
 - null_space:
 
-  What becomes of the directions the penalty does not see. `"shrink"` is
-  rejected here; see the note below.
+  What happens to the directions that the penalty does not see.
+  `"shrink"` is rejected, because the shrinkage is a fraction of the
+  eigenvalues of one roughness matrix and this penalty is a sum of
+  components.
 
 - reparam:
 
-  The coordinates the coefficients live in, `"none"` or `"orthonorm"`.
-  `"dr"` is rejected.
+  The coordinates in which the coefficients are expressed, `"none"` or
+  `"orthonorm"`. `"dr"` is rejected.
 
 - penalty:
 
-  Rejected here, and accepted only to say so: the penalty of this family
-  is the sum of its components, and a factory replaces it with one
-  penalty over the coefficients, which is
+  Any value other than `NULL` signals an error. The penalty of this
+  family is the sum of its components, and a factory would replace it
+  with one penalty over the coefficients, which is
   [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
   with that factory.
 
@@ -94,80 +96,56 @@ coefficient INDEX. Because \\\mathrm{diag}\\ is linear the whole penalty
 is the sum \\\sum_i \lambda_i S_i\\ with \\S_i = D^\top
 \mathrm{diag}(v_i) D\\, so
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
-answers with those `m` components and whichever layer places the smooth
-turns them into one penalty with `m` smoothing parameters. The weight
+returns those `m` components and the layer that places the smooth
+combines them into one penalty with `m` smoothing parameters. The weight
 profile is itself a spline, and its coefficients are those smoothing
 parameters.
 
-The index basis is built over the index's own range, so an affine
-relabelling of the index – \\1, \ldots, n\\, or \\i/n\\, or mgcv's
-\\i/k\\ – gives the identical profile, measured to 1e-16. The
-construction carries no arbitrary constant.
+The index basis is built over the range of the index, so an affine
+relabeling of the index (\\1, \ldots, n\\, \\i/n\\, or the \\i/k\\ of
+mgcv) gives the same profile up to rounding.
 
-## At equal smoothing parameters it IS a P-spline
+## Equal smoothing parameters
 
 The weight functions are a B-spline basis, hence a partition of unity,
-so \\\sum_i v_i = 1\\ and therefore \\\sum_i S_i = D^\top D\\ exactly –
-measured at 8.9e-16 to 2.7e-15 for `m` from 2 to 12. Holding every
-\\\lambda_i\\ at one value gives the P-spline penalty at that value, so
+so \\\sum_i v_i = 1\\ and therefore \\\sum_i S_i = D^\top D\\, up to
+rounding. Holding every \\\lambda_i\\ at one value gives the P-spline
+penalty at that value, so
 [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
-is the interior point of this family rather than a different
-construction, and the extra freedom is spent only where the data pay for
-it.
+is a special case of this family, and the additional freedom is used
+only where the data require it.
 
-## What it buys, and what it costs
+## Comparison with a single smoothing parameter
 
-Measured against a single-lambda P-spline through mgcv's REML, which
-shares no code with this package, on 400 observations at `k = 40` and
-eight seeds: on a truth of variable roughness – a sine with a narrow
-bump – the adaptive wins on 8 seeds of 8, at a median root mean square
-error of 0.0357 against 0.0443, and does so at FEWER effective degrees
-of freedom, 17.4 against 23.6. On a truth of constant roughness it wins
-on 0 seeds of 8, 0.0315 against 0.0310: about 1.6 per cent worse, which
-is what the extra smoothing parameters cost where there is nothing to
-adapt to. That second measurement is the control, without which the
-first would show only that more parameters fit better.
-
-Where the gain comes from is not where it is first looked for. Split by
-region on one sample, the adaptive is better on the quiet left (0.0242
-against 0.0305) and on the smooth right (0.0437 against 0.0476) and
-slightly WORSE at the feature itself (0.0553 against 0.0503). What it
-buys is not a sharper peak but less noise chasing where the function is
-quiet.
+On a function whose roughness varies along the covariate the adaptive
+penalty smooths the quiet stretches more strongly than a P-spline with
+one smoothing parameter, and follows the noise less there. On a function
+of constant roughness its additional smoothing parameters have nothing
+to adapt to, and the fit is slightly worse than the P-spline fit.
 
 The differences are taken in the Eilers-Marx coordinates of
 [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
-so the fit is the adaptive P-spline of mgcv's `bs = "ad"`: on
-[`MASS::mcycle`](https://rdrr.io/pkg/MASS/man/mcycle.html) at `k = 40`,
-`m = 5`, 10.3352 effective degrees of freedom against 10.3343, the
-fitted values 0.002 apart on a response whose standard deviation is 48.
-Up to basis7 0.13.1 they were taken on the clamped coefficients and the
-two fits were 0.84 apart.
+as in the adaptive P-spline of mgcv's `bs = "ad"`. At equal smoothing
+parameters the two sums are the same P-spline penalty; the weight
+functions differ, mgcv building them from a different basis over the
+index, so the two fits are close and not identical.
 
 ## The coordinates
 
-`reparam = "dr"` is rejected, and by construction rather than by choice:
-Demmler-Reinsch diagonalizes the pencil of the Gram matrix against a
-single penalty, and here there are `m` of them, so a rotation making one
-component the identity leaves the others arbitrary. The default is
-`"none"`, which the measurement prefers on both axes it can be judged
-on. At a spread of smoothing parameters an adaptive really reaches –
-1.3e8, measured on mgcv – the condition number of the system solved is
-3.4e3 in the raw coordinates against 4.7e4 orthonormalized, and the
-components' scales, which decide whether the `m` smoothing parameters
-are comparable with one another, spread by a factor of 1.7 against 2.8.
+`reparam = "dr"` is rejected: the Demmler-Reinsch rotation diagonalizes
+the pencil of the Gram matrix against a single penalty, this family has
+`m` penalties, and a rotation that makes one component the identity
+leaves the others unspecified. The default is `"none"`, and
+`"orthonorm"` is also available.
 
-## The rank is the family's
+## The rank of the penalty
 
-Each \\S_i\\ is nearly all null space, its weight vanishing off the
-support of its own weight function: measured at `k = 40`, `m = 5`, the
-five components have null dimensions 20, 1, 1, 1 and 19 out of 38. The
-null space of the SUM is the intersection of theirs and does not move
-with the smoothing parameters, which is why the rank must be read from
-the components rather than from the assembled \\S(\lambda)\\. Measured,
-a rank counted off the assembled matrix reads 38, 38, 26 and 19 as one
-parameter is raised through 1, 1e6, 1e12 and 1e24, where the family's
-own is 38 throughout.
+Each \\S_i\\ has a large null space, made of the directions on which its
+weight function vanishes. The null space of the sum is the intersection
+of the null spaces of the components and does not depend on the
+smoothing parameters, so the rank is read from the components and not
+from the assembled \\S(\lambda)\\, whose numerical rank falls as one
+smoothing parameter grows and depends on the tolerance used.
 
 ## References
 

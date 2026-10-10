@@ -31,20 +31,18 @@ An S7 object of class
 
 ## Details
 
-It exists to be composed.
+This operator is meant to be composed.
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
-is this operator with a leading \\D\\, which is what puts the constant
-into the null space, so the two are related by `harmonic_operator(T, h)`
-being `deriv_operator(1) * oscillator_operator(T, h)` exactly, and a
-penalty that should leave a **linear trend** and a cycle alone rather
-than a level and a cycle is
-`deriv_operator(2) * oscillator_operator(T)`.
+is this operator with a leading \\D\\, which puts the constant into the
+null space, so the two are related by `harmonic_operator(T, h)` being
+`deriv_operator(1) * oscillator_operator(T, h)` exactly, and a penalty
+that should leave a **linear trend** and a cycle alone rather than a
+level and a cycle is `deriv_operator(2) * oscillator_operator(T)`.
 
 Composing with
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
 instead would raise the order by one and put an extra power of \\t\\ in
-the null space, which is why the factor is offered separately rather
-than left to be written out by hand.
+the null space, which is why this factor is offered separately.
 
 ## See also
 
@@ -63,18 +61,18 @@ oscillator_operator(365)
 
 # the null space is the fundamental alone: no constant
 operator_null(oscillator_operator(365))
-#>              label         rate       freq degree part
-#> 1 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin
-#> 2 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos
+#>              label rate       freq degree part
+#> 1 sin(0.0172142 t)    0 0.01721421      0  sin
+#> 2 cos(0.0172142 t)    0 0.01721421      0  cos
 
 # a linear trend and a yearly cycle, and nothing else
 op <- deriv_operator(2) * oscillator_operator(365)
 operator_null(op)
-#>              label         rate       freq degree part
-#> 1                1 0.000000e+00 0.00000000      0     
-#> 2                t 0.000000e+00 0.00000000      1     
-#> 3 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin
-#> 4 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos
+#>              label rate       freq degree part
+#> 1                1    0 0.00000000      0     
+#> 2                t    0 0.00000000      1     
+#> 3 sin(0.0172142 t)    0 0.01721421      0  sin
+#> 4 cos(0.0172142 t)    0 0.01721421      0  cos
 
 # the harmonic operator is this one with a leading derivative
 a <- operator_weights(deriv_operator(1) * oscillator_operator(365))

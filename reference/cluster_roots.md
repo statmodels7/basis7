@@ -2,8 +2,10 @@
 
 Clusters the output of
 [`base::polyroot()`](https://rdrr.io/r/base/polyroot.html) so that roots
-within `tol` of one another, relative to their own size, are read as one
-root of higher multiplicity.
+within `tol` of one another are read as one root of higher multiplicity.
+[`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+passes the roots of the polynomial scaled to unit root size, so that
+`tol` is relative to the size of the roots.
 
 ## Usage
 
@@ -15,11 +17,11 @@ cluster_roots(rt, tol)
 
 - rt:
 
-  The complex roots.
+  The complex roots, scaled to unit size.
 
 - tol:
 
-  The relative tolerance.
+  The tolerance.
 
 ## Value
 

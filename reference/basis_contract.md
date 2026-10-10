@@ -3,10 +3,10 @@
 Returns the values of the function a coefficient vector describes,
 \\B(x)\beta\\, computed without forming \\B(x)\\ in full where that is
 possible. For an ordinary basis it is the design matrix times the
-coefficients and there is nothing to save; for a
+coefficients; for a
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
-the design matrix has \\\prod_j K_j\\ columns, and avoiding it is what
-keeps a model of several variables affordable.
+the design matrix has \\\prod_j K_j\\ columns, and avoiding it keeps a
+model of several variables affordable.
 
 ## Usage
 
@@ -34,7 +34,7 @@ basis_contract(basis, x, coef, ...)
   an array of dimension `(K_1, ..., K_D)`, a vector of `basis@dimension`
   values in the design's own column order, or a list of `D` factor
   matrices each with `F` columns. A wrong length or a wrong set of
-  dimensions throws, naming what was wanted.
+  dimensions signals an error that states what is expected.
 
 - ...:
 
@@ -52,23 +52,21 @@ ordinary basis.
 ## Two shapes of coefficient
 
 An **array** of dimension \\(K_1, \ldots, K_D)\\ is the general case.
-The rows are processed in blocks of `block`, so the peak memory is the
-block's design in place of the whole one: at four margins of eight
-functions and 20000 points, 32 MB against 625 MB, measured, at the same
-speed (0.83 s against 1.00 s) and to an exact agreement.
+The rows are processed in blocks of `block`, so the peak memory is that
+of one block's design matrix instead of the whole one, and the values
+are those of the design-matrix product.
 
 A **list of factor matrices** \\\Gamma_j\\ of size \\K_j \times F\\ is
 the canonical polyadic form, in which the coefficient array is a sum of
 \\F\\ outer products. The value is then \\\sum_f \prod_j B_j(x_j)^\top
 \gamma\_{j,f}\\, costing \\O(nF\sum_j K_j)\\ in both time and memory:
-neither the design matrix nor the coefficient array is formed anywhere.
-On the same problem at \\F = 3\\ it is 0.03 s against 0.83.
+neither the design matrix nor the coefficient array is formed.
 
-That second shape is what brings a model with high-order interactions
-within reach, and what the factorized tensor product spline models of
-Ruegamer (2024) estimate. Choosing the factors is a modeling decision
-and belongs to the layer that owns the parameters; evaluating them is
-basis arithmetic and belongs here.
+The second shape makes a model with high-order interactions affordable,
+and is what the factorized tensor product spline models of Ruegamer
+(2024) estimate. The choice of the factors is a modeling decision made
+in the layer that owns the parameters; this function evaluates the
+factors it receives.
 
 ## An array and a vector are read differently
 
@@ -84,9 +82,9 @@ design's own column order. So a vector and an array holding the same
 numbers in the same storage order describe different functions, and the
 identity to check against is
 `basis_eval(b, x) %*% as.numeric(aperm(coef))`. Flattening without the
-[`aperm()`](https://rdrr.io/r/base/aperm.html) pairs every coefficient
-with the wrong function and returns a perfectly finite number: 1.16 on
-the example below.
+[`aperm()`](https://rdrr.io/r/base/aperm.html) pairs most coefficients
+with the wrong function and returns a finite value with no error, as the
+example below shows.
 
 ## References
 
@@ -114,7 +112,7 @@ max(abs(basis_contract(b, x, cf) -
         basis_eval(b, x) %*% as.numeric(aperm(cf))))
 #> [1] 0
 
-# Flattening without that gives a plausible wrong answer, not an error.
+# Flattening without that gives a wrong value and no error.
 max(abs(basis_contract(b, x, cf) - basis_eval(b, x) %*% as.numeric(cf)))
 #> [1] 1.162171
 
@@ -126,7 +124,7 @@ head(basis_contract(b, x, g))
 # And agrees with the array it stands for.
 full <- outer(g[[1]][, 1], g[[2]][, 1]) + outer(g[[1]][, 2], g[[2]][, 2])
 max(abs(basis_contract(b, x, g) - basis_contract(b, x, full)))
-#> [1] 1.110223e-16
+#> [1] 1.665335e-16
 
 # On an ordinary basis it is the design matrix times the coefficients.
 p <- poly_basis(dimension = 4)

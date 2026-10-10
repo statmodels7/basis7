@@ -2,9 +2,9 @@
 
 The B-spline smoother: `k` B-spline functions of degree `degree` over an
 interval, penalized by the integrated squared derivative of order
-`order`, rotated to the Demmler-Reinsch coordinates and carrying the
-unpenalized direction as a free column. It is the construction
-`modelterms7::s()` has always used, named as an object.
+`order`, rotated to the Demmler-Reinsch coordinates and, with the null
+space kept, carrying the unpenalized polynomial directions as free
+columns. It is the construction used by `modelterms7::s()`.
 
 ## Usage
 
@@ -27,9 +27,9 @@ bspline_smooth(
 
 - k:
 
-  The number of basis functions, a whole number of at least 3. Two
-  directions are removed by the constraint, so a smaller `k` leaves
-  nothing to smooth.
+  The number of basis functions, a whole number of at least `degree + 1`
+  and greater than the number of directions the constraint removes,
+  which is `order` by default.
 
 - degree:
 
@@ -47,32 +47,34 @@ bspline_smooth(
   or
   [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
   or a whole number `m` as the shorthand for `deriv_operator(m)`. It
-  says what a strongly penalized fit contracts toward, which for `m` is
-  a constant at 1, a straight line at 2 and a parabola at 3, and for any
-  operator is
-  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
-  A spline of degree `d` has no derivative above `d`, so an operator of
-  order above `degree` is rejected.
+  determines the functions toward which a strongly penalized fit
+  contracts: a constant for `m = 1`, a straight line for 2, a parabola
+  for 3, and the functions of
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+  for any operator. The derivatives of a spline of degree `d` vanish
+  above order `d`, so an operator of order above `degree` is rejected.
 
 - measure:
 
-  The measure the roughness is integrated against.
+  The measure against which the roughness is integrated.
 
 - constrain:
 
-  The directions the smooth is made orthogonal to. `NULL`, the default,
-  is the null space of the basis and the penalty together.
+  The directions to which the smooth is made orthogonal. `NULL`, the
+  default, is the null space of the penalty, the polynomials of degree
+  below `order`.
 
 - null_space:
 
-  What becomes of the directions the penalty does not see: `"keep"`
+  What happens to the directions that the penalty does not see: `"keep"`
   leaves them as free columns, `"drop"` removes them, `"shrink"`
-  penalizes them under the same smoothing parameter.
+  penalizes them under the same smoothing parameter with a weight of one
+  tenth.
 
 - reparam:
 
-  The coordinates the coefficients live in. `"dr"`, the default, is the
-  Demmler-Reinsch rotation.
+  The coordinates in which the coefficients are expressed. `"dr"`, the
+  default, is the Demmler-Reinsch rotation.
 
 - penalty:
 
@@ -82,9 +84,9 @@ bspline_smooth(
 
 - lower, upper:
 
-  The interval. `NULL`, the default for each, reads it from the data at
-  build; give both to fix it, which is what a prediction outside the
-  observed range needs.
+  The interval. `NULL`, the default for each, reads that endpoint from
+  the data at build. A given endpoint is fixed, as a prediction beyond
+  that end of the observed range requires.
 
 ## Value
 
@@ -104,27 +106,30 @@ performs, in order:
 
 1.  a
     [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
-    of `k` functions over the interval, which is `lower` and `upper`
-    when both are given and otherwise the range of the data padded by a
-    thousandth of its width;
+    of `k` functions over the interval, whose endpoints are `lower` and
+    `upper` where given and otherwise the ends of the range of the data,
+    padded by a thousandth of its width;
 
 2.  [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md),
-    which restricts the basis to the orthogonal complement of the
-    constant and the linear function over the observed values, then
+    which restricts the basis to the orthogonal complement, over the
+    observed values, of the polynomials of degree below `order` (the
+    constant and the linear function at the default `order = 2`), then
     diagonalizes the pencil of the empirical Gram matrix against the
     roughness matrix. The result is a basis whose columns are orthogonal
     over the data and ordered from the smoothest to the most
     oscillatory, and whose penalty is the identity;
 
-3.  with `null_space = "keep"`, the standardized covariate prepended as
-    a free column, so the penalty is `diag(0, 1, ..., 1)` and a strongly
-    penalized fit contracts to a straight line rather than to a
-    constant.
+3.  with `null_space = "keep"`, the polynomial directions of degree 1 to
+    `order - 1` prepended as free columns. At the default `order = 2`
+    this is the standardized covariate, so the penalty is
+    `diag(0, 1, ..., 1)` and a strongly penalized fit contracts to a
+    straight line and not to a constant.
 
-A basis of `k` functions therefore gives `k - 1` columns when the null
-space is kept and `k - 2` when it is dropped: the constraint against the
-constant and the linear function removes two directions, and the free
-column adds one back.
+At the default `order = 2`, a basis of `k` functions therefore gives
+`k - 1` columns when the null space is kept and `k - 2` when it is
+dropped: the constraint removes two directions, and the free column adds
+one back. At order \\m\\ the constraint removes \\m\\ directions and a
+kept null space restores \\m - 1\\ of them.
 
 ## What `order` means
 
@@ -182,7 +187,7 @@ out$unpenalized
 round(cor(out$X[, 1], x), 12)
 #> [1] 1
 max(abs(crossprod(out$X[, 1], out$X[, -1])))
-#> [1] 2.198242e-14
+#> [1] 5.551115e-15
 
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
@@ -209,6 +214,6 @@ try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
 
 # 'k' must leave something after the constraint.
 try(bspline_smooth(k = 2))
-#> Error : 'k' (2) is too small for 'degree' (3): a B-spline basis of degree m
-#>   needs at least m + 1 functions.
+#> Error : 'k' (2) is too small for 'degree' (3): a B-spline basis of degree 3
+#>   needs at least 4 functions.
 ```

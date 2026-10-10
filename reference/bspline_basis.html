@@ -15,7 +15,7 @@ conditioning does not deteriorate as the dimension grows."><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@ conditioning does not deteriorate as the dimension grows.</p>
 <dl><dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
 <dd><p>The endpoints of the interval, each a single finite
 number with <code>lower &lt; upper</code>. Default \([0, 1]\). They are the boundary
-knots, and evaluating outside them throws.</p></dd>
+knots, and evaluating outside them signals an error.</p></dd>
 
 
 <dt id="arg-dimension">dimension<a class="anchor" aria-label="anchor" href="#arg-dimension"></a></dt>
@@ -91,26 +91,27 @@ names <code>bs1</code>, <code>bs2</code>, and so on.</p>
     <div class="section level2">
     <h2 id="dimension-degree-and-knots">Dimension, degree and knots<a class="anchor" aria-label="anchor" href="#dimension-degree-and-knots"></a></h2>
     <p>A basis of \(K\) functions of degree \(m\) has \(K - m - 1\)
-interior knots, so \(K \ge m + 1\); a smaller <code>dimension</code> throws, naming
-both numbers. At equality there is no interior knot and the basis is the
+interior knots, so \(K \ge m + 1\); a smaller <code>dimension</code> signals an
+error that states both numbers. At equality there is no interior knot and the basis is the
 polynomials of degree \(m\) on the whole interval, which it spans
 exactly. The knots are <code>seq(lower, upper, length.out = K - m + 1)</code> with the
-endpoints dropped, so they are equally spaced; a quantile placement is not
-offered, and a caller wanting one can build the class directly.</p>
+endpoints dropped, so they are equally spaced. A quantile placement is not
+offered by the constructor, and is obtained by building the class
+directly.</p>
 <p><code>degree = 0</code> gives indicator functions of the knot intervals, a step basis,
 and <code>degree = 1</code> the piecewise linear hat functions.</p>
     </div>
     <div class="section level2">
-    <h2 id="the-basis-is-complete">The basis is complete<a class="anchor" aria-label="anchor" href="#the-basis-is-complete"></a></h2>
+    <h2 id="a-complete-basis">A complete basis<a class="anchor" aria-label="anchor" href="#a-complete-basis"></a></h2>
     <p>All <code>dimension</code> functions are kept, so the rows of <code><a href="basis_eval.html">basis_eval()</a></code> sum to
 one and the basis spans the constant. Beside an intercept the design is
-therefore rank deficient by one. Dropping a function is a linear
-transformation of the basis: use <code><a href="constrain_basis.html">constrain_basis()</a></code>, which keeps the
-object a basis, and leave the choice of constraint to whatever owns the
-meaning of the term.</p>
+therefore rank deficient by one. Removing a direction is a linear
+transformation of the basis, carried out by <code><a href="constrain_basis.html">constrain_basis()</a></code>, which
+keeps the object a basis; the choice of constraint belongs to the layer
+that gives the term its meaning.</p>
     </div>
     <div class="section level2">
-    <h2 id="where-each-quantity-comes-from">Where each quantity comes from<a class="anchor" aria-label="anchor" href="#where-each-quantity-comes-from"></a></h2>
+    <h2 id="computation-of-each-quantity">Computation of each quantity<a class="anchor" aria-label="anchor" href="#computation-of-each-quantity"></a></h2>
     <p><code><a href="basis_eval.html">basis_eval()</a></code>, <code><a href="basis_deriv.html">basis_deriv()</a></code> and <code><a href="basis_int.html">basis_int()</a></code> call
 <code><a href="https://wwenjie.org/splines2/reference/bSpline.html" class="external-link">splines2::bSpline()</a></code>, which evaluates the recurrence and its exact
 derivative and integral. The Gram matrix is integrated in this package,
@@ -172,7 +173,7 @@ penalized fit uses; <code><a href="basis_gram.html">basis_gram()</a></code> for 
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">40</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lmfit.html" class="external-link">lm.fit</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">p</span>, <span class="va">x</span><span class="op">)</span>, <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">$</span><span class="va">fitted.values</span> <span class="op">-</span> <span class="va">x</span><span class="op">^</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.745023e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.389027e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Degree 0 gives indicators of the knot intervals.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="fu">bspline_basis</span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">4</span>, degree <span class="op">=</span> <span class="fl">0</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">0.3</span>, <span class="fl">0.6</span>, <span class="fl">0.9</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -182,7 +183,8 @@ penalized fit uses; <code><a href="basis_gram.html">basis_gram()</a></code> for 
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]   0   0   1   0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]   0   0   0   1</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Too few functions for the degree is refused, with both numbers named.</span></span></span>
+<span class="r-in"><span><span class="co"># Too few functions for the degree signal an error that states both</span></span></span>
+<span class="r-in"><span><span class="co"># numbers.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">bspline_basis</span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">3</span>, degree <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error : 'dimension' (3) is too small for 'degree' (3): a B-spline basis of degree m needs at least m + 1 functions.</span>
 <span class="r-in"><span></span></span>

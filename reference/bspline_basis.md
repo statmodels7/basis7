@@ -18,7 +18,7 @@ bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 
   The endpoints of the interval, each a single finite number with
   `lower < upper`. Default \\\[0, 1\]\\. They are the boundary knots,
-  and evaluating outside them throws.
+  and evaluating outside them signals an error.
 
 - dimension:
 
@@ -46,28 +46,29 @@ and `boundary_knots`, and column names `bs1`, `bs2`, and so on.
 ## Dimension, degree and knots
 
 A basis of \\K\\ functions of degree \\m\\ has \\K - m - 1\\ interior
-knots, so \\K \ge m + 1\\; a smaller `dimension` throws, naming both
-numbers. At equality there is no interior knot and the basis is the
-polynomials of degree \\m\\ on the whole interval, which it spans
+knots, so \\K \ge m + 1\\; a smaller `dimension` signals an error that
+states both numbers. At equality there is no interior knot and the basis
+is the polynomials of degree \\m\\ on the whole interval, which it spans
 exactly. The knots are `seq(lower, upper, length.out = K - m + 1)` with
-the endpoints dropped, so they are equally spaced; a quantile placement
-is not offered, and a caller wanting one can build the class directly.
+the endpoints dropped, so they are equally spaced. A quantile placement
+is not offered by the constructor, and is obtained by building the class
+directly.
 
 `degree = 0` gives indicator functions of the knot intervals, a step
 basis, and `degree = 1` the piecewise linear hat functions.
 
-## The basis is complete
+## A complete basis
 
 All `dimension` functions are kept, so the rows of
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
 sum to one and the basis spans the constant. Beside an intercept the
-design is therefore rank deficient by one. Dropping a function is a
-linear transformation of the basis: use
+design is therefore rank deficient by one. Removing a direction is a
+linear transformation of the basis, carried out by
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
-which keeps the object a basis, and leave the choice of constraint to
-whatever owns the meaning of the term.
+which keeps the object a basis; the choice of constraint belongs to the
+layer that gives the term its meaning.
 
-## Where each quantity comes from
+## Computation of each quantity
 
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
@@ -142,7 +143,7 @@ length(p@basis_params$knots)
 #> [1] 0
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 1.745023e-16
+#> [1] 5.389027e-16
 
 # Degree 0 gives indicators of the knot intervals.
 basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
@@ -152,7 +153,8 @@ basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
 #> [3,]   0   0   1   0
 #> [4,]   0   0   0   1
 
-# Too few functions for the degree is refused, with both numbers named.
+# Too few functions for the degree signal an error that states both
+# numbers.
 try(bspline_basis(dimension = 3, degree = 3))
 #> Error : 'dimension' (3) is too small for 'degree' (3): a B-spline basis of degree m needs at least m + 1 functions.
 ```

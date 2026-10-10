@@ -11,7 +11,7 @@ cos2, and anything else keeps a syntactically safe form of its label."><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,9 +68,9 @@ functions that were restored.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The number is the rank of the frequency among those restored, not the
 frequency itself, so the columns of a two-harmonic smooth read <code>sin1</code>,
-<code>cos1</code>, <code>sin2</code>, <code>cos2</code> and match what a reader of a Fourier basis
-expects. A column from a real root keeps its label, <code>t</code> and <code>t^2</code>
-passing through <code><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names()</a></code> as they stand.</p>
+<code>cos1</code>, <code>sin2</code>, <code>cos2</code>, as the columns of a Fourier basis do. A column
+from a real root keeps its label after <code><a href="https://rdrr.io/r/base/make.names.html" class="external-link">make.names()</a></code>, so <code>t</code> stays <code>t</code>
+and <code>t^2</code> becomes <code>t.2</code>.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

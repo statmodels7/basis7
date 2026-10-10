@@ -4,7 +4,11 @@ Builds a table of \\P_0, \ldots, P\_{k-1}\\ evaluated at `t` on \\\[-1,
 1\]\\, one column per polynomial, from the three-term recurrence
 \$\$(n+1) P\_{n+1}(t) = (2n+1)\\ t\\ P_n(t) - n\\ P\_{n-1}(t),\$\$
 seeded with \\P_0 = 1\\ and \\P_1 = t\\. Used by
+[`legendre_deriv()`](https://statmodels7.github.io/basis7/reference/legendre_deriv.md),
+and through it by
 [`basis_eval.PolyBasis()`](https://statmodels7.github.io/basis7/reference/basis_eval.PolyBasis.md)
+and
+[`basis_deriv.PolyBasis()`](https://statmodels7.github.io/basis7/reference/basis_deriv.PolyBasis.md),
 and, at one extra column, by
 [`basis_int.PolyBasis()`](https://statmodels7.github.io/basis7/reference/basis_int.PolyBasis.md).
 

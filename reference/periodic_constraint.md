@@ -1,6 +1,6 @@
 # The Periodicity Constraint of a Spline Basis
 
-Returns the matrix whose rows say that a function of `basis` and its
+Returns the matrix whose rows state that a function of `basis` and its
 first `degree - 1` derivatives take the same value at the two ends of
 the interval: row \\j\\ is \\B^{(j)}(a) - B^{(j)}(b)\\ for \\j = 0,
 \ldots, d - 1\\. Its null space is the periodic splines, which is what

@@ -2,8 +2,8 @@
 
 ## Bases
 
-The families the package ships. Each is complete: all its functions are
-kept, so restricting one is a separate, deliberate step.
+The families the package ships. Each holds all its functions, and
+restricting one is a separate step.
 
 - [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
   : Construct a B-Spline Basis
@@ -29,11 +29,11 @@ share one class.
 
 ## Smoothers
 
-A smoother carries the four decisions a penalized smooth is made of –
-the basis, the penalty, the null space and the reparametrization – as
-one object, because the null space is a property of the basis and the
-penalty together rather than of either alone. Built at the covariate, it
-returns the block and the penalty matrix.
+A smoother carries the four choices a penalized smooth is made of (the
+basis, the penalty, the treatment of the null space and the
+reparametrization) as one object, because the null space is a property
+of the basis and the penalty together. Built at the covariate, it
+returns the design block and the penalty matrix.
 
 - [`smoother()`](https://statmodels7.github.io/basis7/reference/smoother.md)
   : A Smoother: the Four Decisions of a Penalized Smooth
@@ -54,10 +54,10 @@ returns the block and the penalty matrix.
 - [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
   : A Smoother's Block at New Values
 - [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
-  : The Basis a Smoother Builds On
+  : The Basis of a Smoother
 - [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
   [`smoother_span_apply()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-  : What a Smoother Removes and What It Gives Back
+  : Constraint and Free Columns of a Smoother
 - [`BsplineSmoother()`](https://statmodels7.github.io/basis7/reference/BsplineSmoother.md)
   : The B-Spline Smoother Class
 - [`FourierSmoother()`](https://statmodels7.github.io/basis7/reference/FourierSmoother.md)
@@ -114,8 +114,10 @@ the functions a maximal penalty leaves untouched.
 
 ## The interface
 
-What every basis answers. A subclass must implement only the first; the
-rest have numerical methods on the base class.
+The generics every basis has methods for. A subclass must implement only
+[`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md).
+The base class supplies numerical methods for the derivatives, the
+integral and the Gram matrices, and default column names.
 
 - [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
   : Evaluate a Basis
@@ -152,8 +154,12 @@ rest have numerical methods on the base class.
 
 ## Internals
 
-Exported for anyone writing a basis of their own: the numerical
-machinery the fallbacks are built from, documented rather than hidden.
+The methods registered on the generics and the numerical machinery the
+fallbacks are built from, documented for anyone writing a basis of their
+own. Apart from
+[`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md),
+the functions listed here are not exported and are reached with
+`basis7:::`.
 
 - [`print.basis`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   : Print a Basis
@@ -180,13 +186,13 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`new_transformed()`](https://statmodels7.github.io/basis7/reference/new_transformed.md)
   : Build a Transformed Basis
 - [`chol_pd()`](https://statmodels7.github.io/basis7/reference/chol_pd.md)
-  : Cholesky Factorization, With the Rank Decided Before It
+  : Cholesky Factor with a Positive-Definiteness Test
 - [`empirical_gram()`](https://statmodels7.github.io/basis7/reference/empirical_gram.md)
   : Gram Matrix Against the Empirical Measure
 - [`weighted_gram()`](https://statmodels7.github.io/basis7/reference/weighted_gram.md)
   : Gram Matrix Against a Weighted Lebesgue Measure
 - [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
-  : A Finite-Difference Reference, and Where It Can Be Trusted
+  : A Finite-Difference Reference and Its Uncertainty
 - [`tensor_design()`](https://statmodels7.github.io/basis7/reference/tensor_design.md)
   : The Row-Wise Kronecker Product of the Marginal Designs
 - [`marginal_designs()`](https://statmodels7.github.io/basis7/reference/marginal_designs.md)
@@ -207,7 +213,7 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md)
   : Validate a Derivative Order
 - [`smoother_interval()`](https://statmodels7.github.io/basis7/reference/smoother_interval.md)
-  : The Interval a Smoother Expands Over
+  : The Interval of a Smoother
 - [`check_smoother_x()`](https://statmodels7.github.io/basis7/reference/check_smoother_x.md)
   : Check a Smoother's Covariate
 - [`check_whole()`](https://statmodels7.github.io/basis7/reference/check_whole.md)
@@ -215,13 +221,17 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`check_interval()`](https://statmodels7.github.io/basis7/reference/check_interval.md)
   : Check a Smoother's Interval Arguments
 - [`check_available()`](https://statmodels7.github.io/basis7/reference/check_available.md)
-  : Check What a Smoother Asks For Against What Is Built
+  : Check the Settings of a Smoother Against Each Other
 - [`check_measure()`](https://statmodels7.github.io/basis7/reference/check_measure.md)
   : Check a Smoother's Measure
 - [`check_constrain()`](https://statmodels7.github.io/basis7/reference/check_constrain.md)
   : Check a Polynomial Family's Constraint Argument
+- [`check_periodic_size()`](https://statmodels7.github.io/basis7/reference/check_periodic_size.md)
+  : Check That a Periodic Basis Is Wider Than What the Operator Removes
+- [`reject_quadrature()`](https://statmodels7.github.io/basis7/reference/reject_quadrature.md)
+  : Reject Quadrature Settings on an Exact Route
 - [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
-  : The Roughness Matrix a Smoother Penalizes With
+  : The Roughness Matrix of a Smoother
 - [`poly_free()`](https://statmodels7.github.io/basis7/reference/poly_free.md)
   : The Free Columns of a Polynomial Null Space
 - [`poly_free_apply()`](https://statmodels7.github.io/basis7/reference/poly_free_apply.md)
@@ -229,15 +239,15 @@ machinery the fallbacks are built from, documented rather than hidden.
 - [`free_names()`](https://statmodels7.github.io/basis7/reference/free_names.md)
   : The Names of the Free Columns
 - [`shrink_weight()`](https://statmodels7.github.io/basis7/reference/shrink_weight.md)
-  : The Weight a Shrunk Null Space Carries
+  : The Weight of a Shrunk Null Space
 - [`smoother_reparam()`](https://statmodels7.github.io/basis7/reference/smoother_reparam.md)
-  : The Coordinates a Smoother's Coefficients Live In
+  : The Coordinates of the Coefficients of a Smoother
 - [`over_penalty()`](https://statmodels7.github.io/basis7/reference/over_penalty.md)
   : One Operation on a Penalty, However Many Components It Has
 - [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
   : Name the Columns of a Basis Matrix
 - [`basis_partitions_unity()`](https://statmodels7.github.io/basis7/reference/basis_partitions_unity.md)
-  : Does This Basis Sum to One?
+  : Whether a Basis Is a Partition of Unity
 - [`rel_close()`](https://statmodels7.github.io/basis7/reference/rel_close.md)
   : Compare Two Matrices Relative to Their Own Magnitude
 - [`print_basis_checks()`](https://statmodels7.github.io/basis7/reference/print_basis_checks.md)

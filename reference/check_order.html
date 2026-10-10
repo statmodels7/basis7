@@ -13,7 +13,7 @@ same errors in the same words."><meta property="og:image" content="https://statm
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,19 +74,21 @@ Default <code>1</code>.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Anything failing the first test throws
+    <p>Anything failing the first test signals the error
 <code>'order' must be a non-negative integer.</code>; that covers a negative value, a
 fraction, an infinity, an <code>NA</code> and a non-numeric.</p>
 <p>A vector of length <code>nvar</code> is returned as it stands, and a single <code>0</code> is
 repeated to that length. For a basis of several variables a single
-<strong>non-zero</strong> order throws with a longer message, because a scalar has two
-readings there: that order in every coordinate, or that total order.
-Choosing one silently would fit a different model from the one the caller
-wrote. Zero is exempt, meaning no derivative under either reading.</p>
+<strong>non-zero</strong> order signals an error, because a scalar has two readings
+there: that order in every coordinate, or that total order. Zero is exempt,
+meaning no derivative under either reading. A vector of any other length
+signals an error naming the length expected.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="basis_deriv.html">basis_deriv()</a></code> and <code><a href="basis_gram.html">basis_gram()</a></code>, its two callers.</p></div>
+    <div class="dont-index"><p><code><a href="basis_deriv.html">basis_deriv()</a></code>, <code><a href="basis_gram.html">basis_gram()</a></code> and <code><a href="orthonorm_basis.html">orthonorm_basis()</a></code>, its
+callers, together with <code><a href="numerical_gram.html">numerical_gram()</a></code> and the Gram method of a
+tensor basis.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

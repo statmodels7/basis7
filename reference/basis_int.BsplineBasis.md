@@ -37,7 +37,7 @@ no quadrature anywhere.
 
 The row at `basis@upper` holds the area under each function. Because the
 basis is a partition of unity, those areas sum to the width of the
-interval, which is a cheap check that the two conventions agree.
+interval.
 
 ## See also
 

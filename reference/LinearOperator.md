@@ -1,8 +1,8 @@
 # The Linear Differential Operator Class
 
 A linear differential operator with constant coefficients, \$\$L x = w_0
-x + w_1 Dx + \cdots + w\_{m-1} D^{m-1} x + D^m x,\$\$ which a smoother
-uses to say what its penalty measures. The leading coefficient is 1 by
+x + w_1 Dx + \cdots + w\_{m-1} D^{m-1} x + D^m x,\$\$ which specifies
+what the penalty of a smoother measures. The leading coefficient is 1 by
 construction, so an operator is determined by the weights \\w_0, \ldots,
 w\_{m-1}\\ and by nothing else.
 
@@ -39,24 +39,28 @@ An S7 object of class `LinearOperator`.
 
 ## Details
 
-Build one with
+An operator is built with
 [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
-[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
+[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
+[`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
 or
 [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
-and compose two with `*`. The properties are not meant to be read
-directly:
+and two are composed with `*`. The properties are read through the
+accessors
 [`operator_order()`](https://statmodels7.github.io/basis7/reference/operator_order.md),
 [`operator_weights()`](https://statmodels7.github.io/basis7/reference/operator_weights.md)
 and
+[`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
+For an operator whose period is still to be resolved, the weights are
+`NA` and
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-are the accessors, and they answer for an operator whose period is still
-to be resolved where reading the property would not.
+signals an error.
 
 ## See also
 
 [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
-[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
+[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
+[`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
 and
 [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
 which build one;

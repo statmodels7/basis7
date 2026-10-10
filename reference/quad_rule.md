@@ -25,7 +25,7 @@ quad_rule(breaks, n)
 ## Value
 
 A list of two numeric vectors of length `n * (length(breaks) - 1)`:
-`nodes` and `weights`, ordered interval by interval.
+`nodes` and `weights`, in the order described above.
 
 ## Details
 
@@ -38,9 +38,10 @@ care:
 uses the knots, so no interval straddles the point where a spline's
 derivative jumps.
 
-Nothing is validated. `breaks` must be increasing and of length at least
-two; the nodes come out in interval order, which is increasing when the
-breaks are.
+The function does not validate its arguments. `breaks` must be
+increasing and of length at least two. The nodes are ordered by their
+position within the rule and then by interval: the first node of every
+interval comes first, then the second node of every interval, and so on.
 
 ## See also
 

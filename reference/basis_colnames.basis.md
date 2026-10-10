@@ -1,15 +1,10 @@
 # Default Column Names
 
 Numbers the basis functions after the family, taking the first two
-characters of `@basis_name` and appending `1` to `@dimension`:
-`bs1 ... bs6` for a B-spline, `on1 ... on5` for an orthonormalized
-basis. The method every class inherits unless it registers one of its
-own, as
-[`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md),
-[`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md)
-and
-[`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
-do.
+characters of `@basis_name` and appending the numbers from 1 to
+`@dimension`: `bs1 ... bs6` for a B-spline. Every class inherits this
+method unless it registers its own, as the Fourier, Legendre, tensor and
+transformed bases do.
 
 ## Arguments
 
@@ -28,11 +23,10 @@ A character vector of length `basis@dimension`.
 
 ## Details
 
-Two characters is enough to tell the families apart at a glance in a
-coefficient table without making the names long. Nothing depends on the
-names being distinct across bases, and a model combining two B-spline
-blocks will see `bs1` twice unless whatever assembles the design
-disambiguates them.
+Two characters tell the families apart in a coefficient table without
+making the names long. The names are not distinct across bases: a model
+that combines two B-spline blocks has `bs1` twice, unless the code that
+assembles the design distinguishes them.
 
 ## See also
 

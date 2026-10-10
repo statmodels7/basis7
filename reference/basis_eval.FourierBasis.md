@@ -30,10 +30,10 @@ with column names `const`, `sin1`, `cos1`, and so on.
 
 ## Details
 
-Cost is two [`sin()`](https://rdrr.io/r/base/Trig.html) and
-[`cos()`](https://rdrr.io/r/base/Trig.html) calls per frequency per
-point, with no recurrence and no accumulation, so a high frequency is
-evaluated as accurately as a low one. Missing points give missing rows.
+Each frequency costs one call of
+[`sin()`](https://rdrr.io/r/base/Trig.html) and one of
+[`cos()`](https://rdrr.io/r/base/Trig.html) per point, with no
+recurrence over the frequencies. Missing points give missing rows.
 
 ## See also
 

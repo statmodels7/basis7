@@ -3,8 +3,8 @@
 Evaluates the construction recorded by
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
 at new covariate values. The basis, the constraint and the
-reparametrization are the ones computed on the original data: nothing is
-recomputed from `newx`.
+reparametrization are those computed on the original data and are not
+recomputed at `newx`; only the functions are evaluated there.
 
 ## Usage
 
@@ -36,7 +36,7 @@ smoother_apply(sm, blueprint, newx, ...)
 ## Value
 
 A numeric matrix of `length(newx)` rows and as many columns as the block
-the blueprint came from, with no dimnames.
+from which the blueprint came, with no dimnames.
 
 ## See also
 

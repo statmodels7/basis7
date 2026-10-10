@@ -1,9 +1,9 @@
 # Gram Matrix of a Transformed Basis
 
 Returns the congruence \\T^\top G\\T\\ of the parent's Gram matrix. A
-parent whose inner products are exact passes that exactness on, so an
-orthonormalized B-spline has an exactly diagonal Gram matrix and no
-quadrature is run anywhere.
+parent whose inner products are exact passes that exactness on, so the
+Gram matrix of an orthonormalized B-spline is the identity up to
+rounding and no quadrature is run.
 
 ## Arguments
 
@@ -38,15 +38,13 @@ on both margins.
 
 ## Details
 
-The congruence preserves symmetry and positive semidefiniteness, and can
-only lower the rank, by at most `nrow(T) - ncol(T)`. The result is
-symmetrized as `(G + t(G))/2` before it is returned, the two orderings
-of a triple product differing in their last bits.
+The congruence preserves symmetry and positive semidefiniteness, and its
+rank is at most the smaller of the rank of \\G\\ and `ncol(T)`. The
+result is symmetrized as `(G + t(G))/2` before it is returned.
 
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
-is exact for this reason: it chooses \\T\\ so that \\T^\top G\\T\\ is
-the identity, and the check `basis_gram(orthonorm_basis(b))` returns it
-to 4.4e-16 on a cubic B-spline.
+relies on this: it chooses \\T\\ so that \\T^\top G\\T\\ is the
+identity.
 
 ## See also
 

@@ -28,21 +28,14 @@ A single `TRUE` or `FALSE`.
 
 Identity is tried first, being the usual case and costing nothing, and
 the name and package are compared when it fails. The second test is
-necessary: [`identical()`](https://rdrr.io/r/base/identical.html) on an
-S7 class is object identity, so it is `FALSE` for a class re-created
-from the same definition, and that is what happens whenever a package's
-code is evaluated instead of loaded. Coverage tools do exactly that, so
-an identity-only test passes every ordinary check and fails under `covr`
-alone.
-
-The same defect in `linkfunctions7` made every fallback differentiate
-the order below it, and the log link's fourth derivative came back wrong
-by a factor of 900 while the whole five-platform check matrix stayed
-green.
+needed because [`identical()`](https://rdrr.io/r/base/identical.html)
+can return `FALSE` for a class re-created from the same definition,
+which happens when the code of a package is evaluated instead of loaded,
+as coverage tools do.
 
 ## See also
 
 [`route_by_owner()`](https://statmodels7.github.io/basis7/reference/route_by_owner.md),
 its only caller, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md),
-which that answers for.
+which relies on it.

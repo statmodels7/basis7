@@ -16,8 +16,9 @@ gauss_legendre(n)
 - n:
 
   The number of nodes, a single positive whole number. `1` returns the
-  midpoint rule directly. `n < 1` throws
-  `'n' must be a positive integer.`
+  midpoint rule directly. Any other value signals an error, which
+  reaches the user through the `nodes` argument of the quadrature
+  routines.
 
 ## Value
 
@@ -32,10 +33,9 @@ off-diagonal \\i/\sqrt{4i^2 - 1}\\, and the weights are twice the square
 of the first component of each eigenvector. The weights sum to 2, the
 length of the interval.
 
-They are computed at call time, which keeps every node count available.
-That is what the exact spline rules need: one rule per knot interval,
-sized from the degree and the derivative order, where a table would
-offer only the counts someone thought to tabulate.
+They are computed at call time, so every node count is available. The
+exact spline rules need this, one rule per knot interval sized from the
+degree and the derivative order, which a fixed table could not cover.
 
 ## References
 

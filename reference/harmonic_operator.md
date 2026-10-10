@@ -31,21 +31,18 @@ harmonic_operator(period = NULL, harmonics = 1)
 An S7 object of class
 [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md).
 
-## Why a periodic basis wants it
+## Use with periodic data
 
-The derivative operator asks a fit to contract toward a straight line,
-and a straight line is not what a cyclic phenomenon simplifies to: it is
-not even periodic. What a seasonal series contracts to is its
-fundamental harmonic, a constant level plus one sine and one cosine of
-the period, and this is the operator that leaves exactly that alone.
+A penalty on the second derivative makes a fit contract toward a
+straight line, which is not periodic. The natural limit of a seasonal
+series is its fundamental harmonic, a constant level plus one sine and
+one cosine of the period, and this operator leaves exactly those
+functions unpenalized.
 
-The difference is visible in the fit rather than only in the algebra. On
-300 observations of a truth \\2 + 1.5\sin\nu t + \cos\nu t + 0.35\sin
-3\nu t\\, at a smoothing parameter large enough to flatten the higher
-harmonics, the fit under \\D^2\\ has fallen to a standard deviation of
-0.745 and a fundamental amplitude of 1.053 against a true 1.803, while
-the fit under this operator keeps 1.271 and 1.795 and is a pure sinusoid
-to 3.9e-08.
+The two penalties also give different fits. With a smoothing parameter
+large enough to flatten the higher harmonics, the fit under \\D^2\\
+loses much of the amplitude of the fundamental, whereas the fit under
+this operator keeps it and is a sinusoid.
 
 ## The period
 
@@ -57,8 +54,11 @@ smoother the operator is given to, which is what
 [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
 does by default;
 [`operator_resolve()`](https://statmodels7.github.io/basis7/reference/operator_resolve.md)
-is what fills it in, and the accessors report an unresolved operator as
-such rather than guessing.
+fills it in. For an unresolved operator
+[`operator_weights()`](https://statmodels7.github.io/basis7/reference/operator_weights.md)
+returns `NA` and
+[`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+signals an error.
 
 ## References
 
@@ -84,10 +84,10 @@ harmonic_operator(365)
 
 # the null space is the constant and the fundamental
 operator_null(harmonic_operator(365))
-#>              label         rate       freq degree part
-#> 1                1 0.000000e+00 0.00000000      0     
-#> 2 sin(0.0172142 t) 1.577722e-30 0.01721421      0  sin
-#> 3 cos(0.0172142 t) 1.577722e-30 0.01721421      0  cos
+#>              label rate       freq degree part
+#> 1                1    0 0.00000000      0     
+#> 2 sin(0.0172142 t)    0 0.01721421      0  sin
+#> 3 cos(0.0172142 t)    0 0.01721421      0  cos
 
 # two harmonics left free instead of one
 harmonic_operator(365, harmonics = 2)

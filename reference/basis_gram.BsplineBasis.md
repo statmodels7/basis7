@@ -3,8 +3,7 @@
 Returns the inner products of the `order`-th derivatives exactly, by
 integrating over one knot interval at a time with a Gauss-Legendre rule
 sized so that it reproduces the integrand exactly. This is the matrix a
-roughness penalty on a spline is built from, so its exactness is worth
-the small amount of work.
+roughness penalty on a spline is built from.
 
 ## Arguments
 
@@ -29,6 +28,7 @@ the small amount of work.
 - ...:
 
   Unused, and accepted so that the signature matches the generic's.
+  `panels` or `nodes` signals an error, the matrix being exact.
 
 ## Value
 
@@ -36,25 +36,21 @@ A symmetric numeric matrix of `basis@dimension` rows and columns, with
 column names `bs1`, `bs2`, and so on. Banded, entry \\(a, b)\\ being
 zero whenever the two supports do not overlap.
 
-## Why it is exact
+## Exactness
 
 On one knot interval the order-\\d\\ derivative of a spline of degree
 \\m\\ is a polynomial of degree \\m - d\\, so the integrand \\B_a^{(d)}
 B_b^{(d)}\\ has degree \\2(m - d)\\. A Gauss-Legendre rule with \\m -
 d + 1\\ nodes is exact to degree \\2(m - d) + 1\\, which is one higher,
-so the only error left is floating point. Against the same knot-aligned
-construction run at 20 nodes instead, the worst entry agrees to 3.1e-16,
-2.1e-14, 8.0e-13 and 7.3e-12 at orders 0 to 3 on a cubic basis of six
-functions.
+so the only error left is rounding.
 
 The breaks are the boundary knots and the interior knots, so no panel
-straddles a knot, and the exactness claim rests on that: at `order = m`
-the derivative is a step function, and a rule spanning a knot would
-integrate the wrong thing. Measured on the same basis, the general
-`weight` route of
-[`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md),
-whose 50 equal panels do not line up with the knots, is out by 1.4e-3 at
-order 2 and by 65 at order 3.
+straddles a knot, and the exactness depends on that: at `order = m` the
+derivative is a step function, which a rule spanning a knot does not
+integrate exactly. The `weight` route of
+[`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+uses equal panels that do not line up with the knots, and is therefore
+approximate for a spline.
 
 ## Above the degree
 

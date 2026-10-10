@@ -11,8 +11,9 @@ exists as the class the Legendre methods dispatch on: every one of
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 and
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
-has a closed-form method registered here, so nothing about a Legendre
-basis is computed by finite differences.
+has an exact method registered here, so nothing about a Legendre basis
+is computed by finite differences. The Gram matrix above order zero is a
+Gauss-Legendre quadrature that is exact for the polynomials involved.
 
 ## Usage
 
@@ -32,8 +33,9 @@ PolyBasis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -51,8 +53,8 @@ PolyBasis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.

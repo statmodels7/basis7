@@ -30,7 +30,8 @@ A character vector of length `basis@dimension`.
 ## Details
 
 The default method takes the first two characters of `@basis_name` and
-appends `1` to `@dimension`, giving `bs1 ... bs6` for a B-spline.
+appends the numbers from 1 to `@dimension`, giving `bs1 ... bs6` for a
+B-spline.
 [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md)
 and
 [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md)
@@ -41,14 +42,14 @@ A wrapper numbers its own columns under a short prefix, so an
 orthonormalized basis reads `on1 ... on5`. A
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
 pastes its margins' names, one term per pair, as `bs1.const`,
-`bs1.sin1`, `bs2.const`, so a coefficient's name says which marginal
-function it belongs to in each variable.
+`bs1.sin1`, `bs2.const`, so the name of a coefficient gives its marginal
+function in each variable.
 
-Overriding it is how a subclass gives its columns meaning. The method
-must return exactly `basis@dimension` strings;
+A subclass gives its columns meaningful names by overriding the method,
+which must return exactly `basis@dimension` strings;
 [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
-sets them without checking, so a shorter vector is recycled by R and
-silently mislabels.
+assigns them with `colnames<-`, and a vector of another length signals
+an error.
 
 ## See also
 

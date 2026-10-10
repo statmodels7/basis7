@@ -15,7 +15,7 @@ Gram matrix against."><meta property="og:image" content="https://statmodels7.git
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,7 +68,7 @@ Gram matrix against.</p>
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
 <dd><p>The derivative order, default <code>0</code>. Passed through
 <code><a href="check_order.html">check_order()</a></code>, so a single non-zero order on a basis of several
-variables throws.</p></dd>
+variables signals an error.</p></dd>
 
 
 <dt id="arg-panels">panels<a class="anchor" aria-label="anchor" href="#arg-panels"></a></dt>
@@ -91,12 +91,11 @@ with <code><a href="basis_colnames.html">basis_colnames()</a></code> on both mar
     <p>The interval is cut into <code>panels</code> equal pieces with an <code>nodes</code>-point rule
 on each, and the matrix is formed as a crossproduct of
 \(\sqrt{w_i}\,B^{(d)}(t_i)\), which keeps it positive semidefinite
-whatever the integrand does. It is then symmetrized as <code>(G + t(G))/2</code>, the
-two triangles of a crossproduct differing in their last bits.</p>
+whatever the integrand does. It is then symmetrized as <code>(G + t(G))/2</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="several-variables">Several variables<a class="anchor" aria-label="anchor" href="#several-variables"></a></h2>
-    <p>The rule is a product over the box: the nodes are the lattice of the
+    <p>The rule is a product over the box: the nodes are the product grid of the
 marginal rules and the weights their products. Each coordinate gets
 <code>max(2, ceiling(panels^(1/d)))</code> panels, so the total node count stays near
 <code>panels * nodes^d</code> and does not grow as <code>panels^d</code>. At the defaults on two
@@ -104,12 +103,10 @@ variables that is 8 panels of 12 nodes per coordinate, 9216 points.</p>
     </div>
     <div class="section level2">
     <h2 id="accuracy">Accuracy<a class="anchor" aria-label="anchor" href="#accuracy"></a></h2>
-    <p>Equal panels line up with nothing in particular, so a family whose
-derivative has kinks is integrated less well than one whose does not. On a
-polynomial family the order-0 matrix agrees with the closed form to
-5.2e-15; on a cubic B-spline at order 2, where the second derivative kinks
-at knots the panels miss, the same comparison is 1.4e-03, or 2.1e-06
-relative. Raising <code>panels</code> is the remedy where the breaks cannot be aligned.</p>
+    <p>Equal panels are not aligned with the knots of a spline, so a family
+whose derivative has kinks is integrated less accurately than a smooth
+one; on a polynomial family the result is exact to rounding. A larger
+<code>panels</code> reduces the error where the breaks cannot be aligned.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

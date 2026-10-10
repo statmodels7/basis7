@@ -13,7 +13,7 @@ supported on a few knot intervals, and its functions sum to one."><meta property
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,8 +66,8 @@ supported on a few knot intervals, and its functions sum to one.</p>
 
 <dl><dt id="arg-basis-name">basis_name<a class="anchor" aria-label="anchor" href="#arg-basis-name"></a></dt>
 <dd><p>A single string naming the family, printed by
-<code><a href="print.basis.html">print.basis()</a></code> and used by wrappers to build their own name. Not read by
-any computation.</p></dd>
+<code><a href="print.basis.html">print.basis()</a></code> and used by wrappers to build their own name. Its first
+two characters form the default column names of <code><a href="basis_colnames.html">basis_colnames()</a></code>.</p></dd>
 
 
 <dt id="arg-dimension">dimension<a class="anchor" aria-label="anchor" href="#arg-dimension"></a></dt>
@@ -84,7 +84,7 @@ length, and <code>lower[j] &lt; upper[j]</code> for every <code>j</code>. Their 
 
 <dt id="arg-basis-params">basis_params<a class="anchor" aria-label="anchor" href="#arg-basis-params"></a></dt>
 <dd><p>A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. <code><a href="print.basis.html">print.basis()</a></code> shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.</p></dd>
 
@@ -98,8 +98,9 @@ it places the knots and checks the dimension against the degree.</p>
     </div>
     <div class="section level2">
     <h2 id="the-cox-de-boor-recurrence">The Cox-de Boor recurrence<a class="anchor" aria-label="anchor" href="#the-cox-de-boor-recurrence"></a></h2>
-    <p>On a knot sequence \(t_1 \le \cdots \le t_{d+m+1}\) the functions are
-defined from the indicators upward:</p>
+    <p>On a knot sequence \(t_1 \le \cdots \le t_{K+m+1}\), for a basis of
+\(K\) functions of degree \(m\), the functions are defined from the
+indicators upward:</p>
 <p>$$B_{j,0}(x) = \mathbf{1}\{t_j \le x &lt; t_{j+1}\},$$</p>
 <p>$$B_{j,q}(x) = \frac{x - t_j}{t_{j+q} - t_j} B_{j,q-1}(x)
   + \frac{t_{j+q+1} - x}{t_{j+q+1} - t_{j+1}} B_{j+1,q-1}(x),
@@ -107,16 +108,16 @@ defined from the indicators upward:</p>
 <p>a term with a zero denominator being taken as zero.</p>
     </div>
     <div class="section level2">
-    <h2 id="the-two-properties-that-follow">The two properties that follow<a class="anchor" aria-label="anchor" href="#the-two-properties-that-follow"></a></h2>
+    <h2 id="local-support-and-partition-of-unity">Local support and partition of unity<a class="anchor" aria-label="anchor" href="#local-support-and-partition-of-unity"></a></h2>
     <p>\(B_{j,m}\) vanishes outside \([t_j, t_{j+m+1}]\), so at most
 \(m + 1\) columns are non-zero in any row and the design matrix is
-banded: at <code>degree = 3</code> exactly four of them, whatever the dimension. And
-\(\sum_j B_{j,m}(x) = 1\) on the interval, measured to 2.2e-16, so the
-basis carries its own constant and is collinear with an intercept in the
-same design.</p>
+banded: at <code>degree = 3</code> at most four of them, whatever the dimension.
+Moreover \(\sum_j B_{j,m}(x) = 1\) on the interval, up to rounding, so
+the basis carries its own constant and is collinear with an intercept in
+the same design.</p>
     </div>
     <div class="section level2">
-    <h2 id="where-the-numbers-come-from">Where the numbers come from<a class="anchor" aria-label="anchor" href="#where-the-numbers-come-from"></a></h2>
+    <h2 id="computation">Computation<a class="anchor" aria-label="anchor" href="#computation"></a></h2>
     <p>Evaluation, derivatives and integrals come from
 <code><a href="https://wwenjie.org/splines2/reference/bSpline.html" class="external-link">splines2::bSpline()</a></code>, through the single wrapper <code><a href="bspline_design.html">bspline_design()</a></code>, which
 computes all three from the recurrence and takes no differences. The Gram

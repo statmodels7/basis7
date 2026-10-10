@@ -1,906 +1,564 @@
 # Changelog
 
+## basis7 0.15.0
+
+### Repairs
+
+- [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+  reads the roots of the characteristic polynomial on the scale of the
+  roots, so its tolerance is relative to their size. With an absolute
+  tolerance a long period merged the roots of the harmonic operator:
+  from a period of 1e7 the null space read `1, t, t^2` instead of the
+  constant, the sine and the cosine, and a short period put a spurious
+  rate in the labels (`exp(5.11e-09 t) sin(6283.19 t)` at a period of
+  1e-3). The null space is now correct for periods from 1e-3 to 1e9.
+- The numerical derivative uses one-sided stencils of `order + 2` nodes
+  at the ends of the interval, so they keep the second-order accuracy of
+  the central stencil. At even orders the one-sided stencil had one node
+  fewer and was first-order accurate: the second derivative of a
+  Legendre basis of dimension 5 had a relative error of 5.7e-04 at the
+  endpoints, against 1.5e-08 inside; it is now 1.3e-07.
+- [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  removes the constant also when the operator does not have it in its
+  null space, as for
+  [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md).
+  The block kept the constant as a penalized direction, and beside an
+  intercept it had rank 9 of 10. The block now has one column fewer, as
+  with the harmonic operator.
+- [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  checks at construction that the constant and the null space of the
+  operator leave at least one function to penalize, and names the
+  smallest admissible `k`. The error previously came from
+  [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+  and did not name the cause.
+- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) of a basis
+  draws derivatives of order 2 and above; it signalled
+  `object 'B' not found`.
+- [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+  accepts an array or a list of factor matrices for a tensor basis built
+  with named margins, and a named list of factors. The names made
+  [`identical()`](https://rdrr.io/r/base/identical.html) reject
+  dimensions that were correct.
+- [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
+  of a tensor basis at a matrix of no rows returns `numeric(0)`, and
+  [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
+  [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
+  and
+  [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
+  of a B-spline basis at no points return a matrix of no rows, where
+  signalled an error.
+- [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
+  accepts an order per variable for a basis of several variables.
+- [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+  and
+  [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md)
+  signal an error for an operator whose period has not been resolved;
+  the matrix was returned with `NA` and `NaN` on the diagonal.
+- [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
+  and
+  [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md)
+  signal an error when `panels` or `nodes` reaches a route that computes
+  the matrix exactly (a B-spline or Legendre basis, or a Fourier basis
+  over a whole period, without `weight`); the two arguments were
+  accepted and ignored.
+- A basis of several variables evaluated at a plain vector whose length
+  is not a multiple of the number of variables signals an error. The
+  vector was recycled with a warning, and the last point was made up of
+  recycled coordinates.
+- A smoother built at a covariate that takes a single value, with
+  neither endpoint of the interval given, signals an error that names
+  the cause; the error came from .
+- The validator of `TensorBasis` checks that every margin takes one
+  variable and that `@lower` and `@upper` are the endpoints of the
+  margins.
+- [`print()`](https://rdrr.io/r/base/print.html) of a smoother built
+  with a `penalty` factory states the factory, and names the roughness
+  matrix that sets the coordinates `roughness`; it printed the roughness
+  matrix as the penalty.
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+  reports a missing value in an analytic derivative as a failure. The
+  comparison returned `NA`, and the table printed `[numerical]` for a
+  derivative that has a method. An entry whose reference is missing, and
+  whose allowance is therefore infinite, is left out of the comparison,
+  as the documentation of
+  [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
+  states.
+- [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
+  compares a numerical Gram matrix with the finer quadrature of 401
+  panels of 7 nodes, allowing each entry four times the difference
+  between the package’s own fallback and that rule. The comparison was
+  skipped, so a Gram method wrong by one percent on a Fourier basis off
+  a whole period passed; a correct fallback on a basis with kinks, whose
+  quadrature error is 6.6e-4, still passes.
+- [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
+  of a Fourier basis, with the method called at order 0, gives the
+  constant column 1; it gave 0. The generic returns the evaluation at
+  order 0 and was not affected.
+- [`print()`](https://rdrr.io/r/base/print.html) of a smoother with one
+  endpoint of the interval given shows it, as in `[-5, from the data]`;
+  it printed `from the data`.
+- The message for an order of the wrong length on a basis of one
+  variable no longer describes a basis of several variables.
+- The internal
+  [`gauss_legendre()`](https://statmodels7.github.io/basis7/reference/gauss_legendre.md)
+  rejects a number of nodes that is not a positive whole number;
+  `nodes = 2.7` was truncated to a two-point rule.
+- The internal
+  [`chol_pd()`](https://statmodels7.github.io/basis7/reference/chol_pd.md)
+  returns `NULL` for an empty matrix or one with a value that is not
+  finite, as documented; [`eigen()`](https://rdrr.io/r/base/eigen.html)
+  signalled an error first.
+- The messages for a `k` too small for the degree state the numbers, and
+  the messages that list the operator constructors include
+  [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md).
+
+### Documentation
+
+- The documentation, the README, the vignette and this file are
+  rewritten in a plain register, and the statements that did not match
+  the code are corrected. Among them: the null space of a derivative
+  penalty on a periodic basis is the constant, so a strongly penalized
+  Fourier or cyclic smooth contracts to a constant and not to a straight
+  line; the one-harmonic operator has a penalty of null dimension 3 on a
+  Fourier basis and 1 on a cubic B-spline; the composition of two
+  operators has a null space that contains, and can exceed, the union of
+  the two; the nodes of
+  [`quad_rule()`](https://statmodels7.github.io/basis7/reference/quad_rule.md)
+  are ordered by position within the rule and then by interval;
+  [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)
+  takes four times the gap between its two estimates as the bound on its
+  error; and the Hilbert matrix of dimension 15 has a condition number
+  of 6.1e+20.
+
 ## basis7 0.14.0
 
-- **[`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
-  takes its differences on the Eilers-Marx coefficients.** The basis is
-  still the clamped B-spline basis, and the difference penalty is
-  computed on the coefficients of the same function on the basis whose
-  knots are equally spaced beyond the interval as well as inside it
-  (Eilers and Marx, 1996), then carried back by the new internal
+- [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
+  takes its differences on the coefficients of the basis of Eilers and
+  Marx (1996), whose knots are equally spaced beyond the interval as
+  well as inside it, and carries the penalty back to the clamped basis
+  through the new internal
   [`pspline_map()`](https://statmodels7.github.io/basis7/reference/pspline_map.md).
   The two bases span the same splines, so only the coordinates of the
-  penalty change. On clamped coefficients the null space was only
+  penalty change. On the clamped coefficients the null space was only
   approximately the polynomials of degree below `diff` (an of 0.9994 at
-  `diff = 2`); it is now exact. The penalty is the one of mgcv’s
-  `bs = "ps"`: on
+  `diff = 2`); it is now exact. The penalty is that of the `bs = "ps"`
+  smooths of mgcv: on
   [`MASS::Boston`](https://rdrr.io/pkg/MASS/man/Boston.html),
   `medv ~ s(lstat)` has 6.98906, 8.75744 and 9.41421 effective degrees
-  of freedom at `k` of 10, 20 and 40 against mgcv’s 6.98927, 8.75783 and
-  9.41421, where before it had 8.29 at `k = 20` against 8.76.
-
+  of freedom at `k` of 10, 20 and 40, against 6.98927, 8.75783 and
+  9.41421 in mgcv; before, it had 8.29 at `k = 20` against 8.76.
 - [`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)
   takes its differences in the same coordinates, so at equal smoothing
-  parameters it is still exactly
-  [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
-  and it is the adaptive P-spline of mgcv’s `bs = "ad"`: on
-  [`MASS::mcycle`](https://rdrr.io/pkg/MASS/man/mcycle.html) at
+  parameters it gives the penalty of `pspline_smooth(reparam = "none")`,
+  and its fit is close to the adaptive P-spline of mgcv’s `bs = "ad"`:
+  on [`MASS::mcycle`](https://rdrr.io/pkg/MASS/man/mcycle.html) at
   `k = 40`, `m = 5`, 10.3352 effective degrees of freedom against
-  10.3343 and fitted values 0.002 apart, where before they were 0.84
-  apart.
-
-- Every fit with a P-spline or an adaptive smooth moves. `splines` joins
-  Imports for
+  10.3343.
+- Every fit with a P-spline or an adaptive smooth changes. `splines` is
+  added to Imports for
   [`splines::splineDesign()`](https://rdrr.io/r/splines/splineDesign.html).
 
 ## basis7 0.13.1
 
-- **[`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md)
-  builds at every `reparam`**, where `"none"` and `"orthonorm"` raised
-  “non-conformable arguments” at every `k` and were reachable end to end
-  through a model formula. `"dr"` was unaffected. The defect dates from
-  the family’s arrival in 0.10.0.
-
-  The cause is that a cyclic basis is **itself a transformed basis** –
-  twelve periodic functions built from fifteen B-splines – and
-  \[new_transformed()\] flattens a nested transform, so the constrained
-  object carries a transform against that parent, 15 by 11 rather than
-  12 by 11. The congruence that carries the roughness matrix onto the
-  reparametrized block was reading it off the object, and the roughness
-  matrix is defined on the twelve. `"dr"` escaped because \[dr_basis()\]
-  builds its own transform against the basis it is given rather than
-  reading a stored one.
-
-  The local transform is now computed where it is needed, by the new
-  internal
+- [`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md)
+  builds with `reparam = "none"` and `reparam = "orthonorm"`, which
+  signalled “non-conformable arguments” at every `k` since the family
+  was added in 0.10.0. A cyclic basis is itself a transformed basis, and
+  [`new_transformed()`](https://statmodels7.github.io/basis7/reference/new_transformed.md)
+  flattens a nested transform, so the constrained object carried a
+  transform against the parent B-spline basis (15 by 11 instead of 12 by
+  11). The congruence of the roughness matrix now uses the local
+  transform, computed by the new internal
   [`constraint_null()`](https://statmodels7.github.io/basis7/reference/constraint_null.md),
   which
   [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
-  also calls so that the two cannot drift. The object goes on carrying
-  the flattened transform, which is what a later evaluation must
-  compute.
-
-  ⚠️ **Nothing else moves, and by construction rather than by
-  tolerance**: the flattening only happens where the parent is already
-  transformed, so for every other family the local transform IS the
-  stored one. Measured against the previous release over seventeen
-  configurations – five families, three coordinate systems, a constraint
-  and a whole order – fifteen are
-  [`identical()`](https://rdrr.io/r/base/identical.html) on the block,
-  the penalty, the unpenalized count, the names and the block reapplied
-  at held-out rows, and the two that differ are the two that used to
-  raise.
-
-- ⚠️ **The coverage gap that let it ship is closed.** `reparam` was
-  exercised on a B-spline alone, and a construction that works for a
-  root basis and not for a transformed one cannot be seen from there.
-  Every family is now built at every coordinate system, with the block
-  reapplied at new values, and the two periodic families are asserted to
-  stay periodic under all three.
+  also calls. Other families are unaffected: over seventeen
+  configurations the results are
+  [`identical()`](https://rdrr.io/r/base/identical.html) to those of the
+  previous release, except the two that signalled the error.
+- The tests build every family in every coordinate system, reapply the
+  block at new values, and check that the two periodic families remain
+  periodic.
 
 ## basis7 0.13.0
 
-- **Linear differential operators**, the general form of what a penalty
-  measures: , with the roughness matrix . Four constructors –
+- Linear differential operators, , with the roughness matrix . The
+  constructors are
   [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
   [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
   [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
   and
-  [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md)
-  – with `*` composing two by multiplying their characteristic
-  polynomials, and
+  [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md);
+  `*` composes two by multiplying their characteristic polynomials; and
   [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md),
   [`operator_null_design()`](https://statmodels7.github.io/basis7/reference/operator_null_design.md),
   [`operator_order()`](https://statmodels7.github.io/basis7/reference/operator_order.md),
   [`operator_weights()`](https://statmodels7.github.io/basis7/reference/operator_weights.md)
   and
   [`operator_resolve()`](https://statmodels7.github.io/basis7/reference/operator_resolve.md)
-  as the accessors.
-
-  They go in the **`order` argument every smoother family already has**,
-  a whole number `m` being the shorthand for `deriv_operator(m)` rather
-  than a second way of saying the same thing.
-  `basis_gram(b, order = op)` answers for a basis alone, routing to the
-  new generic
+  are the accessors.
+- An operator is given through the `order` argument of every smoother
+  family, a whole number `m` being the shorthand for
+  `deriv_operator(m)`. `basis_gram(b, order = op)` computes the matrix
+  for a basis alone, through the new generic
   [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md).
-
-  **The null space comes from the operator and never from the rank of
-  the assembled matrix**, being read off the roots of the characteristic
-  polynomial. The two are different questions and give different
-  answers: the same two-harmonic operator has a penalty of null
-  dimension 5 on a Fourier basis and 3 on a cubic B-spline at a relative
-  tolerance of 1e-10, because a spline represents a sine only
-  approximately, while the operator’s own null space is five-dimensional
-  in both cases.
-
-- **[`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
-  now penalizes with the harmonic acceleration operator, and shrinks its
-  null space**, where it integrated the squared second derivative and
-  kept it. A derivative penalty asks a fit to contract toward a straight
-  line, which is not periodic and is not what a cyclic phenomenon
-  simplifies to; the harmonic operator leaves the level and the
-  fundamental cycle alone and removes everything above them.
-
-  ⚠️ **Every Fourier smooth therefore moves.** `order = 2` restores the
-  old construction in one argument and gives it back bit for bit.
-  Measured at `k = 21` over 200 observations with the smoothing
-  parameter chosen by generalized cross-validation on eight samples: on
-  a truth dominated by its fundamental the harmonic penalty reaches a
-  root mean square error of 0.0596 against 0.0654 and wins on seven
-  samples of eight, at 9.28 effective degrees of freedom against 10.72.
-
-  ⚠️ **The default null space is `"shrink"` here and `"keep"`
-  elsewhere**, and the control is what decided it. On a truth with no
-  periodic signal at all, `"shrink"` is level with the derivative
-  penalty – 0.0110 against 0.0121 at 1.16 effective degrees of freedom
-  against 1.20 – because the fundamental can leave the model, while
-  `"keep"` reads 0.0281 at 3.00 and wins on none of the eight. Use
-  `"keep"` where the cycle is known to be there and is the thing being
-  estimated. It resolves to `"keep"` where a `penalty` factory is given,
-  the two being refused together.
-
-  ⚠️ **An explicit `null_space = "keep"` gives a different block too**,
-  and “the default moves” does not say so. The argument did not change
-  meaning: the penalty under it did. The harmonic operator’s null space
-  is three-dimensional against the second derivative’s one – it
-  annihilates the constant AND the fundamental where annihilates the
-  constant alone – and the constraint removes the constant either way,
-  which is why nine functions still give eight columns. So “keep
-  everything the penalty does not see” frees TWO coordinates where it
-  freed none, and a coefficient table that read `z1 ... z8` now reads
-  `sin1`, `cos1`, `z1 ... z6`. That is what to look at first if the
-  names in an existing model’s summary have changed. `order = 2`
-  restores both the penalty and the count.
-
-  ⚠️ **A periodic family refuses a null function it cannot carry.**
-  Every function of the null space other than the constant is restored
-  as a free column, so each must be periodic on the basis’s period; an
-  operator whose null space holds is rejected with the reason, being
-  right for a B-spline and wrong here.
-
-- On a **Fourier basis over a full period the roughness matrix of any
-  operator is exactly diagonal**, with the entry of the pair at
-  frequency equal to for the characteristic polynomial. ⚠️ The book this
-  operator comes from states that the harmonic penalty makes
-  structurally different and **more complex** than the diagonal matrix
-  of the derivative penalty. The first half is right – the null space
-  goes from one dimension to three – and the second is not: measured,
-  the largest off-diagonal entry is 1.7e-16 of the largest entry, for
-  the harmonic operator, for two harmonics and for a composed one.
-
-- On a **B-spline basis the operator’s roughness matrix is exact**,
-  integrated knot interval by knot interval as the derivative one is,
-  since is piecewise polynomial with the same breakpoints. The base
-  method’s evenly spaced panels do not line up with the knots and differ
-  from the derivative route by 5e-8 relative, where this one differs by
-  3e-15. An operator of order above the spline’s degree is **rejected**
-  rather than integrated, its leading term being identically zero there,
-  so what would be measured is the operator with its highest derivative
-  deleted.
-
-- ⚠️ **`smoother@order` holds a `LinearOperator` and no longer an
-  integer.** A whole number is normalized by
+- The null space of an operator is read from the roots of its
+  characteristic polynomial and not from the rank of the assembled
+  matrix. The two differ: the one-harmonic operator has a penalty of
+  null dimension 3 on a Fourier basis and 1 on a cubic B-spline at a
+  relative tolerance of 1e-10, because a spline represents a sine only
+  approximately, while the null space of the operator is
+  three-dimensional in both cases.
+- [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+  penalizes with the harmonic acceleration operator and shrinks its null
+  space by default, where it penalized the squared second derivative and
+  kept the null space. On a periodic basis a derivative penalty has the
+  constant as its only null direction, so a strongly penalized fit
+  contracts to a constant; the harmonic operator leaves the level and
+  the fundamental cycle unpenalized, so the fit contracts to a sinusoid.
+  Every Fourier smooth changes; `order = 2` restores the previous
+  construction exactly.
+- At `k = 21`, over 200 observations and eight samples, with the
+  smoothing parameter chosen by generalized cross-validation, the
+  harmonic penalty had a root mean square error of 0.0596 against 0.0654
+  on a truth dominated by its fundamental. On a truth with no periodic
+  signal the default `"shrink"` gave 0.0110 against 0.0121 for the
+  derivative penalty, and `"keep"` gave 0.0281, which is why the default
+  null space of this family is `"shrink"`. It resolves to `"keep"` when
+  a `penalty` factory is given, the two being incompatible.
+- With `null_space = "keep"` the block of a Fourier smooth changes as
+  well: the constraint removes the constant in both constructions, and
+  the harmonic operator frees the sine and cosine of the fundamental, so
+  nine functions still give eight columns, named `sin1`, `cos1`, `z1` to
+  `z6` instead of `z1` to `z8`.
+- A periodic family rejects an operator whose null space holds a
+  function that is not periodic on the period of the basis, such as in
+  `deriv_operator(2) * oscillator_operator(p)`. A plain derivative
+  operator restores nothing beyond the constant and is accepted.
+- On a Fourier basis over a whole period the roughness matrix of any
+  operator is diagonal, with the entry of the pair at frequency equal to
+  for the characteristic polynomial.
+- On a B-spline basis the roughness matrix of an operator is exact,
+  integrated knot interval by knot interval as the derivative one is.
+  The equally spaced panels of the base method do not line up with the
+  knots and are approximate. An operator of order above the degree of
+  the spline is rejected, its leading term being zero there.
+- `smoother@order` holds a `LinearOperator` and no longer an integer; a
+  whole number is converted by
   [`as_operator()`](https://statmodels7.github.io/basis7/reference/as_operator.md)
-  at the constructor, so nothing downstream has to ask which of the two
-  it was given; `operator_order(sm@order)` is the integer. Every
-  construction written before operators existed is unchanged: measured
-  against a battery captured before the change, fourteen smoother shapes
+  at the constructor, and `operator_order(sm@order)` is the integer.
+  Against results recorded before the change, fourteen smoother shapes
   and eight Gram matrices are
   [`identical()`](https://rdrr.io/r/base/identical.html), and the three
-  that move are the Fourier default, deliberately.
+  that change are the Fourier default.
 
 ## basis7 0.12.0
 
-- **[`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md),
-  a difference penalty whose weight varies along the covariate**, so a
-  function may be smoothed hard where it is quiet and left free where it
-  is not. Each difference carries a weight with a B-spline basis over
-  the coefficient INDEX, and because `diag` is linear the penalty is the
-  sum . The weight profile is itself a spline, and its coefficients are
-  the smoothing parameters.
-
-  **At equal smoothing parameters it IS a P-spline.** The weight
-  functions are a B-spline basis, hence a partition of unity, so and
-  exactly – measured at 8.9e-16 to 2.7e-15 for `m` from 2 to 12, with
-  the design block
-  [`identical()`](https://rdrr.io/r/base/identical.html) to
-  [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)’s.
-  That makes the sibling family the interior point of this one rather
-  than a different construction, and it is the gate the family is held
-  to.
-
-  **What it buys, measured through an implementation neither of us
-  wrote.** Against a single-lambda P-spline under ’s REML, 400
-  observations at `k = 40`, eight seeds: on a truth of variable
-  roughness the adaptive wins on 8 seeds of 8 at a median root mean
-  square error of 0.0357 against 0.0443, and at FEWER effective degrees
-  of freedom, 17.4 against 23.6. On a truth of constant roughness it
-  wins on 0 of 8, 0.0315 against 0.0310 – 1.6 per cent worse, which is
-  what the extra smoothing parameters cost where there is nothing to
-  adapt to. The second is the control, without which the first would
-  show only that more parameters fit better.
-
-  ⚠️ Where the gain comes from is not where it is first looked for.
-  Split by region, the adaptive is better on the quiet left (0.0242
-  against 0.0305) and on the smooth right (0.0437 against 0.0476) and
-  slightly WORSE at the feature itself (0.0553 against 0.0503). What it
-  buys is not a sharper peak but less noise chasing where the function
-  is quiet.
-
-  ⚠️ The construction carries NO arbitrary constant. The index basis is
-  built over the index’s own range, so an affine relabelling of the
-  index – , or , or ’s – gives the identical profile, measured to 1e-16.
-
-  ⚠️ `reparam = "dr"` is rejected, and by construction rather than by
-  choice: Demmler-Reinsch diagonalizes the pencil of the Gram matrix
-  against a SINGLE penalty, and here there are `m`. The default is
-  `"none"`, which the measurement prefers on both axes it can be judged
-  on: at a spread of smoothing parameters an adaptive really reaches
-  (1.3e8, measured) the condition number of the system solved is 3.4e3
-  raw against 4.7e4 orthonormalized, and the components’ scales spread
-  by 1.7 against 2.8. `null_space = "shrink"` and a `penalty` factory
-  are rejected too, each with the reason and the remedy.
-
-  ⚠️ Our weight profile is not ’s, and the cost is stated rather than
-  hidden. Its P-spline basis extends its knots past the index range
-  (measured -1.37 to 2.34 over an index in \[0, 1\]) where a basis7
-  B-spline clamps them, so the profiles differ in shape though not in
-  support, and at its own best the fit is 2.4 per cent behind on this
-  truth. Padding the interval was measured and does not recover it
-  (0.0461 to 0.0465), so no padding is applied. The assembly itself IS
-  mgcv’s: rebuilt from its constructor’s own lines and compared against
-  `smoothCon(scale.penalty = FALSE)`, the components agree at 0.000e+00
-  on six configurations.
-
-- **A smoother’s penalty may be a LIST**, which is what the family above
-  needs and what
+- [`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md),
+  a difference penalty whose weight varies along the covariate. Each
+  difference carries a weight , with a B-spline basis over the
+  coefficient index, so the penalty is the sum and its smoothing
+  parameters are the coefficients of the weight profile.
+- The weight functions are a partition of unity, so the components sum
+  to and the family at equal smoothing parameters is a P-spline (to
+  between 8.9e-16 and 2.7e-15 for `m` from 2 to 12).
+- Against a P-spline with one smoothing parameter fitted by mgcv’s REML
+  (400 observations, `k = 40`, eight seeds), the median root mean square
+  error was 0.0357 against 0.0443 on a truth of variable roughness, at
+  17.4 effective degrees of freedom against 23.6, and 0.0315 against
+  0.0310 on a truth of constant roughness. Split by region, the gain
+  came from the quiet stretches of the function and not from the
+  feature.
+- The index basis is built over the range of the index, so an affine
+  relabeling of the index gives the same profile.
+- `reparam = "dr"` is rejected, the Demmler-Reinsch rotation
+  diagonalizing one penalty and this family having `m`; the default is
+  `"none"`. `null_space = "shrink"` and a `penalty` factory are rejected
+  as well.
+- The weight profile differs from mgcv’s, whose P-spline basis extends
+  its knots beyond the index range; the assembly of the components
+  follows mgcv’s constructor and agrees with
+  `smoothCon(scale.penalty = FALSE)`.
+- A smoother’s penalty may be a list of matrices, which
   [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
-  now carries through.
+  carries through.
   [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
-  may answer with one matrix or with several;
+  may return one matrix or several,
   [`over_penalty()`](https://statmodels7.github.io/basis7/reference/over_penalty.md)
-  applies each step – the congruence of a reparametrization, the border
-  a kept null space adds, the removal of the dimnames – to one or to
-  each, and
+  applies each step to one or to each, and
   [`smoother_reparam()`](https://statmodels7.github.io/basis7/reference/smoother_reparam.md)
-  rejects a list under `"dr"` with the reason, which is what makes the
-  guard hold for a family written later. The number of unpenalized
-  leading columns is read off the SUM of the components, a coordinate
-  being free only where no component touches it.
-
-  ⚠️ For
-  [`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)
-  the sum and any single component give the same answer, and saying why
-  is worth more than the line: its components are localized in RANK and
-  not in sparsity once the constraint has been applied. Measured at
-  `k = 30`, `m = 4`, the raw components are 15 per cent nonzero with one
-  or two zero columns each and the built ones 93.2 per cent nonzero with
-  exactly one zero column, the free border. Reading the sum is correct
-  by definition rather than measurably better here.
-
-- **[`print()`](https://rdrr.io/r/base/print.html) says what the penalty
-  IS.** A difference penalty integrates nothing, so the line no longer
-  names a measure for a family that has none:
-  [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
-  prints `difference of order 2 on the coefficients` where it printed
-  `derivative of order 2, lebesgue measure`, which was false of both
-  halves. A family that does integrate is unchanged.
+  rejects a list under `"dr"`. The number of unpenalized leading columns
+  is read from the sum of the components.
+- [`print()`](https://rdrr.io/r/base/print.html) of a P-spline smoother
+  states `difference of order 2 on the coefficients`, where it printed a
+  derivative and a measure.
 
 ## basis7 0.11.0
 
-- **[`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
-  the Eilers-Marx smoother.** A B-spline basis of `k` functions
-  penalized by the sum of squared `diff`-th differences of its
-  coefficients rather than by an integrated squared derivative: a rich
-  basis and a cheap penalty, `k` chosen large enough not to matter and
-  the smoothing parameter doing the rest.
-
-  It declares no `measure` and no `order`, because nothing is integrated
-  – there is no measure to integrate against and no derivative whose
-  order to name. That is also why `diff` belongs to this family and not
-  to every one: a difference penalty reads the coefficients as an
-  ordered sequence in which neighbours are comparable, which a
-  B-spline’s are and a Fourier basis’s are not.
-
-- **[`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
-  is a generic**, so a family may declare a roughness matrix that is not
-  a Gram matrix of its own derivatives. Its base method is what the
-  function was, character for character.
-
-  ⚠️ **The change is inert, and by an identity rather than a
-  tolerance.** Every shipped family – B-spline, Fourier, Legendre and
-  cyclic – over three measures, three null-space settings, three
-  reparametrizations and two covariates: **216 cases of which 180 build
-  a block, and every element of every one is
+- [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
+  the Eilers-Marx smoother: a B-spline basis of `k` functions penalized
+  by the sum of squared `diff`-th differences of its coefficients. It
+  has no `measure` and no `order`, since nothing is integrated, and
+  `diff` belongs to this family alone, because only the coefficients of
+  a B-spline form an ordered sequence in which neighbors are comparable.
+- [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
+  is a generic, so a family may declare a roughness matrix that is not a
+  Gram matrix of its derivatives. Its base method is the previous
+  function, and over 180 builds of the shipped families the results are
   [`identical()`](https://rdrr.io/r/base/identical.html) before and
-  after** – the block, the penalty, the unpenalized count, the
-  coefficient names, the free-column count and the reapplied rows.
-
-- ⚠️ **The null space of a difference penalty is only APPROXIMATELY the
-  polynomials on a clamped knot sequence, and the construction removes
-  the difference.** Marsden’s identity gives `sum_j xi_j B_j(x) = x`
-  with `xi_j` the Greville abscissae, so coefficients affine in the
-  index give a straight line exactly where `xi_j` is affine in `j` –
-  which fails at the ends, whose boundary knots are repeated. Measured,
-  the R-squared of `xi_j` against `j` is 0.9893, 0.9979 and 0.9997 at
-  `k` of 10, 20 and 40, and the functions spanning the null space are
-  the polynomials of degree below `diff` to 1.0000000000, 0.9994 and
-  0.9957 at `diff` of 1, 2 and 3.
-
-  It costs nothing because
-  [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-  constrains the block against the EXACT polynomials, so the
-  Demmler-Reinsch rotation runs on their complement, where the
-  difference penalty is positive definite: the built penalty is the
-  identity to 1.0000000000 on every one of its 23 penalized directions,
-  exactly as
-  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)’s
-  is, and a strongly penalized fit contracts to a straight line with an
-  R-squared against `(1, x)` of 1.0000000000 at a smoothing parameter of
-  1e10 for both.
-
-- ⚠️ **The two penalties differ by four orders and their smoothing
-  parameters do not**, which is the reparametrization doing what it is
-  for. At `k = 25` over 300 observations the raw roughness matrices
-  correlate at 0.5075 and their scales are 6 against 2.556e+05, the
-  difference operator carrying no factor of the knot spacing; but at
-  matched effective degrees of freedom of 5, 8 and 12 the two smoothing
-  parameters stand in a ratio of 1.0, 0.9 and 0.8, because after the
-  rotation both penalties are the identity. The fitted functions differ
-  by a root mean square of 0.0135, 0.0243 and 0.0180 against a signal
-  whose own standard deviation is 0.7061.
+  after.
+- On a clamped knot sequence the null space of a difference penalty is
+  only approximately the polynomials, the Greville abscissae not being
+  equally spaced near the ends. The block is constrained against the
+  exact polynomials, so the Demmler-Reinsch rotation runs on their
+  complement and a strongly penalized fit contracts to a straight line,
+  as for
+  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md).
+- The raw P-spline and integrated-derivative penalties differ in scale
+  by orders of magnitude, the difference operator carrying no factor of
+  the knot spacing; after the Demmler-Reinsch rotation both are the
+  identity, so their smoothing parameters are comparable.
 
 ## basis7 0.10.1
 
-- ⚠️ **The cyclic smoother’s tests named `penalties7::`, which this
-  package may not.** basis7 sits at the bottom of the dependency graph –
-  it is the reason its validation of a penalty factory is deliberately
-  weak, checking that the argument is a function of a count and nothing
-  about what the function returns – so naming that package in a test is
-  the one thing the arrangement forbids. Both places now use a plain
-  function of `n_coef`, and the factory of the “stored and never called”
-  test RAISES when called, so the claim is enforced by the construction
-  rather than counted, which is the idiom `test-smoother.R` already
-  used.
-
-  ⚠️ **A local suite could not have caught it and did not**: penalties7
-  is installed here, so the tests passed locally at 941 and failed on
-  all five CI platforms with `there is no package called 'penalties7'`.
-  Five of five is what says it is deterministic rather than platform
-  arithmetic, and the failing step was the test run rather than
-  `setup-r`, which is what separates it from an infrastructure outage.
-  Nothing about the family itself moved: 944 passing, 0 failures, 0
-  skips.
+- The tests of the cyclic smoother no longer name , which this package
+  does not depend on; they use a plain function of `n_coef`, and the
+  factory of the test for a factory that is stored and never called
+  signals an error when called. The tests had passed locally, where
+  penalties7 is installed, and failed on the CI platforms.
 
 ## basis7 0.10.0
 
-- **[`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md),
-  the local periodic smoother.** `k` B-spline functions over one period,
+- [`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md),
+  the local periodic smoother: `k` B-spline functions over one period,
   constrained so that the fit and its first `degree - 1` derivatives
-  take the same value at the two ends. It is to
-  [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
-  what
-  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
-  is to
-  [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md):
-  a local basis where the other is global, so a feature at one point of
-  the cycle leaves the rest of it alone.
-
-  Nothing outside this package was touched. A family declares a class, a
+  take the same value at the two ends. It is built with
+  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
+  on a B-spline basis of dimension `k + degree` over the period itself,
+  so the Gram matrix integrates over one period and every quantity is
+  exact. On a cubic with `k = 9` over the basis functions agree at the
+  two ends to 5.6e-17 in value, 7.1e-15 in the first derivative and
+  8.5e-14 in the second.
+- The null space of the roughness matrix of a derivative penalty is the
+  constant at every order, a non-constant periodic function being never
+  a polynomial, so `constrain` is not an argument and a block carries
+  `k - 1` columns.
+- The periodicity constraints have rank `degree` (checked at every `k`
+  from 1 to 12 and every `degree` from 1 to 5), and the construction
+  checks the resulting dimension.
+- `lower` and `upper` are the ends of the period; left `NULL` they are
+  read from the data, which makes the period the observed range.
+- A family is added with a class, a
   [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
-  method and a constructor, and `modelterms7::s()` reads it through
+  method and a constructor; `modelterms7::s()` reads the cyclic family
+  through
   [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
-  like any other – which is the property the separation of 0.7.0 was
-  for, tested rather than asserted.
-
-- **The construction is a constraint and not a fold, and that is what
-  makes every quantity exact.** A spline of degree is periodic exactly
-  when its value and its first derivatives agree at the two ends, which
-  is linear conditions, so the periodic splines are the null space of
-  those conditions inside an ordinary spline space of dimension
-  `k + degree`.
-  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
-  already built exactly that.
-
-  The parent therefore lives on the period **itself**, so its Gram
-  matrix integrates over one period and the roughness matrix is with the
-  parent’s own exact Gram: no widened interval, no numerical fallback,
-  and evaluation and derivatives of every order exact for free. A folded
-  knot sequence puts its parent on a widened interval, and its Gram then
-  integrates over more than one period.
-
-- Measured on a cubic with `k = 9` over . The basis agrees at the two
-  ends to 5.6e-17 in value, 7.1e-15 in the first derivative and 8.5e-14
-  in the second, where an ordinary B-spline of the same `k` disagrees by
-  4.12; a fitted block agrees to 1.1e-16 at every smoothing parameter
-  tried. The roughness matrix agrees with a knot-aligned trapezoid of
-  the second derivatives over one period with the gap falling by exactly
-  **4.00** at each halving of the step – the reference’s own order of
-  convergence, so the residual is the trapezoid’s and not the matrix’s –
-  while integrating over 99 per cent of the period instead moves that
-  matrix by 167.6 against a size of 2820.4.
-
-- ⚠️ The null space of the pair is the **constant at every order**, not
-  a space growing with it: a non-constant periodic function is never a
-  polynomial. Measured at orders 1, 2 and 3 it is one-dimensional in all
-  three and its function is constant to 2.7e-15, where the non-periodic
-  family of the same degree has a null space of dimension 3 at order 3.
-  So `constrain` is not an argument here, for the reason it is not one
-  on
-  [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md),
-  and a block carries `k - 1` columns.
-
-- ⚠️ **The constraints never lose rank, and the guard that would have
-  been written for that is not there.** Measured, the rank is exactly
-  `degree` at every `k` from 1 to 12 and every `degree` from 1 to 5, so
-  the bound `k >= 3` is the sibling periodic family’s floor – the
-  constant is removed, so `k = 2` leaves one column – and nothing else.
-  What the construction does assert is the resulting **dimension**,
-  because
-  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
-  removes one direction per unit of rank and a constraint that lost rank
-  would return a basis wider than the caller asked for, silently, and
-  the whole block with it.
-
-- ⚠️ **`lower` and `upper` are the period, and they are a property of
-  the problem rather than of the sample.** Left `NULL` they are read
-  from the data, which makes the fitted period the observed range and is
-  almost never what a periodic model means. The page says so.
+  with no change outside this package.
 
 ## basis7 0.9.0
 
-- **A smoother may carry a penalty of its own.** The `penalty` argument
-  of
+- The `penalty` argument of
   [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md),
   [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
   and
   [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
-  has been on the constructors and documented on their pages since
-  0.7.0, and a non-NULL value was refused; it is now stored. It is a
-  FACTORY and not a built penalty, because how many coefficients a
-  smooth has is settled by the data: the constraint, the null space and
-  the reparametrization all move with them, and a smoother is a recipe
-  for exactly that reason.
-
-- The validation is deliberately weak, and the dependency graph is why.
-  sits at the bottom of it and imports alone, so it cannot name and
-  cannot ask whether what the function returns is a penalty.
+  stores a factory of the coefficient count; a non-NULL value was
+  rejected before. The smoother never calls it: the layer that builds
+  the term calls it at the count settled by the data. Of the toolkit
+  this package imports numericals7 only, so
   [`check_penalty()`](https://statmodels7.github.io/basis7/reference/check_penalty.md)
-  asks only that it be a function of one argument. The smoother stores
-  it and NEVER CALLS IT, which a test asserts with a factory that
-  raises: whichever layer builds the term calls it, at the count the
-  data settle, and checks the result there.
-
-- The construction a factory produces is the construction it would have
-  produced without one, asserted by identity on the block, the roughness
-  matrix and the unpenalized count. The reparametrization reads the
-  ROUGHNESS matrix, which is what orders the coordinates from the
-  smoothest to the most wiggly and makes the penalty on them the
-  identity; the factory replaces that matrix only for whoever penalizes
-  with it. That ordering is what a penalty of another shape is reached
-  for.
-
-- ⚠️ `penalty` and `null_space = "shrink"` are refused TOGETHER, and
-  each is accepted alone. The shrinkage is a weight written inside the
-  roughness matrix – a tenth of what a penalized direction carries,
-  which is a ratio against that matrix’s own eigenvalues – and a factory
-  replaces the matrix with a penalty that has no such eigenvalue to be a
-  tenth of. The free columns would keep a weight in a matrix the fit no
-  longer reads, which is an argument accepted and ignored.
+  checks only that the factory is a function with at least one argument.
+- A factory does not change the construction: the block, the roughness
+  matrix and the unpenalized count are those built without it, the
+  reparametrization reading the roughness matrix.
+- `penalty` and `null_space = "shrink"` are rejected together and
+  accepted separately, the shrinkage being a weight inside the roughness
+  matrix that a factory replaces.
 
 ## basis7 0.8.3
 
-- The reapplication test asserts the ROUTE as well as the numbers. A
-  tolerance carries the claim that the two agree and cannot carry the
-  claim the test is named for – that the block is reapplied and not
-  rebuilt – since a rebuild that happened to land close would pass it.
-  The route is asserted structurally instead: with the empirical Gram
-  and the reparametrization mocked to raise,
+- The test of reapplication checks that
   [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
-  completes, so it reaches neither. The mock is proven live in the same
-  test by
-  [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
-  raising under it, without which the assertion would pass whether or
-  not the bindings were ever replaced.
+  reapplies the block and does not rebuild it, by mocking the empirical
+  Gram matrix and the reparametrization to signal an error.
 
 ## basis7 0.8.2
 
-- The four tests comparing a reapplied block against the block it came
-  from ask a tolerance rather than an identity, through the new
-  `expect_reapplied()` test helper. Both routes end in the same product
-  on the same basis object, so they perform the same operations; what
-  differs is the shape, the build multiplying a matrix with one row per
-  observation and the reapplication one with a row per new point, and a
-  BLAS is free to block, vectorize and accumulate a product differently
-  by shape. Measured: bit-identical under the reference BLAS here and
-  under R release and oldrel-1 on the continuous integration’s Ubuntu
-  image, and two ulps apart under R-devel on that same image, where it
-  separated three of nine numbers of one comparison. The tolerance is
-  chosen so the defect the check exists for still fails it. That defect
-  is a basis rebuilt from the new points rather than reapplied, which
-  carries different knots, a different empirical Gram and a different
-  rotation: measured, it sits 3.025 from a block whose largest entry is
-  2.1, twelve orders above the threshold, while the platform’s last bits
-  are four orders below it. Injection-checked in both directions – two
-  ulps and a thousand ulps pass, a relative perturbation of 1e-11, a
-  rebuilt basis and a block of the wrong width are each rejected – with
-  the control reading the threshold from the helper’s own default rather
-  than from a copy of it. One of the four sites had gone red; the other
-  three carry the same shape and were repaired with it.
+- The four tests that compare a reapplied block with the block it came
+  from use a tolerance, through the new test helper
+  `expect_reapplied()`. The two routes compute the same product on
+  matrices of different shapes, which a BLAS may accumulate differently:
+  the results were identical under the reference BLAS and two ulps apart
+  under R-devel on the Ubuntu image of the
+  101. A rebuilt basis differs by 3.025 on a block whose largest entry
+       is 2.1, and still fails the comparison.
 
 ## basis7 0.8.1
 
 - [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
-  is exported. It is the roughness matrix a smoother penalizes with, at
-  the order and the measure the smoother carries, and a tensor product
-  needs it: what `modelterms7::te()` reads from a margin is the basis
-  and this matrix, the constraint and the coordinates being the
-  product’s own.
+  is exported, for `modelterms7::te()`, which reads the basis and the
+  roughness matrix of each margin.
 
 ## basis7 0.8.0
 
-- **[`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)**,
-  the periodic family, and the reason the smoother exists. Handed a
-  Fourier basis, the construction `modelterms7::s()` runs today loses
-  the property the basis was chosen for: measured on a periodic truth at
-  300 observations, the fitted curve has **`f(0) - f(1) = 2.2125`**, and
-  it does so quietly, being neither an error nor a correct fit. Through
-  `fourier_smooth(k = 9, lower = 0, upper = 1)` the same data give
-  **2.2e-16**, and the fit is better by a factor of seven, rmse 0.0294
-  against 0.2038. Every column of the block is itself periodic, so any
-  fit built on it is.
-
-- Nine functions give **eight** coordinates rather than seven. The
-  default construction removes the constant and the linear function; a
-  periodic basis contains no linear function, so removing one costs a
-  degree of freedom and buys nothing.
+- [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md),
+  the periodic smoother. Every column of its block is periodic, so a fit
+  built on it is; the construction of `modelterms7::s()` applied to a
+  Fourier basis gave a fit with `f(0) - f(1) = 2.2125` on a periodic
+  truth.
+- A Fourier smooth of nine functions has eight coordinates: the default
+  construction removes the constant and the linear function, and a
+  periodic basis contains no linear function.
   [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-  is the generic where a family says what it removes and what it gives
-  back, and the Fourier method answers with the constant alone at every
-  order, which is measured: the null function of its Gram matrix has a
-  standard deviation of exactly zero at orders 1, 2 and 3.
-
-- **[`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)**,
-  the global polynomial family. Its null space is the polynomials of
-  degree below `order`, as a B-spline’s is, so it needs no
-  [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-  method of its own – which is the test of whether the seam is in the
-  right place.
-
-- **`order`** is built, and it says what a strongly penalized fit
-  contracts toward. Measured at `k = 20`, `degree = 5` and a smoothing
-  parameter of 1e12: at `order = 1` the fitted values have a standard
-  deviation of 4.8e-11, which is a constant; at 2 they lie on a straight
-  line to an R-squared of 1.0000000; at 3 on a parabola to 1.0000000
-  while a line explains only 0.974. The free columns follow the order
-  rather than a fixed count – one at order 2, **two** at order 3, named
-  `lin` and `poly2` – and `order` may not exceed `degree`, above which
-  the roughness matrix is identically zero.
-
-- **`constrain`** is built: the directions the smooth is made orthogonal
-  to, which may exceed the penalty’s null space and may not fall short
-  of it. Measured on `y ~ 1 + x + x^2 + s(x)` at `k = 20`, the largest
-  correlation between a column of the block and `x^2` is 0.995 at the
-  default and **1.9e-15** at `constrain = 2`, which is exact by
-  construction, and the standard error of the quadratic coefficient
-  falls with it by more than an order of magnitude, at the cost of one
-  dimension. A constraint below the null space is rejected where the two
-  numbers were written: a direction neither penalized nor identified is
-  an error several frames down otherwise.
-
-- **`measure`** is built: `"lebesgue"`, `"empirical"`, or a weight
-  function. It is a different penalty and not a detail – on a cubic
-  B-spline of twelve functions at order 2, the correlation between the
-  Lebesgue Gram matrix and the one weighted by a Gaussian of standard
-  deviation 0.25 is 0.11.
-
-- ⚠️ **The default construction is unchanged, bit for bit.** The
-  pipeline was rewritten to consume the new hooks, and the identity gate
-  of 0.7.0 – 56 comparisons against `term_build.SmoothTerm()` over seven
-  shapes – is still 56 identities and no difference. Passing the
-  roughness matrix and the constraint to
-  [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-  explicitly gives what it builds for itself at order 2, and the first
-  free column is written as `(x - mean(x)) / sd(x)` rather than as the
-  general regression it is a case of, because a change of arithmetic
-  there would move fits that are not being asked to move.
-
-- **`reparam`** is built, in all three coordinate systems. `"dr"` is the
-  Demmler-Reinsch rotation, where the penalty is the identity; `"none"`
-  leaves the constrained basis as it stands and the penalty is the
-  congruence of the roughness matrix, which is not diagonal;
-  `"orthonorm"` rotates so that over the observed covariate, against the
-  **empirical** measure,
-  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
-  being the one. The three describe the same space, and that is how it
-  is checked: an unpenalized fit cannot tell them apart, the fitted
-  values of the three agreeing to 1.8e-15 at `k = 12` over 300
-  observations. It is the reparametrized part that is orthonormal – with
-  a free column prepended the whole block is not, and
-  `null_space = "drop"` gives for the block itself, at 3.1e-15.
-
-- ⚠️ **The block is evaluated from the basis object
-  [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
-  evaluates, so the two are the same arithmetic and not the same
-  formula.** Built as a local matrix product instead, the orthonormal
-  route reapplied to something that was not identical to the block:
-  [`new_transformed()`](https://statmodels7.github.io/basis7/reference/new_transformed.md)
-  flattens a nested transform, so a later evaluation computes where
-  building it in two steps computes , and the two agree in exact
-  arithmetic and not in the last bit. The penalty is read off that same
-  object’s transform for the same reason.
-
-- **`null_space = "shrink"`** is built, at a weight of 0.1. It is ’s
-  rule translated rather than a number chosen here: measured on
-  `mgcv::s(bs = "ts")`, the shrinkage construction leaves the positive
-  eigenvalues of the penalty exactly as they were, 7708.76 down to
-  20.82, and replaces each zero with 2.082, a tenth of the smallest
-  positive one. In Demmler-Reinsch coordinates every penalized direction
-  has eigenvalue exactly 1, so the rule is that single number. ⚠️ Both
-  0.1 and 1 let the term leave the model – the fitted values reach a
-  standard deviation under 1e-6 at a large smoothing parameter, against
-  0.31 when the null space is kept – and they differ in rate: on a
-  genuinely linear truth at a smoothing parameter of 100, the error
-  against that truth is 0.0723 at 0.1 and 0.4049 at 1, so the heavier
-  weight destroys a real linear trend at a smoothing parameter chosen to
-  smooth the wiggles.
-
-- ⚠️ **A penalty factory is the one setting still rejected**, that being
-  a lot of its own.
-
-- ⚠️ **The guard that a constraint must leave something to smooth is
-  reachable only through `constrain`**, which was found by writing its
-  test: with the default, `k` is at least `degree + 1` and `order` is at
-  most `degree`, so `k` always exceeds the number of directions removed.
-  The guard is kept because a caller can write a large `constrain`, and
-  the test reaches it that way.
+  is the generic where a family states what it removes and what it
+  restores.
+- [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md),
+  the global polynomial smoother, whose null space is the polynomials of
+  degree below `order`, as for a B-spline.
+- `order` sets the derivative of the penalty and so the function toward
+  which a strongly penalized fit contracts; the free columns follow it,
+  one at `order = 2` and two at `order = 3`, named `lin` and `poly2`.
+  `order` may not exceed `degree`.
+- `constrain` sets the directions to which the smooth is made
+  orthogonal, which may exceed the null space of the penalty and may not
+  fall short of it.
+- `measure` is `"lebesgue"`, `"empirical"`, or a weight function.
+- `reparam` is `"dr"`, `"none"` or `"orthonorm"`, the last orthonormal
+  against the empirical measure.
+- `null_space = "shrink"`, at a weight of 0.1, the shrinkage
+  construction of mgcv’s `bs = "ts"` smooths in Demmler-Reinsch
+  coordinates.
+- The default construction is unchanged: the 56 comparisons of 0.7.0 are
+  still identical.
+- A penalty factory is still rejected.
 
 ## basis7 0.7.0
 
-- A **smoother** is a new class: the four decisions a penalized smooth
-  is made of, carried as one object. Which functions span the space,
-  what counts as roughness, which directions the penalty leaves alone
-  and what becomes of them, and which coordinates the coefficients live
-  in. They are independent of one another and a basis determines none of
-  them but the first, which is why they travel together rather than as
-  separate arguments at a call site: the null space is a property of the
-  basis and the penalty TOGETHER, so a basis and a penalty chosen
-  separately can be an illegal pair. The second-derivative Gram matrix
-  of a cubic B-spline has a two-dimensional null space, that of a
-  Fourier basis is one-dimensional at every order because the basis
-  contains no linear function, and the Gram matrix of a B-spline of
-  degree m at an order above m is identically zero, which penalizes
-  nothing.
-
+- The smoother class carries the four choices of a penalized smooth: the
+  basis, the penalty, the treatment of the null space, and the
+  coordinates of the coefficients. The null space is a property of the
+  basis and the penalty together, so they are carried as one object.
 - [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
-  is the first family, and `smoother_build(sm, x)` resolves it at a
-  covariate and returns the pair `(X, S)` of
-  `solve(X'X + lambda * S, X'y)`, with the count of leading columns the
-  penalty does not cover, the names of the coordinates, and a blueprint.
+  is the first family. `smoother_build(sm, x)` returns the block `X`,
+  the penalty `S`, the number of unpenalized leading columns, the names
+  of the coordinates and a blueprint, and
   `smoother_apply(sm, blueprint, newx)` reapplies the recorded
-  construction at new values rather than rebuilding it: a rebuild is a
-  basis over another interval and a rotation of another Gram matrix,
-  hence a different function of the covariate, which the suite pins by
-  measuring that the two disagree.
-
-- It is a recipe rather than a built object because two of the four
-  decisions need the data: the Demmler-Reinsch rotation diagonalizes the
-  pencil of the empirical Gram matrix against the penalty, and the
-  default interval is read from the covariate.
-
-- ⚠️ **The construction is the one `modelterms7::s()` has always run,
-  and what says so is an identity rather than a tolerance.** Against
-  `term_build.SmoothTerm()` on seven shapes – with and without `by`,
-  factor and numeric, sparse and dense, the null space kept and dropped,
-  and a non-default `k` and `degree` – the block, the penalty object,
-  the coefficient names and the block at new rows are
-  [`identical()`](https://rdrr.io/r/base/identical.html), 56 comparisons
-  and no difference. The gate was written against a reference captured
-  from the installed packages before any of this code existed, and it
-  was injection-checked: five defects make it red in the places they
-  belong, and the sharpest, the lower endpoint of the interval moved by
-  ONE ULP, turns 28 comparisons red. ⚠️ A sixth injection changed
-  nothing and is recorded because it looked like a blind spot and is
-  not: adding one more `.Machine$double.eps` to the PAD is half an ulp
-  of the endpoint, so the subtraction rounds to the same double and the
-  perturbation is not an injection at all.
-
-- ⚠️ **A setting this version does not build is rejected rather than
-  ignored.** `order`, `measure`, `constrain`, `null_space = "shrink"`,
-  `reparam` and a penalty factory are on the constructor because they
-  are part of its interface, and each reaches arithmetic that is not
-  written yet. An argument accepted and ignored would report a fit of a
-  model the caller did not ask for. What is built is `order = 2`, the
-  Lebesgue measure, the null space of the basis and the penalty as the
-  constraint, `null_space` in `"keep"` and `"drop"`, the Demmler-Reinsch
-  coordinates and the quadratic roughness penalty.
-
-- `order` may not exceed `degree`, and the constructor says so where the
-  two numbers were written: above the degree the roughness matrix is
-  identically zero, so the penalty would leave every direction free.
+  construction at new values.
+- The construction is that of `modelterms7::s()`: against
+  `term_build.SmoothTerm()` on seven shapes, 56 comparisons of the
+  block, the penalty, the names and the block at new rows are
+  [`identical()`](https://rdrr.io/r/base/identical.html).
+- Settings that this version did not build (`order`, `measure`,
+  `constrain`, `null_space = "shrink"`, `reparam` and a penalty factory)
+  are rejected.
+- `order` may not exceed `degree`, the roughness matrix being zero above
+  it.
 
 ## basis7 0.6.0
 
-- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on a basis
-  accepts every argument
-  [`matplot()`](https://rdrr.io/r/graphics/matplot.html) does. The
-  method named `type`, `lty`, `xlab`, `ylab` and `main` in its call, so
-  passing any of the five through `...` matched the same formal twice
-  and R threw
-  `formal argument "main" matched by multiple actual arguments` before
-  anything was drawn. `main` and `xlab` are the two a reader reaches for
-  first, and the error named neither the plot method nor where the
-  argument came from.
-
-  The five are defaults now, replaced by a value the caller gives, so
-  `plot(b, main = "my title")` retitles the panel and
-  `plot(b, type = "p", pch = 16)` draws points. Nothing else changes:
-  with none of the five given the device output is byte-identical to
-  what it was, which the suite asserts.
+- [`plot()`](https://rdrr.io/r/graphics/plot.default.html) of a basis
+  accepts every argument of
+  [`matplot()`](https://rdrr.io/r/graphics/matplot.html). Passing
+  `type`, `lty`, `xlab`, `ylab` or `main` signalled
+  `formal argument "main" matched by multiple actual arguments`; the
+  five are now defaults that a given value replaces.
 
 ## basis7 0.5.0
 
-- [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
-  is a new exported generic, and it is what
-  [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-  now asks. The predicate answered by reading which class each method is
-  registered on, which says where a method came from and not what it
-  does: a method registered on a concrete class that then calls the
-  fallback was reported as exact.
-  [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
-  does exactly that whenever the period is not the interval width, so a
-  Fourier basis built with `omega = 0.7` reported all three routes exact
-  while its Gram matrix came from composite Gauss-Legendre.
-
-- A family whose route depends on its own parameters registers a method
-  and is believed over the owner test, which stays the default method.
-  The generic is exported because a basis written outside the package
-  has the same need; take the default through
-  `basis_numerical_route(S7::super(basis, basis7::basis))` and set what
-  your own branching decides.
+- [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md),
+  an exported generic called by
+  [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md).
+  The predicate read the class on which each method is registered, so a
+  Fourier basis whose period is not the width of its interval reported
+  an exact Gram matrix computed by quadrature. A family whose route
+  depends on its parameters registers a method, whose result replaces
+  the owner test;
   [`route_by_owner()`](https://statmodels7.github.io/basis7/reference/route_by_owner.md)
-  is that default under a name, for the package’s own override, whose
-  formal `basis` shadows the class of the same name.
-
-- The correction reaches the two wrapper classes without either of them
-  changing:
-  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
-  of such a Fourier basis reports its Gram matrix numerical, since a
-  transformed basis delegates to its parent, and so does a
+  is the default.
+- [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
+  and
   [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
-  carrying one, taking any over its margins.
-
+  of such a Fourier basis report the Gram matrix as numerical.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-  therefore stops comparing that Gram matrix against a finer quadrature,
-  which is the treatment its `deriv` and `integral` branches already
-  gave a numerical quantity, and holds it to symmetry and positive
-  semidefiniteness instead. What was measured is that the two agreed to
-  2.6e-14, both being
-  [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
-  at different settings. [`print()`](https://rdrr.io/r/base/print.html)
-  names the route on its `Numerical:` line.
+  no longer compares a numerical Gram matrix with a second quadrature,
+  and tests its symmetry and positive semidefiniteness.
+  [`print()`](https://rdrr.io/r/base/print.html) names the route on its
+  `Numerical:` line.
 
 ## basis7 0.4.1
 
 - The finite-difference step comes from
-  [`numericals7::fd_step()`](https://statmodels7.github.io/numericals7/reference/fd_step.html)
-  as the offsets and the weights already did, instead of restating its
-  formula.
+  [`numericals7::fd_step()`](https://statmodels7.github.io/numericals7/reference/fd_step.html).
 
 ## basis7 0.4.0
 
-- The finite-difference weights and offsets move to numericals7, where
-  the toolkit’s one stencil library now lives; this package’s
-  Vandermonde construction was the most general of the three the toolkit
-  carried and is the one that survived.
+- The finite-difference weights and offsets come from numericals7.
   [`numerical_deriv_matrix()`](https://statmodels7.github.io/basis7/reference/numerical_deriv_matrix.md)
-  keeps its own policy – the interval-aware step cap and the switch to
-  one-sided stencils at the endpoints – and speaks to the shared weights
-  for everything else.
+  keeps the cap of the step by the interval and the one-sided stencils
+  at the endpoints.
 
 ## basis7 0.3.1
 
-- The numerical derivative no longer labels the rows of its result after
-  the finite-difference stencil each point uses. The stencil is chosen
-  per point and recorded in a character vector, whose names traveled
-  through the evaluation points and came back as row names for any basis
-  whose method propagates the names of `x`.
-
-- Whether a Gram matrix or a penalty is positive definite is now decided
-  from its eigenvalues rather than from whether
-  [`chol()`](https://rdrr.io/r/base/chol.html) raises. On a matrix with
-  an exactly zero eigenvalue the pivot that should be zero comes out
-  positive or negative according to rounding, so
-  [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
-  and
-  [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-  gave different answers on different machines about the same matrix.
+- The numerical derivative no longer names the rows of its result after
+  the stencil used at each point.
+- Whether a Gram matrix or a penalty is positive definite is decided
+  from its eigenvalues and not from whether
+  [`chol()`](https://rdrr.io/r/base/chol.html) succeeds, which on a
+  singular matrix depends on rounding and gave different results on
+  different platforms.
 
 ## basis7 0.3.0
 
 - [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),
-  the product of bases, one per variable. Everything follows from the
-  marginals because the product separates: a partial derivative
-  differentiates one marginal and leaves the others, the integral over
-  the box from its lower corner is the product of the marginal
-  integrals, and the Gram matrix is the Kronecker product of the
-  marginal ones. A tensor of exactly integrated marginals is therefore
-  exact at any number of variables, where a quadrature over the box
-  would not be.
-
-- A basis now declares how many variables it takes, through
-  [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  and the length of its endpoints, so a univariate basis is the case of
-  one variable rather than a separate kind of object. Evaluation points
-  become a matrix with one column per variable, and the derivative order
-  becomes a multi-index. A single non-zero order is rejected for a
-  product, since it could mean that order in every coordinate or that
-  total order.
-
+  the product of bases, one per variable. A partial derivative
+  differentiates one margin, the integral over the box is the product of
+  the marginal integrals, and the Gram matrix is the Kronecker product
+  of the marginal ones, so a product of exact margins is exact at any
+  number of variables.
+- [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
+  gives the number of variables of a basis; evaluation points become a
+  matrix with one column per variable, and the derivative order a
+  multi-index. A single non-zero order is rejected for a product.
 - [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
-  evaluates a basis against coefficients without necessarily forming the
-  design matrix. Coefficients come as a full array, processed in row
-  blocks so the peak memory is bounded by the block rather than by the
-  sample, or as a list of factor matrices in canonical polyadic form,
-  where the cost is linear in the number of variables instead of
-  exponential in it. A product of six bases of ten functions has a
-  million columns; the factorized route touches neither that matrix nor
-  the coefficient array.
-
+  evaluates a basis against coefficients without forming the full design
+  matrix: in row blocks for an array of coefficients, and from the
+  margins alone for factor matrices in canonical polyadic form, at a
+  cost linear in the number of variables.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
   [`print()`](https://rdrr.io/r/base/print.html) and the numerical
-  fallbacks understand several variables.
+  fallbacks handle several variables;
   [`plot()`](https://rdrr.io/r/graphics/plot.default.html) rejects a
-  product with an explanatory message.
+  product.
 
 ## basis7 0.2.0
 
 - [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md),
-  the Legendre polynomials by recurrence. They span the same space as
-  the raw powers and are chosen over them for conditioning: the Gram
-  matrix of raw powers is a Hilbert matrix, and ten of them are already
-  close to singular in double precision.
-
+  the Legendre polynomials by recurrence, better conditioned than the
+  raw powers, whose Gram matrix is a Hilbert matrix.
 - [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-  takes a measure. The default is Lebesgue on the interval; `at` gives
-  the empirical measure of a sample, which is the matrix a design matrix
-  produces, and `weight` gives a weighted integral. Both are handled in
-  the body of the generic, before dispatch, so a method never implements
-  them. **Breaking for user-written methods**: a
+  takes a measure: Lebesgue on the interval by default, the empirical
+  measure of a sample with `at`, a weighted integral with `weight`.
+  **Breaking for user-written methods**: a
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-  method must now name `at` and `weight` in its signature, because S7
-  requires a method’s formals to contain the generic’s.
-
-- `TransformedBasis`, one class for every linear reparametrization ,
-  with three constructors:
+  method must name `at` and `weight` in its signature, S7 requiring a
+  method’s formals to contain the generic’s.
+- `TransformedBasis`, one class for the linear reparametrizations , with
   [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
-  from the Cholesky factor of the Gram matrix rather than from a grid;
-  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
-  from the null space of a constraint; and
+  [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
+  and
   [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md),
-  the Demmler-Reinsch construction, which diagonalizes the empirical
-  inner product and the penalty at once and is empirically orthogonal to
-  a constant and to the covariate.
-
-  Transforms compose by multiplication rather than by nesting, and a
-  transformed basis reports the *parent’s* numerical status, since its
-  own methods delegate and multiply.
-
+  the Demmler-Reinsch construction. Transforms compose by
+  multiplication, and a transformed basis reports the numerical status
+  of its parent.
 - [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-  factorizes the penalty and not the design, so it survives a
-  rank-deficient design, which equally spaced knots produce whenever the
-  data leave a knot span empty. Verified on a design where the Cholesky
-  factor of the design matrix does not exist.
-
+  factorizes the penalty and not the design, so it works on a
+  rank-deficient design, which equally spaced knots produce when the
+  data leave `degree + 1` or more consecutive knot spans empty.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-  allows for the accuracy of its own reference. Each numerical reference
-  is computed at a step and at half of it, and the gap between them
-  bounds its uncertainty; the comparison is given that much slack, point
-  by point. Without it a spline failed at its own knots, where the third
-  derivative jumps and a central difference returns the jump rather than
-  the truncation error. A deliberate five per cent error is still caught
-  by four orders of magnitude.
-
+  allows for the error of its reference: each numerical reference is
+  computed at a step and at half of it, and four times the gap between
+  them is allowed point by point. A spline no longer fails at its knots,
+  and a derivative wrong by five percent still fails.
 - A vignette, `defining-a-basis`.
 
 ## basis7 0.1.0
@@ -913,39 +571,30 @@ First release.
   [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
   and
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md).
-  Derivative order is an argument, so no order is privileged, and
+  The derivative order is an argument, and
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
   returns the inner products a roughness penalty integrates.
-
 - Two families with exact formulas:
   [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md),
   whose Gram matrix is integrated exactly knot interval by knot
   interval, and
   [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md),
-  whose derivatives of every order and whose antiderivative come from
-  one phase-shift identity, and whose Gram matrix is diagonal in closed
-  form over a whole period.
-
-- Numerical fallbacks registered on the base class, so a basis that
-  implements only
+  whose derivatives and antiderivative come from one phase-shift
+  identity and whose Gram matrix is diagonal in closed form over a whole
+  period.
+- Numerical methods on the base class, so a basis that implements only
   [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
-  is complete. Derivatives use one finite-difference stencil built from
-  a Vandermonde solve, never a chain of first differences, and switch to
-  a one-sided stencil at the interval endpoints.
-
+  is complete. Derivatives use one finite-difference stencil, never a
+  chain of first differences, with a one-sided stencil at the endpoints.
 - [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-  is anchored: its value at the lower endpoint is exactly zero, for
-  every family. Any antiderivative satisfies a differentiation check, so
-  the constant is fixed by the contract instead.
-
+  is anchored at the lower endpoint, where its value is zero for every
+  family.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-  runs six numerical checks and reports a quantity that came from a
-  fallback as unchecked rather than as passed, and a property the family
-  never claimed as not claimed.
-
+  runs six numerical checks, marking a quantity that comes from a
+  fallback as `[numerical]` and a property that the family does not have
+  as `[not claimed]`.
 - [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-  answers the same question programmatically.
-
+  reports which quantities are numerical.
 - [`print()`](https://rdrr.io/r/base/print.html) and
   [`plot()`](https://rdrr.io/r/graphics/plot.default.html) methods; the
-  plot draws the basis, any derivative, or the integral.
+  plot draws the basis, a derivative or the integral.

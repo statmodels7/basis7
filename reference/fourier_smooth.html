@@ -13,7 +13,7 @@ takes the same value at the two ends of the interval."><meta property="og:image"
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,15 +85,14 @@ harmonic acceleration operator at the period of the interval.</p></dd>
 
 
 <dt id="arg-null-space">null_space<a class="anchor" aria-label="anchor" href="#arg-null-space"></a></dt>
-<dd><p>What becomes of the directions the penalty does not
-see, other than the constant, which is always removed. <code>NULL</code> takes
+<dd><p>What happens to the directions that the penalty does
+not see, other than the constant, which is always removed. <code>NULL</code> takes
 <code>"shrink"</code>, or <code>"keep"</code> where a <code>penalty</code> factory is given, the two
-being refused together. See the section above for what the choice
-costs.</p></dd>
+being incompatible. See the section above.</p></dd>
 
 
 <dt id="arg-reparam">reparam<a class="anchor" aria-label="anchor" href="#arg-reparam"></a></dt>
-<dd><p>The coordinates the coefficients live in.</p></dd>
+<dd><p>The coordinates in which the coefficients are expressed.</p></dd>
 
 
 <dt id="arg-penalty">penalty<a class="anchor" aria-label="anchor" href="#arg-penalty"></a></dt>
@@ -104,7 +103,8 @@ smoother's own page.</p></dd>
 
 <dt id="arg-omega">omega<a class="anchor" aria-label="anchor" href="#arg-omega"></a></dt>
 <dd><p>The period <strong>of the basis</strong>, <code>NULL</code> for the width of the
-interval. It is not the operator's, which <code><a href="harmonic_operator.html">harmonic_operator()</a></code> carries.</p></dd>
+interval. The period of the operator is carried by
+<code><a href="harmonic_operator.html">harmonic_operator()</a></code>.</p></dd>
 
 
 <dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
@@ -119,66 +119,55 @@ See the section above: give both.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="the-penalty-is-the-harmonic-acceleration-operator">The penalty is the harmonic acceleration operator<a class="anchor" aria-label="anchor" href="#the-penalty-is-the-harmonic-acceleration-operator"></a></h2>
-    <p>The default <code>order</code> is <code><a href="harmonic_operator.html">harmonic_operator()</a></code>, not a derivative, and the
-period it uses is the interval's. The reason is what a strongly penalized
-fit contracts <strong>to</strong>: the derivative penalty asks for a straight line,
-which is not periodic and is not what a cyclic phenomenon simplifies to,
-while the harmonic operator leaves the level and the fundamental cycle
-alone and removes everything above them.</p>
-<p>Measured at <code>k = 21</code> over 200 observations with the smoothing parameter
-chosen by generalized cross-validation on eight samples: on a truth
-dominated by its fundamental the harmonic penalty reaches a root mean
-square error of 0.0596 against the derivative penalty's 0.0654 and wins on
-seven samples of eight, at 9.28 effective degrees of freedom against
-10.72. On a truth with no periodic signal at all the two are level, 0.0110
-against 0.0121 at 1.16 degrees of freedom against 1.20, because
-<code>null_space = "shrink"</code> lets the fundamental leave the model.</p>
-<p>⚠️ That second row is why the default null space is <code>"shrink"</code> here and
-<code>"keep"</code> elsewhere. With <code>"keep"</code> the fundamental is free, the fit
-contracts to a sinusoid exactly as the operator promises, and the two
-columns are spent whether or not the covariate carries a cycle: on that
-same flat truth <code>"keep"</code> reads 0.0281 at 3.00 degrees of freedom and wins
-on none of the eight. Use <code>"keep"</code> where the cycle is known to be there
-and is the thing being estimated, and <code>"shrink"</code> where it is a hypothesis.</p>
-<p><code>order = 2</code> restores the integrated squared second derivative, in one
-argument, and gives the construction this family had before operators
-existed.</p>
+    <p>The default <code>order</code> is <code><a href="harmonic_operator.html">harmonic_operator()</a></code> and not a derivative, and
+the period that it uses is the width of the interval. The two differ in
+what a strongly penalized fit contracts <strong>to</strong>. On a periodic basis a
+derivative penalty has the constant as its only null direction, so the
+fit contracts to a constant; the harmonic operator leaves the level and
+the fundamental cycle unpenalized and penalizes every higher harmonic, so
+the fit contracts to a sinusoid.</p>
+<p>The default null space is <code>"shrink"</code> for this family and <code>"keep"</code> for the
+others. With <code>"keep"</code> the sine and cosine of the fundamental are free
+columns, so they are spent whether or not the covariate carries a cycle;
+with <code>"shrink"</code> they are penalized lightly and can leave the model. The
+first suits a cycle known to be present and estimated, the second a cycle
+whose presence is a hypothesis.</p>
+<p><code>order = 2</code> gives the integrated squared second derivative.</p>
     </div>
     <div class="section level2">
-    <h2 id="what-it-does-not-have-and-why">What it does not have, and why<a class="anchor" aria-label="anchor" href="#what-it-does-not-have-and-why"></a></h2>
+    <h2 id="arguments-the-family-does-not-take">Arguments the family does not take<a class="anchor" aria-label="anchor" href="#arguments-the-family-does-not-take"></a></h2>
     <p><code>degree</code> is a B-spline's, and a Fourier basis has none.</p>
 <p><code>constrain</code> in the form "the polynomials up to degree c" has no reading
 here: a periodic basis contains no linear function, so a derivative
 penalty's null space is the <strong>constant at every order</strong>, not a space
-growing with the order. Measured on the Gram matrix of a nine-function
-Fourier basis at orders 1, 2 and 3, the null function has a standard
-deviation of exactly zero, which is to say it is constant, and the null
-space is one-dimensional in all three.</p>
+growing with the order: the null space of the Gram matrix of a Fourier
+basis is one-dimensional at every order, spanned by the constant.</p>
     </div>
     <div class="section level2">
-    <h2 id="which-operators-this-family-accepts">Which operators this family accepts<a class="anchor" aria-label="anchor" href="#which-operators-this-family-accepts"></a></h2>
-    <p>The constant is always removed, so a model carrying an intercept spans
+    <h2 id="accepted-operators">Accepted operators<a class="anchor" aria-label="anchor" href="#accepted-operators"></a></h2>
+    <p>The constant is always removed, including when the operator penalizes it,
+as <code><a href="oscillator_operator.html">oscillator_operator()</a></code> does, so a model carrying an intercept spans
 the level and the smooth carries the shape. Every <strong>other</strong> function of
 the operator's null space is restored as a free column, and it must be
-periodic on the basis's own period, which means a pure sine or cosine at a
-whole multiple of the fundamental frequency. An operator whose null space
-holds \(t\), or \(e^{at}\), or a frequency that is not a multiple, is
-rejected: restoring such a column is what makes a fit on a periodic basis
-lose the property the basis was chosen for.</p>
+periodic on the period of the basis, which means a pure sine or cosine at
+a whole multiple of the fundamental frequency. An operator whose null
+space holds \(t\), or \(e^{at}\), or a frequency that is not a
+multiple, is rejected, because such a column would make the fit
+non-periodic.</p>
 <p>So <code><a href="harmonic_operator.html">harmonic_operator()</a></code> and <code><a href="oscillator_operator.html">oscillator_operator()</a></code> are accepted at any
-number of harmonics the basis is wide enough to hold, <code>deriv_operator(m)</code>
-is accepted and restores nothing, and
-<code>deriv_operator(2) * oscillator_operator()</code> is rejected with the reason,
-being right for a B-spline and wrong here.</p>
+number of harmonics that leaves at least one function to penalize, which
+<code>fourier_smooth()</code> checks at construction; <code>deriv_operator(m)</code> is
+accepted and restores nothing; and <code>deriv_operator(2) * oscillator_operator(p)</code>, with a period <code>p</code>, is rejected because its null
+space holds \(t\), which suits a B-spline and not a periodic basis.</p>
     </div>
     <div class="section level2">
     <h2 id="the-interval-is-the-period">The interval is the period<a class="anchor" aria-label="anchor" href="#the-interval-is-the-period"></a></h2>
-    <p>A periodic basis needs its interval fixed by the modeller, not read from
-the data: the period is a fact about the covariate, and the range of one
-sample is not it. Give <code>lower</code> and <code>upper</code>, as in
-<code>fourier_smooth(k = 9, lower = 0, upper = 365)</code> for a day of the year.
-Without them the interval is the padded range of the data, which makes
-the basis periodic on an interval nothing else knows about.</p>
+    <p>The interval of a periodic basis is fixed by the modeler and not read
+from the data, because the period is a property of the covariate and the
+range of one sample does not determine it. <code>lower</code> and <code>upper</code> give it, as
+in <code>fourier_smooth(k = 9, lower = 0, upper = 365)</code> for a day of the year.
+Without them the interval is the range of the data padded by a thousandth
+of its width, and the basis is periodic on that interval.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -209,7 +198,7 @@ the non-periodic family, <code><a href="fourier_basis.html">fourier_basis()</a><
 <span class="r-in"><span><span class="va">b</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/solve.html" class="external-link">solve</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span><span class="op">)</span> <span class="op">+</span> <span class="fl">0.01</span> <span class="op">*</span> <span class="va">out</span><span class="op">$</span><span class="va">S</span>, <span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="va">out</span><span class="op">$</span><span class="va">X</span>, <span class="va">y</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ends</span> <span class="op">&lt;-</span> <span class="fu"><a href="smoother_apply.html">smoother_apply</a></span><span class="op">(</span><span class="va">sm</span>, <span class="va">out</span><span class="op">$</span><span class="va">blueprint</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">b</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/format.html" class="external-link">format</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/diff.html" class="external-link">diff</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">ends</span><span class="op">)</span><span class="op">)</span>, digits <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-1.11e-16"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "-2.78e-16"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># THE FUNDAMENTAL IS WHAT A STRONG PENALTY LEAVES. With the null space</span></span></span>
 <span class="r-in"><span><span class="co"># kept it is free, and the heavily penalized fit is a pure sinusoid.</span></span></span>

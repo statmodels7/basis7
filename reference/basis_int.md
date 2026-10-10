@@ -31,7 +31,7 @@ basis_int(basis, x, ...)
 - ...:
 
   Passed to methods. The numerical fallback reads `nodes` from it, the
-  number of Gauss-Legendre nodes per panel, default `12`.
+  number of Gauss-Legendre nodes per segment, default `12`.
 
 ## Value
 
@@ -52,13 +52,13 @@ an expansion is the expansion against the same coefficients: \\\int_a^x
 the whole interval is the row at `basis@upper`, and the integral over
 \\\[u, v\]\\ is the difference of two rows.
 
-## Why the anchor is fixed
+## The fixed anchor
 
 The value at `basis@lower` is exactly zero, for every basis and every
-column, and that is part of the contract every implementation owes. Any
+column, and every implementation is required to satisfy this. Any
 antiderivative satisfies the differentiation check, so with the constant
 of integration left free two bases could disagree while both being
-right, and a sum of them would be wrong with nothing to report it.
+correct, and a sum of them would be wrong without any sign of it.
 
 ## A basis of several variables
 
@@ -70,9 +70,10 @@ one iterated integral per variable, so on two variables column \\j\\ is
 
 A subclass registering no method gets the one on the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class:
-composite Gauss-Legendre from the lower endpoint to each point,
-`nodes = 12` per panel by default. Exact for a polynomial integrand of
-degree up to `2 * nodes - 1`, and accurate to the panel width elsewhere.
+a Gauss-Legendre rule of `nodes = 12` nodes by default on each segment
+between consecutive sorted evaluation points, starting at the lower
+endpoint, with the segment integrals accumulated. The rule is exact for
+a polynomial integrand of degree up to `2 * nodes - 1` on each segment.
 
 ## See also
 

@@ -6,7 +6,8 @@ collection of functions on an interval; the object carries the interval,
 how many functions there are, and whatever else the family needs, and
 the generics evaluate that collection, differentiate it, integrate it
 and take its inner products. The class is abstract, so `basis(...)`
-throws; construct one of the concrete families or a subclass.
+signals an error; an object is constructed from one of the concrete
+families or a subclass.
 
 ## Usage
 
@@ -26,8 +27,9 @@ basis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -45,8 +47,8 @@ basis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.
@@ -82,16 +84,17 @@ A concrete basis is a subclass of this one. It must implement
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
 and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-have numerical methods registered on this class, so a subclass supplying
-its evaluation alone answers all four generics immediately. A closed
-form registered later takes over through dispatch, with no change to
-calling code, and
+have numerical methods registered on this class, so a subclass of one
+variable that supplies its evaluation alone has all four generics at
+once. For a subclass of several variables the numerical integral is not
+available. A closed form registered later takes over through dispatch,
+with no change to calling code, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports which of the three are still on the fallback. The vignette
+reports which of the three are still numerical. The vignette
 [`vignette("defining-a-basis")`](https://statmodels7.github.io/basis7/articles/defining-a-basis.md)
-works one through.
+works through an example.
 
-## Bases here are complete
+## Complete bases
 
 A B-spline basis carries all its functions, so its rows sum to one and
 it spans the constant. Restricting a basis, for identifiability or to
@@ -103,8 +106,8 @@ and
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
 each return a
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
-that is itself a basis, so nothing downstream has to know a restriction
-happened.
+that is itself a basis, so code that receives a basis works in the same
+way whether or not a restriction has been applied.
 
 ## One variable or several
 
@@ -113,9 +116,9 @@ box. `@lower` and `@upper` then hold one endpoint per variable and
 [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
 reports how many;
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
-takes a matrix of that many columns instead of a vector. Nothing else
-changes, and a basis of one variable is the case \\d = 1\\ of the same
-object.
+takes a matrix of that many columns instead of a vector. The rest of the
+interface is the same, and a basis of one variable is the case of a
+single variable of the same object.
 
 ## What the validator enforces
 
@@ -138,7 +141,7 @@ for the three concrete families;
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
 and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-for the generics every basis answers;
+for the generics of every basis;
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
 to verify a subclass of your own.
 
@@ -154,7 +157,8 @@ c(b@lower, b@upper)
 b@basis_params$degree
 #> [1] 3
 
-# Its five properties are the same five on every basis in the package.
+# The five properties of the class; a product adds `marginals`, and a
+# transformed basis adds `parent_basis` and `transform`.
 S7::prop_names(b)
 #> [1] "basis_name"   "dimension"    "lower"        "upper"        "basis_params"
 S7::prop_names(fourier_basis(dimension = 5))
@@ -170,7 +174,9 @@ S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
 }
 bump <- Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
 
-# The three unwritten generics answer anyway, from finite differences.
+# The three generics without a method use the numerical route: finite
+# differences for the derivative, quadrature for the integral and the
+# Gram matrix.
 basis_is_numerical(bump)
 #> basis_deriv   basis_int  basis_gram 
 #>        TRUE        TRUE        TRUE 

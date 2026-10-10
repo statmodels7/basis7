@@ -3,13 +3,15 @@
 finite-difference stencil, symmetric where the interval leaves room for it
 and one-sided where it does not. One stencil of the order wanted, never a
 composition of lower-order differences, so the error is the truncation of
-that one formula. The engine behind every numerical fallback in the
-package."><meta property="og:description" content="Estimates the order-th derivative of f at each point of x by a single
+that one formula. It computes the numerical derivatives of every basis; the
+numerical integral and Gram matrix use Gauss-Legendre quadrature through
+quad_rule() instead."><meta property="og:description" content="Estimates the order-th derivative of f at each point of x by a single
 finite-difference stencil, symmetric where the interval leaves room for it
 and one-sided where it does not. One stencil of the order wanted, never a
 composition of lower-order differences, so the error is the truncation of
-that one formula. The engine behind every numerical fallback in the
-package."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
+that one formula. It computes the numerical derivatives of every basis; the
+numerical integral and Gram matrix use Gauss-Legendre quadrature through
+quad_rule() instead."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +19,7 @@ package."><meta property="og:image" content="https://statmodels7.github.io/basis
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,8 +53,9 @@ package."><meta property="og:image" content="https://statmodels7.github.io/basis
 finite-difference stencil, symmetric where the interval leaves room for it
 and one-sided where it does not. One stencil of the order wanted, never a
 composition of lower-order differences, so the error is the truncation of
-that one formula. The engine behind every numerical fallback in the
-package.</p>
+that one formula. It computes the numerical derivatives of every basis; the
+numerical integral and Gram matrix use Gauss-Legendre quadrature through
+<code><a href="quad_rule.html">quad_rule()</a></code> instead.</p>
     </div>
 
     <div class="section level2">
@@ -66,8 +69,8 @@ package.</p>
 
 <dl><dt id="arg-f">f<a class="anchor" aria-label="anchor" href="#arg-f"></a></dt>
 <dd><p>A function of one numeric vector returning a numeric matrix with
-one row per element. Called <code>2 * reach + 1</code> times, so a costly <code>f</code> is
-evaluated three or five times over.</p></dd>
+one row per element. Called <code>max(2 * reach + 1, order + 2)</code> times, from
+three times at order 1 to six at order 4.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -80,14 +83,14 @@ central stencil and propagate to an <code>NA</code> row.</p></dd>
 
 
 <dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
-<dd><p>The endpoints of the interval <code>f</code> is defined on, used to
-choose each point's stencil and to cap the step.</p></dd>
+<dd><p>The endpoints of the interval on which <code>f</code> is defined,
+used to choose each point's stencil and to cap the step.</p></dd>
 
 
 <dt id="arg-step-scale">step_scale<a class="anchor" aria-label="anchor" href="#arg-step-scale"></a></dt>
 <dd><p>A multiplier on the step, default <code>1</code>. <code><a href="fd_reference.html">fd_reference()</a></code>
-passes <code>0.5</code> to measure the reference's own uncertainty by how much the
-answer moves.</p></dd>
+passes <code>0.5</code> to measure the uncertainty of the reference by the change in
+the result.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -96,42 +99,47 @@ answer moves.</p></dd>
 returns, with no dimnames; callers add them through <code><a href="name_columns.html">name_columns()</a></code>.</p>
     </div>
     <div class="section level2">
-    <h2 id="one-stencil-per-point-chosen-by-the-room-available">One stencil per point, chosen by the room available<a class="anchor" aria-label="anchor" href="#one-stencil-per-point-chosen-by-the-room-available"></a></h2>
+    <h2 id="choice-of-the-stencil">Choice of the stencil<a class="anchor" aria-label="anchor" href="#choice-of-the-stencil"></a></h2>
     <p>A basis is evaluated at its endpoints as readily as anywhere else, and a
-symmetric stencil centered on an endpoint would ask for points outside the
-interval, where the basis throws. Each point therefore gets the central
-stencil when both sides have room, and otherwise the one-sided stencil that
-points inward, with the same order and the same number of nodes. All three
-weight vectors come from <code><a href="https://statmodels7.github.io/numericals7/reference/fd_weights.html" class="external-link">numericals7::fd_weights()</a></code> on the offsets
-<code><a href="https://statmodels7.github.io/numericals7/reference/fd_offsets.html" class="external-link">numericals7::fd_offsets()</a></code> supplies.</p>
-<p>Accuracy is not lost at the ends. Measured against exact Legendre
-derivatives on \([0, 1]\), the first derivative agrees to 5.1e-10
-relative at the two endpoints and to 3.9e-10 in the interior.</p>
+symmetric stencil centered on an endpoint would need points outside the
+interval, where the basis signals an error. Each point therefore gets the
+central stencil when both sides have room, and otherwise the one-sided
+stencil that points inward. The one-sided stencils have <code>order + 2</code> nodes,
+so that they keep the second-order accuracy of the central one, which at an
+even order has one node fewer; the central stencil is padded with zero
+weights to the same length. The weights come from
+<code><a href="https://statmodels7.github.io/numericals7/reference/fd_weights.html" class="external-link">numericals7::fd_weights()</a></code>, and the central offsets from
+<code><a href="https://statmodels7.github.io/numericals7/reference/fd_offsets.html" class="external-link">numericals7::fd_offsets()</a></code>.</p>
+<p>The one-sided stencils carry a larger error constant. Measured against
+exact Legendre derivatives of dimension 5 on \([0, 1]\), relative to the
+scale of the result, the first derivative agrees to 5.1e-10 at the two
+endpoints and to 3.9e-10 in the interior, the second to 1.3e-07 and
+1.5e-08.</p>
     </div>
     <div class="section level2">
     <h2 id="the-step">The step<a class="anchor" aria-label="anchor" href="#the-step"></a></h2>
-    <p>The step is <code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code>'s,
+    <p>The step is that of <code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code>,
 \(\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)\), which balances
-truncation against rounding for order \(d\). It is written nowhere in
-this package, a second copy of a rule with one home being how two packages
-come to disagree.</p>
-<p>It is then capped at <code>0.4 * (upper - lower) / (2 * reach)</code> so that the
-whole stencil fits inside the interval: <code>0.2</code> of the width at orders 1 and
-2, where the stencil has three nodes, and <code>0.1</code> at orders 3 and 4, where it
-has five.</p>
+truncation against rounding for order \(d\). The rule is not repeated in
+this package, so that it has a single definition in <span class="pkg">numericals7</span>.</p>
+<p>It is then capped at <code>0.4 * (upper - lower) / (2 * reach)</code>, <code>reach</code> being
+the half-width of the central stencil, so that every stencil fits inside
+the interval: <code>0.2</code> of the width at orders 1 and 2, and <code>0.1</code> at orders 3
+and 4.</p>
     </div>
     <div class="section level2">
     <h2 id="what-it-costs-in-accuracy">What it costs in accuracy<a class="anchor" aria-label="anchor" href="#what-it-costs-in-accuracy"></a></h2>
-    <p>Measured against exact Legendre derivatives at 21 interior points of
-\([0, 1]\), relative to the scale of the answer: 3.9e-10 at order 1,
-1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4. That is what
-a family which registers no derivative method gets, and the reason to write
-a closed form where one exists.</p>
+    <p>Measured against exact Legendre derivatives of dimension 5 at 21 interior
+points of \([0, 1]\), relative to the scale of the result: 3.9e-10 at
+order 1, 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4,
+and about ten times more at the endpoints from order 2 on. A closed form,
+where one exists, is exact.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="https://statmodels7.github.io/numericals7/reference/fd_weights.html" class="external-link">numericals7::fd_weights()</a></code>, <code><a href="https://statmodels7.github.io/numericals7/reference/fd_offsets.html" class="external-link">numericals7::fd_offsets()</a></code> and
-<code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code>, which supply the three pieces;
+<code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code>, which supply the weights, the central offsets
+and the step;
 <code><a href="basis_deriv.basis.html">basis_deriv.basis()</a></code>, its main caller.</p></div>
     </div>
 

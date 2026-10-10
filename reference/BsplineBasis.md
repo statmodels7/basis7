@@ -26,8 +26,9 @@ BsplineBasis(
 
   A single string naming the family, printed by
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
-  and used by wrappers to build their own name. Not read by any
-  computation.
+  and used by wrappers to build their own name. Its first two characters
+  form the default column names of
+  [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 - dimension:
 
@@ -45,8 +46,8 @@ BsplineBasis(
 - basis_params:
 
   A named list of whatever else the subclass needs: the knots and degree
-  of a B-spline, the frequency of a Fourier basis, the marginal
-  dimensions of a product.
+  of a B-spline, the period of a Fourier basis, the marginal dimensions
+  of a product.
   [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   shows it, abbreviating any numeric entry of more than four values.
   Defaults to an empty list.
@@ -63,8 +64,9 @@ dimension against the degree.
 
 ## The Cox-de Boor recurrence
 
-On a knot sequence \\t_1 \le \cdots \le t\_{d+m+1}\\ the functions are
-defined from the indicators upward:
+On a knot sequence \\t_1 \le \cdots \le t\_{K+m+1}\\, for a basis of
+\\K\\ functions of degree \\m\\, the functions are defined from the
+indicators upward:
 
 \$\$B\_{j,0}(x) = \mathbf{1}\\t_j \le x \< t\_{j+1}\\,\$\$
 
@@ -74,16 +76,16 @@ defined from the indicators upward:
 
 a term with a zero denominator being taken as zero.
 
-## The two properties that follow
+## Local support and partition of unity
 
 \\B\_{j,m}\\ vanishes outside \\\[t_j, t\_{j+m+1}\]\\, so at most \\m +
 1\\ columns are non-zero in any row and the design matrix is banded: at
-`degree = 3` exactly four of them, whatever the dimension. And \\\sum_j
-B\_{j,m}(x) = 1\\ on the interval, measured to 2.2e-16, so the basis
+`degree = 3` at most four of them, whatever the dimension. Moreover
+\\\sum_j B\_{j,m}(x) = 1\\ on the interval, up to rounding, so the basis
 carries its own constant and is collinear with an intercept in the same
 design.
 
-## Where the numbers come from
+## Computation
 
 Evaluation, derivatives and integrals come from
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html),

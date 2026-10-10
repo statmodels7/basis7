@@ -1,9 +1,9 @@
 # The Free Columns of a Polynomial Null Space
 
-Builds the columns `null_space = "keep"` restores for a family whose
-null space is the polynomials of degree below `order`: the powers \\x,
-\ldots, x^{m}\\ made orthogonal to the constant and to one another over
-the observed covariate, then standardized.
+Builds the columns that `null_space = "keep"` restores for a family
+whose null space is the polynomials of degree below `order`: the powers
+\\x, \ldots, x^{m}\\ made orthogonal to the constant and to one another
+over the observed covariate, then standardized.
 
 ## Usage
 
@@ -29,9 +29,7 @@ needs to rebuild it at new values.
 
 ## Details
 
-The first column is written as `(x - mean(x)) / sd(x)` rather than as
-the general regression it is a case of. The two agree to the last bit
-for the quantities themselves, and the literal form is what the
-construction has always computed at `order = 2`, which is every smooth
-the toolkit has fitted; a change of arithmetic there would move fits
-that are not being asked to move.
+The first column is written as `(x - mean(x)) / sd(x)` instead of as the
+general regression of which it is a case. The two agree to rounding, and
+the literal form keeps the arithmetic of the default `order = 2`
+unchanged.

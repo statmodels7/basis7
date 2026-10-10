@@ -15,7 +15,7 @@ with \(z = 2\pi (x - \ell)/\omega\)."><meta property="og:image" content="https:/
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,9 +76,9 @@ columns, with column names <code>const</code>, <code>sin1</code>, <code>cos1</co
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Cost is two <code><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin()</a></code> and <code><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos()</a></code> calls per frequency per point, with no
-recurrence and no accumulation, so a high frequency is evaluated as
-accurately as a low one. Missing points give missing rows.</p>
+    <p>Each frequency costs one call of <code><a href="https://rdrr.io/r/base/Trig.html" class="external-link">sin()</a></code> and one of <code><a href="https://rdrr.io/r/base/Trig.html" class="external-link">cos()</a></code> per point,
+with no recurrence over the frequencies. Missing points give missing
+rows.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -44,11 +44,7 @@ A numeric vector with one value per row of `x`.
 Each block of rows is evaluated through
 [`tensor_design()`](https://statmodels7.github.io/basis7/reference/tensor_design.md)
 and multiplied by the flattened coefficients, and the block is then
-discarded. Measured at four margins of eight functions and 20000 points,
-where the full design is 625 MB: 32 MB at the default block and 0.83 s,
-against 625 MB and 1.00 s for the design route, agreeing exactly.
-Raising `block` past a few thousand buys no speed and costs memory
-linearly.
+discarded. The memory grows linearly with `block`.
 
 ## The flattening
 
@@ -62,7 +58,8 @@ numbers. See
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md).
 
 A `coef` of the wrong length, or an array whose dimensions are not the
-margins', throws with the expected values named.
+margins', signals an error that states the expected values. A matrix `x`
+of no rows gives `numeric(0)`.
 
 ## See also
 

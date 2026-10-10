@@ -1,10 +1,10 @@
-# The Interval a Smoother Expands Over
+# The Interval of a Smoother
 
-Returns the interval a smoother's basis is built on: the endpoints
-stored on the object when both are given, and otherwise the range of `x`
-padded by a thousandth of its width. The padding keeps the observed
-values strictly inside the interval, which is what a basis whose
-validator requires an open interval needs at its endpoints.
+Returns the interval on which the basis of a smoother is built. An
+endpoint stored on the object is used as it stands, and an endpoint
+stored as `NULL` is the corresponding end of the range of `x`, moved
+outward by a thousandth of the width of that range. The padding places
+the observed values strictly inside the interval.
 
 ## Usage
 
@@ -25,4 +25,5 @@ smoother_interval(sm, x)
 
 ## Value
 
-A list of two numbers, the lower and upper endpoints.
+A list of two numbers, the lower and upper endpoints. A covariate that
+takes a single value, with neither endpoint given, signals an error.

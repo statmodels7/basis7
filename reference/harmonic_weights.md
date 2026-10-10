@@ -21,5 +21,5 @@ harmonic_weights(period, harmonics)
 
 ## Value
 
-A numeric vector of `2 * harmonics` entries, the weights \\w_0, \ldots,
-w\_{m-1}\\.
+A numeric vector of `2 * harmonics + 1` entries, the weights \\w_0,
+\ldots, w\_{m-1}\\.

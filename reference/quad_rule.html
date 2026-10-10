@@ -13,7 +13,7 @@ composite rule every quadrature in the package is built from."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,8 +70,8 @@ first and last are the ends of the span.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list of two numeric vectors of length
-<code>n * (length(breaks) - 1)</code>: <code>nodes</code> and <code>weights</code>, ordered interval by
-interval.</p>
+<code>n * (length(breaks) - 1)</code>: <code>nodes</code> and <code>weights</code>, in the order described
+above.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -81,9 +81,10 @@ exact for any function that is a polynomial of degree at most
 \(2n - 1\) <strong>on each interval separately</strong>, which is why the callers
 choose their breaks with care: <code><a href="basis_gram.BsplineBasis.html">basis_gram.BsplineBasis()</a></code> uses the knots,
 so no interval straddles the point where a spline's derivative jumps.</p>
-<p>Nothing is validated. <code>breaks</code> must be increasing and of length at least
-two; the nodes come out in interval order, which is increasing when the
-breaks are.</p>
+<p>The function does not validate its arguments. <code>breaks</code> must be
+increasing and of length at least two. The nodes are ordered by their
+position within the rule and then by interval: the first node of every
+interval comes first, then the second node of every interval, and so on.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

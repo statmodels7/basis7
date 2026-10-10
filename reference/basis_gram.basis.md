@@ -5,8 +5,9 @@ The inner-product method every basis inherits from the abstract
 composite Gauss-Legendre over `panels` equal subintervals of the
 interval, applied to the requested derivatives. A one-line wrapper over
 [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md),
-which is where the work is and which the other families also call when
-their closed form does not apply.
+which does the work and which
+[`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
+also calls when the period is not the width of the interval.
 
 ## Arguments
 
@@ -31,8 +32,8 @@ their closed form does not apply.
 
   The number of equal subintervals, default `50`. For a basis of several
   variables the rule is a product and each coordinate gets
-  `ceiling(panels^(1/d))` panels, so 8 apiece at `panels = 50` on two
-  variables.
+  `max(2, ceiling(panels^(1/d)))` panels, so 8 apiece at `panels = 50`
+  on two variables.
 
 - nodes:
 
@@ -52,12 +53,12 @@ on both margins.
 
 Numerical Gram Matrix of a Basis
 
-Its accuracy is bounded by the derivative it integrates. On a polynomial
-family the order-0 matrix agrees with the closed form to 5.2e-15, while
-at order 2 the gap is 3.0e-08 relative, which is the finite-difference
-error of
-[`basis_deriv.basis()`](https://statmodels7.github.io/basis7/reference/basis_deriv.basis.md)
-carried through the integral, and no fault of the quadrature.
+Its accuracy is bounded by that of the derivatives it integrates, which
+come from
+[`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md):
+a family with a closed-form derivative gets the accuracy of the
+quadrature, and one with the finite-difference derivative carries that
+error into the matrix.
 
 All three shipped families and both wrappers register their own method,
 so this one is reached only by a basis defined outside the package.

@@ -1,6 +1,6 @@
-# Refuse Anything That Is Not an Operator
+# Check That an Object Is an Operator
 
-Refuse Anything That Is Not an Operator
+Check That an Object Is an Operator
 
 ## Usage
 

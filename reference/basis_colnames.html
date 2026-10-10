@@ -15,7 +15,7 @@ their own overrides it."><meta property="og:image" content="https://statmodels7.
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -76,19 +76,20 @@ their own overrides it.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The default method takes the first two characters of <code>@basis_name</code> and
-appends <code>1</code> to <code>@dimension</code>, giving <code>bs1 ... bs6</code> for a B-spline.
+appends the numbers from 1 to <code>@dimension</code>, giving <code>bs1 ... bs6</code> for a
+B-spline.
 <code><a href="fourier_basis.html">fourier_basis()</a></code> and <code><a href="poly_basis.html">poly_basis()</a></code> override it with names carrying
 meaning: <code>const</code>, <code>sin1</code>, <code>cos1</code>, <code>sin2</code> for the first, <code>P0</code>, <code>P1</code>, <code>P2</code>
 for the second.</p>
 <p>A wrapper numbers its own columns under a short prefix, so an
 orthonormalized basis reads <code>on1 ... on5</code>. A <code><a href="tensor_basis.html">tensor_basis()</a></code> pastes its
 margins' names, one term per pair, as <code>bs1.const</code>, <code>bs1.sin1</code>,
-<code>bs2.const</code>, so a coefficient's name says which marginal function it
-belongs to in each variable.</p>
-<p>Overriding it is how a subclass gives its columns meaning. The method must
-return exactly <code>basis@dimension</code> strings; <code><a href="name_columns.html">name_columns()</a></code> sets them
-without checking, so a shorter vector is recycled by R and silently
-mislabels.</p>
+<code>bs2.const</code>, so the name of a coefficient gives its marginal function in
+each variable.</p>
+<p>A subclass gives its columns meaningful names by overriding the method,
+which must return exactly <code>basis@dimension</code> strings; <code><a href="name_columns.html">name_columns()</a></code>
+assigns them with <code>colnames&lt;-</code>, and a vector of another length signals an
+error.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

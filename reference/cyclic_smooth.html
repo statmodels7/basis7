@@ -21,7 +21,7 @@ it alone."><meta property="og:image" content="https://statmodels7.github.io/basi
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,24 +95,24 @@ derivatives.</p></dd>
 <dd><p>What the penalty measures: a <a href="LinearOperator.html">LinearOperator</a> from
 <code><a href="deriv_operator.html">deriv_operator()</a></code>, <code><a href="harmonic_operator.html">harmonic_operator()</a></code>, <code><a href="oscillator_operator.html">oscillator_operator()</a></code> or
 <code><a href="linear_operator.html">linear_operator()</a></code>, or a whole number <code>m</code> as the shorthand for
-<code>deriv_operator(m)</code>. It says what a strongly penalized fit contracts
-toward, which for <code>m</code> is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is <code><a href="operator_null.html">operator_null()</a></code>.
-Its order is at most <code>degree</code>.</p></dd>
+<code>deriv_operator(m)</code>. The block is constrained against the constant
+only, so with a derivative penalty a strongly penalized fit contracts to
+a constant at every order. Its order is at most <code>degree</code>.</p></dd>
 
 
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
-<dd><p>The measure the roughness is integrated against.</p></dd>
+<dd><p>The measure against which the roughness is integrated.</p></dd>
 
 
 <dt id="arg-null-space">null_space<a class="anchor" aria-label="anchor" href="#arg-null-space"></a></dt>
-<dd><p>What becomes of the directions the penalty does not see.
-A periodic basis restores none, so the settings differ only in what they
-refuse.</p></dd>
+<dd><p>What happens to the directions that the penalty does
+not see. A periodic basis restores no free column, so the three settings
+give the same block, and <code>"shrink"</code> differs only in that it cannot be
+combined with a <code>penalty</code> factory.</p></dd>
 
 
 <dt id="arg-reparam">reparam<a class="anchor" aria-label="anchor" href="#arg-reparam"></a></dt>
-<dd><p>The coordinates the coefficients live in.</p></dd>
+<dd><p>The coordinates in which the coefficients are expressed.</p></dd>
 
 
 <dt id="arg-penalty">penalty<a class="anchor" aria-label="anchor" href="#arg-penalty"></a></dt>
@@ -139,8 +139,8 @@ which is \(d\) linear conditions on its coefficients. The periodic
 splines are therefore a subspace of an ordinary spline space, and the
 whole construction is <code><a href="constrain_basis.html">constrain_basis()</a></code> applied to a B-spline of
 dimension <code>k + degree</code>, whose null space has dimension <code>k</code>.</p>
-<p>Building it this way rather than by folding a widened knot sequence is
-what makes every quantity exact. The parent basis lives on \([a, b]\),
+<p>Building it this way instead of by folding a widened knot sequence makes
+every quantity exact. The parent basis lives on \([a, b]\),
 the period itself, so its Gram matrix integrates over one period and the
 penalty needs no numerical fallback: the roughness matrix is
 \(T^\top G T\) with \(G\) the parent's own exact Gram. A folded
@@ -148,56 +148,36 @@ construction puts its parent on a widened interval, and its Gram then
 integrates over more than one period.</p>
     </div>
     <div class="section level2">
-    <h2 id="what-it-buys-over-a-fourier-basis-and-where-it-buys-nothing">What it buys over a Fourier basis, and where it buys nothing<a class="anchor" aria-label="anchor" href="#what-it-buys-over-a-fourier-basis-and-where-it-buys-nothing"></a></h2>
-    <p>Both families are periodic, so the choice between them is locality and
-nothing else, and what it is worth depends entirely on the truth. The
-measurement sweeps the concentration of a seasonal peak,
-\(\exp(\kappa \cos t)\), at 400 observations with both bases ten columns
-wide and both smoothing parameters chosen by \(\mathrm{REML}\), three
-samples per setting, reporting the root mean square error against the
-truth:</p>
-<table class="table table"><tr><td>\(\kappa\)</td><td>cyclic</td><td>fourier</td><td>ratio</td></tr><tr><td>1</td><td>0.0600</td><td>0.0612</td><td>1.02</td></tr><tr><td>3</td><td>0.0652</td><td>0.0655</td><td>1.00</td></tr><tr><td>8</td><td>0.0717</td><td>0.1783</td><td><strong>2.49</strong></td></tr><tr><td>20</td><td>0.3962</td><td>0.6156</td><td>1.55</td></tr><tr><td>50</td><td>0.9282</td><td>1.1168</td><td>1.20</td></tr></table><p>At a low concentration the two are the same fit: \(\exp(\kappa \cos t)\)
-is a von Mises density, whose Fourier coefficients are modified Bessel
-functions and decay geometrically, so it is the function a global basis is
-best at. The gain appears where the peak becomes narrow against what ten
-columns can carry, and falls back again at \(\kappa = 50\), where
-neither basis of that width represents the spike at all and the comparison
-stops being about locality. So the family is worth choosing for a
-localized seasonal feature and is worth nothing for a smooth one, which is
-the same reading <code><a href="bspline_smooth.html">bspline_smooth()</a></code> and <code><a href="legendre_smooth.html">legendre_smooth()</a></code> have against
-each other away from the circle.</p>
-<p>Measured on a cubic with <code>k = 9</code> over \([0, 1]\): the basis functions
-agree at the two ends to 5.6e-17 in value, 7.1e-15 in the first
-derivative and 8.5e-14 in the second, where an ordinary B-spline of the
-same <code>k</code> disagrees by 4.12. The roughness matrix agrees with a fine
-trapezoid of the second derivatives over one period, the gap falling by
-exactly 4.00 at each halving of the step, which is the reference's own
-order of convergence rather than an error of the matrix. Integrating over
-99 per cent of the period instead moves that matrix by 167.6 against a
-size of 2820.4.</p>
+    <h2 id="comparison-with-the-fourier-basis">Comparison with the Fourier basis<a class="anchor" aria-label="anchor" href="#comparison-with-the-fourier-basis"></a></h2>
+    <p>Both families are periodic and differ in locality: a Fourier basis is
+global and a periodic B-spline basis is local. For a smooth periodic
+function, such as \(\exp(\kappa \cos t)\) at a low concentration
+\(\kappa\), whose Fourier coefficients are modified Bessel functions
+and decay rapidly, the two give the same fit. A narrow seasonal feature,
+at a higher concentration, is represented better by the local basis at
+the same number of columns.</p>
+<p>At the two ends of the period the basis functions agree in value and in
+their first <code>degree - 1</code> derivatives, up to rounding.</p>
     </div>
     <div class="section level2">
-    <h2 id="what-it-does-not-have-and-why">What it does not have, and why<a class="anchor" aria-label="anchor" href="#what-it-does-not-have-and-why"></a></h2>
-    <p><code>constrain</code> in the form "the polynomials up to degree c" has no reading
-here, for the reason it has none on <code><a href="fourier_smooth.html">fourier_smooth()</a></code>: a non-constant
+    <h2 id="arguments-the-family-does-not-take">Arguments the family does not take<a class="anchor" aria-label="anchor" href="#arguments-the-family-does-not-take"></a></h2>
+    <p><code>constrain</code> in the form "the polynomials up to degree c" has no meaning
+here, for the same reason as on <code><a href="fourier_smooth.html">fourier_smooth()</a></code>: a non-constant
 periodic function is never a polynomial, so the null space of the
-roughness matrix is the constant at every order rather than a space
-growing with the order. Measured on the pair at orders 1, 2 and 3, the
-null space is one-dimensional in all three and its function is constant to
-2.7e-15.</p>
+roughness matrix of a derivative penalty is the constant at every order,
+instead of a space growing with the order.</p>
 <p>The constant is removed, so a model carrying an intercept spans the level
-and the smooth carries the shape, and nothing is restored as a free
-column: a linear column is not periodic, and restoring one is what makes a
-fit lose the property the basis was chosen for. A block therefore carries
-<code>k - 1</code> columns.</p>
+and the smooth carries the shape, and no free column is restored: a
+linear column is not periodic. A block therefore carries <code>k - 1</code>
+columns.</p>
     </div>
     <div class="section level2">
     <h2 id="the-interval-is-the-period">The interval is the period<a class="anchor" aria-label="anchor" href="#the-interval-is-the-period"></a></h2>
     <p><code>lower</code> and <code>upper</code> are the ends of one cycle, and they are a property of
 the problem rather than of the sample: day-of-year data run over
 \([0, 365]\) whether or not an observation falls on the first day of the
-year. Left <code>NULL</code> they are read from the data, which makes the fitted
-period the observed range and is almost never what a periodic model means.</p>
+year. Left <code>NULL</code> they are read from the data, which makes the period the
+observed range.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -217,12 +197,12 @@ period the observed range and is almost never what a periodic model means.</p>
 <span class="r-in"><span><span class="co"># the block takes the same value at the two ends of the period</span></span></span>
 <span class="r-in"><span><span class="va">ends</span> <span class="op">&lt;-</span> <span class="fu"><a href="smoother_apply.html">smoother_apply</a></span><span class="op">(</span><span class="va">sm</span>, <span class="va">out</span><span class="op">$</span><span class="va">blueprint</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">365</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="va">ends</span><span class="op">[</span><span class="fl">1</span>, <span class="op">]</span> <span class="op">-</span> <span class="va">ends</span><span class="op">[</span><span class="fl">2</span>, <span class="op">]</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1.110223e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># 'order' may not exceed the degree.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">cyclic_smooth</span><span class="op">(</span>k <span class="op">=</span> <span class="fl">10</span>, degree <span class="op">=</span> <span class="fl">3</span>, order <span class="op">=</span> <span class="fl">4</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error : 'order' (4) exceeds 'degree' (3): the derivative of that order of a</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   spline of degree m is zero, so the penalty would be the zero matrix.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   spline of that degree is zero, so the penalty would be the zero matrix.</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

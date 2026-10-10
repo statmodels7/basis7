@@ -15,7 +15,7 @@ endpoint."><meta property="og:image" content="https://statmodels7.github.io/basi
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ of <code><a href="basis_nvar.html">basis_nvar()</a></code> columns for a basis o
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Passed to methods. The numerical fallback reads <code>nodes</code> from it,
-the number of Gauss-Legendre nodes per panel, default <code>12</code>.</p></dd>
+the number of Gauss-Legendre nodes per segment, default <code>12</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -93,12 +93,12 @@ The integral over the whole interval is the row at <code>basis@upper</code>, and
 integral over \([u, v]\) is the difference of two rows.</p>
     </div>
     <div class="section level2">
-    <h2 id="why-the-anchor-is-fixed">Why the anchor is fixed<a class="anchor" aria-label="anchor" href="#why-the-anchor-is-fixed"></a></h2>
+    <h2 id="the-fixed-anchor">The fixed anchor<a class="anchor" aria-label="anchor" href="#the-fixed-anchor"></a></h2>
     <p>The value at <code>basis@lower</code> is exactly zero, for every basis and every
-column, and that is part of the contract every implementation owes. Any
+column, and every implementation is required to satisfy this. Any
 antiderivative satisfies the differentiation check, so with the constant of
-integration left free two bases could disagree while both being right, and
-a sum of them would be wrong with nothing to report it.</p>
+integration left free two bases could disagree while both being correct,
+and a sum of them would be wrong without any sign of it.</p>
     </div>
     <div class="section level2">
     <h2 id="a-basis-of-several-variables">A basis of several variables<a class="anchor" aria-label="anchor" href="#a-basis-of-several-variables"></a></h2>
@@ -109,9 +109,11 @@ iterated integral per variable, so on two variables column \(j\) is
     <div class="section level2">
     <h2 id="the-numerical-fallback">The numerical fallback<a class="anchor" aria-label="anchor" href="#the-numerical-fallback"></a></h2>
     <p>A subclass registering no method gets the one on the abstract <a href="basis.html">basis</a>
-class: composite Gauss-Legendre from the lower endpoint to each point,
-<code>nodes = 12</code> per panel by default. Exact for a polynomial integrand of
-degree up to <code>2 * nodes - 1</code>, and accurate to the panel width elsewhere.</p>
+class: a Gauss-Legendre rule of <code>nodes = 12</code> nodes by default on each
+segment between consecutive sorted evaluation points, starting at the
+lower endpoint, with the segment integrals accumulated. The rule is exact
+for a polynomial integrand of degree up to <code>2 * nodes - 1</code> on each
+segment.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

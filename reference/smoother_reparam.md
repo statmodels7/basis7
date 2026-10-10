@@ -1,7 +1,7 @@
-# The Coordinates a Smoother's Coefficients Live In
+# The Coordinates of the Coefficients of a Smoother
 
-Applies the constraint and the reparametrization, returning the block,
-the penalty matrix on it, and the basis object
+Applies the constraint and the reparametrization, returning the penalty
+matrix on the block and the basis object that
 [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
 reapplies.
 
@@ -20,9 +20,8 @@ smoother_reparam(sm, b, x, g, cons)
 
 - b:
 
-  The basis
-  [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md)
-  returned.
+  The basis returned by
+  [`smoother_basis()`](https://statmodels7.github.io/basis7/reference/smoother_basis.md).
 
 - x:
 
@@ -30,9 +29,8 @@ smoother_reparam(sm, b, x, g, cons)
 
 - g:
 
-  The roughness matrix
-  [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md)
-  returned.
+  The roughness matrix returned by
+  [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md).
 
 - cons:
 
@@ -57,30 +55,29 @@ express is the same span in each.
   roughness matrix, so the columns are orthogonal over the data, ordered
   from the smoothest to the most oscillatory, and the penalty is the
   identity. A separable penalty is available under a diagonal map and
-  not under a general one, so a sparse or heavy-tailed prior on a smooth
-  is computationally reachable precisely because the basis is rotated
-  this way.
+  not under a general one, so the rotation makes a sparse or
+  heavy-tailed prior on a smooth computationally feasible.
 
 - `"none"`:
 
   The constrained basis as it stands, with the penalty the congruence of
-  the roughness matrix. The coefficients are the basis coefficients,
-  which is what a difference penalty is written on.
+  the roughness matrix by the transform of the constraint. The
+  coefficients are those of the constrained basis, one fewer than the
+  basis functions for each direction removed.
 
 - `"orthonorm"`:
 
   The constrained basis rotated so that it satisfies \\X'X = I\\ over
   the observed covariate. The orthonormality is against the
-  **empirical** measure, which is what makes the design orthonormal;
+  **empirical** measure, which makes the design orthonormal;
   [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
   orthonormalizes against the \\L^2\\ inner product instead and remains
   available as an operation on a basis. It is the **reparametrized
   part** that is orthonormal: with `null_space = "keep"` a free column
   is prepended afterwards and the whole block is then not orthonormal,
-  while `null_space = "drop"` gives \\X'X = I\\ for the block itself,
-  measured at 3.1e-15.
+  while `null_space = "drop"` gives \\X'X = I\\ for the block itself, up
+  to rounding.
 
-The three describe the same space, so an unpenalized fit cannot tell
-them apart: measured at `k = 12` over 300 observations, the fitted
-values of the three agree to 1.8e-15. What differs is what a coefficient
-means and therefore what the penalty is.
+The three describe the same space, so the fitted values of an
+unpenalized fit agree to rounding. They differ in what a coefficient
+means, and therefore in the penalty.

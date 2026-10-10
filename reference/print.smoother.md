@@ -1,7 +1,9 @@
 # Print a Smoother
 
-Prints the family, the number of basis functions and the four decisions
-the smoother carries.
+Prints the family, the number of basis functions, the penalty, the
+treatment of the null space, the coordinates and the interval. With a
+penalty factory the line `roughness` names the matrix that sets the
+coordinates, and a further line records the factory.
 
 ## Arguments
 

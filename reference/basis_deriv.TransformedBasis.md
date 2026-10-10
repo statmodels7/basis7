@@ -19,8 +19,9 @@ and no derivative of the transformation itself enters.
 
 - order:
 
-  The derivative order, a single non-negative whole number, default `1`,
-  passed to the parent unchanged.
+  The derivative order, default `1`, passed to the parent unchanged: a
+  single non-negative whole number, or one per variable for a parent of
+  several variables.
 
 - ...:
 
@@ -34,10 +35,10 @@ A numeric matrix with `length(x)` rows and `basis@dimension` columns.
 
 The accuracy is the parent's. Where the parent differentiates exactly so
 does this; where the parent falls back to a stencil the result is that
-stencil's answer arranged by \\T\\, which is why
+stencil's result multiplied by \\T\\, which is why
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports the parent's flags for a transformed basis in place of its own
-registered methods.
+reports the parent's flags for a transformed basis in place of those of
+its own registered methods.
 
 ## See also
 

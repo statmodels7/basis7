@@ -1,9 +1,8 @@
 # Contract an Ordinary Basis Against Coefficients
 
 Returns `basis_eval(basis, x) %*% coef`. For a basis of one variable the
-design matrix has `basis@dimension` columns and there is nothing worth
-avoiding, so the definition is the computation. The method every class
-inherits except
+design matrix has `basis@dimension` columns, which is small enough to
+form. Every class inherits this method except
 [TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md).
 
 ## Arguments
@@ -44,4 +43,4 @@ a matrix, and the result then has one column each.
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
 for the generic;
 [`basis_contract.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_contract.TensorBasis.md)
-for the case where the design matrix is worth avoiding.
+for the case in which the design matrix is not formed.

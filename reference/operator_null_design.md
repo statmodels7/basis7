@@ -32,20 +32,20 @@ as column names.
 ## Details
 
 These are the mathematical functions, unscaled. A smoother that restores
-them as free columns centers and scales them first and records what it
-did, so that a prediction reapplies the same columns rather than
-recomputing them from new data;
-[`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md)
-is where that happens.
+them as free columns scales them first and records the scale, so that a
+prediction reapplies the same columns instead of recomputing them from
+new data; see
+[`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md).
 
-A rate far from zero over a wide interval overflows: \\e^{at}\\ is what
-it is, and an operator with a large real root is a statement about
-growth that a design matrix cannot hold. The two operators this package
-builds for itself,
-[`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md)
+A rate far from zero over a wide interval makes \\e^{at}\\ overflow, so
+the design matrix of an operator with a large real root cannot be
+formed. The operators built by
+[`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md),
+[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
 and
-[`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md),
-have purely imaginary roots and no such difficulty.
+[`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
+have only roots on the imaginary axis, zero included, and this
+difficulty does not arise.
 
 ## See also
 
@@ -64,9 +64,12 @@ round(operator_null_design(harmonic_operator(365), x), 4)
 #> [4,] 1               -1                0
 #> [5,] 1                0                1
 
-# L applied to its own null space is zero, which is what makes it the
-# null space; here to the accuracy of a central difference
-round(colSums(abs(operator_null_design(deriv_operator(2), 1:5))), 6)
-#>  1  t 
-#>  5 15 
+# the constant and t, the null space of the second derivative
+operator_null_design(deriv_operator(2), 1:5)
+#>      1 t
+#> [1,] 1 1
+#> [2,] 1 2
+#> [3,] 1 3
+#> [4,] 1 4
+#> [5,] 1 5
 ```

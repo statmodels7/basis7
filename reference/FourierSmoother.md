@@ -4,7 +4,7 @@ The class
 [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
 returns: a Fourier basis with a roughness penalty and the
 Demmler-Reinsch reparametrization. It has no `degree` and no
-`constrain`, neither of which a periodic family has a reading for.
+`constrain`, which have no meaning for a periodic family.
 
 ## Usage
 
@@ -29,9 +29,9 @@ FourierSmoother(
 
 - smoother_name:
 
-  A single string naming the family, printed by
-  [`print.smoother()`](https://statmodels7.github.io/basis7/reference/print.smoother.md).
-  Not read by any computation.
+  A single string naming the family. It is stored and validated;
+  [`print.smoother()`](https://statmodels7.github.io/basis7/reference/print.smoother.md)
+  prints the class name instead.
 
 - dimension:
 
@@ -50,33 +50,35 @@ FourierSmoother(
   or
   [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
   or a whole number `m` as the shorthand for `deriv_operator(m)`. It
-  says what a strongly penalized fit contracts toward, which for `m` is
-  a constant at 1, a straight line at 2 and a parabola at 3, and for any
-  operator is
-  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
+  determines the functions toward which a strongly penalized fit
+  contracts: a constant for `m = 1`, a straight line for 2, a parabola
+  for 3, and the functions of
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+  for any operator.
 
 - measure:
 
-  The measure the roughness is integrated against. `"lebesgue"` is the
-  length measure on the interval.
+  The measure against which the roughness is integrated. `"lebesgue"` is
+  the length measure on the interval.
 
 - constrain:
 
-  The directions the smooth is made orthogonal to, or `NULL` for the
-  null space of the basis and the penalty together. The form it takes
-  belongs to the family, a periodic basis having no reading for
-  "polynomials up to degree c".
+  The directions to which the smooth is made orthogonal, or `NULL` for
+  the null space of the penalty. The form it takes belongs to the
+  family, a periodic basis having no reading for "polynomials up to
+  degree c".
 
 - null_space:
 
-  What becomes of the directions the penalty does not see: `"keep"`
+  What happens to the directions that the penalty does not see: `"keep"`
   leaves them as free columns, `"drop"` removes them, `"shrink"`
-  penalizes them under the same smoothing parameter.
+  penalizes them under the same smoothing parameter with a weight of one
+  tenth.
 
 - reparam:
 
-  The coordinates the coefficients live in, a single string. `"dr"` is
-  the Demmler-Reinsch rotation.
+  The coordinates in which the coefficients are expressed, a single
+  string. `"dr"` is the Demmler-Reinsch rotation.
 
 - penalty:
 
@@ -85,9 +87,9 @@ FourierSmoother(
 
 - lower, upper:
 
-  The endpoints of the interval, each a single finite number or `NULL`
-  to read it from the data at build. Given, both must be given, with
-  `lower < upper`.
+  The endpoints of the interval, each a single finite number, or `NULL`
+  to read that endpoint from the data at build. When both are given,
+  `lower` must be less than `upper`.
 
 - smoother_params:
 

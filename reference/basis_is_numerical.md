@@ -31,26 +31,26 @@ A named logical vector of length 3, with elements `basis_deriv`,
 `basis_int` and `basis_gram`, `TRUE` where the numerical fallback is in
 force.
 
-## What it decides
+## Use
 
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-reads it to decide which of its checks can mean anything. Comparing a
-finite difference against a finite difference is the same arithmetic
-twice, agreeing however wrong the basis is, so the `deriv` and
-`integral` checks are not run at all where this reports `TRUE`.
+reads it to decide which of its checks are informative. Comparing a
+finite difference against a finite difference repeats the same
+arithmetic, and the two agree however wrong the basis is, so the `deriv`
+and `integral` checks are not run where this reports `TRUE`.
 [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md)
 shows the same information on its `Numerical:` line.
 
-## How it is answered
+## Computation
 
-For an ordinary class, by asking the family through
+For an ordinary class the result comes from
 [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md),
-whose default method is the owner test: which class each method is
-registered on, through `attr(m, "signature")[[1]]`, tested with
+whose default method is the owner test: the class on which each method
+is registered, read through `attr(m, "signature")[[1]]` and tested with
 [`is_base_basis_class()`](https://statmodels7.github.io/basis7/reference/is_base_basis_class.md).
 A generic with no method at all counts as numerical.
 
-Two classes are answered by delegation instead. A
+Two classes are handled by delegation instead. A
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
 reports its parent's: all three of its methods are registered, but each
 one calls the parent and multiplies, so what is exact about it is
@@ -61,15 +61,15 @@ one of its methods being a product of its margins'.
 
 ## A method that branches
 
-The owner test says where a method came from and not what it does, so a
-method registered on a concrete class that itself calls the fallback
+The owner test reports where a method came from and not what it does, so
+a method registered on a concrete class that itself calls the fallback
 would be reported as exact.
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
-does that when the period is not the interval width, and it is why
+does that when the period is not the interval width, and this is why
 [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
 is a generic: a family whose route depends on its own parameters
-registers a method and is believed over the owner test. A basis written
-outside the package does the same.
+registers a method, whose result replaces the owner test. A basis
+written outside the package can do the same.
 
 ## See also
 
@@ -83,7 +83,8 @@ where a basis is taken from all three `TRUE` to all three `FALSE`.
 ## Examples
 
 ``` r
-# Every shipped family, and every wrapper over one, is exact throughout.
+# The shipped families at their default arguments, and wrappers over
+# them, are exact throughout.
 basis_is_numerical(bspline_basis(dimension = 5))
 #> basis_deriv   basis_int  basis_gram 
 #>       FALSE       FALSE       FALSE 
@@ -91,7 +92,7 @@ basis_is_numerical(orthonorm_basis(fourier_basis(dimension = 5)))
 #> basis_deriv   basis_int  basis_gram 
 #>       FALSE       FALSE       FALSE 
 
-# A basis defined from its evaluation alone answers TRUE to all three.
+# A basis defined from its evaluation alone gives TRUE for all three.
 Bumps <- S7::new_class("Bumps", parent = basis)
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
   out <- exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension),

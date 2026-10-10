@@ -15,7 +15,7 @@ not the whole one."><meta property="og:image" content="https://statmodels7.githu
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -88,11 +88,8 @@ otherwise what forming the design matrix would cost. Ignored for a list.</p></dd
     <div class="section level2">
     <h2 id="the-blocked-route">The blocked route<a class="anchor" aria-label="anchor" href="#the-blocked-route"></a></h2>
     <p>Each block of rows is evaluated through <code><a href="tensor_design.html">tensor_design()</a></code> and multiplied by
-the flattened coefficients, and the block is then discarded. Measured at
-four margins of eight functions and 20000 points, where the full design is
-625 MB: 32 MB at the default block and 0.83 s, against 625 MB and 1.00 s
-for the design route, agreeing exactly. Raising <code>block</code> past a few thousand
-buys no speed and costs memory linearly.</p>
+the flattened coefficients, and the block is then discarded. The memory
+grows linearly with <code>block</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="the-flattening">The flattening<a class="anchor" aria-label="anchor" href="#the-flattening"></a></h2>
@@ -102,7 +99,8 @@ its first index fastest. A plain vector has no dimensions to reverse and is
 taken in the design's column order as it stands, so the two shapes describe
 different functions from the same numbers. See <code><a href="basis_contract.html">basis_contract()</a></code>.</p>
 <p>A <code>coef</code> of the wrong length, or an array whose dimensions are not the
-margins', throws with the expected values named.</p>
+margins', signals an error that states the expected values. A matrix <code>x</code>
+of no rows gives <code>numeric(0)</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

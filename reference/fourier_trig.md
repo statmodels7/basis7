@@ -42,11 +42,12 @@ columns, no dimnames, sine and cosine interleaved by frequency.
 
 ## Details
 
-At `d = -1` the identity gives an antiderivative whose constant is not
-the one
+At `d = -1` the identity gives an antiderivative that differs from the
+one defined by
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-promises; the caller subtracts the row at the lower endpoint. Columns
-are interleaved sine-then-cosine per frequency, matching
+by a constant in each column; the caller subtracts the row at the lower
+endpoint. Columns are interleaved sine-then-cosine per frequency,
+matching
 [`basis_colnames.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_colnames.FourierBasis.md).
 
 At `n_pairs == 0` the result is a `length(x)` by 0 matrix, and the loop

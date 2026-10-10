@@ -2,9 +2,9 @@
 
 Returns \\\int\_{\ell}^{x} P_n(t)\\\mathrm{d}t\\ for every polynomial,
 in closed form and with no quadrature. The zero at the lower endpoint
-that
+required by
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-promises falls out of the identity used and needs no correction term.
+follows from the identity used and needs no correction term.
 
 ## Arguments
 
@@ -30,15 +30,15 @@ exactly zero in the row at `basis@lower`.
 ## Details
 
 The identity is \\\int P_n = (P\_{n+1} - P\_{n-1})/(2n+1)\\ for \\n \ge
-1\\, with \\\int P_0 = t\\, so one table of \\K + 1\\ polynomials
-supplies all \\K\\ integrals: the integral of the last one reaches one
-degree beyond the basis.
+1\\, with \\\int\_{-1}^{t} P_0 = t + 1\\, so one table of \\K + 1\\
+polynomials supplies all \\K\\ integrals: the integral of the last one
+reaches one degree beyond the basis.
 
-The anchoring is automatic. At \\t = -1\\, which is the lower endpoint,
-\\P\_{n+1} - P\_{n-1}\\ is \\(-1)^{n+1} - (-1)^{n-1} = 0\\, and the \\n
-= 0\\ column is written as \\(t + 1)/2 \cdot (u - \ell)\\, which also
-vanishes there. Every column is therefore exactly zero at `basis@lower`,
-with no cancellation of large numbers behind it.
+At \\t = -1\\, which is the lower endpoint, \\P\_{n+1} - P\_{n-1}\\ is
+\\(-1)^{n+1} - (-1)^{n-1} = 0\\, and the \\n = 0\\ column is written as
+\\(t + 1)/2 \cdot (u - \ell)\\, which also vanishes there. Every column
+is therefore exactly zero at `basis@lower`, with no cancellation of
+large numbers behind it.
 
 ## See also
 

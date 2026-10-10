@@ -2,10 +2,9 @@
 
 The Eilers-Marx smoother: a B-spline basis of `k` functions over equally
 spaced knots, penalized by the sum of squared `diff`-th differences of
-its coefficients rather than by an integrated squared derivative. A rich
-basis and a cheap penalty, which is the construction's own argument: `k`
-is chosen large enough not to matter and the smoothing parameter does
-the rest.
+its coefficients instead of an integrated squared derivative. The basis
+is rich and the penalty cheap to compute: `k` is chosen large enough not
+to limit the fit, and the smoothing parameter controls the roughness.
 
 ## Usage
 
@@ -41,16 +40,16 @@ pspline_smooth(
 
 - constrain:
 
-  The directions the smooth is made orthogonal to, `NULL` for the null
-  space of the penalty.
+  The directions to which the smooth is made orthogonal, `NULL` for the
+  null space of the penalty.
 
 - null_space:
 
-  What becomes of the directions the penalty does not see.
+  What happens to the directions that the penalty does not see.
 
 - reparam:
 
-  The coordinates the coefficients live in.
+  The coordinates in which the coefficients are expressed.
 
 - penalty:
 
@@ -80,18 +79,17 @@ integrated, which is why the family has no `measure` and no `order`:
 there is no measure to integrate against and no derivative whose order
 to name.
 
-That is also the reason the argument belongs to this family and not to
-every one. A difference penalty reads the coefficients as an ordered
-sequence in which neighbours are comparable, which a B-spline's are and
-a Fourier basis's are not – there "adjacent" is a sine, a cosine and the
-next sine, and their difference means nothing.
+The argument `diff` belongs to this family alone. A difference penalty
+reads the coefficients as an ordered sequence in which neighbors are
+comparable. This holds for the coefficients of a B-spline and not for
+those of a Fourier basis, where adjacent coefficients are a sine, a
+cosine and the next sine, and their difference has no meaning.
 
-## What it contracts to
+## The null space
 
 \\D_d c = 0\\ exactly when the coefficients are a polynomial of degree
-below \\d\\ in their index, and the null space of the roughness matrix
-has dimension exactly `diff`: measured at `k = 20`, `degree = 3`, it is
-1, 2 and 3 at `diff` of 1, 2 and 3.
+below \\d\\ in their index, so the null space of the roughness matrix
+has dimension `diff`.
 
 The differences are taken on the coefficients of the basis of Eilers and
 Marx, whose knots are equally spaced with the same step beyond the
@@ -99,34 +97,19 @@ interval as inside it, and the penalty is carried onto the clamped basis
 the package evaluates (the two span the same splines on the interval, so
 only the coordinates change). On those knots the Greville abscissae are
 equally spaced, and Marsden's identity makes the null space exactly the
-polynomials of degree below `diff`: measured at `k = 20` over 300
-points, the functions spanning it are those polynomials to an \\R^2\\ of
-1 at `diff` of 2 and 3. It is also the penalty of mgcv's `bs = "ps"`: on
-[`MASS::Boston`](https://rdrr.io/pkg/MASS/man/Boston.html),
-`medv ~ s(lstat)` has 6.98906, 8.75744 and 9.41421 effective degrees of
-freedom at `k` of 10, 20 and 40 against mgcv's 6.98927, 8.75783 and
-9.41421.
+polynomials of degree below `diff`. It is also the penalty of mgcv's
+`bs = "ps"` smooths, up to the normalization that mgcv applies to its
+penalty matrices.
 
-Up to basis7 0.13.1 the differences were taken on the clamped
-coefficients, whose Greville abscissae are not equally spaced near the
-ends, so the null space was only approximately the polynomials and the
-fit differed from mgcv's (8.29 effective degrees of freedom against 8.76
-in the example above).
+## Comparison with the integrated penalty on the same basis
 
-## Against the integrated penalty on the same basis
-
-The two are different penalties and neither contains the other. Measured
-at `k = 25`, `degree = 3` over 300 uniform observations, the raw
-roughness matrices correlate at 0.987 and their scales differ by more
-than three orders (83 against 2.7e+05), the difference operator carrying
-no factor of the knot spacing.
-
-The smoothing parameters nevertheless mean nearly the same thing, since
-after the Demmler-Reinsch rotation both penalties are the identity. At
-matched effective degrees of freedom of 5, 8 and 12 the two smoothing
-parameters stand in a ratio of 0.92, 0.81 and 0.65, and the fitted
-functions differ by a root mean square of 0.0044, 0.0021 and 0.0027
-against a signal whose own standard deviation is 0.61.
+The two are different penalties, and neither contains the other. The
+difference operator carries no factor of the knot spacing, so the raw
+P-spline roughness matrix is on a scale several orders of magnitude
+smaller than the integrated-derivative matrix on the same basis. After
+the Demmler-Reinsch rotation both penalties are the identity on the
+penalized directions, so equal smoothing parameters give similar amounts
+of smoothing.
 
 ## References
 

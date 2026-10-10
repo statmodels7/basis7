@@ -3,8 +3,8 @@
 Rebuilds what
 [`poly_free()`](https://statmodels7.github.io/basis7/reference/poly_free.md)
 produced, at new covariate values, from the centering, the
-orthogonalization coefficients and the scales recorded there. Nothing is
-recomputed from `newx`.
+orthogonalization coefficients and the scales recorded there, which are
+not recomputed from `newx`.
 
 ## Usage
 

@@ -1,14 +1,14 @@
 # The Row-Wise Kronecker Product of the Marginal Designs
 
-Evaluates each margin, differentiated or integrated as asked, and
-reduces the results with
+Evaluates each margin, differentiated or integrated as `order` and
+`integral` specify, and reduces the results with
 [`khatri_rao()`](https://statmodels7.github.io/basis7/reference/khatri_rao.md)
 into the product's own design matrix. The one body behind
 [`basis_eval.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_eval.TensorBasis.md),
 [`basis_deriv.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_deriv.TensorBasis.md)
 and
 [`basis_int.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_int.TensorBasis.md),
-which differ only in what they ask the margins for.
+which differ only in the quantity computed from the margins.
 
 ## Usage
 
@@ -35,13 +35,14 @@ tensor_design(basis, x, order = NULL, integral = FALSE)
 
 - integral:
 
-  `TRUE` to ask each margin for its anchored integral instead of its
+  `TRUE` to use the anchored integral of each margin instead of its
   evaluation. Not combined with `order`; each caller sets at most one.
 
 ## Value
 
-A numeric matrix with `nrow(x)` rows and `basis@dimension` columns, no
-dimnames; callers add them through
+A numeric matrix with `nrow(x)` rows and `basis@dimension` columns. Its
+column names, inherited from the first margin, are replaced by the
+callers through
 [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md).
 
 ## See also

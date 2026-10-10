@@ -34,7 +34,7 @@ check_basis_args(lower, upper, dimension)
 
 ## Details
 
-Three conditions, each throwing with `call. = FALSE`:
+Three conditions, each signalling an error with `call. = FALSE`:
 
 - `lower` and `upper` must each be a single finite number, else
   `'lower' and 'upper' must be single finite numbers.`
@@ -45,8 +45,8 @@ Three conditions, each throwing with `call. = FALSE`:
 - `dimension` must be a single finite number, at least 1 and whole, else
   `'dimension' must be a single positive integer.`
 
-A whole-valued double passes and is converted, so a caller writing `6`
-rather than `6L` is served. The multivariate case is not reachable here:
+A whole-valued double passes and is converted, so `6` is accepted as
+well as `6L`. The multivariate case does not arise here, because
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md)
 builds its endpoints from margins already validated.
 

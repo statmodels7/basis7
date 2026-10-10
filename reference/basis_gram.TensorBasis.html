@@ -15,7 +15,7 @@ variables and still carry an error."><meta property="og:image" content="https://
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,7 +63,7 @@ variables and still carry an error.</p>
 
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
 <dd><p>The derivative order, an integer vector with one entry per
-variable, or a single <code>0</code>. Each margin is asked for its own entry.</p></dd>
+variable, or a single <code>0</code>. Each margin receives its own entry.</p></dd>
 
 
 <dt id="arg-at-weight">at, weight<a class="anchor" aria-label="anchor" href="#arg-at-weight"></a></dt>
@@ -88,10 +88,10 @@ into one-dimensional integrals, so
 \(G = G_1 \otimes \cdots \otimes G_D\) with \(G_j\) the margin's own
 matrix at that margin's own order. It costs one marginal Gram matrix per
 variable and no integration over the box at all.</p>
-<p>The result is symmetrized as <code>(G + t(G))/2</code>, a Kronecker product of
-symmetric matrices being symmetric only up to the order its entries were
-formed in. It is singular whenever any margin's is, so an <code>order</code> with any
-non-zero entry gives a singular matrix.</p>
+<p>The result is symmetrized as <code>(G + t(G))/2</code>. It is singular whenever any
+margin's is; for the shipped families every Gram matrix above order zero
+is singular, so an <code>order</code> with a non-zero entry gives a singular matrix
+when the margins are shipped families.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

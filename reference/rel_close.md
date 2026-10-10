@@ -2,10 +2,10 @@
 
 Reports whether two matrices agree to a relative tolerance, with the
 denominator taken from the values themselves and floored at a millionth
-of the column's own scale. The one comparison
+of the column's own scale. It is the only comparison
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-makes, so that its derivative, integral and Gram checks all read
-agreement the same way.
+makes, so its derivative, integral and Gram checks read agreement in the
+same way.
 
 ## Usage
 
@@ -38,7 +38,8 @@ rel_close(a, b, tol, slack = NULL)
 ## Value
 
 A single `TRUE` or `FALSE`: `TRUE` when every informative entry agrees
-within its own allowance.
+within its own allowance. An entry whose allowance is infinite is not
+compared, and a missing value in any other entry gives `FALSE`.
 
 ## Why the denominator is not floored at one
 
@@ -51,17 +52,15 @@ denominator is `pmax(abs(a), abs(b))`.
 
 A basis function's derivative crosses zero, and at the crossing the
 pointwise value vanishes while the numerical reference carries its usual
-rounding error. Dividing that error by nothing reports a failure of the
-reference as a failure of the basis. The floor is `1e-6` times the
-largest absolute value in the same column, so a proportional error stays
-detectable wherever the curve is large, which is where a wrong formula
-shows itself.
+rounding error, and dividing that error by a value near zero would
+report an error of the reference as a failure of the basis. The floor is
+`1e-6` times the largest absolute value in the same column, so a
+proportional error remains detectable wherever the curve is large.
 
-## Columns with nothing to say
+## Columns of negligible scale
 
 A column whose whole scale is below `1e-8` of the largest column's is
-skipped: neither side carries information there. If every column is
-skipped the answer is `TRUE`.
+skipped. If every column is skipped the result is `TRUE`.
 
 ## See also
 

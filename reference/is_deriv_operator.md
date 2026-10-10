@@ -1,8 +1,7 @@
 # Is This the Plain Derivative Operator?
 
-Reports whether an operator is \\D^m\\, which is the case every family
-had before operators existed and the one whose construction must not
-move.
+Reports whether an operator is \\D^m\\, the case that each smoother
+family builds with its own construction for a whole `order`.
 
 ## Usage
 

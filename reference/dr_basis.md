@@ -66,51 +66,46 @@ the remaining functions empirically orthogonal to a constant and to
 then diagonalized, and the transform is \\T = V_0 A\\.
 
 The resulting design matrix \\Z = B T\\ then has \\Z^\top Z\\ diagonal
-and satisfies \\(\mathbf{1}, x)^\top Z = 0\\. Measured on a B-spline of
-twelve functions at 200 random points: the largest off-diagonal entry of
-\\Z^\top Z\\ is 8.3e-14 and the largest entry of \\(\mathbf{1}, x)^\top
-Z\\ is 1.3e-14.
+and satisfies \\(\mathbf{1}, x)^\top Z = 0\\, both up to rounding.
 
 ## What `scale` does to the penalty
 
 \\T^\top P T\\ is **proportional to** the identity, and equal to it only
 when `scale = FALSE`. With `scale = TRUE`, the default, \\T\\ is divided
 by \\\sqrt{\sum_j \lambda_j}\\, so \\T^\top P T\\ is \\(\sum_j
-\lambda_j)^{-1} I\\: on the example above, 481.6 times the identity,
-with `tr(Z'Z/n)` exactly 1. At `scale = FALSE` the two swap, \\T^\top P
-T\\ being the identity to 8.3e-14 and `tr(Z'Z/n)` being 0.00208.
+\lambda_j)^{-1} I\\ and `tr(Z'Z/n)` is 1. At `scale = FALSE` \\T^\top P
+T\\ is the identity and `tr(Z'Z/n)` is \\\sum_j \lambda_j\\.
 
-The scaling is what puts the bases of different terms on a common
-footing, so one smoothing parameter means the same thing across them. A
-consumer that needs the penalty to be exactly \\I\\ passes
-`scale = FALSE`.
+The scaling puts the bases of different terms on a common footing, so
+one smoothing parameter means the same thing across them. A consumer
+that needs the penalty to be exactly \\I\\ passes `scale = FALSE`.
 
 `basis_params$empirical_variance` holds the eigenvalues, normalized to
-sum to one when `scale = TRUE`, and they are exactly `diag(Z'Z/n)`: the
-share of empirical variance each column carries, falling from 0.834 for
-the smoothest to 4.4e-05 for the wiggliest on the example above.
+sum to one when `scale = TRUE`. They equal `diag(Z'Z/n)` up to rounding,
+and are the share of empirical variance each column carries, falling
+from the smoothest column to the wiggliest.
 
-## What this construction costs
+## Cost and properties
 
 It factorizes only a \\q \times K\\ matrix and a \\(K-q) \times (K-q)\\
 one, never anything of the size of the sample. It tolerates a
-rank-deficient \\B\\, which equally spaced knots produce whenever the
-data leave a knot span empty, the matrix inverted being the penalty. And
-the transform is kept, so prediction at new points is the parent's
-evaluation multiplied by it, as for any other transformed basis.
+rank-deficient \\B\\, which equally spaced knots produce when the data
+leave `degree + 1` or more consecutive knot spans of a B-spline empty,
+the matrix inverted being the penalty. The transform is kept, so
+prediction at new points is the parent's evaluation multiplied by it, as
+for any other transformed basis.
 
-That last property is what separating a linear from a nonlinear effect
-needs: a reparametrization not satisfying \\(\mathbf{1}, x)^\top Z = 0\\
-estimates the sum of the two correctly and the split between them with
-bias.
+The orthogonality \\(\mathbf{1}, x)^\top Z = 0\\ is what separates a
+linear from a nonlinear effect: a reparametrization without it estimates
+the sum of the two correctly and the split between them with bias.
 
 ## Errors
 
 A missing value in `x`, a `penalty` that is not `K` by `K`, or a
-`constraints` with the wrong number of columns each throw. A penalty
-singular on the constrained space throws with the two remedies named:
-there is then a direction neither penalized nor identified, and no
-rotation can fix it.
+`constraints` with the wrong number of columns each signal an error. A
+penalty singular on the constrained space signals an error that names
+two remedies: there is then a direction that is neither penalized nor
+identified, and a rotation of the basis cannot remove it.
 
 ## References
 
@@ -141,17 +136,17 @@ z <- basis_eval(d, x)
 
 # Z'Z is diagonal, and Z is orthogonal to a constant and to x.
 max(abs(crossprod(z)[upper.tri(crossprod(z))]))
-#> [1] 8.650707e-14
+#> [1] 9.114426e-14
 max(abs(crossprod(cbind(1, x), z)))
-#> [1] 4.751755e-14
+#> [1] 1.953993e-14
 
 # The columns run from smoothest to wiggliest, and the recorded shares of
-# empirical variance are exactly the diagonal of Z'Z/n.
+# empirical variance are the diagonal of Z'Z/n.
 round(d@basis_params$empirical_variance, 6)
 #>  [1] 0.833632 0.115301 0.030148 0.011133 0.004913 0.002493 0.001384 0.000875
 #>  [9] 0.000077 0.000044
 max(abs(d@basis_params$empirical_variance - diag(crossprod(z)) / length(x)))
-#> [1] 2.498002e-16
+#> [1] 6.661338e-16
 
 # Scaled, the penalty is a multiple of the identity and the trace is one.
 P <- basis_gram(bspline_basis(dimension = 12), order = 2)
@@ -163,5 +158,5 @@ sum(diag(crossprod(z))) / length(x)
 # Unscaled, the penalty is the identity instead.
 du <- dr_basis(bspline_basis(dimension = 12), x, scale = FALSE)
 max(abs(crossprod(du@transform, P %*% du@transform) - diag(du@dimension)))
-#> [1] 3.308465e-14
+#> [1] 2.975398e-14
 ```

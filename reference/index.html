@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
     <div class="section level2">
       <h2 id="bases">Bases<a class="anchor" aria-label="anchor" href="#bases"></a></h2>
 
-      <div class="section-desc"><p>The families the package ships. Each is complete: all its functions are kept, so restricting one is a separate, deliberate step.</p></div>
+      <div class="section-desc"><p>The families the package ships. Each holds all its functions, and restricting one is a separate step.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -104,7 +104,7 @@
       </dl></div><div class="section level2">
       <h2 id="smoothers">Smoothers<a class="anchor" aria-label="anchor" href="#smoothers"></a></h2>
 
-      <div class="section-desc"><p>A smoother carries the four decisions a penalized smooth is made of – the basis, the penalty, the null space and the reparametrization – as one object, because the null space is a property of the basis and the penalty together rather than of either alone. Built at the covariate, it returns the block and the penalty matrix.</p></div>
+      <div class="section-desc"><p>A smoother carries the four choices a penalized smooth is made of (the basis, the penalty, the treatment of the null space and the reparametrization) as one object, because the null space is a property of the basis and the penalty together. Built at the covariate, it returns the design block and the penalty matrix.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -179,14 +179,14 @@
           <code><a href="smoother_basis.html">smoother_basis()</a></code>
 
         </dt>
-        <dd>The Basis a Smoother Builds On</dd>
+        <dd>The Basis of a Smoother</dd>
 
         <dt>
 
           <code><a href="smoother_span.html">smoother_span()</a></code> <code><a href="smoother_span.html">smoother_span_apply()</a></code>
 
         </dt>
-        <dd>What a Smoother Removes and What It Gives Back</dd>
+        <dd>Constraint and Free Columns of a Smoother</dd>
 
         <dt>
 
@@ -348,7 +348,7 @@
       </dl></div><div class="section level2">
       <h2 id="the-interface">The interface<a class="anchor" aria-label="anchor" href="#the-interface"></a></h2>
 
-      <div class="section-desc"><p>What every basis answers. A subclass must implement only the first; the rest have numerical methods on the base class.</p></div>
+      <div class="section-desc"><p>The generics every basis has methods for. A subclass must implement only <code><a href="../reference/basis_eval.html">basis_eval()</a></code>. The base class supplies numerical methods for the derivatives, the integral and the Gram matrices, and default column names.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -466,7 +466,7 @@
       </dl></div><div class="section level2">
       <h2 id="internals">Internals<a class="anchor" aria-label="anchor" href="#internals"></a></h2>
 
-      <div class="section-desc"><p>Exported for anyone writing a basis of their own: the numerical machinery the fallbacks are built from, documented rather than hidden.</p></div>
+      <div class="section-desc"><p>The methods registered on the generics and the numerical machinery the fallbacks are built from, documented for anyone writing a basis of their own. Apart from <code><a href="../reference/smoother_gram.html">smoother_gram()</a></code>, the functions listed here are not exported and are reached with <code>basis7:::</code>.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -562,7 +562,7 @@
           <code><a href="chol_pd.html">chol_pd()</a></code>
 
         </dt>
-        <dd>Cholesky Factorization, With the Rank Decided Before It</dd>
+        <dd>Cholesky Factor with a Positive-Definiteness Test</dd>
 
         <dt>
 
@@ -583,7 +583,7 @@
           <code><a href="fd_reference.html">fd_reference()</a></code>
 
         </dt>
-        <dd>A Finite-Difference Reference, and Where It Can Be Trusted</dd>
+        <dd>A Finite-Difference Reference and Its Uncertainty</dd>
 
         <dt>
 
@@ -653,7 +653,7 @@
           <code><a href="smoother_interval.html">smoother_interval()</a></code>
 
         </dt>
-        <dd>The Interval a Smoother Expands Over</dd>
+        <dd>The Interval of a Smoother</dd>
 
         <dt>
 
@@ -681,7 +681,7 @@
           <code><a href="check_available.html">check_available()</a></code>
 
         </dt>
-        <dd>Check What a Smoother Asks For Against What Is Built</dd>
+        <dd>Check the Settings of a Smoother Against Each Other</dd>
 
         <dt>
 
@@ -699,10 +699,24 @@
 
         <dt>
 
+          <code><a href="check_periodic_size.html">check_periodic_size()</a></code>
+
+        </dt>
+        <dd>Check That a Periodic Basis Is Wider Than What the Operator Removes</dd>
+
+        <dt>
+
+          <code><a href="reject_quadrature.html">reject_quadrature()</a></code>
+
+        </dt>
+        <dd>Reject Quadrature Settings on an Exact Route</dd>
+
+        <dt>
+
           <code><a href="smoother_gram.html">smoother_gram()</a></code>
 
         </dt>
-        <dd>The Roughness Matrix a Smoother Penalizes With</dd>
+        <dd>The Roughness Matrix of a Smoother</dd>
 
         <dt>
 
@@ -730,14 +744,14 @@
           <code><a href="shrink_weight.html">shrink_weight()</a></code>
 
         </dt>
-        <dd>The Weight a Shrunk Null Space Carries</dd>
+        <dd>The Weight of a Shrunk Null Space</dd>
 
         <dt>
 
           <code><a href="smoother_reparam.html">smoother_reparam()</a></code>
 
         </dt>
-        <dd>The Coordinates a Smoother's Coefficients Live In</dd>
+        <dd>The Coordinates of the Coefficients of a Smoother</dd>
 
         <dt>
 
@@ -758,7 +772,7 @@
           <code><a href="basis_partitions_unity.html">basis_partitions_unity()</a></code>
 
         </dt>
-        <dd>Does This Basis Sum to One?</dd>
+        <dd>Whether a Basis Is a Partition of Unity</dd>
 
         <dt>
 

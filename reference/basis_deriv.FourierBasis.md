@@ -5,7 +5,8 @@ order, from the phase-shift identity of
 [FourierBasis](https://statmodels7.github.io/basis7/reference/FourierBasis.md):
 differentiating \\\sin(jz)\\ shifts its phase by \\k\pi/2\\ and
 multiplies it by \\(2\pi j/\omega)^{k}\\. The constant column is zero at
-every order above 0.
+every order above 0, and 1 at order 0, where the method returns the
+evaluation.
 
 ## Arguments
 
@@ -37,14 +38,13 @@ first column zero, with column names `const`, `sin1`, and so on.
 
 Reaching order \\k\\ costs the same as reaching order 1: the shift and
 the scale are both computed directly from \\k\\, with no recursion over
-the orders below it. A Fourier basis therefore has no order at which its
-derivatives stop being available, in contrast with a spline, whose
-derivatives run out at its degree.
+the orders below it. Every derivative of a Fourier basis is therefore
+available, whereas the derivatives of a spline vanish above its degree.
 
 The scale grows as \\j^{k}\\, so a high frequency differentiated many
-times is a large number: at `dimension = 21` and `order = 4` the largest
-entry is \\(20\pi)^4\\, about 1.6e+06 on the unit interval. That is the
-value, not a loss of accuracy.
+times gives a large number: at `dimension = 21` and `order = 4` the
+largest entry is \\(20\pi)^4\\, about 1.6e+07 on the unit interval. This
+is the value of the derivative, with no loss of accuracy.
 
 ## See also
 

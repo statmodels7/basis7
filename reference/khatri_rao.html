@@ -13,7 +13,7 @@ the margins' design matrices with it gives the product's, one row of
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,13 +60,14 @@ the margins' design matrices with it gives the product's, one row of
 
 <dl><dt id="arg-a-b">a, b<a class="anchor" aria-label="anchor" href="#arg-a-b"></a></dt>
 <dd><p>Numeric matrices with the same number of rows. The row counts
-are not checked; a mismatch gives R's own recycling behavior.</p></dd>
+are not checked here; a mismatch gives R's error for non-conformable
+arrays.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A numeric matrix with <code>nrow(a)</code> rows and <code>ncol(a) * ncol(b)</code>
-columns, no dimnames.</p>
+columns, carrying the column names of <code>a</code> repeated when <code>a</code> has them.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -75,8 +76,7 @@ columns, no dimnames.</p>
 column-order convention of a tensor basis, and the reason <code><a href="basis_contract.html">basis_contract()</a></code>
 reverses an array's dimensions before flattening it.</p>
 <p>The result has <code>ncol(a) * ncol(b)</code> columns, so reducing across several
-margins grows geometrically; nothing here bounds that, and
-<code><a href="basis_contract.html">basis_contract()</a></code> is what avoids paying it.</p>
+margins grows geometrically; <code><a href="basis_contract.html">basis_contract()</a></code> avoids forming it.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

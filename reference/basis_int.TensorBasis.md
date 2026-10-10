@@ -3,7 +3,7 @@
 Returns the integral over the box from the lower corner to each point,
 one iterated integral per variable, in closed form wherever the margins
 have one. It is the only integral over a box in the package, the
-numerical fallback taking one variable alone.
+numerical fallback handling one variable alone.
 
 ## Arguments
 
@@ -32,9 +32,9 @@ exactly zero in the row at the lower corner.
 The integrand separates, so the multiple integral is the product of the
 marginal integrals. The anchoring convention of
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-survives without a correction: a product in which every factor is zero
-at the corner is zero at the corner, so the row at `basis@lower` is
-exactly zero.
+holds without a correction: a product in which every factor is zero at
+the corner is zero at the corner, so the row at `basis@lower` is exactly
+zero.
 
 ## See also
 

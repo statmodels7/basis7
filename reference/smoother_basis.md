@@ -1,11 +1,11 @@
-# The Basis a Smoother Builds On
+# The Basis of a Smoother
 
 Returns the
-[basis](https://statmodels7.github.io/basis7/reference/basis.md) a
-smoother expands the covariate in, before any constraint or
+[basis](https://statmodels7.github.io/basis7/reference/basis.md) in
+which a smoother expands the covariate, before any constraint or
 reparametrization. It is the one step of the construction that differs
 between families, so a family is added by registering a method here
-rather than by rewriting
+instead of rewriting
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md).
 
 ## Usage

@@ -16,12 +16,12 @@ khatri_rao(a, b)
 - a, b:
 
   Numeric matrices with the same number of rows. The row counts are not
-  checked; a mismatch gives R's own recycling behavior.
+  checked here; a mismatch gives R's error for non-conformable arrays.
 
 ## Value
 
-A numeric matrix with `nrow(a)` rows and `ncol(a) * ncol(b)` columns, no
-dimnames.
+A numeric matrix with `nrow(a)` rows and `ncol(a) * ncol(b)` columns,
+carrying the column names of `a` repeated when `a` has them.
 
 ## Details
 
@@ -34,9 +34,9 @@ reason
 reverses an array's dimensions before flattening it.
 
 The result has `ncol(a) * ncol(b)` columns, so reducing across several
-margins grows geometrically; nothing here bounds that, and
+margins grows geometrically;
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
-is what avoids paying it.
+avoids forming it.
 
 ## See also
 

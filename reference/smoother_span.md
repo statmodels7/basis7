@@ -1,4 +1,4 @@
-# What a Smoother Removes and What It Gives Back
+# Constraint and Free Columns of a Smoother
 
 Returns the directions a smoother constrains its block against, and the
 ones `null_space = "keep"` restores as free columns. Both are evaluated
@@ -38,33 +38,31 @@ smoother_span_apply(sm, params, newx, ...)
 
 ## Value
 
-`smoother_span()` returns a list of three elements: `constraint`, a
-numeric matrix of one column per direction removed, or `NULL` for none;
-`free`, a numeric matrix of one column per direction restored, with zero
-columns where none is; and `params`, what `smoother_span_apply()` needs
-to rebuild `free` at new values. `smoother_span_apply()` returns that
-matrix at `newx`.
+`smoother_span()` returns a list with elements `constraint`, a numeric
+matrix of one column per direction removed; `free`, a numeric matrix of
+one column per direction restored, with zero columns where none is; and
+`params`, which `smoother_span_apply()` needs to rebuild `free` at new
+values. For a penalty that is not a derivative operator the list also
+has `free_names`, the names of the columns of `free`.
+`smoother_span_apply()` returns that matrix at `newx`.
 
-## Why the pair and not the basis
+## The basis and the penalty together
 
-The null space is a property of the basis and the penalty **together**,
-not of the basis alone. The second-derivative Gram matrix of a cubic
-B-spline has the polynomials of degree below 2 in its null space and the
-order-3 matrix the polynomials of degree below 3, while a Fourier basis
-has the constant alone at every order, the basis containing no linear
-function. Measured, the null function of a Fourier Gram matrix has a
-standard deviation of exactly zero at orders 1, 2 and 3. So the answer
+The null space is a property of the basis and the penalty together. The
+second-derivative Gram matrix of a cubic B-spline has the polynomials of
+degree below 2 in its null space and the order-3 matrix the polynomials
+of degree below 3, while a Fourier basis has the constant alone at every
+order, the basis containing no linear function. The null space therefore
 belongs to the smoother, which carries both, and a family declares it by
 registering a method here.
 
-## The default, which serves every polynomial family
+## The default method of the polynomial families
 
 The base method removes the polynomials of degree below `order`, or up
 to `constrain` when that is given and larger, and restores all but the
 constant. The constant is not restored because a model carrying an
-intercept already spans it, which is the convention
-[`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-has always followed.
+intercept already spans it, which is also the convention of
+[`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md).
 
 The restored columns are the raw powers made orthogonal to one another
 and to the constant over the observed covariate, then standardized. The

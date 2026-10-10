@@ -33,7 +33,7 @@ basis_deriv(basis, x, order = 1L, ...)
   of one variable, default `1`; a vector of
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
   such numbers for a basis of several, or a single `0`. A negative,
-  fractional or missing order throws.
+  fractional, infinite or `NA` order signals an error.
 
 - ...:
 
@@ -53,8 +53,7 @@ Derivative order is an argument, not a family of generics, because it is
 unbounded: a Fourier basis is differentiable to any order, and a spline
 of degree \\k\\ has \\k\\ non-trivial derivatives and zeros above that.
 An order beyond what the family carries returns the zero matrix, which
-is the value of the derivative; nothing is thrown, and the zeros are
-exact.
+is the value of the derivative, with exact zeros and no error.
 
 `order = 0` short-circuits to
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
@@ -66,7 +65,7 @@ pays nothing for the zero.
 For a product basis `order` has one entry per variable and names a mixed
 partial: `c(2, 0)` is \\\partial^2/\partial x_1^2\\ and `c(1, 1)` is
 \\\partial^2/\partial x_1 \partial x_2\\. A single non-zero number is
-refused, having two readings; `0` alone is accepted, meaning no
+rejected, because it has two readings; `0` alone is accepted, meaning no
 derivative under either. See
 [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md).
 
@@ -74,7 +73,7 @@ derivative under either. See
 
 A subclass registering no method gets the one on the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class,
-which applies **one** stencil of the order asked for to
+which applies **one** stencil of the requested order to
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
 never a composition of lower-order differences. The offsets, weights and
 step come from
@@ -83,18 +82,19 @@ step come from
 and
 [`numericals7::fd_step()`](https://statmodels7.github.io/numericals7/reference/fd_step.html),
 and the stencil is shifted to one side near an endpoint so that no node
-leaves the interval.
+leaves the interval, with one node more than the central stencil so that
+it keeps the same order of accuracy.
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-says whether this is the route in use, and
+reports whether this is the route in use, and
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
 measures the agreement.
 
 For a basis of several variables the fallback differentiates one
-coordinate at a time, so a mixed partial such as `c(1, 1)` throws there:
-a stencil in the plane has the product of two errors, and the one family
-that needs mixed partials,
+coordinate at a time, so a mixed partial such as `c(1, 1)` signals an
+error there: a stencil in the plane has the product of two errors, and
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),
-computes them exactly from its margins.
+the family that needs mixed partials, computes them exactly from its
+margins.
 
 ## See also
 
@@ -103,7 +103,7 @@ which is `order = 0`;
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
 for the opposite direction;
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-to learn whether a family answers this from a formula or a stencil.
+to learn whether a family computes this from a formula or a stencil.
 
 ## Examples
 

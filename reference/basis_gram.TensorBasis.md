@@ -17,7 +17,7 @@ in the number of variables and still carry an error.
 - order:
 
   The derivative order, an integer vector with one entry per variable,
-  or a single `0`. Each margin is asked for its own entry.
+  or a single `0`. Each margin receives its own entry.
 
 - at, weight:
 
@@ -43,10 +43,10 @@ G_D\\ with \\G_j\\ the margin's own matrix at that margin's own order.
 It costs one marginal Gram matrix per variable and no integration over
 the box at all.
 
-The result is symmetrized as `(G + t(G))/2`, a Kronecker product of
-symmetric matrices being symmetric only up to the order its entries were
-formed in. It is singular whenever any margin's is, so an `order` with
-any non-zero entry gives a singular matrix.
+The result is symmetrized as `(G + t(G))/2`. It is singular whenever any
+margin's is; for the shipped families every Gram matrix above order zero
+is singular, so an `order` with a non-zero entry gives a singular matrix
+when the margins are shipped families.
 
 ## See also
 

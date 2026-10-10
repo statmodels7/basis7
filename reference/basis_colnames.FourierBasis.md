@@ -2,10 +2,10 @@
 
 Names the columns `const`, `sin1`, `cos1`, `sin2`, `cos2`, and so on:
 the constant first, then the sine and cosine of each frequency in the
-order the matrix holds them. A coefficient's name therefore says which
-harmonic it belongs to, where the default `fo1 ... fo5` of
+order the matrix holds them, so the name of a coefficient gives its
+harmonic. The default of
 [`basis_colnames.basis()`](https://statmodels7.github.io/basis7/reference/basis_colnames.basis.md)
-would leave the reader counting.
+would be `fo1` to `fo5`.
 
 ## Arguments
 
@@ -25,7 +25,7 @@ A character vector of length `basis@dimension`, `"const"` first.
 
 ## Details
 
-At `n_pairs == 0`, which is `dimension = 1`, the answer is the single
+At `n_pairs == 0`, which is `dimension = 1`, the result is the single
 name `"const"` and the general branch is skipped. Falling through it
 would give `"sin"` and `"cos"` with no number,
 [`paste0()`](https://rdrr.io/r/base/paste.html) recycling a zero-length

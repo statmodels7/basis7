@@ -15,7 +15,7 @@ needs no refitting."><meta property="og:image" content="https://statmodels7.gith
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,8 +74,8 @@ basis of several.</p></dd>
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
 <dd><p>The derivative order. A single non-negative whole number for a
 basis of one variable, default <code>1</code>; a vector of <code><a href="basis_nvar.html">basis_nvar()</a></code> such
-numbers for a basis of several, or a single <code>0</code>. A negative, fractional
-or missing order throws.</p></dd>
+numbers for a basis of several, or a single <code>0</code>. A negative, fractional,
+infinite or <code>NA</code> order signals an error.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -95,7 +95,7 @@ family.</p>
 unbounded: a Fourier basis is differentiable to any order, and a spline of
 degree \(k\) has \(k\) non-trivial derivatives and zeros above that.
 An order beyond what the family carries returns the zero matrix, which is
-the value of the derivative; nothing is thrown, and the zeros are exact.</p>
+the value of the derivative, with exact zeros and no error.</p>
 <p><code>order = 0</code> short-circuits to <code><a href="basis_eval.html">basis_eval()</a></code> in the generic body, so a loop
 over orders needs no special case and pays nothing for the zero.</p>
     </div>
@@ -104,29 +104,31 @@ over orders needs no special case and pays nothing for the zero.</p>
     <p>For a product basis <code>order</code> has one entry per variable and names a mixed
 partial: <code>c(2, 0)</code> is \(\partial^2/\partial x_1^2\) and <code>c(1, 1)</code> is
 \(\partial^2/\partial x_1 \partial x_2\). A single non-zero number is
-refused, having two readings; <code>0</code> alone is accepted, meaning no derivative
-under either. See <code><a href="check_order.html">check_order()</a></code>.</p>
+rejected, because it has two readings; <code>0</code> alone is accepted, meaning no
+derivative under either. See <code><a href="check_order.html">check_order()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="the-numerical-fallback">The numerical fallback<a class="anchor" aria-label="anchor" href="#the-numerical-fallback"></a></h2>
     <p>A subclass registering no method gets the one on the abstract <a href="basis.html">basis</a>
-class, which applies <strong>one</strong> stencil of the order asked for to
+class, which applies <strong>one</strong> stencil of the requested order to
 <code><a href="basis_eval.html">basis_eval()</a></code>, never a composition of lower-order differences. The
 offsets, weights and step come from <code><a href="https://statmodels7.github.io/numericals7/reference/fd_offsets.html" class="external-link">numericals7::fd_offsets()</a></code>,
 <code><a href="https://statmodels7.github.io/numericals7/reference/fd_weights.html" class="external-link">numericals7::fd_weights()</a></code> and <code><a href="https://statmodels7.github.io/numericals7/reference/fd_step.html" class="external-link">numericals7::fd_step()</a></code>, and the stencil
 is shifted to one side near an endpoint so that no node leaves the
-interval. <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> says whether this is the route in use, and
-<code><a href="check_basis.html">check_basis()</a></code> measures the agreement.</p>
+interval, with one node more than the central stencil so that it keeps
+the same order of accuracy. <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> reports whether this is
+the route in use, and <code><a href="check_basis.html">check_basis()</a></code> measures the agreement.</p>
 <p>For a basis of several variables the fallback differentiates one coordinate
-at a time, so a mixed partial such as <code>c(1, 1)</code> throws there: a stencil in
-the plane has the product of two errors, and the one family that needs
-mixed partials, <code><a href="tensor_basis.html">tensor_basis()</a></code>, computes them exactly from its margins.</p>
+at a time, so a mixed partial such as <code>c(1, 1)</code> signals an error there: a
+stencil in the plane has the product of two errors, and <code><a href="tensor_basis.html">tensor_basis()</a></code>,
+the family that needs mixed partials, computes them exactly from its
+margins.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="basis_eval.html">basis_eval()</a></code>, which is <code>order = 0</code>; <code><a href="basis_int.html">basis_int()</a></code> for the
 opposite direction; <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> to learn whether a family
-answers this from a formula or a stencil.</p></div>
+computes this from a formula or a stencil.</p></div>
     </div>
 
     <div class="section level2">

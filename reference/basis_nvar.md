@@ -6,8 +6,7 @@ margins for a
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md).
 It is the number of columns
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
-expects its `x` to have, so it answers what shape of input the object
-takes.
+expects its `x` to have.
 
 ## Usage
 
@@ -39,15 +38,15 @@ and the generics return an `n` by `@dimension` matrix. Above one they
 are a matrix of `basis_nvar(b)` columns, one per variable; a plain
 vector is reshaped by row, so `c(0.1, 0.2, 0.5, 0.6)` on a two-variable
 basis is the two points `(0.1, 0.2)` and `(0.5, 0.6)`.
-[`plot()`](https://rdrr.io/r/graphics/plot.default.html) refuses a basis
-of more than one variable, having no single picture to draw.
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) signals an
+error for a basis of more than one variable.
 
 ## See also
 
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
 whose input shape this describes;
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),
-the only shipped family that answers more than `1`;
+the only shipped family for which it exceeds `1`;
 [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md),
 which shows it on the `Variables:` line.
 
@@ -60,7 +59,7 @@ basis_nvar(bspline_basis(dimension = 5))
 basis_nvar(orthonorm_basis(bspline_basis(dimension = 5)))
 #> [1] 1
 
-# A product answers with its number of margins.
+# For a product it is the number of margins.
 tb <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
 basis_nvar(tb)
 #> [1] 2

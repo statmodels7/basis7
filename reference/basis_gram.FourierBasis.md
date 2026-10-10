@@ -29,7 +29,7 @@ quadrature instead.
   Passed to
   [`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
   on the non-full-period branch, where `panels` and `nodes` control the
-  quadrature. Ignored on the closed branch.
+  quadrature. On the closed branch `panels` or `nodes` signals an error.
 
 ## Value
 
@@ -61,14 +61,12 @@ composite Gauss-Legendre over the interval, and the result is a full
 matrix.
 
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports `basis_gram` as `TRUE` on such a basis, the family answering
-through
-[`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md)
-rather than through the class the method is registered on, which is
-`FourierBasis` in both branches.
+reports `basis_gram` as `TRUE` on such a basis, through
+[`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md),
+although the method is registered on `FourierBasis` in both branches.
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-reads the same predicate, so it holds this matrix to the tolerance a
-quadrature deserves.
+reads the same predicate, and on this branch compares the matrix with a
+finer quadrature at the accuracy of a quadrature.
 
 ## See also
 

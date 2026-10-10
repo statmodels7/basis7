@@ -1,6 +1,6 @@
-# Refuse a Period That Is Not One Positive Number
+# Check That a Period Is One Positive Number
 
-Refuse a Period That Is Not One Positive Number
+Check That a Period Is One Positive Number
 
 ## Usage
 

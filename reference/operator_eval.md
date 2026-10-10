@@ -34,6 +34,6 @@ A numeric matrix of `length(x)` rows and `basis@dimension` columns.
 It is one weighted sum of derivative evaluations, \\\sum_j w_j D^j b +
 D^m b\\, and every term of it comes from
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
-so a basis that answers its derivatives answers this. Terms whose weight
-is exactly zero are skipped, which is why the pure derivative operator
-costs one call and not \\m + 1\\.
+so it is available for every basis whose derivatives are. Terms whose
+weight is exactly zero are skipped, which is why the pure derivative
+operator costs one call and not \\m + 1\\.

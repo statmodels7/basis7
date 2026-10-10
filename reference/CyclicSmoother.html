@@ -11,7 +11,7 @@ degree beside the properties every smoother has."><meta property="og:image" cont
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,8 +69,8 @@ roughness penalty and the Demmler-Reinsch reparametrization. It carries
 
 
 <dl><dt id="arg-smoother-name">smoother_name<a class="anchor" aria-label="anchor" href="#arg-smoother-name"></a></dt>
-<dd><p>A single string naming the family, printed by
-<code><a href="print.smoother.html">print.smoother()</a></code>. Not read by any computation.</p></dd>
+<dd><p>A single string naming the family. It is stored and
+validated; <code><a href="print.smoother.html">print.smoother()</a></code> prints the class name instead.</p></dd>
 
 
 <dt id="arg-dimension">dimension<a class="anchor" aria-label="anchor" href="#arg-dimension"></a></dt>
@@ -83,32 +83,34 @@ integer.</p></dd>
 <dd><p>What the penalty measures: a <a href="LinearOperator.html">LinearOperator</a> from
 <code><a href="deriv_operator.html">deriv_operator()</a></code>, <code><a href="harmonic_operator.html">harmonic_operator()</a></code>, <code><a href="oscillator_operator.html">oscillator_operator()</a></code> or
 <code><a href="linear_operator.html">linear_operator()</a></code>, or a whole number <code>m</code> as the shorthand for
-<code>deriv_operator(m)</code>. It says what a strongly penalized fit contracts
-toward, which for <code>m</code> is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is <code><a href="operator_null.html">operator_null()</a></code>.</p></dd>
+<code>deriv_operator(m)</code>. It determines the functions toward which a
+strongly penalized fit contracts: a constant for <code>m = 1</code>, a straight
+line for 2, a parabola for 3, and the functions of <code><a href="operator_null.html">operator_null()</a></code>
+for any operator.</p></dd>
 
 
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
-<dd><p>The measure the roughness is integrated against.
+<dd><p>The measure against which the roughness is integrated.
 <code>"lebesgue"</code> is the length measure on the interval.</p></dd>
 
 
 <dt id="arg-constrain">constrain<a class="anchor" aria-label="anchor" href="#arg-constrain"></a></dt>
-<dd><p>The directions the smooth is made orthogonal to, or
-<code>NULL</code> for the null space of the basis and the penalty together. The
-form it takes belongs to the family, a periodic basis having no reading
-for "polynomials up to degree c".</p></dd>
+<dd><p>The directions to which the smooth is made orthogonal,
+or <code>NULL</code> for the null space of the penalty. The form it takes belongs
+to the family, a periodic basis having no reading for "polynomials up to
+degree c".</p></dd>
 
 
 <dt id="arg-null-space">null_space<a class="anchor" aria-label="anchor" href="#arg-null-space"></a></dt>
-<dd><p>What becomes of the directions the penalty does not
-see: <code>"keep"</code> leaves them as free columns, <code>"drop"</code> removes them,
-<code>"shrink"</code> penalizes them under the same smoothing parameter.</p></dd>
+<dd><p>What happens to the directions that the penalty does
+not see: <code>"keep"</code> leaves them as free columns, <code>"drop"</code> removes them,
+<code>"shrink"</code> penalizes them under the same smoothing parameter with a
+weight of one tenth.</p></dd>
 
 
 <dt id="arg-reparam">reparam<a class="anchor" aria-label="anchor" href="#arg-reparam"></a></dt>
-<dd><p>The coordinates the coefficients live in, a single string.
-<code>"dr"</code> is the Demmler-Reinsch rotation.</p></dd>
+<dd><p>The coordinates in which the coefficients are expressed, a
+single string. <code>"dr"</code> is the Demmler-Reinsch rotation.</p></dd>
 
 
 <dt id="arg-penalty">penalty<a class="anchor" aria-label="anchor" href="#arg-penalty"></a></dt>
@@ -118,8 +120,8 @@ building a <span class="pkg">penalties7</span> penalty from a coefficient count.
 
 <dt id="arg-lower-upper">lower, upper<a class="anchor" aria-label="anchor" href="#arg-lower-upper"></a></dt>
 <dd><p>The endpoints of the interval, each a single finite
-number or <code>NULL</code> to read it from the data at build. Given, both must be
-given, with <code>lower &lt; upper</code>.</p></dd>
+number, or <code>NULL</code> to read that endpoint from the data at build. When
+both are given, <code>lower</code> must be less than <code>upper</code>.</p></dd>
 
 
 <dt id="arg-smoother-params">smoother_params<a class="anchor" aria-label="anchor" href="#arg-smoother-params"></a></dt>

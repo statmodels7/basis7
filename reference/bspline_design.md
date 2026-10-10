@@ -3,9 +3,8 @@
 The single point at which this package talks to splines2. It assembles
 the knot arguments from `basis@basis_params`, calls
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html)
-once, and returns a plain matrix, so the dependency stays behind the S7
-interface and no caller has to know its argument names or its return
-class.
+once, and returns a plain matrix, so the argument names and the return
+class of splines2 stay inside this function.
 
 ## Usage
 
@@ -50,13 +49,13 @@ splines2 attaches. Callers add the column names through
 `intercept = TRUE` is passed always, so all `dimension` functions come
 back; splines2 would otherwise drop the first.
 
-The returned object is of class `BSpline` and carries ten attributes,
-among them `x`, `knots`, `degree` and `intercept`. Rebuilding it as
-`matrix(as.numeric(out), ...)` strips every one, which matters because
-those attributes would survive arithmetic and reappear on a matrix that
-no longer describes them. The dimensions are taken from `length(x)` and
-`basis@dimension`, so a mismatch with what splines2 returned surfaces
-here.
+The object splines2 returns is of class `BSpline` and carries
+attributes, among them `x`, `knots`, `degree` and `intercept`.
+Rebuilding it as `matrix(as.numeric(out), ...)` strips all of them,
+since they would survive arithmetic and reappear on a matrix that they
+no longer describe. The dimensions are taken from `length(x)` and
+`basis@dimension`. An empty `x`, which splines2 rejects, gives a matrix
+of no rows.
 
 `derivs` and `integral` are mutually exclusive in practice, each caller
 setting at most one.

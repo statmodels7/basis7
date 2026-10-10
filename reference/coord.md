@@ -42,14 +42,15 @@ shape as `x`: the matrix with column `j` overwritten, or `z` itself when
 
 ## Details
 
-Both are the identity for a basis of one variable, where `x` is a plain
-vector with no coordinate to pick: `coord()` returns `x` and
-`replace_coord()` returns `z`, so the caller writes one loop over
-`seq_len(basis_nvar(basis))` with no branch for the univariate case.
+For a basis of one variable, where `x` is a plain vector, `coord()`
+returns `x` and `replace_coord()` returns `z`, so the caller writes one
+loop over `seq_len(basis_nvar(basis))` with no branch for the univariate
+case.
 
-Neither validates anything. `j` outside the columns of `x` gives R's own
-subscript error, and a `z` of the wrong length is recycled by R's usual
-rules.
+Neither function validates its arguments. An index `j` outside the
+columns of `x` gives R's subscript error. A `z` of the wrong length is
+recycled into a matrix only when its length divides the number of rows,
+and is returned as it is for a vector `x`.
 
 ## See also
 

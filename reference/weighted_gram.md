@@ -1,9 +1,8 @@
 # Gram Matrix Against a Weighted Lebesgue Measure
 
 Computes \\\int_a^b B^{(d)}(t)\\ B^{(d)}(t)^\top w(t)\\\mathrm{d}t\\ by
-composite Gauss-Legendre. A weight is an arbitrary function, so no
-family has a closed form for it and the quadrature is always run. Called
-from the body of
+composite Gauss-Legendre. A weight is an arbitrary function, so the
+quadrature is always run. Called from the body of
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 when `weight` is supplied.
 
@@ -18,8 +17,7 @@ weighted_gram(basis, order, weight, panels = 50L, nodes = 12L, ...)
 - basis:
 
   A basis object of one variable, of any class inheriting from
-  [basis](https://statmodels7.github.io/basis7/reference/basis.md). More
-  than one variable throws.
+  [basis](https://statmodels7.github.io/basis7/reference/basis.md).
 
 - order:
 
@@ -29,7 +27,7 @@ weighted_gram(basis, order, weight, panels = 50L, nodes = 12L, ...)
 - weight:
 
   A function of one numeric vector returning one non-negative value per
-  point. A wrong length, an `NA` or a negative value throws.
+  point. A wrong length, an `NA` or a negative value signals an error.
 
 - panels:
 
@@ -58,14 +56,11 @@ folded into the quadrature weights and the matrix formed as a
 crossproduct of \\\sqrt{w_i}\\B^{(d)}(t_i)\\, which keeps the result
 positive semidefinite whatever the weight does.
 
-Measured against the closed forms at \\w \equiv 1\\ with the defaults,
-worst absolute entry: 5e-15 at order 0 and 2e-11 at order 2 for Fourier
-and Legendre; 5e-12 at order 0 and 1.4e-3 at order 2 for a cubic
-B-spline over eight knots, 2e-6 of the matrix's own scale, the second
-derivative there having kinks the panel breaks do not line up with.
-Raise `panels` when a family's derivative is not smooth.
+For a spline the accuracy is limited by the kinks of the derivative at
+knots that the panel breaks do not line up with; `panels` is raised when
+a derivative is not smooth.
 
-A basis of several variables is refused: the rule above is
+A basis of several variables is rejected, the rule being
 one-dimensional.
 
 ## See also

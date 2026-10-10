@@ -1,9 +1,9 @@
 # The Null Basis of a Constraint
 
-An orthonormal basis of the null space of `cm`, the columns a
-constrained basis is built from. It is the transform **relative to the
-basis being constrained**, which is not always the one the resulting
-object stores.
+An orthonormal basis of the null space of `cm`, from whose columns a
+constrained basis is built. It is the transform **relative to the basis
+being constrained**, which is not always the one stored by the resulting
+object.
 
 ## Usage
 
@@ -38,9 +38,8 @@ flattens a nested transform, so a basis that is itself transformed comes
 back carrying the product against its own parent: constraining a cyclic
 smoother's twelve periodic functions, which are a transform of fifteen
 B-splines, gives an object whose transform is 15 by 11 and not 12 by 11.
-That is right for evaluating it and wrong for carrying a matrix defined
-on the twelve, which is why the local transform is available here rather
-than read off the object.
+The stored transform serves the evaluation, and a matrix defined on the
+twelve functions needs the local one, which is why it is returned here.
 
 ## See also
 

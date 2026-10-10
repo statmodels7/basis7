@@ -4,7 +4,7 @@ Computes \\B^{(d)\top} B^{(d)} / n\\ at the given points: the inner
 products a design matrix produces, in place of those of the functions on
 their interval. Called from the body of
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-when `at` is supplied, so no method ever sees this case.
+when `at` is supplied, so this case never reaches a method.
 
 ## Usage
 
@@ -30,7 +30,7 @@ empirical_gram(basis, order, at)
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
   columns. Not range-checked here;
   [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
-  does that and throws for a point outside the interval.
+  does that and signals an error for a point outside the interval.
 
 ## Value
 
@@ -40,15 +40,15 @@ on both margins.
 
 ## Details
 
-Missing points are dropped **before** the basis is evaluated. A basis is
-entitled to refuse a vector that is entirely missing, and its refusal
-would name the wrong thing here, so `at` with no usable point throws
-`'at' has no usable points.` instead. For a basis of several variables
-`at` is coerced to a matrix and rows with any missing entry are dropped
-whole.
+Missing points are dropped **before** the basis is evaluated. A basis
+may reject a vector that is entirely missing, with a message that would
+name the wrong argument here, so `at` with no usable point signals the
+error `'at' has no usable points.` instead. For a basis of several
+variables `at` is coerced to a matrix and rows with any missing entry
+are dropped whole.
 
-The result is symmetrized as `(G + t(G))/2` before it is returned, the
-two triangles of a crossproduct differing in their last bits, and given
+The result is symmetrized as `(G + t(G))/2` before it is returned, and
+given
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
 on both margins.
 

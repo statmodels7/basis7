@@ -33,21 +33,23 @@ check_order(order, nvar = 1L)
 
 ## Details
 
-Anything failing the first test throws
+Anything failing the first test signals the error
 `'order' must be a non-negative integer.`; that covers a negative value,
 a fraction, an infinity, an `NA` and a non-numeric.
 
 A vector of length `nvar` is returned as it stands, and a single `0` is
 repeated to that length. For a basis of several variables a single
-**non-zero** order throws with a longer message, because a scalar has
-two readings there: that order in every coordinate, or that total order.
-Choosing one silently would fit a different model from the one the
-caller wrote. Zero is exempt, meaning no derivative under either
-reading.
+**non-zero** order signals an error, because a scalar has two readings
+there: that order in every coordinate, or that total order. Zero is
+exempt, meaning no derivative under either reading. A vector of any
+other length signals an error naming the length expected.
 
 ## See also
 
-[`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
+[`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
+[`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 and
-[`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md),
-its two callers.
+[`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
+its callers, together with
+[`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
+and the Gram method of a tensor basis.

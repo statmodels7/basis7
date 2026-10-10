@@ -15,7 +15,7 @@ basis takes several."><meta property="og:image" content="https://statmodels7.git
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,13 +87,14 @@ when <code>x</code> is not a matrix.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Both are the identity for a basis of one variable, where <code>x</code> is a plain
-vector with no coordinate to pick: <code>coord()</code> returns <code>x</code> and
-<code>replace_coord()</code> returns <code>z</code>, so the caller writes one loop over
-<code>seq_len(basis_nvar(basis))</code> with no branch for the univariate case.</p>
-<p>Neither validates anything. <code>j</code> outside the columns of <code>x</code> gives R's own
-subscript error, and a <code>z</code> of the wrong length is recycled by R's usual
-rules.</p>
+    <p>For a basis of one variable, where <code>x</code> is a plain vector, <code>coord()</code>
+returns <code>x</code> and <code>replace_coord()</code> returns <code>z</code>, so the caller writes one
+loop over <code>seq_len(basis_nvar(basis))</code> with no branch for the univariate
+case.</p>
+<p>Neither function validates its arguments. An index <code>j</code> outside the columns
+of <code>x</code> gives R's subscript error. A <code>z</code> of the wrong length is recycled
+into a matrix only when its length divides the number of rows, and is
+returned as it is for a vector <code>x</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

@@ -1,15 +1,17 @@
-# The Owner Test, Which Is the Default Route
+# Default Numerical Route by Owner Test
 
-Answers with
+Returns
 [`route_by_owner()`](https://statmodels7.github.io/basis7/reference/route_by_owner.md):
-which class each of
+the class on which each of
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
 and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-is registered on. That is right for every family whose methods take one
-route, which is all of them but
-[`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md).
+is registered. That is correct for every family whose methods take one
+route, which excludes the Fourier family, and for a class that is not a
+wrapper;
+[`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
+handles the wrappers itself.
 
 ## Arguments
 

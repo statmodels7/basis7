@@ -15,7 +15,7 @@ in the same words."><meta property="og:image" content="https://statmodels7.githu
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,14 +77,14 @@ least 1, integer or double.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Three conditions, each throwing with <code>call. = FALSE</code>:</p><ul><li><p><code>lower</code> and <code>upper</code> must each be a single finite number, else
+    <p>Three conditions, each signalling an error with <code>call. = FALSE</code>:</p><ul><li><p><code>lower</code> and <code>upper</code> must each be a single finite number, else
 <code>'lower' and 'upper' must be single finite numbers.</code></p></li>
 <li><p><code>lower</code> must be strictly below <code>upper</code>, else
 <code>'lower' must be strictly less than 'upper'.</code></p></li>
 <li><p><code>dimension</code> must be a single finite number, at least 1 and whole, else
 <code>'dimension' must be a single positive integer.</code></p></li>
-</ul><p>A whole-valued double passes and is converted, so a caller writing <code>6</code>
-rather than <code>6L</code> is served. The multivariate case is not reachable here:
+</ul><p>A whole-valued double passes and is converted, so <code>6</code> is accepted as well
+as <code>6L</code>. The multivariate case does not arise here, because
 <code><a href="tensor_basis.html">tensor_basis()</a></code> builds its endpoints from margins already validated.</p>
     </div>
     <div class="section level2">

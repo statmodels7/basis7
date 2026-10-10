@@ -56,13 +56,13 @@ A symmetric numeric matrix of `basis@dimension` rows and columns.
 
 ## Details
 
-The nodes are the same rule
-[`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
-uses, and the only difference is what is evaluated at them: \\Lb\\ from
+The nodes are those of the rule used by
+[`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md),
+and the only difference is what is evaluated at them: \\Lb\\ from
 [`operator_eval()`](https://statmodels7.github.io/basis7/reference/operator_eval.md)
-rather than one derivative. A piecewise polynomial basis therefore gets
-an approximation here where its own derivative Gram matrix is exact, and
-the accuracy is the quadrature's.
+instead of one derivative. A piecewise polynomial basis therefore gets
+an approximation here where its own derivative Gram matrix is exact,
+with the accuracy of the quadrature.
 
 ## See also
 

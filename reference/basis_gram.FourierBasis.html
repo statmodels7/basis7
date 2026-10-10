@@ -11,7 +11,7 @@ the orthogonality fails and the method computes a quadrature instead."><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -68,8 +68,8 @@ to contain the generic's.</p></dd>
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
 <dd><p>Passed to <code><a href="numerical_gram.html">numerical_gram()</a></code> on the non-full-period branch,
-where <code>panels</code> and <code>nodes</code> control the quadrature. Ignored on the closed
-branch.</p></dd>
+where <code>panels</code> and <code>nodes</code> control the quadrature. On the closed branch
+<code>panels</code> or <code>nodes</code> signals an error.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -95,10 +95,10 @@ order-2 diagonal is <code>0, 779.27, 779.27, 12468.4, 12468.4, 63121.1, 63121.1<
 <code><a href="numerical_gram.html">numerical_gram()</a></code>, composite Gauss-Legendre over the interval, and the
 result is a full matrix.</p>
 <p><code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> reports <code>basis_gram</code> as <code>TRUE</code> on such a basis,
-the family answering through <code><a href="basis_numerical_route.FourierBasis.html">basis_numerical_route.FourierBasis()</a></code>
-rather than through the class the method is registered on, which is
-<code>FourierBasis</code> in both branches. <code><a href="check_basis.html">check_basis()</a></code> reads the same predicate,
-so it holds this matrix to the tolerance a quadrature deserves.</p>
+through <code><a href="basis_numerical_route.FourierBasis.html">basis_numerical_route.FourierBasis()</a></code>, although the method is
+registered on <code>FourierBasis</code> in both branches. <code><a href="check_basis.html">check_basis()</a></code> reads the
+same predicate, and on this branch compares the matrix with a finer
+quadrature at the accuracy of a quadrature.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

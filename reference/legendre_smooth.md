@@ -40,28 +40,29 @@ legendre_smooth(
   or
   [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
   or a whole number `m` as the shorthand for `deriv_operator(m)`. It
-  says what a strongly penalized fit contracts toward, which for `m` is
-  a constant at 1, a straight line at 2 and a parabola at 3, and for any
-  operator is
-  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md).
-  Its order is at most `k - 1`, the highest degree the basis carries.
+  determines the functions toward which a strongly penalized fit
+  contracts: a constant for `m = 1`, a straight line for 2, a parabola
+  for 3, and the functions of
+  [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
+  for any operator. Its order is at most `k - 1`, the highest degree the
+  basis carries.
 
 - measure:
 
-  The measure the roughness is integrated against.
+  The measure against which the roughness is integrated.
 
 - constrain:
 
-  The directions the smooth is made orthogonal to, `NULL` for the null
-  space of the penalty.
+  The directions to which the smooth is made orthogonal, `NULL` for the
+  null space of the penalty.
 
 - null_space:
 
-  What becomes of the directions the penalty does not see.
+  What happens to the directions that the penalty does not see.
 
 - reparam:
 
-  The coordinates the coefficients live in.
+  The coordinates in which the coefficients are expressed.
 
 - penalty:
 
@@ -85,9 +86,7 @@ inheriting from
 The null space of the roughness matrix is the polynomials of degree
 below `order`, exactly as for a B-spline, so `order` and `constrain`
 mean what they mean there and `null_space = "keep"` restores `order - 1`
-free columns. Measured, the null space of the order-2 Gram matrix of an
-eight-function Legendre basis is spanned by the constant and the linear
-function to an R-squared of 1.0000000000.
+free columns.
 
 ## See also
 

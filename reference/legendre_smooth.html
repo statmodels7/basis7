@@ -15,7 +15,7 @@ interval, so a feature at one end moves the fit at the other."><meta property="o
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,27 +80,29 @@ highest degree is <code>k - 1</code>.</p></dd>
 <dd><p>What the penalty measures: a <a href="LinearOperator.html">LinearOperator</a> from
 <code><a href="deriv_operator.html">deriv_operator()</a></code>, <code><a href="harmonic_operator.html">harmonic_operator()</a></code>, <code><a href="oscillator_operator.html">oscillator_operator()</a></code> or
 <code><a href="linear_operator.html">linear_operator()</a></code>, or a whole number <code>m</code> as the shorthand for
-<code>deriv_operator(m)</code>. It says what a strongly penalized fit contracts
-toward, which for <code>m</code> is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is <code><a href="operator_null.html">operator_null()</a></code>.
-Its order is at most <code>k - 1</code>, the highest degree the basis carries.</p></dd>
+<code>deriv_operator(m)</code>. It determines the functions toward which a
+strongly penalized fit contracts: a constant for <code>m = 1</code>, a straight
+line for 2, a parabola for 3, and the functions of <code><a href="operator_null.html">operator_null()</a></code>
+for any operator. Its order is at most <code>k - 1</code>, the highest degree the
+basis carries.</p></dd>
 
 
 <dt id="arg-measure">measure<a class="anchor" aria-label="anchor" href="#arg-measure"></a></dt>
-<dd><p>The measure the roughness is integrated against.</p></dd>
+<dd><p>The measure against which the roughness is integrated.</p></dd>
 
 
 <dt id="arg-constrain">constrain<a class="anchor" aria-label="anchor" href="#arg-constrain"></a></dt>
-<dd><p>The directions the smooth is made orthogonal to, <code>NULL</code>
-for the null space of the penalty.</p></dd>
+<dd><p>The directions to which the smooth is made orthogonal,
+<code>NULL</code> for the null space of the penalty.</p></dd>
 
 
 <dt id="arg-null-space">null_space<a class="anchor" aria-label="anchor" href="#arg-null-space"></a></dt>
-<dd><p>What becomes of the directions the penalty does not see.</p></dd>
+<dd><p>What happens to the directions that the penalty does
+not see.</p></dd>
 
 
 <dt id="arg-reparam">reparam<a class="anchor" aria-label="anchor" href="#arg-reparam"></a></dt>
-<dd><p>The coordinates the coefficients live in.</p></dd>
+<dd><p>The coordinates in which the coefficients are expressed.</p></dd>
 
 
 <dt id="arg-penalty">penalty<a class="anchor" aria-label="anchor" href="#arg-penalty"></a></dt>
@@ -123,9 +125,7 @@ smoother's own page.</p></dd>
     <p>The null space of the roughness matrix is the polynomials of degree below
 <code>order</code>, exactly as for a B-spline, so <code>order</code> and <code>constrain</code> mean what
 they mean there and <code>null_space = "keep"</code> restores <code>order - 1</code> free
-columns. Measured, the null space of the order-2 Gram matrix of an
-eight-function Legendre basis is spanned by the constant and the linear
-function to an R-squared of 1.0000000000.</p>
+columns.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

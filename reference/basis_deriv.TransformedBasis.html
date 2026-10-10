@@ -13,7 +13,7 @@ and no derivative of the transformation itself enters."><meta property="og:image
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,8 +63,9 @@ and no derivative of the transformation itself enters.</p>
 
 
 <dt id="arg-order">order<a class="anchor" aria-label="anchor" href="#arg-order"></a></dt>
-<dd><p>The derivative order, a single non-negative whole number,
-default <code>1</code>, passed to the parent unchanged.</p></dd>
+<dd><p>The derivative order, default <code>1</code>, passed to the parent
+unchanged: a single non-negative whole number, or one per variable for
+a parent of several variables.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -80,9 +81,9 @@ columns.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The accuracy is the parent's. Where the parent differentiates exactly so
 does this; where the parent falls back to a stencil the result is that
-stencil's answer arranged by \(T\), which is why <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code>
-reports the parent's flags for a transformed basis in place of its own
-registered methods.</p>
+stencil's result multiplied by \(T\), which is why
+<code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> reports the parent's flags for a transformed basis
+in place of those of its own registered methods.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

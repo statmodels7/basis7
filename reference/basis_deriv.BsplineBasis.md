@@ -3,8 +3,8 @@
 Returns the `order`-th derivative of every B-spline, exactly, from the
 derivative form of the Cox-de Boor recurrence in
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html).
-An order above the degree short-circuits to the zero matrix, which is
-the value of that derivative; nothing is thrown.
+An order above the degree returns the zero matrix, which is the value of
+that derivative, without calling splines2.
 
 ## Arguments
 
@@ -21,7 +21,8 @@ the value of that derivative; nothing is thrown.
 - order:
 
   The derivative order, a single non-negative whole number, default `1`.
-  Above `basis@basis_params$degree` the result is exactly zero.
+  Above `basis@basis_params$degree` the result is exactly zero at every
+  point that is not missing.
 
 - ...:
 
@@ -36,9 +37,8 @@ with column names `bs1`, `bs2`, and so on.
 
 A spline of degree \\m\\ is piecewise polynomial of that degree, so it
 has \\m\\ non-trivial derivatives and the rest vanish: a cubic gives
-three, and `order = 4` is exactly zero everywhere. The short-circuit
-happens here because splines2 rejects a `derivs` above the degree
-instead of returning zeros.
+three, and `order = 4` is exactly zero everywhere. A missing point gives
+a missing row at every order.
 
 The derivative of order \\m\\ is a step function, discontinuous at each
 interior knot, and the value returned at a knot is the one the

@@ -11,7 +11,7 @@ a degree below order - 1 is rejected."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.14.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,19 +69,16 @@ a degree below <code>order - 1</code> is rejected.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The requirement is not a convention. A direction the penalty does not see
-and the constraint does not remove is neither penalized nor identified,
-and <code><a href="dr_basis.html">dr_basis()</a></code> signals an error there: with <code>order = 3</code> and a constraint
-spanning only the constant and the linear function, the quadratic
-direction is left free and unpenalized. Reported here, where the two
-numbers were written, rather than several frames down.</p>
-<p>Constraining <strong>beyond</strong> the null space is legitimate. It buys
-orthogonality to a parametric term written in the formula. Measured on
-<code>y ~ 1 + x + x^2 + s(x)</code> at <code>k = 20</code> and 400 observations, the largest
-correlation between a column of the block and <code>x^2</code> falls from 0.995 at
-the default to 1.9e-15 at <code>constrain = 2</code>, which is exact by
-construction, and the standard error of the quadratic coefficient falls
-with it by more than an order of magnitude. The cost is one dimension.</p>
+    <p>The requirement follows from identifiability. A direction that the
+penalty does not see and that the constraint does not remove is neither
+penalized nor identified, and <code><a href="dr_basis.html">dr_basis()</a></code> signals an error there: with
+<code>order = 3</code> and a constraint spanning only the constant and the linear
+function, the quadratic direction is left free and unpenalized. The error
+is reported here, at the constructor.</p>
+<p>Constraining <strong>beyond</strong> the null space is admitted. It makes the block
+orthogonal, over the observed covariate, to the polynomials up to degree
+<code>constrain</code>, which avoids collinearity with a parametric term of that
+degree written in the formula. The cost is one dimension per degree.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

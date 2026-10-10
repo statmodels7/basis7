@@ -4,7 +4,7 @@ Multiplies bases, one per variable, into the basis of all products of
 their functions. This is how a smooth surface of several covariates is
 built from one-dimensional pieces: the result is a basis like any other,
 evaluated at a matrix of points instead of a vector, and every generic
-answers exactly where the margins do.
+is exact where the margins are.
 
 ## Usage
 
@@ -16,10 +16,11 @@ tensor_basis(...)
 
 - ...:
 
-  The bases to multiply, two or more, or a single list of them. Each
-  must take one variable; a
+  The bases to multiply, or a single list of them. Each must take one
+  variable; a
   [TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
-  among them is flattened into its own margins.
+  among them is flattened into its own margins. A single basis is
+  returned unchanged, and no basis at all signals an error.
 
 ## Value
 
@@ -27,14 +28,15 @@ An object of class
 [TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
 with `basis_name` `tensor(<names>)`, `basis_params` holding
 `marginal_dimensions`, and column names pasting the margins' with dots.
+Given a single basis, that basis.
 
 ## Size
 
 The result has \\\prod_j K_j\\ functions and takes \\D\\ variables, so
 the evaluation points become a matrix of \\D\\ columns. The dimension
 grows geometrically: four cubic B-splines of eight functions each give
-4096 columns, and the design matrix at 20000 observations would be 625
-MB.
+4096 columns, and the design matrix at 20000 observations would hold
+about 82 million numbers, some 655 MB.
 
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
 exists for that reason. It computes what a fit needs from the marginal
@@ -53,7 +55,7 @@ one three-way product with three margins.
 
 `@lower` and `@upper` hold one entry per variable, taken from the
 margins, so the domain is the box they span and a point outside any
-margin's interval throws.
+margin's interval signals an error.
 
 ## References
 
