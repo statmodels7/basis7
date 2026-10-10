@@ -17,7 +17,7 @@ direction.
 }
 \description{
 Rebuilds what \code{\link[=operator_span]{operator_span()}} produced, at new covariate values, from
-the operator and the scales recorded there. Nothing is recomputed from
-\code{newx} except the functions themselves.
+the operator and the scales recorded there. Only the functions themselves
+are evaluated at \code{newx}.
 }
 \keyword{internal}

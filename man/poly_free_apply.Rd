@@ -17,6 +17,6 @@ A numeric matrix of \code{length(newx)} rows and one column per step.
 \description{
 Rebuilds what \code{\link[=poly_free]{poly_free()}} produced, at new covariate values, from the
 centering, the orthogonalization coefficients and the scales recorded
-there. Nothing is recomputed from \code{newx}.
+there, which are not recomputed from \code{newx}.
 }
 \keyword{internal}

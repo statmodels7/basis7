@@ -19,13 +19,13 @@ with column names pasting the margins' with dots.
 Evaluates each margin at its own column of the points and takes the
 row-wise Kronecker product, so row \eqn{i} of the result is
 \eqn{B_1(x_{i1}) \otimes \cdots \otimes B_D(x_{iD})}. The matrix has
-\eqn{\prod_j K_j} columns, so at several variables it is worth avoiding,
-and \code{\link[=basis_contract]{basis_contract()}} avoids it.
+\eqn{\prod_j K_j} columns, which is large at several variables;
+\code{\link[=basis_contract]{basis_contract()}} evaluates a fit without forming it.
 }
 \details{
 Cost is one marginal evaluation per variable plus the products, and the
-result is \code{nrow(x)} by \code{basis@dimension}, which at four margins of eight
-functions and 20000 points is 625 MB. Nothing is cached.
+result is \code{nrow(x)} by \code{basis@dimension}. The method does not cache its
+result.
 }
 \seealso{
 \code{\link[=tensor_design]{tensor_design()}} and \code{\link[=khatri_rao]{khatri_rao()}}, which do the work;

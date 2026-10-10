@@ -30,11 +30,8 @@ not the whole one.
 }
 \section{The blocked route}{
 Each block of rows is evaluated through \code{\link[=tensor_design]{tensor_design()}} and multiplied by
-the flattened coefficients, and the block is then discarded. Measured at
-four margins of eight functions and 20000 points, where the full design is
-625 MB: 32 MB at the default block and 0.83 s, against 625 MB and 1.00 s
-for the design route, agreeing exactly. Raising \code{block} past a few thousand
-buys no speed and costs memory linearly.
+the flattened coefficients, and the block is then discarded. The memory
+grows linearly with \code{block}.
 }
 
 \section{The flattening}{
@@ -45,7 +42,8 @@ taken in the design's column order as it stands, so the two shapes describe
 different functions from the same numbers. See \code{\link[=basis_contract]{basis_contract()}}.
 
 A \code{coef} of the wrong length, or an array whose dimensions are not the
-margins', throws with the expected values named.
+margins', signals an error that states the expected values. A matrix \code{x}
+of no rows gives \code{numeric(0)}.
 }
 
 \seealso{

@@ -4,16 +4,17 @@
 #' @description
 #' A linear differential operator with constant coefficients,
 #' \deqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x,}
-#' which a smoother uses to say what its penalty measures. The leading
+#' which specifies what the penalty of a smoother measures. The leading
 #' coefficient is 1 by construction, so an operator is determined by the
 #' weights \eqn{w_0, \ldots, w_{m-1}} and by nothing else.
 #'
 #' @details
-#' Build one with [deriv_operator()], [harmonic_operator()] or
-#' [linear_operator()], and compose two with `*`. The properties are not
-#' meant to be read directly: [operator_order()], [operator_weights()] and
-#' [operator_null()] are the accessors, and they answer for an operator whose
-#' period is still to be resolved where reading the property would not.
+#' An operator is built with [deriv_operator()], [harmonic_operator()],
+#' [oscillator_operator()] or [linear_operator()], and two are composed with
+#' `*`. The properties are read through the accessors [operator_order()],
+#' [operator_weights()] and [operator_null()]. For an operator whose period
+#' is still to be resolved, the weights are `NA` and [operator_null()]
+#' signals an error.
 #'
 #' @param weights The coefficients \eqn{w_0, \ldots, w_{m-1}}, a numeric
 #'   vector, or `NA` of the right length for an operator whose period has not
@@ -24,9 +25,9 @@
 #'
 #' @return An S7 object of class `LinearOperator`.
 #'
-#' @seealso [deriv_operator()], [harmonic_operator()] and
-#'   [linear_operator()], which build one; [operator_null()] for the space a
-#'   maximal penalty leaves untouched.
+#' @seealso [deriv_operator()], [harmonic_operator()],
+#'   [oscillator_operator()] and [linear_operator()], which build one;
+#'   [operator_null()] for the space a maximal penalty leaves untouched.
 #'
 #' @examples
 #' op <- harmonic_operator(365)
@@ -58,8 +59,7 @@ LinearOperator <- S7::new_class(
 #'
 #' @description
 #' The operator \eqn{L x = D^m x}, whose penalty
-#' \eqn{\int (D^m x)^2} is the integrated squared derivative every smoother
-#' in this package penalized with before operators existed. Writing
+#' \eqn{\int (D^m x)^2} is the integrated squared derivative. Writing
 #' `order = m` on a smoother is the shorthand for `order = deriv_operator(m)`
 #' and builds the identical construction.
 #'
@@ -113,21 +113,17 @@ deriv_operator <- function(m = 2) {
 #' Silverman, which is what `fda::vec2Lfd(c(0, (2*pi/T)^2, 0))` builds.
 #'
 #' @details
-#' # Why a periodic basis wants it
+#' # Use with periodic data
 #'
-#' The derivative operator asks a fit to contract toward a straight line,
-#' and a straight line is not what a cyclic phenomenon simplifies to: it is
-#' not even periodic. What a seasonal series contracts to is its fundamental
-#' harmonic, a constant level plus one sine and one cosine of the period, and
-#' this is the operator that leaves exactly that alone.
+#' A penalty on the second derivative makes a fit contract toward a straight
+#' line, which is not periodic. The natural limit of a seasonal series is its
+#' fundamental harmonic, a constant level plus one sine and one cosine of the
+#' period, and this operator leaves exactly those functions unpenalized.
 #'
-#' The difference is visible in the fit rather than only in the algebra. On
-#' 300 observations of a truth \eqn{2 + 1.5\sin\nu t + \cos\nu t +
-#' 0.35\sin 3\nu t}, at a smoothing parameter large enough to flatten the
-#' higher harmonics, the fit under \eqn{D^2} has fallen to a standard
-#' deviation of 0.745 and a fundamental amplitude of 1.053 against a true
-#' 1.803, while the fit under this operator keeps 1.271 and 1.795 and is a
-#' pure sinusoid to 3.9e-08.
+#' The two penalties also give different fits. With a smoothing parameter
+#' large enough to flatten the higher harmonics, the fit under \eqn{D^2}
+#' loses much of the amplitude of the fundamental, whereas the fit under this
+#' operator keeps it and is a sinusoid.
 #'
 #' # The period
 #'
@@ -135,10 +131,10 @@ deriv_operator <- function(m = 2) {
 #' covariate: 365 for a day of the year, 12 for a month, 24 for an hour.
 #' It is **not** \eqn{\nu = 2\pi/T}, which some of the literature also calls
 #' omega. `NULL` leaves it to be resolved from the interval of whichever
-#' smoother the operator is given to, which is what
-#' [fourier_smooth()] does by default; [operator_resolve()] is what fills it
-#' in, and the accessors report an unresolved operator as such rather than
-#' guessing.
+#' smoother the operator is given to, which is what [fourier_smooth()] does
+#' by default; [operator_resolve()] fills it in. For an unresolved operator
+#' [operator_weights()] returns `NA` and [operator_null()] signals an
+#' error.
 #'
 #' @param period The length of one cycle, a positive number, or `NULL` to
 #'   take the width of the smoother's interval.
@@ -199,17 +195,17 @@ harmonic_operator <- function(period = NULL, harmonics = 1) {
 #' harmonic motion, \eqn{L x = \nu^2 x + D^2 x}.
 #'
 #' @details
-#' It exists to be composed. [harmonic_operator()] is this operator with a
-#' leading \eqn{D}, which is what puts the constant into the null space, so
-#' the two are related by
+#' This operator is meant to be composed. [harmonic_operator()] is this
+#' operator with a leading \eqn{D}, which puts the constant into the null
+#' space, so the two are related by
 #' `harmonic_operator(T, h)` being `deriv_operator(1) * oscillator_operator(T, h)`
 #' exactly, and a penalty that should leave a **linear trend** and a cycle
 #' alone rather than a level and a cycle is
 #' `deriv_operator(2) * oscillator_operator(T)`.
 #'
 #' Composing with [harmonic_operator()] instead would raise the order by one
-#' and put an extra power of \eqn{t} in the null space, which is why the
-#' factor is offered separately rather than left to be written out by hand.
+#' and put an extra power of \eqn{t} in the null space, which is why this
+#' factor is offered separately.
 #'
 #' @param period The length of one cycle, a positive number, or `NULL` to
 #'   take the width of the smoother's interval.
@@ -254,7 +250,7 @@ oscillator_operator <- function(period = NULL, harmonics = 1) {
 }
 
 
-#' Refuse a Period That Is Not One Positive Number
+#' Check That a Period Is One Positive Number
 #'
 #' @param period The period to check, or `NULL`.
 #'
@@ -305,7 +301,7 @@ oscillator_weights <- function(period, harmonics) {
 #' @param period The length of one cycle.
 #' @param harmonics How many harmonics to leave in the null space.
 #'
-#' @return A numeric vector of `2 * harmonics` entries, the weights
+#' @return A numeric vector of `2 * harmonics + 1` entries, the weights
 #'   \eqn{w_0, \ldots, w_{m-1}}.
 #'
 #' @keywords internal
@@ -345,7 +341,7 @@ poly_mul <- function(a, b) {
 #'
 #' @description
 #' The general form: `linear_operator(w)` is
-#' \eqn{L x = w_1 x + w_2 Dx + \cdots + w_m D^{m-1} x + D^m x}, with the
+#' \eqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x}, with the
 #' leading coefficient 1 and `w` given in increasing order of
 #' differentiation. It is the vector `fda::vec2Lfd()` takes.
 #'
@@ -356,9 +352,10 @@ poly_mul <- function(a, b) {
 #' a complex pair \eqn{a \pm bi} contributes \eqn{t^i e^{at}\cos(bt)} and
 #' \eqn{t^i e^{at}\sin(bt)}. [operator_null()] reports it.
 #'
-#' Use [deriv_operator()] and [harmonic_operator()] where they apply: they
-#' say what the operator is for, and they carry a period that can be
-#' resolved from a smoother's interval, which a bare weight vector cannot.
+#' Where they apply, [deriv_operator()], [harmonic_operator()] and
+#' [oscillator_operator()] are preferable: they record what the operator is
+#' for, and the last two carry a period that can be resolved from the
+#' interval of a smoother, which a bare weight vector cannot.
 #'
 #' @param w The weights \eqn{w_0, \ldots, w_{m-1}}, a numeric vector of at
 #'   least one finite entry. Its length is the order of the operator.
@@ -402,35 +399,33 @@ linear_operator <- function(w) {
 #' @description
 #' `L1 * L2` is the operator that applies one after the other. Composition
 #' multiplies the characteristic polynomials, so the order of the product is
-#' the sum of the orders and its null space is the union of the two null
-#' spaces.
+#' the sum of the orders. Its null space contains the null space of each
+#' factor; a root common to both factors appears with the sum of its
+#' multiplicities, which adds powers of \eqn{t}.
 #'
 #' @details
-#' The union is what makes composition worth having: an operator whose
-#' penalty leaves both a linear trend and a seasonal cycle alone is
-#' `deriv_operator(2) * oscillator_operator(365)`, and there is no reason to
-#' write its four weights by hand. Composition commutes, these operators
-#' having constant coefficients.
+#' An operator whose penalty leaves both a linear trend and a seasonal cycle
+#' unpenalized is `deriv_operator(2) * oscillator_operator(365)`, built
+#' without writing its four weights by hand. Composition commutes, these
+#' operators having constant coefficients.
 #'
-#' ⚠️ Compose with [oscillator_operator()] and not with
-#' [harmonic_operator()], unless the extra power of \eqn{t} is wanted. The
-#' harmonic operator already carries a leading \eqn{D}, so
-#' `deriv_operator(2) * harmonic_operator(365)` is \eqn{D^3(D^2 + \nu^2)},
-#' of order 5, whose null space is \eqn{1, t, t^2, \sin\nu t, \cos\nu t}. The
-#' arithmetic is right either way and the dimension of the null space is
-#' always the order; which of the two is meant is the thing to read off
-#' [operator_null()] before fitting.
+#' The factor to compose with is [oscillator_operator()], unless the extra
+#' power of \eqn{t} is wanted. The harmonic operator already carries a
+#' leading \eqn{D}, so `deriv_operator(2) * harmonic_operator(365)` is
+#' \eqn{D^3(D^2 + \nu^2)}, of order 5, whose null space is
+#' \eqn{1, t, t^2, \sin\nu t, \cos\nu t}. The dimension of the null space is
+#' always the order, and [operator_null()] shows which functions it holds.
 #'
 #' An operator whose period has not been resolved cannot be composed: the
 #' weights of the product depend on the period, and resolving afterwards
-#' would have to know which factor it came from. Give the period, or compose
-#' after [operator_resolve()].
+#' would require knowing which factor it came from. The period is given
+#' first, or the factors are composed after [operator_resolve()].
 #'
 #' @param e1,e2 Two [LinearOperator] objects.
 #'
 #' @return An S7 object of class [LinearOperator].
 #'
-#' @seealso [operator_null()], which reports the union.
+#' @seealso [operator_null()], which reports the null space of the product.
 #'
 #' @examples
 #' # a linear trend and a yearly cycle, both left unpenalized
@@ -438,7 +433,7 @@ linear_operator <- function(w) {
 #' op
 #' operator_null(op)
 #'
-#' # the order is the sum, the null space the union
+#' # the order is the sum of the orders
 #' c(operator_order(deriv_operator(2)), operator_order(oscillator_operator(365)),
 #'   operator_order(op))
 #'
@@ -516,7 +511,8 @@ operator_weights <- function(op) {
 #'
 #' @description
 #' Reports whether the weights are numbers rather than the `NA` placeholder
-#' [harmonic_operator()] leaves when it is given no period.
+#' that [harmonic_operator()] and [oscillator_operator()] leave when they are
+#' given no period.
 #'
 #' @param op A [LinearOperator].
 #'
@@ -590,22 +586,22 @@ operator_resolve <- function(op, lower, upper) {
 #' \eqn{t^i e^{at}\cos(bt)} and \eqn{t^i e^{at}\sin(bt)}.
 #'
 #' The null space is a property of the **operator** and is computed from it,
-#' never from the rank of an assembled penalty matrix. The two are different
-#' questions and they give different answers: the same two-harmonic operator
-#' has a penalty of null dimension 5 on a Fourier basis and 3 on a cubic
-#' B-spline at a relative tolerance of 1e-10, because a spline represents a
-#' sine only approximately, while the operator's own null space is
-#' five-dimensional in both cases. Which of those functions a **basis** can
-#' carry is a separate question, and [smoother_build()] is where it is asked.
+#' never from the rank of an assembled penalty matrix, and the two differ:
+#' the one-harmonic operator has a penalty of null dimension 3 on a Fourier
+#' basis and 1 on a cubic B-spline at a relative tolerance of 1e-10, because
+#' a spline represents a sine only approximately, while the null space of the
+#' operator is three-dimensional in both cases. Whether a **basis** can carry
+#' those functions is a separate question, settled in [smoother_build()].
 #'
 #' @param op A [LinearOperator].
-#' @param tol The relative tolerance at which two roots count as one, a
-#'   positive number.
+#' @param tol The tolerance at which two roots count as one, relative to the
+#'   size of the roots, a positive number.
 #'
 #' @return A data frame of one row per function in the null space, with
 #'   columns `label` (how the function reads), `rate` (the real part of the
-#'   root), `freq` (the imaginary part) and `degree` (the power of \eqn{t}
-#'   multiplying it).
+#'   root), `freq` (the imaginary part), `degree` (the power of \eqn{t}
+#'   multiplying it) and `part` (`"sin"` or `"cos"` for the two halves of a
+#'   conjugate pair, `""` for a real root).
 #'
 #' @seealso [operator_null_design()] for those functions evaluated,
 #'   [deriv_operator()] and [harmonic_operator()] for the two named
@@ -618,7 +614,8 @@ operator_resolve <- function(op, lower, upper) {
 #' # a constant plus the fundamental of a yearly cycle
 #' operator_null(harmonic_operator(365))
 #'
-#' # both at once
+#' # the product: five functions, with t^2 because both factors hold the
+#' # constant
 #' operator_null(deriv_operator(2) * harmonic_operator(365))
 #'
 #' # the dimension is always the order
@@ -641,8 +638,14 @@ operator_null <- function(op, tol = 1e-6) {
     return(null_frame(rate = rep(0, m), freq = rep(0, m),
                       degree = seq_len(m) - 1L))
   }
-  rt <- polyroot(c(w, 1))
-  cl <- cluster_roots(rt, tol)
+  # The roots are found on the scale of the polynomial, r = s z, with s the
+  # bound max_j |w_j|^(1/(m - j)) on their moduli, so that the tolerance is
+  # relative to the size of the roots and a long period (roots near zero)
+  # does not merge the constant with the cosine and sine.
+  s <- max(abs(w)^(1 / (m - seq_len(m) + 1)))
+  if (!is.finite(s) || s <= 0) s <- 1
+  z <- polyroot(c(w / s^(m - seq_len(m) + 1), 1))
+  cl <- cluster_roots(z, tol)
   rate <- numeric(0)
   freq <- numeric(0)
   deg <- integer(0)
@@ -654,6 +657,8 @@ operator_null <- function(op, tol = 1e-6) {
     # of its real functions there
     if (b < -tol) next
     real_root <- abs(b) <= tol
+    a <- if (abs(a) <= tol) 0 else s * a
+    b <- s * b
     for (i in seq_len(g$mult) - 1L) {
       if (real_root) {
         rate <- c(rate, a)
@@ -676,11 +681,12 @@ operator_null <- function(op, tol = 1e-6) {
 #'
 #' @description
 #' Clusters the output of [base::polyroot()] so that roots within `tol` of one
-#' another, relative to their own size, are read as one root of higher
-#' multiplicity.
+#' another are read as one root of higher multiplicity. [operator_null()]
+#' passes the roots of the polynomial scaled to unit root size, so that `tol`
+#' is relative to the size of the roots.
 #'
-#' @param rt The complex roots.
-#' @param tol The relative tolerance.
+#' @param rt The complex roots, scaled to unit size.
+#' @param tol The tolerance.
 #'
 #' @return A list of `root` and `mult` pairs, ordered by the real part and
 #'   then the imaginary part.
@@ -691,7 +697,7 @@ cluster_roots <- function(rt, tol) {
   for (r in rt) {
     hit <- FALSE
     for (i in seq_along(out)) {
-      if (Mod(r - out[[i]]$root) <= tol * max(1, Mod(r))) {
+      if (Mod(r - out[[i]]$root) <= tol) {
         out[[i]]$mult <- out[[i]]$mult + 1L
         hit <- TRUE
         break
@@ -751,15 +757,15 @@ null_frame <- function(rate, freq, degree, part = rep("", length(rate))) {
 #'
 #' @details
 #' These are the mathematical functions, unscaled. A smoother that restores
-#' them as free columns centers and scales them first and records what it
-#' did, so that a prediction reapplies the same columns rather than
-#' recomputing them from new data; [smoother_span()] is where that happens.
+#' them as free columns scales them first and records the scale, so that a
+#' prediction reapplies the same columns instead of recomputing them from new
+#' data; see [smoother_span()].
 #'
-#' A rate far from zero over a wide interval overflows: \eqn{e^{at}} is what
-#' it is, and an operator with a large real root is a statement about growth
-#' that a design matrix cannot hold. The two operators this package builds
-#' for itself, [deriv_operator()] and [harmonic_operator()], have purely
-#' imaginary roots and no such difficulty.
+#' A rate far from zero over a wide interval makes \eqn{e^{at}} overflow, so
+#' the design matrix of an operator with a large real root cannot be formed.
+#' The operators built by [deriv_operator()], [harmonic_operator()] and
+#' [oscillator_operator()] have only roots on the imaginary axis, zero
+#' included, and this difficulty does not arise.
 #'
 #' @param op A [LinearOperator].
 #' @param x The points to evaluate at, a numeric vector.
@@ -773,9 +779,8 @@ null_frame <- function(rate, freq, degree, part = rep("", length(rate))) {
 #' x <- seq(0, 365, length.out = 5)
 #' round(operator_null_design(harmonic_operator(365), x), 4)
 #'
-#' # L applied to its own null space is zero, which is what makes it the
-#' # null space; here to the accuracy of a central difference
-#' round(colSums(abs(operator_null_design(deriv_operator(2), 1:5))), 6)
+#' # the constant and t, the null space of the second derivative
+#' operator_null_design(deriv_operator(2), 1:5)
 #' @export
 operator_null_design <- function(op, x) {
   nl <- operator_null(op)
@@ -805,7 +810,8 @@ operator_null_design <- function(op, x) {
 #' @details
 #' It is one weighted sum of derivative evaluations,
 #' \eqn{\sum_j w_j D^j b + D^m b}, and every term of it comes from
-#' [basis_deriv()], so a basis that answers its derivatives answers this.
+#' [basis_deriv()], so it is available for every basis whose derivatives
+#' are.
 #' Terms whose weight is exactly zero are skipped, which is why the pure
 #' derivative operator costs one call and not \eqn{m + 1}.
 #'
@@ -842,7 +848,7 @@ operator_eval <- function(basis, x, op) {
 is_operator <- function(x) S7::S7_inherits(x, LinearOperator)
 
 
-#' Refuse Anything That Is Not an Operator
+#' Check That an Object Is an Operator
 #'
 #' @param op The object to check.
 #'
@@ -853,7 +859,7 @@ check_operator <- function(op) {
   if (!is_operator(op)) {
     stop(paste0(
       "expected a linear differential operator, from deriv_operator(),",
-      " harmonic_operator()\n  or linear_operator()."
+      " harmonic_operator(),\n  oscillator_operator() or linear_operator()."
     ), call. = FALSE)
   }
   invisible(NULL)
@@ -865,8 +871,7 @@ check_operator <- function(op) {
 #' @description
 #' Normalizes the `order` argument every smoother family takes: a whole
 #' number `m` becomes `deriv_operator(m)` and an operator is returned
-#' unchanged. It is what makes `order = 2` the shorthand rather than a
-#' second way of saying the same thing.
+#' unchanged, so that `order = 2` is a shorthand for `deriv_operator(2)`.
 #'
 #' @param order A whole number or a [LinearOperator].
 #' @param nm The argument's name, for the error message.
@@ -879,8 +884,8 @@ as_operator <- function(order, nm = "order") {
   if (is.numeric(order)) return(deriv_operator(check_whole(order, nm, 1L)))
   stop(sprintf(paste0(
     "'%s' must be a whole number of at least 1, or a linear differential",
-    " operator\n  from deriv_operator(), harmonic_operator() or",
-    " linear_operator()."
+    " operator\n  from deriv_operator(), harmonic_operator(),",
+    " oscillator_operator() or linear_operator()."
   ), nm), call. = FALSE)
 }
 
@@ -888,8 +893,8 @@ as_operator <- function(order, nm = "order") {
 #' Is This the Plain Derivative Operator?
 #'
 #' @description
-#' Reports whether an operator is \eqn{D^m}, which is the case every family
-#' had before operators existed and the one whose construction must not move.
+#' Reports whether an operator is \eqn{D^m}, the case that each smoother
+#' family builds with its own construction for a whole `order`.
 #'
 #' @param op A [LinearOperator].
 #'
@@ -905,8 +910,10 @@ is_deriv_operator <- function(op) {
 #' @name print.LinearOperator
 #'
 #' @description
-#' Three lines: the order, the operator written out, and the functions its
-#' null space holds.
+#' Three lines: the order, the operator written out, and the functions of
+#' its null space. For an operator whose period is unresolved, the third line
+#' states that the period is taken from the interval of the smoother, with the
+#' number of harmonics.
 #'
 #' @param x A [LinearOperator].
 #' @param ... Ignored.

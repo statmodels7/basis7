@@ -14,8 +14,8 @@ basis(
 }
 \arguments{
 \item{basis_name}{A single string naming the family, printed by
-\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
-any computation.}
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Its first
+two characters form the default column names of \code{\link[=basis_colnames]{basis_colnames()}}.}
 
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
@@ -26,7 +26,7 @@ length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
 \code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 }
@@ -42,8 +42,8 @@ from when writing one of your own. A basis is a finite collection of
 functions on an interval; the object carries the interval, how many
 functions there are, and whatever else the family needs, and the generics
 evaluate that collection, differentiate it, integrate it and take its inner
-products. The class is abstract, so \code{basis(...)} throws; construct one of
-the concrete families or a subclass.
+products. The class is abstract, so \code{basis(...)} signals an error; an
+object is constructed from one of the concrete families or a subclass.
 }
 \section{What a basis is}{
 A basis of dimension \eqn{d} on \eqn{[a, b]} is a collection
@@ -63,29 +63,31 @@ data arrive.
 \section{Writing a subclass}{
 A concrete basis is a subclass of this one. It must implement
 \code{\link[=basis_eval]{basis_eval()}}; \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} have
-numerical methods registered on this class, so a subclass supplying its
-evaluation alone answers all four generics immediately. A closed form
-registered later takes over through dispatch, with no change to calling
-code, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which of the three are still on
-the fallback. The vignette \code{vignette("defining-a-basis")} works one
-through.
+numerical methods registered on this class, so a subclass of one variable
+that supplies its evaluation alone has all four generics at once. For a
+subclass of several variables the numerical integral is not available. A
+closed form registered later takes over through dispatch, with no change
+to calling code, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which of the three
+are still numerical. The vignette \code{vignette("defining-a-basis")} works
+through an example.
 }
 
-\section{Bases here are complete}{
+\section{Complete bases}{
 A B-spline basis carries all its functions, so its rows sum to one and it
 spans the constant. Restricting a basis, for identifiability or to separate
 a linear part from a nonlinear one, is a linear transformation of it:
 \code{\link[=constrain_basis]{constrain_basis()}}, \code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}} each return a
-\link{TransformedBasis} that is itself a basis, so nothing downstream has to
-know a restriction happened.
+\link{TransformedBasis} that is itself a basis, so code that receives a basis
+works in the same way whether or not a restriction has been applied.
 }
 
 \section{One variable or several}{
 A basis lives on an interval, or, when it is a product of several, on a
 box. \verb{@lower} and \verb{@upper} then hold one endpoint per variable and
 \code{\link[=basis_nvar]{basis_nvar()}} reports how many; \code{\link[=basis_eval]{basis_eval()}} takes a matrix of that
-many columns instead of a vector. Nothing else changes, and a basis of one
-variable is the case \eqn{d = 1} of the same object.
+many columns instead of a vector. The rest of the interface is the same,
+and a basis of one variable is the case of a single variable of the same
+object.
 }
 
 \section{What the validator enforces}{
@@ -103,7 +105,8 @@ b@dimension
 c(b@lower, b@upper)
 b@basis_params$degree
 
-# Its five properties are the same five on every basis in the package.
+# The five properties of the class; a product adds `marginals`, and a
+# transformed basis adds `parent_basis` and `transform`.
 S7::prop_names(b)
 S7::prop_names(fourier_basis(dimension = 5))
 
@@ -117,7 +120,9 @@ S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
 }
 bump <- Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
 
-# The three unwritten generics answer anyway, from finite differences.
+# The three generics without a method use the numerical route: finite
+# differences for the derivative, quadrature for the integral and the
+# Gram matrix.
 basis_is_numerical(bump)
 round(basis_deriv(bump, c(0.25, 0.75), order = 1), 4)
 
@@ -128,6 +133,6 @@ try(Bumps(basis_name = "b", dimension = 4L, lower = 1, upper = 0))
 \seealso{
 \code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}} and \code{\link[=poly_basis]{poly_basis()}} for the
 three concrete families; \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}}
-and \code{\link[=basis_gram]{basis_gram()}} for the generics every basis answers; \code{\link[=check_basis]{check_basis()}}
+and \code{\link[=basis_gram]{basis_gram()}} for the generics of every basis; \code{\link[=check_basis]{check_basis()}}
 to verify a subclass of your own.
 }

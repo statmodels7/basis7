@@ -13,7 +13,8 @@ default \code{0}. \code{2} is the usual roughness penalty for a cubic.}
 they never arrive here. Named only because S7 requires a method's formals
 to contain the generic's.}
 
-\item{...}{Unused, and accepted so that the signature matches the generic's.}
+\item{...}{Unused, and accepted so that the signature matches the
+generic's. \code{panels} or \code{nodes} signals an error, the matrix being exact.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
@@ -24,25 +25,21 @@ being zero whenever the two supports do not overlap.
 Returns the inner products of the \code{order}-th derivatives exactly, by
 integrating over one knot interval at a time with a Gauss-Legendre rule
 sized so that it reproduces the integrand exactly. This is the matrix a
-roughness penalty on a spline is built from, so its exactness is worth the
-small amount of work.
+roughness penalty on a spline is built from.
 }
-\section{Why it is exact}{
+\section{Exactness}{
 On one knot interval the order-\eqn{d} derivative of a spline of degree
 \eqn{m} is a polynomial of degree \eqn{m - d}, so the integrand
 \eqn{B_a^{(d)} B_b^{(d)}} has degree \eqn{2(m - d)}. A Gauss-Legendre
 rule with \eqn{m - d + 1} nodes is exact to degree \eqn{2(m - d) + 1},
-which is one higher, so the only error left is floating point. Against the
-same knot-aligned construction run at 20 nodes instead, the worst entry
-agrees to 3.1e-16, 2.1e-14, 8.0e-13 and 7.3e-12 at orders 0 to 3 on a
-cubic basis of six functions.
+which is one higher, so the only error left is rounding.
 
 The breaks are the boundary knots and the interior knots, so no panel
-straddles a knot, and the exactness claim rests on that: at \code{order = m} the
-derivative is a step function, and a rule spanning a knot would integrate
-the wrong thing. Measured on the same basis, the general
-\code{weight} route of \code{\link[=basis_gram]{basis_gram()}}, whose 50 equal panels do not line up with
-the knots, is out by 1.4e-3 at order 2 and by 65 at order 3.
+straddles a knot, and the exactness depends on that: at \code{order = m} the
+derivative is a step function, which a rule spanning a knot does not
+integrate exactly. The \code{weight} route of \code{\link[=basis_gram]{basis_gram()}} uses equal panels
+that do not line up with the knots, and is therefore approximate for a
+spline.
 }
 
 \section{Above the degree}{

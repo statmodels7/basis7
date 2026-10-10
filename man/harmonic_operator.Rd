@@ -26,20 +26,16 @@ harmonics of the period \eqn{T}. At \code{harmonics = 1} it is the harmonic
 acceleration operator \eqn{L x = \nu^2 Dx + D^3 x} of Ramsay and
 Silverman, which is what \code{fda::vec2Lfd(c(0, (2*pi/T)^2, 0))} builds.
 }
-\section{Why a periodic basis wants it}{
-The derivative operator asks a fit to contract toward a straight line,
-and a straight line is not what a cyclic phenomenon simplifies to: it is
-not even periodic. What a seasonal series contracts to is its fundamental
-harmonic, a constant level plus one sine and one cosine of the period, and
-this is the operator that leaves exactly that alone.
+\section{Use with periodic data}{
+A penalty on the second derivative makes a fit contract toward a straight
+line, which is not periodic. The natural limit of a seasonal series is its
+fundamental harmonic, a constant level plus one sine and one cosine of the
+period, and this operator leaves exactly those functions unpenalized.
 
-The difference is visible in the fit rather than only in the algebra. On
-300 observations of a truth \eqn{2 + 1.5\sin\nu t + \cos\nu t +
-0.35\sin 3\nu t}, at a smoothing parameter large enough to flatten the
-higher harmonics, the fit under \eqn{D^2} has fallen to a standard
-deviation of 0.745 and a fundamental amplitude of 1.053 against a true
-1.803, while the fit under this operator keeps 1.271 and 1.795 and is a
-pure sinusoid to 3.9e-08.
+The two penalties also give different fits. With a smoothing parameter
+large enough to flatten the higher harmonics, the fit under \eqn{D^2}
+loses much of the amplitude of the fundamental, whereas the fit under this
+operator keeps it and is a sinusoid.
 }
 
 \section{The period}{
@@ -47,10 +43,10 @@ pure sinusoid to 3.9e-08.
 covariate: 365 for a day of the year, 12 for a month, 24 for an hour.
 It is \strong{not} \eqn{\nu = 2\pi/T}, which some of the literature also calls
 omega. \code{NULL} leaves it to be resolved from the interval of whichever
-smoother the operator is given to, which is what
-\code{\link[=fourier_smooth]{fourier_smooth()}} does by default; \code{\link[=operator_resolve]{operator_resolve()}} is what fills it
-in, and the accessors report an unresolved operator as such rather than
-guessing.
+smoother the operator is given to, which is what \code{\link[=fourier_smooth]{fourier_smooth()}} does
+by default; \code{\link[=operator_resolve]{operator_resolve()}} fills it in. For an unresolved operator
+\code{\link[=operator_weights]{operator_weights()}} returns \code{NA} and \code{\link[=operator_null]{operator_null()}} signals an
+error.
 }
 
 \examples{

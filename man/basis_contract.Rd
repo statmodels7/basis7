@@ -17,7 +17,7 @@ length \code{basis@dimension}, or a matrix of several such columns. For a
 \link{TensorBasis}, an array of dimension \verb{(K_1, ..., K_D)}, a vector of
 \code{basis@dimension} values in the design's own column order, or a list of
 \code{D} factor matrices each with \code{F} columns. A wrong length or a wrong set
-of dimensions throws, naming what was wanted.}
+of dimensions signals an error that states what is expected.}
 
 \item{...}{Passed to methods. The \link{TensorBasis} method reads \code{block} from
 it, the number of rows processed at once, default \code{1024}.}
@@ -31,30 +31,28 @@ ordinary basis.
 Returns the values of the function a coefficient vector describes,
 \eqn{B(x)\beta}, computed without forming \eqn{B(x)} in full where that is
 possible. For an ordinary basis it is the design matrix times the
-coefficients and there is nothing to save; for a \code{\link[=tensor_basis]{tensor_basis()}} the
-design matrix has \eqn{\prod_j K_j} columns, and avoiding it is what keeps
-a model of several variables affordable.
+coefficients; for a \code{\link[=tensor_basis]{tensor_basis()}} the design matrix has
+\eqn{\prod_j K_j} columns, and avoiding it keeps a model of several
+variables affordable.
 }
 \section{Two shapes of coefficient}{
 An \strong{array} of dimension \eqn{(K_1, \ldots, K_D)} is the general case.
-The rows are processed in blocks of \code{block}, so the peak memory is the
-block's design in place of the whole one: at four margins of eight functions
-and 20000 points, 32 MB against 625 MB, measured, at the same speed
-(0.83 s against 1.00 s) and to an exact agreement.
+The rows are processed in blocks of \code{block}, so the peak memory is that
+of one block's design matrix instead of the whole one, and the values are
+those of the design-matrix product.
 
 A \strong{list of factor matrices} \eqn{\Gamma_j} of size \eqn{K_j \times F} is
 the canonical polyadic form, in which the coefficient array is a sum of
 \eqn{F} outer products. The value is then
 \eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}, costing
 \eqn{O(nF\sum_j K_j)} in both time and memory: neither the design matrix
-nor the coefficient array is formed anywhere. On the same problem at
-\eqn{F = 3} it is 0.03 s against 0.83.
+nor the coefficient array is formed.
 
-That second shape is what brings a model with high-order interactions
-within reach, and what the factorized tensor product spline models of
-Ruegamer (2024) estimate. Choosing the factors is a modeling decision and
-belongs to the layer that owns the parameters; evaluating them is basis
-arithmetic and belongs here.
+The second shape makes a model with high-order interactions affordable,
+and is what the factorized tensor product spline models of Ruegamer (2024)
+estimate. The choice of the factors is a modeling decision made in the
+layer that owns the parameters; this function evaluates the factors it
+receives.
 }
 
 \section{An array and a vector are read differently}{
@@ -69,8 +67,8 @@ design's own column order. So a vector and an array holding the same
 numbers in the same storage order describe different functions, and the
 identity to check against is
 \code{basis_eval(b, x) \%*\% as.numeric(aperm(coef))}. Flattening without the
-\code{aperm()} pairs every coefficient with the wrong function and returns a
-perfectly finite number: 1.16 on the example below.
+\code{aperm()} pairs most coefficients with the wrong function and returns a
+finite value with no error, as the example below shows.
 }
 
 \examples{
@@ -84,7 +82,7 @@ cf <- array(rnorm(20), dim = c(5, 4))
 max(abs(basis_contract(b, x, cf) -
         basis_eval(b, x) \%*\% as.numeric(aperm(cf))))
 
-# Flattening without that gives a plausible wrong answer, not an error.
+# Flattening without that gives a wrong value and no error.
 max(abs(basis_contract(b, x, cf) - basis_eval(b, x) \%*\% as.numeric(cf)))
 
 # A rank-two factorization, which forms neither the design nor the array.

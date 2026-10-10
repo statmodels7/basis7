@@ -156,3 +156,20 @@ test_that("check_basis passes on transformed bases", {
     expect_false(isFALSE(r[["deriv"]]), label = tb@basis_name)
   }
 })
+
+
+test_that("a tensor basis is orthonormalized at an order per variable", {
+  tb <- tensor_basis(bspline_basis(dimension = 5), bspline_basis(dimension = 4))
+  expect_equal(basis_gram(orthonorm_basis(tb, order = c(0, 0))), diag(20),
+               tolerance = 1e-10, ignore_attr = TRUE)
+  # an order above zero reaches the Gram matrix, which is singular
+  expect_error(orthonorm_basis(tb, order = c(1, 0)), "singular")
+  expect_error(orthonorm_basis(tb, order = 1), "one entry per variable")
+})
+
+test_that("the guarded Cholesky returns NULL where eigen() would throw", {
+  expect_null(basis7:::chol_pd(matrix(NA_real_, 2, 2)))
+  expect_null(basis7:::chol_pd(matrix(c(1, 0, 0, Inf), 2, 2)))
+  expect_null(basis7:::chol_pd(matrix(0, 0, 0)))
+  expect_equal(basis7:::chol_pd(diag(2)), diag(2))
+})

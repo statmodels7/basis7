@@ -7,27 +7,30 @@
 tensor_basis(...)
 }
 \arguments{
-\item{...}{The bases to multiply, two or more, or a single list of them.
-Each must take one variable; a \link{TensorBasis} among them is flattened into
-its own margins.}
+\item{...}{The bases to multiply, or a single list of them. Each must take
+one variable; a \link{TensorBasis} among them is flattened into its own
+margins. A single basis is returned unchanged, and no basis at all
+signals an error.}
 }
 \value{
 An object of class \link{TensorBasis} with \code{basis_name}
 \verb{tensor(<names>)}, \code{basis_params} holding \code{marginal_dimensions}, and
-column names pasting the margins' with dots.
+column names pasting the margins' with dots. Given a single basis, that
+basis.
 }
 \description{
 Multiplies bases, one per variable, into the basis of all products of their
 functions. This is how a smooth surface of several covariates is built from
 one-dimensional pieces: the result is a basis like any other, evaluated at
-a matrix of points instead of a vector, and every generic answers exactly
-where the margins do.
+a matrix of points instead of a vector, and every generic is exact where
+the margins are.
 }
 \section{Size}{
 The result has \eqn{\prod_j K_j} functions and takes \eqn{D} variables, so
 the evaluation points become a matrix of \eqn{D} columns. The dimension
 grows geometrically: four cubic B-splines of eight functions each give
-4096 columns, and the design matrix at 20000 observations would be 625 MB.
+4096 columns, and the design matrix at 20000 observations would hold about
+82 million numbers, some 655 MB.
 
 \code{\link[=basis_contract]{basis_contract()}} exists for that reason. It computes what a fit needs
 from the marginal evaluations, in blocks for a full coefficient array and
@@ -44,7 +47,7 @@ basis gives one three-way product with three margins.
 \section{The interval}{
 \verb{@lower} and \verb{@upper} hold one entry per variable, taken from the margins,
 so the domain is the box they span and a point outside any margin's
-interval throws.
+interval signals an error.
 }
 
 \examples{

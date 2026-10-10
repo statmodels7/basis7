@@ -2,18 +2,18 @@
 % Please edit documentation in R/smoother.R
 \name{smoother_reparam}
 \alias{smoother_reparam}
-\title{The Coordinates a Smoother's Coefficients Live In}
+\title{The Coordinates of the Coefficients of a Smoother}
 \usage{
 smoother_reparam(sm, b, x, g, cons)
 }
 \arguments{
 \item{sm}{A \link{smoother}.}
 
-\item{b}{The basis \code{\link[=smoother_basis]{smoother_basis()}} returned.}
+\item{b}{The basis returned by \code{\link[=smoother_basis]{smoother_basis()}}.}
 
 \item{x}{The covariate.}
 
-\item{g}{The roughness matrix \code{\link[=smoother_gram]{smoother_gram()}} returned.}
+\item{g}{The roughness matrix returned by \code{\link[=smoother_gram]{smoother_gram()}}.}
 
 \item{cons}{The constraint, one column per direction removed, or \code{NULL}.}
 }
@@ -23,8 +23,9 @@ A list of \code{S}, the penalty on the reparametrized block, and
 \code{\link[=smoother_apply]{smoother_apply()}} evaluates at new values.
 }
 \description{
-Applies the constraint and the reparametrization, returning the block, the
-penalty matrix on it, and the basis object \code{\link[=smoother_apply]{smoother_apply()}} reapplies.
+Applies the constraint and the reparametrization, returning the penalty
+matrix on the block and the basis object that \code{\link[=smoother_apply]{smoother_apply()}}
+reapplies.
 }
 \details{
 The three routes differ in what the coefficients mean, and the fit they
@@ -35,26 +36,25 @@ express is the same span in each.
 matrix against the roughness matrix, so the columns are orthogonal
 over the data, ordered from the smoothest to the most oscillatory, and
 the penalty is the identity. A separable penalty is available under a
-diagonal map and not under a general one, so a sparse or heavy-tailed
-prior on a smooth is computationally reachable precisely because the
-basis is rotated this way.}
+diagonal map and not under a general one, so the rotation makes a
+sparse or heavy-tailed prior on a smooth computationally feasible.}
 \item{\code{"none"}}{The constrained basis as it stands, with the penalty the
-congruence of the roughness matrix. The coefficients are the basis
-coefficients, which is what a difference penalty is written on.}
+congruence of the roughness matrix by the transform of the constraint.
+The coefficients are those of the constrained basis, one fewer than
+the basis functions for each direction removed.}
 \item{\code{"orthonorm"}}{The constrained basis rotated so that it satisfies
 \eqn{X'X = I} over the observed covariate. The orthonormality is
-against the \strong{empirical} measure, which is what makes the design
+against the \strong{empirical} measure, which makes the design
 orthonormal; \code{\link[=orthonorm_basis]{orthonorm_basis()}} orthonormalizes against the
 \eqn{L^2} inner product instead and remains available as an operation
 on a basis. It is the \strong{reparametrized part} that is orthonormal:
 with \code{null_space = "keep"} a free column is prepended afterwards and
 the whole block is then not orthonormal, while \code{null_space = "drop"}
-gives \eqn{X'X = I} for the block itself, measured at 3.1e-15.}
+gives \eqn{X'X = I} for the block itself, up to rounding.}
 }
 
-The three describe the same space, so an unpenalized fit cannot tell them
-apart: measured at \code{k = 12} over 300 observations, the fitted values of
-the three agree to 1.8e-15. What differs is what a coefficient means and
-therefore what the penalty is.
+The three describe the same space, so the fitted values of an
+unpenalized fit agree to rounding. They differ in what a coefficient
+means, and therefore in the penalty.
 }
 \keyword{internal}

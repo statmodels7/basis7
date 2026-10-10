@@ -26,15 +26,16 @@ description and a verdict, and a closing line listing the quantities that
 came from the numerical fallback.
 }
 \details{
-A verdict is \verb{[PASSED]}, \verb{[FAILED]}, or one of two things for an \code{NA}. A
-check not run because the quantity is a finite difference prints
-\verb{[numerical]}; the partition-of-unity check on a family that is not one
-prints \verb{[not claimed]}. Saying which matters: a value that was not verified
-is a gap, where a property never promised is not.
+A verdict is \verb{[PASSED]}, \verb{[FAILED]}, or one of two labels for an \code{NA}. A
+check that was not run because the quantity is numerical prints
+\verb{[numerical]}; the partition-of-unity check on a family that is not a
+partition of unity prints \verb{[not claimed]}. The first marks a value that was
+not verified, the second a property that does not apply.
 
-Only \code{deriv}, \code{integral} and \code{partition} can be \code{NA} today. The other three
-rows carry a \verb{[numerical]} label in the table that nothing currently
-reaches, \code{shape}, \code{gram} and \code{missing} all being assigned on every path.
+Only \code{deriv}, \code{integral} and \code{partition} can be \code{NA}. The rows \code{shape},
+\code{gram} and \code{missing} are assigned on every path, so their \verb{[numerical]}
+label is never printed. The \code{gram} row omits "matches quadrature" when the
+Gram matrix is numerical, that comparison not being made.
 }
 \seealso{
 \code{\link[=check_basis]{check_basis()}}, its only caller.

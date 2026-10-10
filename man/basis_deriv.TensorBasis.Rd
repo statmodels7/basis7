@@ -9,8 +9,8 @@
 \item{x}{A numeric matrix with one column per variable.}
 
 \item{order}{An integer vector with one entry per variable, or a single
-\code{0}. A single non-zero order throws, having two readings; see
-\code{\link[=check_order]{check_order()}}.}
+\code{0}. A single non-zero order signals an error, having two readings;
+see \code{\link[=check_order]{check_order()}}.}
 
 \item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
@@ -20,15 +20,16 @@ A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns.
 \description{
 Returns the mixed partial derivative named by a multi-index, one order per
 variable: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
-\eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins are,
-and the one place in the package a mixed partial is available at all, the
-numerical fallback refusing them.
+\eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins
+are. It is the only method of the package that computes a mixed partial,
+the numerical fallback signalling an error for one; a transformed tensor
+basis obtains it from this method.
 }
 \details{
 The product separates, so the derivative differentiates each margin to its
-own order and multiplies the results. No cross term appears and no stencil
-in the plane is needed, which is why the accuracy of a mixed partial here
-is the accuracy of the margins' own derivatives.
+own order and multiplies the results. The derivative has no cross term and
+needs no stencil in the plane, so the accuracy of a mixed partial is the
+accuracy of the margins' own derivatives.
 
 An order beyond what a margin carries makes that factor zero, so the whole
 product is zero: \code{c(4, 0)} on a cubic B-spline margin is the exact zero

@@ -13,7 +13,7 @@ check_smoother_x(x)
 \code{x} as a numeric vector.
 }
 \description{
-Validates the covariate a smoother is built or reapplied at: one finite
-numeric value per observation, with no missing values.
+Validates the covariate at which a smoother is built or reapplied: one
+finite numeric value per observation, with no missing values.
 }
 \keyword{internal}

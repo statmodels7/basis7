@@ -14,8 +14,8 @@ navbar:
 reference:
 - title: Bases
   desc: >
-    The families the package ships. Each is complete: all its functions are
-    kept, so restricting one is a separate, deliberate step.
+    The families the package ships. Each holds all its functions, and
+    restricting one is a separate step.
   contents:
   - bspline_basis
   - fourier_basis
@@ -34,11 +34,11 @@ reference:
 
 - title: Smoothers
   desc: >
-    A smoother carries the four decisions a penalized smooth is made of --
-    the basis, the penalty, the null space and the reparametrization -- as
-    one object, because the null space is a property of the basis and the
-    penalty together rather than of either alone. Built at the covariate, it
-    returns the block and the penalty matrix.
+    A smoother carries the four choices a penalized smooth is made of (the
+    basis, the penalty, the treatment of the null space and the
+    reparametrization) as one object, because the null space is a property
+    of the basis and the penalty together. Built at the covariate, it
+    returns the design block and the penalty matrix.
   contents:
   - smoother
   - bspline_smooth
@@ -87,8 +87,10 @@ reference:
 
 - title: The interface
   desc: >
-    What every basis answers. A subclass must implement only the first;
-    the rest have numerical methods on the base class.
+    The generics every basis has methods for. A subclass must implement
+    only `basis_eval()`. The base class supplies numerical methods for the
+    derivatives, the integral and the Gram matrices, and default column
+    names.
   contents:
   - basis_eval
   - basis_deriv
@@ -112,8 +114,10 @@ reference:
 
 - title: Internals
   desc: >
-    Exported for anyone writing a basis of their own: the numerical machinery
-    the fallbacks are built from, documented rather than hidden.
+    The methods registered on the generics and the numerical machinery the
+    fallbacks are built from, documented for anyone writing a basis of their
+    own. Apart from `smoother_gram()`, the functions listed here are not
+    exported and are reached with `basis7:::`.
   contents:
   - starts_with("basis_eval.")
   - starts_with("basis_deriv.")
@@ -153,6 +157,8 @@ reference:
   - check_available
   - check_measure
   - check_constrain
+  - check_periodic_size
+  - reject_quadrature
   - smoother_gram
   - poly_free
   - poly_free_apply

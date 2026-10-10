@@ -38,11 +38,11 @@ and against a density where one is given. It is the base method of
 \code{\link[=basis_operator_gram]{basis_operator_gram()}} and the route a family with no closed form takes.
 }
 \details{
-The nodes are the same rule \code{\link[=numerical_gram]{numerical_gram()}} uses, and the only
+The nodes are those of the rule used by \code{\link[=numerical_gram]{numerical_gram()}}, and the only
 difference is what is evaluated at them: \eqn{Lb} from \code{\link[=operator_eval]{operator_eval()}}
-rather than one derivative. A piecewise polynomial basis therefore gets
-an approximation here where its own derivative Gram matrix is exact, and
-the accuracy is the quadrature's.
+instead of one derivative. A piecewise polynomial basis therefore gets an
+approximation here where its own derivative Gram matrix is exact, with the
+accuracy of the quadrature.
 }
 \seealso{
 \code{\link[=basis_operator_gram]{basis_operator_gram()}}, the generic.

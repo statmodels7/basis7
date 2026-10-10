@@ -7,13 +7,13 @@ NULL
 #' @description
 #' The S7 class of bases obtained from another by a fixed linear map of its
 #' functions, \eqn{\tilde{B}(x) = B(x)\,T}. It carries the parent and the
-#' matrix, and it is itself a basis, so a constrained or rotated basis goes on
-#' answering every generic and nothing downstream has to know a
-#' transformation happened. Constructed by [orthonorm_basis()],
+#' matrix, and it is itself a basis, so every generic applies to a
+#' constrained or rotated basis and code that receives it works in the same
+#' way as for the parent. Constructed by [orthonorm_basis()],
 #' [constrain_basis()] or [dr_basis()].
 #'
 #' @details
-#' # Three operations, one class
+#' # Orthonormalization, constraints and rotations
 #'
 #' Orthonormalizing a basis, restricting it to satisfy a linear constraint,
 #' and rebuilding it so that it diagonalizes an inner product are the same
@@ -27,10 +27,10 @@ NULL
 #' \eqn{x}, so both transform by the same matrix; the Gram matrix transforms
 #' by congruence. A parent with exact derivatives and an exact Gram matrix
 #' therefore passes its exactness on, and [basis_is_numerical()] reports the
-#' parent's answer in place of this class's own methods.
+#' parent's flags in place of those of this class's own methods.
 #'
-#' The anchored integral survives too: a linear combination of columns that
-#' are all zero at the lower endpoint is zero there.
+#' The anchoring of the integral is kept as well: a linear combination of
+#' columns that are all zero at the lower endpoint is zero there.
 #'
 #' # Fewer columns than rows
 #'
@@ -49,7 +49,7 @@ NULL
 #'
 #' @inheritParams basis
 #' @param parent_basis The basis being transformed, any object inheriting from
-#'   [basis]. Kept whole, so it can still be evaluated and asked what it is.
+#'   [basis]. Kept whole, so that it can still be evaluated and inspected.
 #' @param transform The matrix \eqn{T}, numeric, with one row per parent
 #'   function and one column per function of the result.
 #'
@@ -101,8 +101,8 @@ TransformedBasis <- S7::new_class(
 #' @description
 #' Wraps a basis in a [TransformedBasis], collapsing the transform into the
 #' parent's when the parent is already one, so that a chain of transformations
-#' is stored as a single matrix. The one constructor [orthonorm_basis()],
-#' [constrain_basis()] and [dr_basis()] all go through.
+#' is stored as a single matrix. [orthonorm_basis()], [constrain_basis()]
+#' and [dr_basis()] all build their result through it.
 #'
 #' @details
 #' When `basis` is itself a `TransformedBasis`, the result holds
@@ -110,10 +110,9 @@ TransformedBasis <- S7::new_class(
 #' the result is `ncol(transform)`, and its interval is the parent's, a linear
 #' map of the functions leaving the domain alone.
 #'
-#' Nothing is validated. The callers have already checked the shape of their
-#' own matrix, and a `transform` whose row count disagrees with the parent's
-#' dimension gives R's own non-conformable-arguments error at the first
-#' evaluation.
+#' The function itself checks nothing. The validator of [TransformedBasis]
+#' rejects a `transform` whose row count differs from the parent's dimension
+#' when the object is built.
 #'
 #' @param basis The basis to transform, any object inheriting from [basis].
 #' @param transform The matrix \eqn{T}, with one row per function of `basis`.
@@ -159,13 +158,12 @@ new_transformed <- function(basis, transform, name, prefix, params = list()) {
 #'
 #' @details
 #' The parent's names cannot be carried over. Each new function is a
-#' combination of all the parent's, so no single one of them names it, and a
-#' constraint returns fewer functions than it consumed. The prefix at least
-#' records which transformation produced the column, which the default
-#' [basis_colnames.basis()] would not: it takes the first two characters of
-#' `@basis_name`, and every name here begins with the transformation's, so a
-#' chain would give `or1` for both an orthonormalization and its
-#' re-orthonormalization.
+#' combination of all the parent's, so none of the parent's names fits it,
+#' and a constraint returns fewer functions than it consumed. The prefix
+#' records which transformation produced the column. The default
+#' [basis_colnames.basis()] takes the first two characters of `@basis_name`,
+#' which here begins with the name of the transformation, and would give
+#' `or1` for both an orthonormalization and its re-orthonormalization.
 #'
 #' @param basis A [TransformedBasis] object.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
@@ -186,9 +184,10 @@ S7::method(basis_colnames, TransformedBasis) <- function(basis, ...) {
 #'
 #' @description
 #' Evaluates the parent and multiplies by the transform,
-#' \eqn{\tilde{B}(x) = B(x)\,T}. Nothing is recomputed and no property of the
-#' parent is lost: the result spans a subspace of what the parent spans, and
-#' spans all of it when \eqn{T} is square and invertible.
+#' \eqn{\tilde{B}(x) = B(x)\,T}, with no further computation. The result
+#' spans a subspace of what the parent spans, and all of it when \eqn{T} is
+#' square and invertible. Properties of the individual columns, such as the
+#' partition of unity of a B-spline, are in general not kept.
 #'
 #' @details
 #' Cost is one parent evaluation plus one `length(x)` by `K` by `m` matrix
@@ -224,14 +223,15 @@ S7::method(basis_eval, TransformedBasis) <- function(basis, x, ...) {
 #' @details
 #' The accuracy is the parent's. Where the parent differentiates exactly so
 #' does this; where the parent falls back to a stencil the result is that
-#' stencil's answer arranged by \eqn{T}, which is why [basis_is_numerical()]
-#' reports the parent's flags for a transformed basis in place of its own
-#' registered methods.
+#' stencil's result multiplied by \eqn{T}, which is why
+#' [basis_is_numerical()] reports the parent's flags for a transformed basis
+#' in place of those of its own registered methods.
 #'
 #' @param basis A [TransformedBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
-#' @param order The derivative order, a single non-negative whole number,
-#'   default `1`, passed to the parent unchanged.
+#' @param order The derivative order, default `1`, passed to the parent
+#'   unchanged: a single non-negative whole number, or one per variable for
+#'   a parent of several variables.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
 #'
 #' @return A numeric matrix with `length(x)` rows and `basis@dimension`
@@ -253,9 +253,8 @@ S7::method(basis_deriv, TransformedBasis) <- function(basis, x, order = 1L, ...)
 #'
 #' @description
 #' Returns the parent's anchored integral multiplied by the transform. The
-#' anchoring survives without a correction: every column of the parent's
-#' integral is zero at the lower endpoint, and a linear combination of zeros
-#' is zero.
+#' anchoring needs no correction: every column of the parent's integral is
+#' zero at the lower endpoint, and a linear combination of zeros is zero.
 #'
 #' @details
 #' Integration is linear and \eqn{T} does not depend on `x`, so the identity
@@ -283,19 +282,17 @@ S7::method(basis_int, TransformedBasis) <- function(basis, x, ...) {
 #'
 #' @description
 #' Returns the congruence \eqn{T^\top G\,T} of the parent's Gram matrix. A
-#' parent whose inner products are exact passes that exactness on, so an
-#' orthonormalized B-spline has an exactly diagonal Gram matrix and no
-#' quadrature is run anywhere.
+#' parent whose inner products are exact passes that exactness on, so the
+#' Gram matrix of an orthonormalized B-spline is the identity up to rounding
+#' and no quadrature is run.
 #'
 #' @details
-#' The congruence preserves symmetry and positive semidefiniteness, and can
-#' only lower the rank, by at most `nrow(T) - ncol(T)`. The result is
-#' symmetrized as `(G + t(G))/2` before it is returned, the two orderings of a
-#' triple product differing in their last bits.
+#' The congruence preserves symmetry and positive semidefiniteness, and its
+#' rank is at most the smaller of the rank of \eqn{G} and `ncol(T)`. The
+#' result is symmetrized as `(G + t(G))/2` before it is returned.
 #'
-#' [orthonorm_basis()] is exact for this reason: it chooses \eqn{T} so that
-#' \eqn{T^\top G\,T} is the identity, and the check
-#' `basis_gram(orthonorm_basis(b))` returns it to 4.4e-16 on a cubic B-spline.
+#' [orthonorm_basis()] relies on this: it chooses \eqn{T} so that
+#' \eqn{T^\top G\,T} is the identity.
 #'
 #' @param basis A [TransformedBasis] object.
 #' @param order The derivative order, a single non-negative whole number,
@@ -325,29 +322,28 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 }
 
 
-#' Cholesky Factorization, With the Rank Decided Before It
+#' Cholesky Factor with a Positive-Definiteness Test
 #'
 #' @description
 #' Returns the upper triangular Cholesky factor of a symmetric matrix, or
 #' `NULL` when the matrix is not positive definite to the given relative
-#' tolerance. The verdict comes from the eigenvalues and never from whether
-#' [base::chol()] raised, so it is the same on every platform.
+#' tolerance. The test is made on the eigenvalues, so that its outcome is the
+#' same on every platform.
 #'
 #' @details
 #' On a matrix with an exactly zero eigenvalue the pivot that should be zero
-#' comes out positive or negative according to rounding, so `chol()` succeeds
-#' on some platforms and fails on others. A construction that asks it whether
-#' a Gram matrix or a penalty is usable therefore gets a different answer on
-#' different machines: [orthonorm_basis()] and [dr_basis()] once disagreed
-#' with themselves between this machine and the CI runners for exactly that
-#' reason.
+#' comes out positive or negative according to rounding, so [base::chol()]
+#' succeeds on some platforms and fails on others. A construction that relied
+#' on `chol()` to decide whether a Gram matrix or a penalty is usable would
+#' therefore give different results on different platforms.
 #'
-#' Comparing the smallest eigenvalue with the largest is a statement about the
-#' matrix and gives the same answer everywhere. The eigendecomposition costs
-#' little beside what both callers already do.
+#' Comparing the smallest eigenvalue with the largest depends only on the
+#' matrix and gives the same result everywhere. The eigendecomposition costs
+#' little beside the other work of the callers.
 #'
 #' The `chol()` call is still wrapped, so a matrix that passes the eigenvalue
-#' test and fails the factorization anyway returns `NULL` instead of throwing.
+#' test and fails the factorization returns `NULL` instead of signalling an
+#' error.
 #'
 #' @param m A symmetric numeric matrix. Symmetry is assumed, never checked:
 #'   `eigen(symmetric = TRUE)` reads the lower triangle.
@@ -356,16 +352,17 @@ S7::method(basis_gram, TransformedBasis) <- function(basis, order = 0L,
 #'   `min(ev) > tol * max(ev)`, so it is scale-free.
 #'
 #' @return The upper triangular Cholesky factor \eqn{R} with
-#'   \eqn{m = R^\top R}, or `NULL` when `m` is empty, holds an `NA`, or is not
-#'   positive definite to `tol`.
+#'   \eqn{m = R^\top R}, or `NULL` when `m` is empty, holds a value that is not
+#'   finite, or is not positive definite to `tol`.
 #'
-#' @seealso [orthonorm_basis()] and [dr_basis()], its two callers, which turn
-#'   a `NULL` into an error naming what to do about it.
+#' @seealso [orthonorm_basis()], [dr_basis()] and [smoother_reparam()], its
+#'   callers, which turn a `NULL` into an error stating what to change.
 #'
 #' @keywords internal
 chol_pd <- function(m, tol = 1e-12) {
+  # eigen() itself throws on an empty matrix and on a missing or infinite entry
+  if (!length(m) || !all(is.finite(m))) return(NULL)
   ev <- eigen(m, symmetric = TRUE, only.values = TRUE)$values
-  if (!length(ev) || anyNA(ev)) return(NULL)
   if (max(ev) <= 0 || min(ev) <= tol * max(ev)) return(NULL)
   tryCatch(chol(m), error = function(e) NULL)
 }
@@ -375,20 +372,19 @@ chol_pd <- function(m, tol = 1e-12) {
 #'
 #' @description
 #' Returns a basis spanning the same functions whose Gram matrix is the
-#' identity, so that the design matrix has orthogonal columns of unit norm in
-#' \eqn{L^2} and a least-squares fit against it is perfectly conditioned. The
-#' transform is read off the Gram matrix, so for the shipped families the
-#' orthonormalization is exact: there is no grid, no number of points to
-#' choose, and no scale factor to correct.
+#' identity, so that the functions are orthonormal in \eqn{L^2}. The
+#' transform is read off the Gram matrix, so for a basis whose Gram matrix is
+#' exact (the B-spline and Legendre families, and a Fourier basis over a whole
+#' period) the orthonormalization is exact, with no grid and no number of
+#' points to choose.
 #'
 #' @details
 #' # The construction
 #'
 #' Write \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix.
 #' The basis \eqn{B R^{-1}} then has Gram matrix
-#' \eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. Measured on a
-#' cubic B-spline of six functions, `basis_gram()` of the result differs from
-#' the identity by 4.4e-16.
+#' \eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. The Gram
+#' matrix of the result is the identity up to rounding.
 #'
 #' The span is unchanged, \eqn{R^{-1}} being invertible: a function the parent
 #' can represent is fitted by the orthonormalized basis to rounding.
@@ -398,9 +394,9 @@ chol_pd <- function(m, tol = 1e-12) {
 #' `order` chooses it. At `0`, the default, the functions themselves are
 #' orthonormal. Above that the `order`-th derivatives would be, and the Gram
 #' matrix there is singular for every family, the constant differentiating
-#' away, so the factorization fails and an error says so. Orthonormalizing a
-#' derivative therefore needs a basis whose constant has already been removed
-#' by [constrain_basis()].
+#' away, so the factorization fails and an error is signalled.
+#' Orthonormalizing a derivative therefore needs a basis whose constant has
+#' already been removed by [constrain_basis()].
 #'
 #' # Composing
 #'
@@ -411,9 +407,10 @@ chol_pd <- function(m, tol = 1e-12) {
 #' @param basis The basis to orthonormalize, any object inheriting from
 #'   [basis].
 #' @param order The derivative order whose inner products are made the
-#'   identity, a single non-negative whole number, default `0`. Any value
-#'   above `0` throws for the shipped families, their higher-order Gram
-#'   matrices being singular.
+#'   identity, a single non-negative whole number, or one per variable for a
+#'   basis of several variables; default `0`. Any value above `0` signals an
+#'   error for the shipped families, their higher-order Gram matrices being
+#'   singular.
 #'
 #' @return An object of class [TransformedBasis] with `basis_name`
 #'   `orthonorm(<parent>)` and column names `on1`, `on2`, and so on. Its
@@ -427,11 +424,12 @@ chol_pd <- function(m, tol = 1e-12) {
 #' b <- bspline_basis(dimension = 6)
 #' o <- orthonorm_basis(b)
 #'
-#' # The Gram matrix is the identity, exactly.
+#' # The Gram matrix is the identity up to rounding.
 #' round(basis_gram(o), 12)
 #' max(abs(basis_gram(o) - diag(6)))
 #'
-#' # The span is unchanged: a function the parent represents is fitted exactly.
+#' # The span is unchanged: a function in the span of the parent is fitted
+#' # exactly.
 #' set.seed(1)
 #' x <- seq(0, 1, length.out = 100)
 #' f <- drop(basis_eval(b, x) %*% rnorm(6))
@@ -441,12 +439,12 @@ chol_pd <- function(m, tol = 1e-12) {
 #' max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
 #' class(orthonorm_basis(o)@parent_basis)
 #'
-#' # A higher order is refused: that Gram matrix is singular.
+#' # A higher order signals an error, that Gram matrix being singular.
 #' try(orthonorm_basis(b, order = 2))
 #'
 #' @export
 orthonorm_basis <- function(basis, order = 0L) {
-  order <- check_order(order)
+  order <- check_order(order, basis_nvar(basis))
   g <- basis_gram(basis, order = order)
   r <- chol_pd(g)
   if (is.null(r)) {
@@ -465,19 +463,19 @@ orthonorm_basis <- function(basis, order = 0L) {
 #' The Null Basis of a Constraint
 #'
 #' @description
-#' An orthonormal basis of the null space of `cm`, the columns a
-#' constrained basis is built from. It is the transform **relative to the
-#' basis being constrained**, which is not always the one the resulting
-#' object stores.
+#' An orthonormal basis of the null space of `cm`, from whose columns a
+#' constrained basis is built. It is the transform **relative to the basis
+#' being constrained**, which is not always the one stored by the resulting
+#' object.
 #'
 #' @details
 #' [new_transformed()] flattens a nested transform, so a basis that is
 #' itself transformed comes back carrying the product against its own
 #' parent: constraining a cyclic smoother's twelve periodic functions,
 #' which are a transform of fifteen B-splines, gives an object whose
-#' transform is 15 by 11 and not 12 by 11. That is right for evaluating
-#' it and wrong for carrying a matrix defined on the twelve, which is why
-#' the local transform is available here rather than read off the object.
+#' transform is 15 by 11 and not 12 by 11. The stored transform serves the
+#' evaluation, and a matrix defined on the twelve functions needs the local
+#' one, which is why it is returned here.
 #'
 #' @param cm The constraint, one row per direction removed and one column
 #'   per basis function.
@@ -534,17 +532,17 @@ constraint_null <- function(cm, dimension, tol = 1e-10) {
 #' covariate is `colSums(basis_eval(b, x))`, which makes the fitted values sum
 #' to zero there; several constraints are the rows of a matrix.
 #'
-#' What the package supplies is the mechanics. Which constraint a model term
-#' should carry, whether a sum-to-zero condition for identifiability or
-#' orthogonality to a linear part, needs to know what the term means and
-#' belongs to the layer that does.
+#' The function applies a given constraint. The choice of constraint for a
+#' model term, such as a sum-to-zero condition for identifiability or
+#' orthogonality to a linear part, depends on the meaning of the term and is
+#' made in the modeling layer.
 #'
 #' # Errors
 #'
 #' A `constraint` that is not numeric, or whose column count is not
-#' `basis@dimension`, throws with both numbers named; a missing value throws;
-#' and a constraint of full rank leaves no functions and throws, in place of
-#' returning a basis of zero columns.
+#' `basis@dimension`, signals an error that states the required count. A
+#' missing value signals an error, and so does a constraint of full rank,
+#' which would leave a basis of zero columns.
 #'
 #' @param basis The basis to restrict, any object inheriting from [basis].
 #' @param constraint A numeric matrix with one column per basis function, or a
@@ -576,7 +574,7 @@ constraint_null <- function(cm, dimension, tol = 1e-10) {
 #' C <- rbind(colSums(basis_eval(b, x)), colSums(basis_eval(b, x) * x))
 #' constrain_basis(b, C)@dimension
 #'
-#' # A constraint of full rank leaves nothing, and is refused.
+#' # A constraint of full rank leaves no functions and signals an error.
 #' try(constrain_basis(b, diag(6)))
 #'
 #' @export
@@ -620,51 +618,46 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' and the transform is \eqn{T = V_0 A}.
 #'
 #' The resulting design matrix \eqn{Z = B T} then has \eqn{Z^\top Z} diagonal
-#' and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0}. Measured on a B-spline of
-#' twelve functions at 200 random points: the largest off-diagonal entry of
-#' \eqn{Z^\top Z} is 8.3e-14 and the largest entry of
-#' \eqn{(\mathbf{1}, x)^\top Z} is 1.3e-14.
+#' and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0}, both up to rounding.
 #'
 #' # What `scale` does to the penalty
 #'
 #' \eqn{T^\top P T} is **proportional to** the identity, and equal to it only
 #' when `scale = FALSE`. With `scale = TRUE`, the default, \eqn{T} is divided
 #' by \eqn{\sqrt{\sum_j \lambda_j}}, so \eqn{T^\top P T} is
-#' \eqn{(\sum_j \lambda_j)^{-1} I}: on the example above, 481.6 times the
-#' identity, with `tr(Z'Z/n)` exactly 1. At `scale = FALSE` the two swap,
-#' \eqn{T^\top P T} being the identity to 8.3e-14 and `tr(Z'Z/n)` being
-#' 0.00208.
+#' \eqn{(\sum_j \lambda_j)^{-1} I} and `tr(Z'Z/n)` is 1. At `scale = FALSE`
+#' \eqn{T^\top P T} is the identity and `tr(Z'Z/n)` is
+#' \eqn{\sum_j \lambda_j}.
 #'
-#' The scaling is what puts the bases of different terms on a common footing,
-#' so one smoothing parameter means the same thing across them. A consumer
-#' that needs the penalty to be exactly \eqn{I} passes `scale = FALSE`.
+#' The scaling puts the bases of different terms on a common footing, so one
+#' smoothing parameter means the same thing across them. A consumer that
+#' needs the penalty to be exactly \eqn{I} passes `scale = FALSE`.
 #'
 #' `basis_params$empirical_variance` holds the eigenvalues, normalized to sum
-#' to one when `scale = TRUE`, and they are exactly `diag(Z'Z/n)`: the share
-#' of empirical variance each column carries, falling from 0.834 for the
-#' smoothest to 4.4e-05 for the wiggliest on the example above.
+#' to one when `scale = TRUE`. They equal `diag(Z'Z/n)` up to rounding, and
+#' are the share of empirical variance each column carries, falling from the
+#' smoothest column to the wiggliest.
 #'
-#' # What this construction costs
+#' # Cost and properties
 #'
 #' It factorizes only a \eqn{q \times K} matrix and a
 #' \eqn{(K-q) \times (K-q)} one, never anything of the size of the sample. It
-#' tolerates a rank-deficient \eqn{B}, which equally spaced knots produce
-#' whenever the data leave a knot span empty, the matrix inverted being the
-#' penalty. And the transform is kept, so prediction at new points is the
+#' tolerates a rank-deficient \eqn{B}, which equally spaced knots produce when
+#' the data leave `degree + 1` or more consecutive knot spans of a B-spline
+#' empty, the matrix inverted being the penalty. The transform is kept, so prediction at new points is the
 #' parent's evaluation multiplied by it, as for any other transformed basis.
 #'
-#' That last property is what separating a linear from a nonlinear effect
-#' needs: a reparametrization not satisfying \eqn{(\mathbf{1}, x)^\top Z = 0}
-#' estimates the sum of the two correctly and the split between them with
-#' bias.
+#' The orthogonality \eqn{(\mathbf{1}, x)^\top Z = 0} is what separates a
+#' linear from a nonlinear effect: a reparametrization without it estimates
+#' the sum of the two correctly and the split between them with bias.
 #'
 #' # Errors
 #'
 #' A missing value in `x`, a `penalty` that is not `K` by `K`, or a
-#' `constraints` with the wrong number of columns each throw. A penalty
-#' singular on the constrained space throws with the two remedies named:
-#' there is then a direction neither penalized nor identified, and no rotation
-#' can fix it.
+#' `constraints` with the wrong number of columns each signal an error. A
+#' penalty singular on the constrained space signals an error that names two
+#' remedies: there is then a direction that is neither penalized nor
+#' identified, and a rotation of the basis cannot remove it.
 #'
 #' @param basis The basis to transform, any object inheriting from [basis].
 #' @param x The points the empirical inner product is taken at, normally the
@@ -712,7 +705,7 @@ constrain_basis <- function(basis, constraint, tol = 1e-10) {
 #' max(abs(crossprod(cbind(1, x), z)))
 #'
 #' # The columns run from smoothest to wiggliest, and the recorded shares of
-#' # empirical variance are exactly the diagonal of Z'Z/n.
+#' # empirical variance are the diagonal of Z'Z/n.
 #' round(d@basis_params$empirical_variance, 6)
 #' max(abs(d@basis_params$empirical_variance - diag(crossprod(z)) / length(x)))
 #'

@@ -16,17 +16,18 @@ columns, exactly zero in the row at \code{basis@lower}.
 }
 \description{
 Returns \eqn{\int_{\ell}^{x} P_n(t)\,\mathrm{d}t} for every polynomial,
-in closed form and with no quadrature. The zero at the lower endpoint that
-\code{\link[=basis_int]{basis_int()}} promises falls out of the identity used and needs no
+in closed form and with no quadrature. The zero at the lower endpoint
+required by \code{\link[=basis_int]{basis_int()}} follows from the identity used and needs no
 correction term.
 }
 \details{
 The identity is \eqn{\int P_n = (P_{n+1} - P_{n-1})/(2n+1)} for
-\eqn{n \ge 1}, with \eqn{\int P_0 = t}, so one table of \eqn{K + 1}
+\eqn{n \ge 1}, with \eqn{\int_{-1}^{t} P_0 = t + 1}, so one table of
+\eqn{K + 1}
 polynomials supplies all \eqn{K} integrals: the integral of the last one
 reaches one degree beyond the basis.
 
-The anchoring is automatic. At \eqn{t = -1}, which is the lower endpoint,
+At \eqn{t = -1}, which is the lower endpoint,
 \eqn{P_{n+1} - P_{n-1}} is \eqn{(-1)^{n+1} - (-1)^{n-1} = 0}, and the
 \eqn{n = 0} column is written as \eqn{(t + 1)/2 \cdot (u - \ell)}, which
 also vanishes there. Every column is therefore exactly zero at

@@ -166,3 +166,32 @@ test_that("a flat vector of coefficients works, in the column order", {
   cf <- rnorm(6)
   expect_equal(basis_contract(b, x, cf), drop(basis_eval(b, x) %*% cf))
 })
+
+
+test_that("named margins do not change which coefficients are accepted", {
+  # the dimensions carried the margins' names and identical() rejected an
+  # array of the right size
+  set.seed(58)
+  nb <- tensor_basis(a = bspline_basis(dimension = 5),
+                     b = bspline_basis(dimension = 4))
+  ub <- tensor_basis(bspline_basis(dimension = 5), bspline_basis(dimension = 4))
+  x <- cbind(runif(10), runif(10))
+  arr <- array(rnorm(20), c(5, 4))
+  cp <- list(matrix(rnorm(10), 5), matrix(rnorm(8), 4))
+  expect_equal(basis_contract(nb, x, arr), basis_contract(ub, x, arr))
+  expect_equal(basis_contract(nb, x, cp), basis_contract(ub, x, cp))
+  # and a named list of factors on unnamed margins
+  expect_equal(basis_contract(ub, x, list(a = cp[[1]], b = cp[[2]])),
+               basis_contract(ub, x, cp))
+})
+
+
+test_that("no rows give an empty result on every route", {
+  b <- tb(c(5L, 4L))
+  x0 <- matrix(numeric(0), 0, 2)
+  expect_identical(basis_contract(b, x0, array(1, c(5, 4))), numeric(0))
+  expect_identical(basis_contract(b, x0, rep(1, 20)), numeric(0))
+  expect_length(basis_contract(b, x0, list(matrix(1, 5), matrix(1, 4))), 0L)
+  expect_identical(dim(basis_eval(bspline_basis(dimension = 5), numeric(0))),
+                   c(0L, 5L))
+})

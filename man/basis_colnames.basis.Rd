@@ -13,17 +13,16 @@ A character vector of length \code{basis@dimension}.
 }
 \description{
 Numbers the basis functions after the family, taking the first two
-characters of \verb{@basis_name} and appending \code{1} to \verb{@dimension}: \verb{bs1 ... bs6}
-for a B-spline, \verb{on1 ... on5} for an orthonormalized basis. The method
-every class inherits unless it registers one of its own, as
-\code{\link[=fourier_basis]{fourier_basis()}}, \code{\link[=poly_basis]{poly_basis()}} and \code{\link[=tensor_basis]{tensor_basis()}} do.
+characters of \verb{@basis_name} and appending the numbers from 1 to
+\verb{@dimension}: \verb{bs1 ... bs6} for a B-spline. Every class inherits this
+method unless it registers its own, as the Fourier, Legendre, tensor and
+transformed bases do.
 }
 \details{
-Two characters is enough to tell the families apart at a glance in a
-coefficient table without making the names long. Nothing depends on the
-names being distinct across bases, and a model combining two B-spline
-blocks will see \code{bs1} twice unless whatever assembles the design
-disambiguates them.
+Two characters tell the families apart in a coefficient table without
+making the names long. The names are not distinct across bases: a model
+that combines two B-spline blocks has \code{bs1} twice, unless the code that
+assembles the design distinguishes them.
 }
 \seealso{
 \code{\link[=basis_colnames]{basis_colnames()}} for the generic.

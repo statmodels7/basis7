@@ -21,22 +21,22 @@ one on the abstract \link{basis} class. \code{TRUE} means the values come from f
 differences or quadrature, so they carry that method's error and cannot be
 verified against a numerical reference.
 }
-\section{What it decides}{
-\code{\link[=check_basis]{check_basis()}} reads it to decide which of its checks can mean anything.
-Comparing a finite difference against a finite difference is the same
-arithmetic twice, agreeing however wrong the basis is, so the \code{deriv} and
-\code{integral} checks are not run at all where this reports \code{TRUE}.
+\section{Use}{
+\code{\link[=check_basis]{check_basis()}} reads it to decide which of its checks are informative.
+Comparing a finite difference against a finite difference repeats the same
+arithmetic, and the two agree however wrong the basis is, so the \code{deriv}
+and \code{integral} checks are not run where this reports \code{TRUE}.
 \code{\link[=print.basis]{print.basis()}} shows the same information on its \verb{Numerical:} line.
 }
 
-\section{How it is answered}{
-For an ordinary class, by asking the family through
-\code{\link[=basis_numerical_route]{basis_numerical_route()}}, whose default method is the owner test:
-which class each method is registered on, through
-\code{attr(m, "signature")[[1]]}, tested with \code{\link[=is_base_basis_class]{is_base_basis_class()}}. A
-generic with no method at all counts as numerical.
+\section{Computation}{
+For an ordinary class the result comes from \code{\link[=basis_numerical_route]{basis_numerical_route()}},
+whose default method is the owner test: the class on which each method is
+registered, read through \code{attr(m, "signature")[[1]]} and tested with
+\code{\link[=is_base_basis_class]{is_base_basis_class()}}. A generic with no method at all counts as
+numerical.
 
-Two classes are answered by delegation instead. A \link{TransformedBasis}
+Two classes are handled by delegation instead. A \link{TransformedBasis}
 reports its parent's: all three of its methods are registered, but each one
 calls the parent and multiplies, so what is exact about it is whatever was
 exact about the parent. A \link{TensorBasis} reports \code{TRUE} for a quantity that
@@ -45,21 +45,22 @@ its margins'.
 }
 
 \section{A method that branches}{
-The owner test says where a method came from and not what it does, so a
-method registered on a concrete class that itself calls the fallback would
-be reported as exact. \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does that when the period
-is not the interval width, and it is why \code{\link[=basis_numerical_route]{basis_numerical_route()}} is a
-generic: a family whose route depends on its own parameters registers a
-method and is believed over the owner test. A basis written outside the
-package does the same.
+The owner test reports where a method came from and not what it does, so
+a method registered on a concrete class that itself calls the fallback
+would be reported as exact. \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does that when the
+period is not the interval width, and this is why
+\code{\link[=basis_numerical_route]{basis_numerical_route()}} is a generic: a family whose route depends on its
+own parameters registers a method, whose result replaces the owner test.
+A basis written outside the package can do the same.
 }
 
 \examples{
-# Every shipped family, and every wrapper over one, is exact throughout.
+# The shipped families at their default arguments, and wrappers over
+# them, are exact throughout.
 basis_is_numerical(bspline_basis(dimension = 5))
 basis_is_numerical(orthonorm_basis(fourier_basis(dimension = 5)))
 
-# A basis defined from its evaluation alone answers TRUE to all three.
+# A basis defined from its evaluation alone gives TRUE for all three.
 Bumps <- S7::new_class("Bumps", parent = basis)
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
   out <- exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension),

@@ -2,7 +2,7 @@
 % Please edit documentation in R/operator.R
 \name{check_period}
 \alias{check_period}
-\title{Refuse a Period That Is Not One Positive Number}
+\title{Check That a Period Is One Positive Number}
 \usage{
 check_period(period)
 }
@@ -13,6 +13,6 @@ check_period(period)
 \code{NULL}, invisibly; called for the error.
 }
 \description{
-Refuse a Period That Is Not One Positive Number
+Check That a Period Is One Positive Number
 }
 \keyword{internal}

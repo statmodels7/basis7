@@ -231,3 +231,19 @@ test_that("a smoother prints its four decisions", {
                                                          upper = 1))),
                      collapse = " "), "\\[0, 1\\]")
 })
+
+test_that("a constant covariate without an interval is rejected by name", {
+  # the padded range had no width and the error came from splines2
+  expect_error(smoother_build(bspline_smooth(k = 8), rep(2, 20)),
+               "takes a single value")
+})
+
+test_that("print() reports a penalty factory", {
+  out <- capture.output(print(bspline_smooth(k = 10,
+                                             penalty = function(n) diag(n))))
+  expect_true(any(grepl("^  roughness: derivative of order 2", out)))
+  expect_true(any(grepl("^  penalty: built by the supplied factory", out)))
+  out0 <- capture.output(print(bspline_smooth(k = 10)))
+  expect_true(any(grepl("^  penalty: derivative of order 2", out0)))
+  expect_false(any(grepl("factory", out0)))
+})

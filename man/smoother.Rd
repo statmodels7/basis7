@@ -19,8 +19,8 @@ smoother(
 )
 }
 \arguments{
-\item{smoother_name}{A single string naming the family, printed by
-\code{\link[=print.smoother]{print.smoother()}}. Not read by any computation.}
+\item{smoother_name}{A single string naming the family. It is stored and
+validated; \code{\link[=print.smoother]{print.smoother()}} prints the class name instead.}
 
 \item{dimension}{The number of basis functions before any constraint or
 reparametrization, a single positive integer. Must be of storage mode
@@ -29,31 +29,33 @@ integer.}
 \item{order}{What the penalty measures: a \link{LinearOperator} from
 \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
 \code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
-\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
-toward, which for \code{m} is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.}
+\code{deriv_operator(m)}. It determines the functions toward which a
+strongly penalized fit contracts: a constant for \code{m = 1}, a straight
+line for 2, a parabola for 3, and the functions of \code{\link[=operator_null]{operator_null()}}
+for any operator.}
 
-\item{measure}{The measure the roughness is integrated against.
+\item{measure}{The measure against which the roughness is integrated.
 \code{"lebesgue"} is the length measure on the interval.}
 
-\item{constrain}{The directions the smooth is made orthogonal to, or
-\code{NULL} for the null space of the basis and the penalty together. The
-form it takes belongs to the family, a periodic basis having no reading
-for "polynomials up to degree c".}
+\item{constrain}{The directions to which the smooth is made orthogonal,
+or \code{NULL} for the null space of the penalty. The form it takes belongs
+to the family, a periodic basis having no reading for "polynomials up to
+degree c".}
 
-\item{null_space}{What becomes of the directions the penalty does not
-see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
-\code{"shrink"} penalizes them under the same smoothing parameter.}
+\item{null_space}{What happens to the directions that the penalty does
+not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
+\code{"shrink"} penalizes them under the same smoothing parameter with a
+weight of one tenth.}
 
-\item{reparam}{The coordinates the coefficients live in, a single string.
-\code{"dr"} is the Demmler-Reinsch rotation.}
+\item{reparam}{The coordinates in which the coefficients are expressed, a
+single string. \code{"dr"} is the Demmler-Reinsch rotation.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness matrix, or a factory
 building a \pkg{penalties7} penalty from a coefficient count.}
 
 \item{lower, upper}{The endpoints of the interval, each a single finite
-number or \code{NULL} to read it from the data at build. Given, both must be
-given, with \code{lower < upper}.}
+number, or \code{NULL} to read that endpoint from the data at build. When
+both are given, \code{lower} must be less than \code{upper}.}
 
 \item{smoother_params}{A named list of whatever else the family needs.}
 }
@@ -64,57 +66,57 @@ object inheriting from it.
 }
 \description{
 A smoother is a recipe for a penalized smooth. It carries the four
-decisions a smooth is made of, which are independent of one another and
-which a single basis does not determine:
+choices that make up a smooth, which a single basis does not determine:
 \enumerate{
 \item which functions span the space, the \strong{basis};
 \item what counts as roughness, the \strong{penalty};
-\item which directions the penalty leaves alone and what becomes of them,
+\item which directions the penalty leaves unpenalized and what happens to them,
 the \strong{null space};
-\item which coordinates the coefficients live in, the \strong{reparametrization}.
+\item in which coordinates the coefficients are expressed, the
+\strong{reparametrization}.
 }
 
-It is a recipe rather than a built object because the third and fourth
-decisions need the data: the Demmler-Reinsch rotation diagonalizes the
+It is a recipe and not a built object because the third and fourth
+choices need the data: the Demmler-Reinsch rotation diagonalizes the
 pencil of the empirical Gram matrix against the penalty, and the interval
 of the default basis is read from the covariate. \code{\link[=smoother_build]{smoother_build()}}
 resolves a smoother at a vector of covariate values and returns the block
 and its penalty matrix; \code{\link[=smoother_apply]{smoother_apply()}} reapplies the transform
 recorded there at new values.
 }
-\section{Why one object rather than a basis and a penalty}{
-The two are not independently choosable. The null space is a property of
-the \strong{pair}: the second-derivative Gram matrix of a cubic B-spline has a
+\section{One object for the basis and the penalty}{
+The basis and the penalty cannot be chosen independently. The null space
+is a property of the \strong{pair}: the second-derivative Gram matrix of a cubic B-spline has a
 two-dimensional null space, that of a Fourier basis is one-dimensional at
 every order because the basis contains no linear function, and the Gram
 matrix of a B-spline of degree \eqn{d} at an order above \eqn{d} is
-identically zero, which penalizes nothing. Passing a basis and a penalty
-separately would leave the caller to satisfy that compatibility at every
+identically zero, which penalizes nothing. With a basis and a penalty
+passed separately, that compatibility would have to be checked at every
 call site. A smoother is one object, so each constructor validates its own
-arguments where the caller wrote them.
+arguments.
 }
 
-\section{A penalty of your own}{
+\section{A user-supplied penalty}{
 \code{penalty} replaces the roughness matrix with a penalty built by a factory
 of the coefficient count: \code{bspline_smooth(penalty = penalties7::lasso_penalty)}. It is a factory and not a built penalty
 because how many coefficients a smooth has is settled by the data, the
 constraint and the null space moving with them.
 
-A smoother \strong{stores the function and never calls it}. This package sits
-at the bottom of the dependency graph and imports \pkg{numericals7}
-alone, so it cannot name \pkg{penalties7} and cannot ask whether what the
-function returns is a penalty; \code{\link[=check_penalty]{check_penalty()}} asks only that it be a
-function of one argument. Whichever layer builds the term calls it, at
-the count only the data settle, and checks the result there.
+A smoother \strong{stores the function and never calls it}. Of the toolkit,
+this package imports \pkg{numericals7} only, so it cannot name
+\pkg{penalties7} and cannot test whether the function returns a penalty;
+\code{\link[=check_penalty]{check_penalty()}} checks only that it is a function with at least one
+argument. The layer that builds the term calls it, at the coefficient
+count that only the data settle, and checks the result there.
 
 The construction is unaffected. \code{\link[=smoother_build]{smoother_build()}} returns the roughness
 matrix in \code{S} whether or not a factory is given, because the
-reparametrization reads that matrix: it is what orders the coordinates
-from the smoothest to the most wiggly and makes the penalty on them the
-identity, and that ordering is the reason a penalty of another shape is
-worth reaching for. \code{unpenalized} counts the columns the roughness leaves
-free, which a caller building a separable penalty needs, since such a
-penalty has no zero row with which to leave a column alone.
+reparametrization reads that matrix: it orders the coordinates from the
+smoothest to the most wiggly and makes the penalty on them the identity,
+and that ordering is what gives a penalty of another shape its meaning.
+\code{unpenalized} counts the leading columns that the roughness leaves free,
+which a caller building a separable penalty needs, since such a penalty
+has no zero row with which to leave a column unpenalized.
 
 \code{smoother} is abstract: construct one through a family, of which
 \code{\link[=bspline_smooth]{bspline_smooth()}} is the first.

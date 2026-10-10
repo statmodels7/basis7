@@ -22,9 +22,9 @@ the sinusoid itself. The first column is \code{1} at every point; column
 with \eqn{z = 2\pi (x - \ell)/\omega}.
 }
 \details{
-Cost is two \code{sin()} and \code{cos()} calls per frequency per point, with no
-recurrence and no accumulation, so a high frequency is evaluated as
-accurately as a low one. Missing points give missing rows.
+Each frequency costs one call of \code{sin()} and one of \code{cos()} per point,
+with no recurrence over the frequencies. Missing points give missing
+rows.
 }
 \seealso{
 \code{\link[=fourier_trig]{fourier_trig()}}, which builds the trigonometric columns;

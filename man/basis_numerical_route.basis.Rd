@@ -2,7 +2,7 @@
 % Please edit documentation in R/numerical_fallbacks.R
 \name{basis_numerical_route.basis}
 \alias{basis_numerical_route.basis}
-\title{The Owner Test, Which Is the Default Route}
+\title{Default Numerical Route by Owner Test}
 \arguments{
 \item{basis}{A basis object.}
 
@@ -12,10 +12,11 @@
 The named logical vector \code{\link[=basis_numerical_route]{basis_numerical_route()}} describes.
 }
 \description{
-Answers with \code{\link[=route_by_owner]{route_by_owner()}}: which class each of \code{\link[=basis_deriv]{basis_deriv()}},
-\code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} is registered on. That is right for every
-family whose methods take one route, which is all of them but
-\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}}.
+Returns \code{\link[=route_by_owner]{route_by_owner()}}: the class on which each of \code{\link[=basis_deriv]{basis_deriv()}},
+\code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} is registered. That is correct for every
+family whose methods take one route, which excludes the Fourier family,
+and for a class that is not a wrapper; \code{\link[=basis_is_numerical]{basis_is_numerical()}} handles the
+wrappers itself.
 }
 \seealso{
 \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}, the one family that needs

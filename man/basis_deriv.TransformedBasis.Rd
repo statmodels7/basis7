@@ -8,8 +8,9 @@
 
 \item{x}{A numeric vector of evaluation points inside the basis interval.}
 
-\item{order}{The derivative order, a single non-negative whole number,
-default \code{1}, passed to the parent unchanged.}
+\item{order}{The derivative order, default \code{1}, passed to the parent
+unchanged: a single non-negative whole number, or one per variable for
+a parent of several variables.}
 
 \item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
@@ -26,9 +27,9 @@ and no derivative of the transformation itself enters.
 \details{
 The accuracy is the parent's. Where the parent differentiates exactly so
 does this; where the parent falls back to a stencil the result is that
-stencil's answer arranged by \eqn{T}, which is why \code{\link[=basis_is_numerical]{basis_is_numerical()}}
-reports the parent's flags for a transformed basis in place of its own
-registered methods.
+stencil's result multiplied by \eqn{T}, which is why
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports the parent's flags for a transformed basis
+in place of those of its own registered methods.
 }
 \seealso{
 \code{\link[=basis_deriv]{basis_deriv()}} for the generic; \code{\link[=basis_is_numerical]{basis_is_numerical()}} for whose

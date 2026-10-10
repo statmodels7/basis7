@@ -47,17 +47,17 @@ sum-to-zero identifiability constraint over a grid or over the observed
 covariate is \code{colSums(basis_eval(b, x))}, which makes the fitted values sum
 to zero there; several constraints are the rows of a matrix.
 
-What the package supplies is the mechanics. Which constraint a model term
-should carry, whether a sum-to-zero condition for identifiability or
-orthogonality to a linear part, needs to know what the term means and
-belongs to the layer that does.
+The function applies a given constraint. The choice of constraint for a
+model term, such as a sum-to-zero condition for identifiability or
+orthogonality to a linear part, depends on the meaning of the term and is
+made in the modeling layer.
 }
 
 \section{Errors}{
 A \code{constraint} that is not numeric, or whose column count is not
-\code{basis@dimension}, throws with both numbers named; a missing value throws;
-and a constraint of full rank leaves no functions and throws, in place of
-returning a basis of zero columns.
+\code{basis@dimension}, signals an error that states the required count. A
+missing value signals an error, and so does a constraint of full rank,
+which would leave a basis of zero columns.
 }
 
 \examples{
@@ -75,7 +75,7 @@ max(abs(colSums(basis_eval(cs, x))))
 C <- rbind(colSums(basis_eval(b, x)), colSums(basis_eval(b, x) * x))
 constrain_basis(b, C)@dimension
 
-# A constraint of full rank leaves nothing, and is refused.
+# A constraint of full rank leaves no functions and signals an error.
 try(constrain_basis(b, diag(6)))
 
 }

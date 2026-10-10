@@ -3,7 +3,7 @@
 \name{smoother_span}
 \alias{smoother_span}
 \alias{smoother_span_apply}
-\title{What a Smoother Removes and What It Gives Back}
+\title{Constraint and Free Columns of a Smoother}
 \usage{
 smoother_span(sm, x, ...)
 
@@ -22,11 +22,12 @@ smoother_span_apply(sm, params, newx, ...)
 \item{newx}{For \code{smoother_span_apply()}, the new covariate values.}
 }
 \value{
-\code{smoother_span()} returns a list of three elements: \code{constraint},
-a numeric matrix of one column per direction removed, or \code{NULL} for
-none; \code{free}, a numeric matrix of one column per direction restored,
-with zero columns where none is; and \code{params}, what
-\code{smoother_span_apply()} needs to rebuild \code{free} at new values.
+\code{smoother_span()} returns a list with elements \code{constraint}, a
+numeric matrix of one column per direction removed; \code{free}, a numeric
+matrix of one column per direction restored, with zero columns where
+none is; and \code{params}, which \code{smoother_span_apply()} needs to rebuild
+\code{free} at new values. For a penalty that is not a derivative operator
+the list also has \code{free_names}, the names of the columns of \code{free}.
 \code{smoother_span_apply()} returns that matrix at \code{newx}.
 }
 \description{
@@ -34,24 +35,22 @@ Returns the directions a smoother constrains its block against, and the
 ones \code{null_space = "keep"} restores as free columns. Both are evaluated at
 the covariate, one column per direction.
 }
-\section{Why the pair and not the basis}{
-The null space is a property of the basis and the penalty \strong{together},
-not of the basis alone. The second-derivative Gram matrix of a cubic
-B-spline has the polynomials of degree below 2 in its null space and the
-order-3 matrix the polynomials of degree below 3, while a Fourier basis
-has the constant alone at every order, the basis containing no linear
-function. Measured, the null function of a Fourier Gram matrix has a
-standard deviation of exactly zero at orders 1, 2 and 3. So the answer
+\section{The basis and the penalty together}{
+The null space is a property of the basis and the penalty together. The
+second-derivative Gram matrix of a cubic B-spline has the polynomials of
+degree below 2 in its null space and the order-3 matrix the polynomials
+of degree below 3, while a Fourier basis has the constant alone at every
+order, the basis containing no linear function. The null space therefore
 belongs to the smoother, which carries both, and a family declares it by
 registering a method here.
 }
 
-\section{The default, which serves every polynomial family}{
+\section{The default method of the polynomial families}{
 The base method removes the polynomials of degree below \code{order}, or up to
 \code{constrain} when that is given and larger, and restores all but the
 constant. The constant is not restored because a model carrying an
-intercept already spans it, which is the convention \code{\link[=dr_basis]{dr_basis()}} has
-always followed.
+intercept already spans it, which is also the convention of
+\code{\link[=dr_basis]{dr_basis()}}.
 
 The restored columns are the raw powers made orthogonal to one another and
 to the constant over the observed covariate, then standardized. The first

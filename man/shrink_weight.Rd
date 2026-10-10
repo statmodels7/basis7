@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R
 \name{shrink_weight}
 \alias{shrink_weight}
-\title{The Weight a Shrunk Null Space Carries}
+\title{The Weight of a Shrunk Null Space}
 \usage{
 shrink_weight()
 }
@@ -10,24 +10,19 @@ shrink_weight()
 A single number.
 }
 \description{
-The penalty \code{null_space = "shrink"} puts on the directions the roughness
-matrix does not see: one tenth of what a penalized direction carries.
+The penalty that \code{null_space = "shrink"} puts on the directions that the
+roughness matrix does not see: one tenth of the weight of a penalized
+direction.
 }
 \details{
-It is \pkg{mgcv}'s rule translated rather than a number chosen here.
-Measured on \code{mgcv::s(bs = "ts")}, the shrinkage construction leaves the
-positive eigenvalues of the penalty exactly as they were -- 7708.76 down
-to 20.82, identical to the unshrunk \code{"tp"} -- and replaces each zero with
-2.082, which is a tenth of the smallest positive one. In Demmler-Reinsch
-coordinates every penalized direction has eigenvalue exactly 1, so the
-rule is the single number below.
+The weight follows the shrinkage construction of the \code{bs = "ts"} smooths
+of \pkg{mgcv}, which keeps the positive eigenvalues of the penalty and
+replaces each zero eigenvalue with a tenth of the smallest positive one.
+In Demmler-Reinsch coordinates every penalized direction has eigenvalue
+1, so the rule is the single number returned here.
 
-What the tenth buys is measured. Both a weight of 0.1 and a weight of 1
-let the term leave the model, the fitted values reaching a standard
-deviation under 1e-6 at a large smoothing parameter. They differ in rate:
-on a genuinely linear truth at a smoothing parameter of 100, the root
-mean square error against that truth is 0.0723 at 0.1 and 0.4049 at 1,
-so the heavier weight destroys a real linear trend at a smoothing
-parameter chosen to smooth the wiggles.
+With this weight the fitted values of the term tend to a constant as the
+smoothing parameter grows, so the term can leave the model, while a
+linear component is shrunk more slowly than the oscillating ones.
 }
 \keyword{internal}

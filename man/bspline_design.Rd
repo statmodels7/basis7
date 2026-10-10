@@ -28,21 +28,19 @@ attributes \pkg{splines2} attaches. Callers add the column names through
 \description{
 The single point at which this package talks to \pkg{splines2}. It
 assembles the knot arguments from \code{basis@basis_params}, calls
-\code{\link[splines2:bSpline]{splines2::bSpline()}} once, and returns a plain matrix, so the dependency
-stays behind the S7 interface and no caller has to know its argument names
-or its return class.
+\code{\link[splines2:bSpline]{splines2::bSpline()}} once, and returns a plain matrix, so the argument
+names and the return class of \pkg{splines2} stay inside this function.
 }
 \details{
 \code{intercept = TRUE} is passed always, so all \code{dimension} functions come
 back; \pkg{splines2} would otherwise drop the first.
 
-The returned object is of class \code{BSpline} and carries ten attributes,
-among them \code{x}, \code{knots}, \code{degree} and \code{intercept}. Rebuilding it as
-\code{matrix(as.numeric(out), ...)} strips every one, which matters because
-those attributes would survive arithmetic and reappear on a matrix that no
-longer describes them. The dimensions are taken from \code{length(x)} and
-\code{basis@dimension}, so a mismatch with what \pkg{splines2} returned surfaces
-here.
+The object \pkg{splines2} returns is of class \code{BSpline} and carries
+attributes, among them \code{x}, \code{knots}, \code{degree} and \code{intercept}. Rebuilding
+it as \code{matrix(as.numeric(out), ...)} strips all of them, since they would
+survive arithmetic and reappear on a matrix that they no longer describe.
+The dimensions are taken from \code{length(x)} and \code{basis@dimension}. An empty
+\code{x}, which \pkg{splines2} rejects, gives a matrix of no rows.
 
 \code{derivs} and \code{integral} are mutually exclusive in practice, each caller
 setting at most one.

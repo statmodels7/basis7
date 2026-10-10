@@ -13,11 +13,12 @@ generic's.}
 \code{x}, invisibly.
 }
 \description{
-Prints a four- or five-line summary of a basis object: the family it comes
-from, how many functions it holds and over how many variables, the interval
-each variable runs over, the parameters the family carries, and which of
-the three derived quantities are computed by finite differences instead of
-from a formula. Called for that output, and returns the object invisibly.
+Prints a summary of a basis object: the family it comes from, how many
+functions it holds and over how many variables, the interval each variable
+runs over, the parameters the family carries, and which of the three
+derived quantities are computed numerically instead of from a formula. The
+summary has four lines, plus a header and one line per parameter when the
+basis carries parameters.
 }
 \section{The lines}{
 \verb{Basis:} is \verb{@basis_name}, which records how the object was built. A
@@ -31,8 +32,8 @@ expects. Every family here has one variable except \code{\link[=tensor_basis]{te
 
 \verb{Domain:} is \verb{@lower} and \verb{@upper} as a closed interval per variable,
 separated by \code{x} for a product. It is the interval every generic checks its
-evaluation points against: a point outside throws, naming how many of the
-points were outside and what the interval is.
+evaluation points against. A point outside signals an error that states
+how many of the points were outside and what the interval is.
 
 \verb{Parameters:} appears only when \verb{@basis_params} is non-empty, and prints
 one line per entry. A numeric entry of more than four values is abbreviated
@@ -40,16 +41,18 @@ to its length, so a B-spline over many knots reads \verb{<8 values>} and leaves
 the knots to \code{b@basis_params$knots}.
 
 \verb{Numerical:} reads \code{\link[=basis_is_numerical]{basis_is_numerical()}} and names those of \code{basis_deriv},
-\code{basis_int} and \code{basis_gram} that have no method registered for this class
-and so fall through to the finite-difference route. All three shipped
-families, and every wrapper over them, report \code{none}. A basis defined from
-its evaluation alone reports all three, and that is the line to read when a
-derivative looks noisier than expected.
+\code{basis_int} and \code{basis_gram} that are computed by the numerical route:
+finite differences for the derivatives, quadrature for the integral and the
+Gram matrix. The three shipped families report \code{none}, except a Fourier
+basis whose interval is not a whole period, whose Gram matrix is computed
+by quadrature. A basis defined from its evaluation alone reports all
+three.
 }
 
 \examples{
-# The parameter block differs by family: knots and a degree for a B-spline,
-# a frequency and a pair count for Fourier, a degree alone for Legendre.
+# The parameter block differs by family: the degree and the knots for a
+# B-spline, the period, the number of pairs and a full-period flag for
+# Fourier, the degree alone for Legendre.
 bspline_basis(dimension = 6)
 fourier_basis(dimension = 5)
 poly_basis(dimension = 4)

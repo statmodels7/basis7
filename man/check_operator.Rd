@@ -2,7 +2,7 @@
 % Please edit documentation in R/operator.R
 \name{check_operator}
 \alias{check_operator}
-\title{Refuse Anything That Is Not an Operator}
+\title{Check That an Object Is an Operator}
 \usage{
 check_operator(op)
 }
@@ -13,6 +13,6 @@ check_operator(op)
 \code{NULL}, invisibly; called for the error.
 }
 \description{
-Refuse Anything That Is Not an Operator
+Check That an Object Is an Operator
 }
 \keyword{internal}

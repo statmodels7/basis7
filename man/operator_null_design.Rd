@@ -21,23 +21,22 @@ The design matrix of the functions \code{\link[=operator_null]{operator_null()}}
 }
 \details{
 These are the mathematical functions, unscaled. A smoother that restores
-them as free columns centers and scales them first and records what it
-did, so that a prediction reapplies the same columns rather than
-recomputing them from new data; \code{\link[=smoother_span]{smoother_span()}} is where that happens.
+them as free columns scales them first and records the scale, so that a
+prediction reapplies the same columns instead of recomputing them from new
+data; see \code{\link[=smoother_span]{smoother_span()}}.
 
-A rate far from zero over a wide interval overflows: \eqn{e^{at}} is what
-it is, and an operator with a large real root is a statement about growth
-that a design matrix cannot hold. The two operators this package builds
-for itself, \code{\link[=deriv_operator]{deriv_operator()}} and \code{\link[=harmonic_operator]{harmonic_operator()}}, have purely
-imaginary roots and no such difficulty.
+A rate far from zero over a wide interval makes \eqn{e^{at}} overflow, so
+the design matrix of an operator with a large real root cannot be formed.
+The operators built by \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} and
+\code{\link[=oscillator_operator]{oscillator_operator()}} have only roots on the imaginary axis, zero
+included, and this difficulty does not arise.
 }
 \examples{
 x <- seq(0, 365, length.out = 5)
 round(operator_null_design(harmonic_operator(365), x), 4)
 
-# L applied to its own null space is zero, which is what makes it the
-# null space; here to the accuracy of a central difference
-round(colSums(abs(operator_null_design(deriv_operator(2), 1:5))), 6)
+# the constant and t, the null space of the second derivative
+operator_null_design(deriv_operator(2), 1:5)
 }
 \seealso{
 \code{\link[=operator_null]{operator_null()}} for what the columns are.

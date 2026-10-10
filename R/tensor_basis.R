@@ -8,28 +8,28 @@ NULL
 #' The S7 class of tensor product bases: all products of the functions of
 #' several bases, one basis per variable,
 #' \deqn{B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).}
-#' It carries the marginals whole, and every quantity it answers with is built
+#' It carries the marginals whole, and every quantity it returns is built
 #' from theirs, so a product of exactly integrated marginals is itself exact
 #' at any number of variables. Constructed by [tensor_basis()].
 #'
 #' @details
-#' # Everything follows from the marginals
+#' # Reduction to the marginals
 #'
 #' The product separates, so each generic reduces to its marginals':
 #'
 #' - a partial derivative differentiates one marginal to its own order and
 #'   leaves the others alone, `order` being a multi-index;
 #' - the integral over the box from the lower corner is the product of the
-#'   marginal integrals, and the anchor survives, a product whose every factor
-#'   is zero at the corner being zero there;
+#'   marginal integrals, and the anchoring is kept, a product whose every
+#'   factor is zero at the corner being zero there;
 #' - the Gram matrix is the Kronecker product of the marginal Gram matrices,
 #'   which is a product of one-dimensional integrals and never a quadrature
 #'   over the box.
 #'
-#' That last point is what keeps the construction affordable. A quadrature
-#' over a box of \eqn{D} variables costs a node count exponential in \eqn{D}
-#' and carries an error to match; a Kronecker product of exact marginal
-#' matrices is exact, and costs one marginal Gram matrix per variable.
+#' The last point keeps the construction affordable. A quadrature over a box
+#' of \eqn{D} variables costs a node count exponential in \eqn{D} and carries
+#' an error, whereas a Kronecker product of exact marginal matrices is exact
+#' and costs one marginal Gram matrix per variable.
 #'
 #' # Column order
 #'
@@ -39,18 +39,19 @@ NULL
 #'
 #' That order matters when coefficients are supplied as an array, R storing an
 #' array with its *first* index fastest. [basis_contract()] reverses the
-#' dimensions for you; a hand-written `as.numeric(coef)` does not, and pairs
-#' every coefficient with the wrong function.
+#' dimensions; a hand-written `as.numeric(coef)` does not, and pairs most
+#' coefficients with the wrong function.
 #'
 #' # What the validator enforces
 #'
-#' `@marginals` must be non-empty and hold only bases, and `@dimension` must
-#' equal the product of their dimensions.
+#' `@marginals` must be non-empty and hold only bases of one variable each,
+#' `@lower` and `@upper` must be their endpoints in the same order, and
+#' `@dimension` must equal the product of their dimensions.
 #'
 #' @inheritParams basis
 #' @param marginals The list of bases being multiplied, one per variable, each
-#'   of one variable itself. Kept whole, so each can still be evaluated and
-#'   asked what it is.
+#'   of one variable itself. Kept whole, so that each can still be evaluated
+#'   and inspected.
 #'
 #' @return An object of class `TensorBasis`, inheriting from [basis], with the
 #'   five properties of a basis plus `marginals`, and `basis_params` holding
@@ -83,6 +84,16 @@ TensorBasis <- S7::new_class(
     ))) {
       return("every element of @marginals must be a basis")
     }
+    if (any(vapply(self@marginals, function(m) length(m@lower), integer(1)) !=
+      1L)) {
+      return("every element of @marginals must take one variable")
+    }
+    lo <- vapply(self@marginals, function(m) m@lower, numeric(1))
+    hi <- vapply(self@marginals, function(m) m@upper, numeric(1))
+    if (length(self@lower) != length(lo) || any(self@lower != lo) ||
+      length(self@upper) != length(hi) || any(self@upper != hi)) {
+      return("@lower and @upper must be the endpoints of the marginals")
+    }
     if (self@dimension != prod(vapply(self@marginals, function(m) m@dimension,
       numeric(1)
     ))) {
@@ -99,8 +110,8 @@ TensorBasis <- S7::new_class(
 #' Multiplies bases, one per variable, into the basis of all products of their
 #' functions. This is how a smooth surface of several covariates is built from
 #' one-dimensional pieces: the result is a basis like any other, evaluated at
-#' a matrix of points instead of a vector, and every generic answers exactly
-#' where the margins do.
+#' a matrix of points instead of a vector, and every generic is exact where
+#' the margins are.
 #'
 #' @details
 #' # Size
@@ -108,7 +119,8 @@ TensorBasis <- S7::new_class(
 #' The result has \eqn{\prod_j K_j} functions and takes \eqn{D} variables, so
 #' the evaluation points become a matrix of \eqn{D} columns. The dimension
 #' grows geometrically: four cubic B-splines of eight functions each give
-#' 4096 columns, and the design matrix at 20000 observations would be 625 MB.
+#' 4096 columns, and the design matrix at 20000 observations would hold about
+#' 82 million numbers, some 655 MB.
 #'
 #' [basis_contract()] exists for that reason. It computes what a fit needs
 #' from the marginal evaluations, in blocks for a full coefficient array and
@@ -125,15 +137,17 @@ TensorBasis <- S7::new_class(
 #'
 #' `@lower` and `@upper` hold one entry per variable, taken from the margins,
 #' so the domain is the box they span and a point outside any margin's
-#' interval throws.
+#' interval signals an error.
 #'
-#' @param ... The bases to multiply, two or more, or a single list of them.
-#'   Each must take one variable; a [TensorBasis] among them is flattened into
-#'   its own margins.
+#' @param ... The bases to multiply, or a single list of them. Each must take
+#'   one variable; a [TensorBasis] among them is flattened into its own
+#'   margins. A single basis is returned unchanged, and no basis at all
+#'   signals an error.
 #'
 #' @return An object of class [TensorBasis] with `basis_name`
 #'   `tensor(<names>)`, `basis_params` holding `marginal_dimensions`, and
-#'   column names pasting the margins' with dots.
+#'   column names pasting the margins' with dots. Given a single basis, that
+#'   basis.
 #'
 #' @references
 #' Wood, S. N. (2006). Low-rank scale-invariant tensor product smooths for
@@ -227,14 +241,13 @@ tensor_basis <- function(...) {
 #' Pastes the margins' column names with dots, in the order the columns come
 #' out: the last marginal varies fastest, following [base::kronecker()]. A
 #' column named `bs2.cos1` is the product of the parent B-spline's second
-#' function with the Fourier margin's first cosine, so a coefficient's name
-#' says which marginal function it belongs to in each variable.
+#' function with the Fourier margin's first cosine, so the name of a
+#' coefficient gives its marginal function in each variable.
 #'
 #' @details
 #' The names are built with the same recycling [khatri_rao()] uses, the second
 #' factor repeated within each element of the first. `outer()` would give the
-#' transpose of this, which reads plausibly and labels every column but the
-#' first and last wrongly.
+#' transpose of this ordering, which mislabels most of the columns.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
@@ -265,13 +278,13 @@ S7::method(basis_colnames, TensorBasis) <- function(basis, ...) {
 #' Evaluates each margin at its own column of the points and takes the
 #' row-wise Kronecker product, so row \eqn{i} of the result is
 #' \eqn{B_1(x_{i1}) \otimes \cdots \otimes B_D(x_{iD})}. The matrix has
-#' \eqn{\prod_j K_j} columns, so at several variables it is worth avoiding,
-#' and [basis_contract()] avoids it.
+#' \eqn{\prod_j K_j} columns, which is large at several variables;
+#' [basis_contract()] evaluates a fit without forming it.
 #'
 #' @details
 #' Cost is one marginal evaluation per variable plus the products, and the
-#' result is `nrow(x)` by `basis@dimension`, which at four margins of eight
-#' functions and 20000 points is 625 MB. Nothing is cached.
+#' result is `nrow(x)` by `basis@dimension`. The method does not cache its
+#' result.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable, or a vector taken
@@ -297,15 +310,16 @@ S7::method(basis_eval, TensorBasis) <- function(basis, x, ...) {
 #' @description
 #' Returns the mixed partial derivative named by a multi-index, one order per
 #' variable: `c(2, 0)` is \eqn{\partial^2/\partial x_1^2} and `c(1, 1)` is
-#' \eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins are,
-#' and the one place in the package a mixed partial is available at all, the
-#' numerical fallback refusing them.
+#' \eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins
+#' are. It is the only method of the package that computes a mixed partial,
+#' the numerical fallback signalling an error for one; a transformed tensor
+#' basis obtains it from this method.
 #'
 #' @details
 #' The product separates, so the derivative differentiates each margin to its
-#' own order and multiplies the results. No cross term appears and no stencil
-#' in the plane is needed, which is why the accuracy of a mixed partial here
-#' is the accuracy of the margins' own derivatives.
+#' own order and multiplies the results. The derivative has no cross term and
+#' needs no stencil in the plane, so the accuracy of a mixed partial is the
+#' accuracy of the margins' own derivatives.
 #'
 #' An order beyond what a margin carries makes that factor zero, so the whole
 #' product is zero: `c(4, 0)` on a cubic B-spline margin is the exact zero
@@ -314,8 +328,8 @@ S7::method(basis_eval, TensorBasis) <- function(basis, x, ...) {
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable.
 #' @param order An integer vector with one entry per variable, or a single
-#'   `0`. A single non-zero order throws, having two readings; see
-#'   [check_order()].
+#'   `0`. A single non-zero order signals an error, having two readings;
+#'   see [check_order()].
 #' @param ... Unused, and accepted so that the signature matches the generic's.
 #'
 #' @return A numeric matrix with `nrow(x)` rows and `basis@dimension` columns.
@@ -337,11 +351,11 @@ S7::method(basis_deriv, TensorBasis) <- function(basis, x, order = 1L, ...) {
 #' Returns the integral over the box from the lower corner to each point, one
 #' iterated integral per variable, in closed form wherever the margins have
 #' one. It is the only integral over a box in the package, the numerical
-#' fallback taking one variable alone.
+#' fallback handling one variable alone.
 #'
 #' @details
 #' The integrand separates, so the multiple integral is the product of the
-#' marginal integrals. The anchoring convention of [basis_int()] survives
+#' marginal integrals. The anchoring convention of [basis_int()] holds
 #' without a correction: a product in which every factor is zero at the corner
 #' is zero at the corner, so the row at `basis@lower` is exactly zero.
 #'
@@ -380,14 +394,14 @@ S7::method(basis_int, TensorBasis) <- function(basis, x, ...) {
 #' matrix at that margin's own order. It costs one marginal Gram matrix per
 #' variable and no integration over the box at all.
 #'
-#' The result is symmetrized as `(G + t(G))/2`, a Kronecker product of
-#' symmetric matrices being symmetric only up to the order its entries were
-#' formed in. It is singular whenever any margin's is, so an `order` with any
-#' non-zero entry gives a singular matrix.
+#' The result is symmetrized as `(G + t(G))/2`. It is singular whenever any
+#' margin's is; for the shipped families every Gram matrix above order zero
+#' is singular, so an `order` with a non-zero entry gives a singular matrix
+#' when the margins are shipped families.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param order The derivative order, an integer vector with one entry per
-#'   variable, or a single `0`. Each margin is asked for its own entry.
+#'   variable, or a single `0`. Each margin receives its own entry.
 #' @param at,weight Handled in the body of [basis_gram()] before dispatch, so
 #'   they never arrive here. Named only because S7 requires a method's formals
 #'   to contain the generic's.
@@ -416,22 +430,24 @@ S7::method(basis_gram, TensorBasis) <- function(basis, order = 0L, at = NULL,
 #' The Row-Wise Kronecker Product of the Marginal Designs
 #'
 #' @description
-#' Evaluates each margin, differentiated or integrated as asked, and reduces
+#' Evaluates each margin, differentiated or integrated as `order` and
+#' `integral` specify, and reduces
 #' the results with [khatri_rao()] into the product's own design matrix. The
 #' one body behind [basis_eval.TensorBasis()], [basis_deriv.TensorBasis()]
-#' and [basis_int.TensorBasis()], which differ only in what they ask the
-#' margins for.
+#' and [basis_int.TensorBasis()], which differ only in the quantity computed
+#' from the margins.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable, already validated.
 #' @param order An integer vector with one entry per variable, or `NULL` for
 #'   the functions themselves.
-#' @param integral `TRUE` to ask each margin for its anchored integral instead
+#' @param integral `TRUE` to use the anchored integral of each margin instead
 #'   of its evaluation. Not combined with `order`; each caller sets at most
 #'   one.
 #'
-#' @return A numeric matrix with `nrow(x)` rows and `basis@dimension` columns,
-#'   no dimnames; callers add them through [name_columns()].
+#' @return A numeric matrix with `nrow(x)` rows and `basis@dimension` columns.
+#'   Its column names, inherited from the first margin, are replaced by the
+#'   callers through [name_columns()].
 #'
 #' @seealso [marginal_designs()] and [khatri_rao()], its two steps.
 #'
@@ -446,14 +462,15 @@ tensor_design <- function(basis, x, order = NULL, integral = FALSE) {
 #'
 #' @description
 #' Returns a list of the margins' design matrices, each evaluated at its own
-#' column of the points, and each differentiated or integrated as asked. The
+#' column of the points, and each differentiated or integrated as `order` and
+#' `integral` specify. The
 #' first step of [tensor_design()].
 #'
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable.
 #' @param order An integer vector with one entry per variable, or `NULL` for
 #'   the functions themselves.
-#' @param integral `TRUE` to ask each margin for its anchored integral.
+#' @param integral `TRUE` to use the anchored integral of each margin.
 #'
 #' @return A list of `basis_nvar(basis)` numeric matrices, the \eqn{j}th with
 #'   `nrow(x)` rows and `basis@marginals[[j]]@dimension` columns.
@@ -491,14 +508,14 @@ marginal_designs <- function(basis, x, order = NULL, integral = FALSE) {
 #' reverses an array's dimensions before flattening it.
 #'
 #' The result has `ncol(a) * ncol(b)` columns, so reducing across several
-#' margins grows geometrically; nothing here bounds that, and
-#' [basis_contract()] is what avoids paying it.
+#' margins grows geometrically; [basis_contract()] avoids forming it.
 #'
 #' @param a,b Numeric matrices with the same number of rows. The row counts
-#'   are not checked; a mismatch gives R's own recycling behavior.
+#'   are not checked here; a mismatch gives R's error for non-conformable
+#'   arrays.
 #'
 #' @return A numeric matrix with `nrow(a)` rows and `ncol(a) * ncol(b)`
-#'   columns, no dimnames.
+#'   columns, carrying the column names of `a` repeated when `a` has them.
 #'
 #' @seealso [tensor_design()], its only caller;
 #'   [basis_colnames.TensorBasis()], which names its columns.
@@ -518,32 +535,30 @@ khatri_rao <- function(a, b) {
 #' Returns the values of the function a coefficient vector describes,
 #' \eqn{B(x)\beta}, computed without forming \eqn{B(x)} in full where that is
 #' possible. For an ordinary basis it is the design matrix times the
-#' coefficients and there is nothing to save; for a [tensor_basis()] the
-#' design matrix has \eqn{\prod_j K_j} columns, and avoiding it is what keeps
-#' a model of several variables affordable.
+#' coefficients; for a [tensor_basis()] the design matrix has
+#' \eqn{\prod_j K_j} columns, and avoiding it keeps a model of several
+#' variables affordable.
 #'
 #' @details
 #' # Two shapes of coefficient
 #'
 #' An **array** of dimension \eqn{(K_1, \ldots, K_D)} is the general case.
-#' The rows are processed in blocks of `block`, so the peak memory is the
-#' block's design in place of the whole one: at four margins of eight functions
-#' and 20000 points, 32 MB against 625 MB, measured, at the same speed
-#' (0.83 s against 1.00 s) and to an exact agreement.
+#' The rows are processed in blocks of `block`, so the peak memory is that
+#' of one block's design matrix instead of the whole one, and the values are
+#' those of the design-matrix product.
 #'
 #' A **list of factor matrices** \eqn{\Gamma_j} of size \eqn{K_j \times F} is
 #' the canonical polyadic form, in which the coefficient array is a sum of
 #' \eqn{F} outer products. The value is then
 #' \eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}, costing
 #' \eqn{O(nF\sum_j K_j)} in both time and memory: neither the design matrix
-#' nor the coefficient array is formed anywhere. On the same problem at
-#' \eqn{F = 3} it is 0.03 s against 0.83.
+#' nor the coefficient array is formed.
 #'
-#' That second shape is what brings a model with high-order interactions
-#' within reach, and what the factorized tensor product spline models of
-#' Ruegamer (2024) estimate. Choosing the factors is a modeling decision and
-#' belongs to the layer that owns the parameters; evaluating them is basis
-#' arithmetic and belongs here.
+#' The second shape makes a model with high-order interactions affordable,
+#' and is what the factorized tensor product spline models of Ruegamer (2024)
+#' estimate. The choice of the factors is a modeling decision made in the
+#' layer that owns the parameters; this function evaluates the factors it
+#' receives.
 #'
 #' # An array and a vector are read differently
 #'
@@ -558,8 +573,8 @@ khatri_rao <- function(a, b) {
 #' numbers in the same storage order describe different functions, and the
 #' identity to check against is
 #' `basis_eval(b, x) %*% as.numeric(aperm(coef))`. Flattening without the
-#' `aperm()` pairs every coefficient with the wrong function and returns a
-#' perfectly finite number: 1.16 on the example below.
+#' `aperm()` pairs most coefficients with the wrong function and returns a
+#' finite value with no error, as the example below shows.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
 #' @param x Evaluation points: a numeric vector for a basis of one variable,
@@ -569,7 +584,7 @@ khatri_rao <- function(a, b) {
 #'   [TensorBasis], an array of dimension `(K_1, ..., K_D)`, a vector of
 #'   `basis@dimension` values in the design's own column order, or a list of
 #'   `D` factor matrices each with `F` columns. A wrong length or a wrong set
-#'   of dimensions throws, naming what was wanted.
+#'   of dimensions signals an error that states what is expected.
 #' @param ... Passed to methods. The [TensorBasis] method reads `block` from
 #'   it, the number of rows processed at once, default `1024`.
 #'
@@ -595,7 +610,7 @@ khatri_rao <- function(a, b) {
 #' max(abs(basis_contract(b, x, cf) -
 #'         basis_eval(b, x) %*% as.numeric(aperm(cf))))
 #'
-#' # Flattening without that gives a plausible wrong answer, not an error.
+#' # Flattening without that gives a wrong value and no error.
 #' max(abs(basis_contract(b, x, cf) - basis_eval(b, x) %*% as.numeric(cf)))
 #'
 #' # A rank-two factorization, which forms neither the design nor the array.
@@ -627,9 +642,8 @@ basis_contract <- S7::new_generic(
 #'
 #' @description
 #' Returns `basis_eval(basis, x) %*% coef`. For a basis of one variable the
-#' design matrix has `basis@dimension` columns and there is nothing worth
-#' avoiding, so the definition is the computation. The method every class
-#' inherits except [TensorBasis].
+#' design matrix has `basis@dimension` columns, which is small enough to
+#' form. Every class inherits this method except [TensorBasis].
 #'
 #' @details
 #' `coef` is taken in the design's own column order, there being one obvious
@@ -647,8 +661,8 @@ basis_contract <- S7::new_generic(
 #'   column per column of `coef`.
 #'
 #' @seealso [basis_contract()] for the generic;
-#'   [basis_contract.TensorBasis()] for the case where the design matrix is
-#'   worth avoiding.
+#'   [basis_contract.TensorBasis()] for the case in which the design matrix
+#'   is not formed.
 #'
 #' @keywords internal
 S7::method(basis_contract, basis) <- function(basis, x, coef, ...) {
@@ -678,11 +692,8 @@ S7::method(basis_contract, basis) <- function(basis, x, coef, ...) {
 #' # The blocked route
 #'
 #' Each block of rows is evaluated through [tensor_design()] and multiplied by
-#' the flattened coefficients, and the block is then discarded. Measured at
-#' four margins of eight functions and 20000 points, where the full design is
-#' 625 MB: 32 MB at the default block and 0.83 s, against 625 MB and 1.00 s
-#' for the design route, agreeing exactly. Raising `block` past a few thousand
-#' buys no speed and costs memory linearly.
+#' the flattened coefficients, and the block is then discarded. The memory
+#' grows linearly with `block`.
 #'
 #' # The flattening
 #'
@@ -693,7 +704,8 @@ S7::method(basis_contract, basis) <- function(basis, x, coef, ...) {
 #' different functions from the same numbers. See [basis_contract()].
 #'
 #' A `coef` of the wrong length, or an array whose dimensions are not the
-#' margins', throws with the expected values named.
+#' margins', signals an error that states the expected values. A matrix `x`
+#' of no rows gives `numeric(0)`.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable.
@@ -713,7 +725,8 @@ S7::method(basis_contract, basis) <- function(basis, x, coef, ...) {
 #' @keywords internal
 S7::method(basis_contract, TensorBasis) <- function(basis, x, coef,
                                                     block = 1024L, ...) {
-  dims <- vapply(basis@marginals, function(m) m@dimension, integer(1))
+  dims <- vapply(basis@marginals, function(m) m@dimension, integer(1),
+                 USE.NAMES = FALSE)
 
   if (is.list(coef)) return(contract_cp(basis, x, coef))
 
@@ -742,7 +755,8 @@ S7::method(basis_contract, TensorBasis) <- function(basis, x, coef,
 
   n <- nrow(x)
   out <- numeric(n)
-  starts <- seq.int(1L, max(n, 1L), by = block)
+  if (n == 0L) return(out)
+  starts <- seq.int(1L, n, by = block)
   for (s in starts) {
     idx <- seq.int(s, min(s + block - 1L, n))
     out[idx] <- drop(tensor_design(basis, x[idx, , drop = FALSE]) %*% cf)
@@ -763,13 +777,10 @@ S7::method(basis_contract, TensorBasis) <- function(basis, x, coef,
 #' @details
 #' Each margin is evaluated once and multiplied by its own factor matrix,
 #' giving \eqn{D} matrices of size \eqn{n \times F}; their elementwise
-#' product, summed across columns, is the answer. The cost is
-#' \eqn{O(nF\sum_j K_j)} in time and memory, linear in the number of variables
-#' where the array is exponential in it: measured at four margins of eight
-#' functions, 20000 points and \eqn{F = 3}, 0.03 s against the blocked array
-#' route's 0.83 s.
-#'
-#' Against the array it stands for, the two routes agree to 1.7e-16.
+#' product, summed across columns, is the result. The cost is
+#' \eqn{O(nF\sum_j K_j)} in time and memory, linear in the number of
+#' variables where the array is exponential in it. The result agrees with
+#' the contraction of the array that the factors define, up to rounding.
 #'
 #' @param basis A [TensorBasis] object.
 #' @param x A numeric matrix with one column per variable.
@@ -787,7 +798,8 @@ S7::method(basis_contract, TensorBasis) <- function(basis, x, coef,
 #'
 #' @keywords internal
 contract_cp <- function(basis, x, coef) {
-  dims <- vapply(basis@marginals, function(m) m@dimension, integer(1))
+  dims <- vapply(basis@marginals, function(m) m@dimension, integer(1),
+                 USE.NAMES = FALSE)
   if (length(coef) != length(dims)) {
     stop(sprintf(
       "'coef' must hold one factor matrix per marginal (%d).", length(dims)
@@ -800,7 +812,7 @@ contract_cp <- function(basis, x, coef) {
       call. = FALSE
     )
   }
-  rows <- vapply(coef, nrow, integer(1))
+  rows <- vapply(coef, nrow, integer(1), USE.NAMES = FALSE)
   if (!identical(rows, dims)) {
     stop(sprintf(
       "factor matrix %d has %d rows, but its marginal has %d functions.",

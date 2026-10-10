@@ -2,7 +2,7 @@
 % Please edit documentation in R/check_basis.R
 \name{basis_partitions_unity}
 \alias{basis_partitions_unity}
-\title{Does This Basis Sum to One?}
+\title{Whether a Basis Is a Partition of Unity}
 \usage{
 basis_partitions_unity(basis)
 }
@@ -14,8 +14,8 @@ A single \code{TRUE} or \code{FALSE}.
 }
 \description{
 Reports whether the family is a partition of unity, so that
-\code{\link[=check_basis]{check_basis()}} tests the row sums only where the property is claimed. A
-family that is not one would fail a check it never promised to pass.
+\code{\link[=check_basis]{check_basis()}} tests the row sums only for the families that have the
+property.
 }
 \details{
 \code{TRUE} for a \link{BsplineBasis}, which sums to one by construction, and for a
@@ -23,11 +23,10 @@ family that is not one would fail a check it never promised to pass.
 are the products of the row sums.
 
 \code{FALSE} for everything else, including a \link{TransformedBasis} over a
-B-spline. That is deliberate: an orthonormalization or a constraint takes
-linear combinations of the columns, and the sum of the
-new columns is generally not one. It is also conservative, so a
-transformation that happens to preserve the property is untested rather
-than wrongly failed.
+B-spline: an orthonormalization or a constraint takes linear combinations
+of the columns, and the sum of the new columns is generally not one. A
+transformation that happens to preserve the property is therefore not
+tested.
 }
 \seealso{
 \code{\link[=check_basis]{check_basis()}}, its only caller.

@@ -13,7 +13,8 @@ default \code{0}.}
 they never arrive here. Named only because S7 requires a method's formals
 to contain the generic's.}
 
-\item{...}{Unused, and accepted so that the signature matches the generic's.}
+\item{...}{Unused, and accepted so that the signature matches the
+generic's. \code{panels} or \code{nodes} signals an error, the matrix being exact.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
@@ -40,9 +41,8 @@ Derivatives of Legendre polynomials are not orthogonal, so the matrix is
 full. The integrand \eqn{P_m^{(d)} P_n^{(d)}} is a polynomial of degree at
 most \eqn{2(K - 1 - d)}, and a \eqn{K}-node Gauss-Legendre rule is exact
 to degree \eqn{2K - 1}, which is larger for every \eqn{d \ge 1}. The
-quadrature is therefore exact to rounding, and the result is symmetrized as
-\code{(G + t(G))/2} because the two triangles of a crossproduct differ in their
-last bits.
+quadrature is therefore exact to rounding. The result is symmetrized as
+\code{(G + t(G))/2}.
 
 An \code{order} above \code{dimension - 1} returns the zero matrix, every derivative
 having vanished.

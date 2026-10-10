@@ -19,13 +19,12 @@ Applies \code{f} to a roughness matrix, or to each component of a list of them,
 and returns the same shape it was given.
 }
 \details{
-\code{\link[=smoother_gram]{smoother_gram()}} answers with a matrix for every family whose roughness
-is one quadratic form, and with a list for one whose roughness is a sum of
-localized components -- \code{\link[=adaptive_smooth]{adaptive_smooth()}}, whose components carry a
-smoothing parameter each. Every step between that answer and the built
+\code{\link[=smoother_gram]{smoother_gram()}} returns a matrix for every family whose roughness is
+one quadratic form, and a list for one whose roughness is a sum of
+localized components (\code{\link[=adaptive_smooth]{adaptive_smooth()}}, whose components carry a
+smoothing parameter each). Every step between that result and the built
 penalty is the same operation on each component: the congruence of a
-reparametrization, the border a kept null space adds, the removal of the
-dimnames. Writing the branch once here is what keeps those steps from
-each growing one of their own.
+reparametrization, the border added by a kept null space, the removal of
+the dimnames. The branch is written once here for all of them.
 }
 \keyword{internal}

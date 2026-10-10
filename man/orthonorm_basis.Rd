@@ -11,9 +11,10 @@ orthonorm_basis(basis, order = 0L)
 \link{basis}.}
 
 \item{order}{The derivative order whose inner products are made the
-identity, a single non-negative whole number, default \code{0}. Any value
-above \code{0} throws for the shipped families, their higher-order Gram
-matrices being singular.}
+identity, a single non-negative whole number, or one per variable for a
+basis of several variables; default \code{0}. Any value above \code{0} signals an
+error for the shipped families, their higher-order Gram matrices being
+singular.}
 }
 \value{
 An object of class \link{TransformedBasis} with \code{basis_name}
@@ -22,18 +23,17 @@ dimension is the parent's.
 }
 \description{
 Returns a basis spanning the same functions whose Gram matrix is the
-identity, so that the design matrix has orthogonal columns of unit norm in
-\eqn{L^2} and a least-squares fit against it is perfectly conditioned. The
-transform is read off the Gram matrix, so for the shipped families the
-orthonormalization is exact: there is no grid, no number of points to
-choose, and no scale factor to correct.
+identity, so that the functions are orthonormal in \eqn{L^2}. The
+transform is read off the Gram matrix, so for a basis whose Gram matrix is
+exact (the B-spline and Legendre families, and a Fourier basis over a whole
+period) the orthonormalization is exact, with no grid and no number of
+points to choose.
 }
 \section{The construction}{
 Write \eqn{G = R^\top R} for the Cholesky factorization of the Gram matrix.
 The basis \eqn{B R^{-1}} then has Gram matrix
-\eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. Measured on a
-cubic B-spline of six functions, \code{basis_gram()} of the result differs from
-the identity by 4.4e-16.
+\eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. The Gram
+matrix of the result is the identity up to rounding.
 
 The span is unchanged, \eqn{R^{-1}} being invertible: a function the parent
 can represent is fitted by the orthonormalized basis to rounding.
@@ -43,9 +43,9 @@ can represent is fitted by the orthonormalized basis to rounding.
 \code{order} chooses it. At \code{0}, the default, the functions themselves are
 orthonormal. Above that the \code{order}-th derivatives would be, and the Gram
 matrix there is singular for every family, the constant differentiating
-away, so the factorization fails and an error says so. Orthonormalizing a
-derivative therefore needs a basis whose constant has already been removed
-by \code{\link[=constrain_basis]{constrain_basis()}}.
+away, so the factorization fails and an error is signalled.
+Orthonormalizing a derivative therefore needs a basis whose constant has
+already been removed by \code{\link[=constrain_basis]{constrain_basis()}}.
 }
 
 \section{Composing}{
@@ -58,11 +58,12 @@ rounding, and the two transforms collapse into one matrix; only
 b <- bspline_basis(dimension = 6)
 o <- orthonorm_basis(b)
 
-# The Gram matrix is the identity, exactly.
+# The Gram matrix is the identity up to rounding.
 round(basis_gram(o), 12)
 max(abs(basis_gram(o) - diag(6)))
 
-# The span is unchanged: a function the parent represents is fitted exactly.
+# The span is unchanged: a function in the span of the parent is fitted
+# exactly.
 set.seed(1)
 x <- seq(0, 1, length.out = 100)
 f <- drop(basis_eval(b, x) \%*\% rnorm(6))
@@ -72,7 +73,7 @@ max(abs(lm.fit(basis_eval(o, x), f)$residuals))
 max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
 class(orthonorm_basis(o)@parent_basis)
 
-# A higher order is refused: that Gram matrix is singular.
+# A higher order signals an error, that Gram matrix being singular.
 try(orthonorm_basis(b, order = 2))
 
 }

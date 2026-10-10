@@ -15,8 +15,9 @@ A named logical vector of length 3, elements \code{basis_deriv},
 }
 \description{
 Reports which of \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} this
-basis takes from the numerical fallback, by asking which class each method
-is registered on through \code{attr(m, "signature")[[1]]} and testing it with
+basis takes from the numerical fallback, by reading the class on which
+each method is registered through \code{attr(m, "signature")[[1]]} and testing
+it with
 \code{\link[=is_base_basis_class]{is_base_basis_class()}}. A generic with no method at all counts as
 numerical, the base class being where the fallback lives.
 }
@@ -24,11 +25,11 @@ numerical, the base class being where the fallback lives.
 It is the body of \code{\link[=basis_numerical_route.basis]{basis_numerical_route.basis()}}, kept under a name so that
 the package's own override can start from it. Inside a method the formal
 \code{basis} shadows the class of the same name, so reaching that default
-through \code{S7::super()} would mean naming the package inside itself; a basis
-written elsewhere has no such difficulty and does use \code{S7::super()}.
+through \code{S7::super()} would require naming the package inside itself; a
+basis written elsewhere uses \code{S7::super()}.
 
-What it cannot see is which branch a method takes once it has been reached:
-that is the question \code{\link[=basis_numerical_route]{basis_numerical_route()}} exists to let a family answer.
+The test does not see which branch a method takes once it has been
+reached; \code{\link[=basis_numerical_route]{basis_numerical_route()}} lets a family report that itself.
 }
 \seealso{
 \code{\link[=basis_numerical_route]{basis_numerical_route()}}, the generic it is the default of, and

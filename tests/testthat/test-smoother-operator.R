@@ -231,3 +231,32 @@ test_that("the smoother prints which operator it penalizes with", {
   out2 <- capture.output(print(fourier_smooth(k = 9, order = 2, lower = 0, upper = 1)))
   expect_true(any(grepl("derivative of order 2", out2)))
 })
+
+test_that("a periodic smooth removes the constant also where the operator penalizes it", {
+  # the null space of the oscillator is the sine and the cosine alone; the
+  # block kept the constant and, beside an intercept, had rank 9 of 10
+  set.seed(1)
+  x <- runif(100)
+  for (ns in c("keep", "shrink", "drop")) {
+    osc <- smoother_build(fourier_smooth(k = 9, lower = 0, upper = 1,
+                                         order = oscillator_operator(),
+                                         null_space = ns), x)
+    har <- smoother_build(fourier_smooth(k = 9, lower = 0, upper = 1,
+                                         null_space = ns), x)
+    expect_identical(ncol(osc$X), ncol(har$X))
+    expect_identical(qr(cbind(1, osc$X))$rank, ncol(osc$X) + 1L)
+  }
+})
+
+test_that("a periodic smooth too narrow for its operator is rejected at construction", {
+  expect_error(fourier_smooth(k = 3, lower = 0, upper = 1,
+                              order = harmonic_operator(harmonics = 2)),
+               "at least 7")
+  expect_error(fourier_smooth(k = 5, order = oscillator_operator(harmonics = 2)),
+               "at least 7")
+  expect_error(fourier_smooth(k = 3, order = oscillator_operator(1)),
+               "at least 5")
+  expect_s3_class(fourier_smooth(k = 5, order = oscillator_operator(1)),
+                  "basis7::FourierSmoother")
+  expect_s3_class(fourier_smooth(k = 3, order = 4), "basis7::FourierSmoother")
+})

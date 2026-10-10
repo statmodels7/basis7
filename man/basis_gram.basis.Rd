@@ -15,8 +15,8 @@ to contain the generic's.}
 
 \item{panels}{The number of equal subintervals, default \code{50}. For a basis
 of several variables the rule is a product and each coordinate gets
-\code{ceiling(panels^(1/d))} panels, so 8 apiece at \code{panels = 50} on two
-variables.}
+\code{max(2, ceiling(panels^(1/d)))} panels, so 8 apiece at \code{panels = 50} on
+two variables.}
 
 \item{nodes}{The number of Gauss-Legendre nodes per subinterval, default
 \code{12}.}
@@ -31,17 +31,16 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 The inner-product method every basis inherits from the abstract \link{basis}
 class: composite Gauss-Legendre over \code{panels} equal subintervals of the
 interval, applied to the requested derivatives. A one-line wrapper over
-\code{\link[=numerical_gram]{numerical_gram()}}, which is where the work is and which the other families
-also call when their closed form does not apply.
+\code{\link[=numerical_gram]{numerical_gram()}}, which does the work and which \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}}
+also calls when the period is not the width of the interval.
 }
 \details{
 Numerical Gram Matrix of a Basis
 
-Its accuracy is bounded by the derivative it integrates. On a polynomial
-family the order-0 matrix agrees with the closed form to 5.2e-15, while at
-order 2 the gap is 3.0e-08 relative, which is the finite-difference error
-of \code{\link[=basis_deriv.basis]{basis_deriv.basis()}} carried through the integral, and no fault of the
-quadrature.
+Its accuracy is bounded by that of the derivatives it integrates, which
+come from \code{\link[=basis_deriv]{basis_deriv()}}: a family with a closed-form derivative gets the
+accuracy of the quadrature, and one with the finite-difference derivative
+carries that error into the matrix.
 
 All three shipped families and both wrappers register their own method, so
 this one is reached only by a basis defined outside the package.

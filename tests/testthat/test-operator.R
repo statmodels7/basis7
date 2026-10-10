@@ -233,3 +233,52 @@ test_that("the null space of the operator is not read off the matrix", {
   # the operator says three either way
   expect_identical(nrow(operator_null(op)), 3L)
 })
+
+test_that("the null space is read relative to the size of the roots", {
+  # the roots of D(D^2 + nu^2) are 0 and +-i nu; with an absolute tolerance
+  # a period of 1e7 merged them into 1, t, t^2
+  for (period in 10^c(-3, 0, 4, 7, 9)) {
+    nu <- 2 * pi / period
+    nl <- operator_null(harmonic_operator(period))
+    expect_identical(nl$label[[1]], "1")
+    expect_identical(nl$degree, c(0L, 0L, 0L))
+    expect_identical(nl$rate, c(0, 0, 0))
+    expect_equal(nl$freq, c(0, nu, nu), tolerance = 1e-10)
+    nl2 <- operator_null(deriv_operator(2) * harmonic_operator(period))
+    expect_identical(nl2$degree, c(0L, 1L, 2L, 0L, 0L))
+    nl3 <- operator_null(harmonic_operator(period) * harmonic_operator(period))
+    expect_identical(nl3$degree, c(0L, 1L, 0L, 0L, 1L, 1L))
+  }
+})
+
+test_that("a Gram matrix of an unresolved operator is an error, not NaN", {
+  expect_error(basis_gram(fourier_basis(dimension = 5),
+                          order = harmonic_operator()), "period is NULL")
+  expect_error(basis_gram(bspline_basis(dimension = 8),
+                          order = harmonic_operator()), "period is NULL")
+  expect_error(basis_operator_gram(poly_basis(dimension = 5),
+                                   harmonic_operator()), "period is NULL")
+})
+
+test_that("quadrature settings on an exact route are rejected", {
+  b <- bspline_basis(dimension = 10)
+  expect_error(basis_gram(b, order = deriv_operator(2), panels = 3L),
+               "'panels' sets the numerical quadrature")
+  expect_error(basis_gram(b, order = deriv_operator(2), nodes = 2L, panels = 3L),
+               "'nodes' and 'panels' set")
+  f <- fourier_basis(lower = 0, upper = 1, dimension = 5)
+  expect_error(basis_gram(f, order = harmonic_operator(1), nodes = 4L), "'nodes'")
+  # and on the exact routes of a whole order
+  expect_error(basis_gram(b, order = 2, panels = 3L), "'panels'")
+  expect_error(basis_gram(f, order = 1, nodes = 4L), "'nodes'")
+  expect_error(basis_gram(poly_basis(dimension = 5), order = 2, nodes = 4L),
+               "'nodes'")
+  # a Fourier basis off a whole period integrates numerically and uses them
+  f3 <- fourier_basis(lower = 0, upper = 1, dimension = 5, omega = 3)
+  expect_equal(basis_gram(f3, order = 1, panels = 200L), basis_gram(f3, order = 1),
+               tolerance = 1e-8)
+  # where 'weight' is given the quadrature is used and they are accepted
+  w <- function(x) rep(1, length(x))
+  expect_equal(basis_gram(b, order = deriv_operator(2), weight = w, panels = 200L),
+               basis_gram(b, order = deriv_operator(2)), tolerance = 1e-4)
+})

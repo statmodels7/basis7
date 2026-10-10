@@ -27,20 +27,20 @@ harmonic acceleration operator at the period of the interval.}
 
 \item{measure}{The measure the roughness is integrated against.}
 
-\item{null_space}{What becomes of the directions the penalty does not
-see, other than the constant, which is always removed. \code{NULL} takes
+\item{null_space}{What happens to the directions that the penalty does
+not see, other than the constant, which is always removed. \code{NULL} takes
 \code{"shrink"}, or \code{"keep"} where a \code{penalty} factory is given, the two
-being refused together. See the section above for what the choice
-costs.}
+being incompatible. See the section above.}
 
-\item{reparam}{The coordinates the coefficients live in.}
+\item{reparam}{The coordinates in which the coefficients are expressed.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
 building a penalty from a coefficient count. See the section on the
 smoother's own page.}
 
 \item{omega}{The period \strong{of the basis}, \code{NULL} for the width of the
-interval. It is not the operator's, which \code{\link[=harmonic_operator]{harmonic_operator()}} carries.}
+interval. The period of the operator is carried by
+\code{\link[=harmonic_operator]{harmonic_operator()}}.}
 
 \item{lower, upper}{The interval, which for a periodic basis is the period.
 See the section above: give both.}
@@ -56,71 +56,59 @@ coordinates. Every column of the block is periodic, so a fit built on it
 takes the same value at the two ends of the interval.
 }
 \section{The penalty is the harmonic acceleration operator}{
-The default \code{order} is \code{\link[=harmonic_operator]{harmonic_operator()}}, not a derivative, and the
-period it uses is the interval's. The reason is what a strongly penalized
-fit contracts \strong{to}: the derivative penalty asks for a straight line,
-which is not periodic and is not what a cyclic phenomenon simplifies to,
-while the harmonic operator leaves the level and the fundamental cycle
-alone and removes everything above them.
+The default \code{order} is \code{\link[=harmonic_operator]{harmonic_operator()}} and not a derivative, and
+the period that it uses is the width of the interval. The two differ in
+what a strongly penalized fit contracts \strong{to}. On a periodic basis a
+derivative penalty has the constant as its only null direction, so the
+fit contracts to a constant; the harmonic operator leaves the level and
+the fundamental cycle unpenalized and penalizes every higher harmonic, so
+the fit contracts to a sinusoid.
 
-Measured at \code{k = 21} over 200 observations with the smoothing parameter
-chosen by generalized cross-validation on eight samples: on a truth
-dominated by its fundamental the harmonic penalty reaches a root mean
-square error of 0.0596 against the derivative penalty's 0.0654 and wins on
-seven samples of eight, at 9.28 effective degrees of freedom against
-10.72. On a truth with no periodic signal at all the two are level, 0.0110
-against 0.0121 at 1.16 degrees of freedom against 1.20, because
-\code{null_space = "shrink"} lets the fundamental leave the model.
+The default null space is \code{"shrink"} for this family and \code{"keep"} for the
+others. With \code{"keep"} the sine and cosine of the fundamental are free
+columns, so they are spent whether or not the covariate carries a cycle;
+with \code{"shrink"} they are penalized lightly and can leave the model. The
+first suits a cycle known to be present and estimated, the second a cycle
+whose presence is a hypothesis.
 
-⚠️ That second row is why the default null space is \code{"shrink"} here and
-\code{"keep"} elsewhere. With \code{"keep"} the fundamental is free, the fit
-contracts to a sinusoid exactly as the operator promises, and the two
-columns are spent whether or not the covariate carries a cycle: on that
-same flat truth \code{"keep"} reads 0.0281 at 3.00 degrees of freedom and wins
-on none of the eight. Use \code{"keep"} where the cycle is known to be there
-and is the thing being estimated, and \code{"shrink"} where it is a hypothesis.
-
-\code{order = 2} restores the integrated squared second derivative, in one
-argument, and gives the construction this family had before operators
-existed.
+\code{order = 2} gives the integrated squared second derivative.
 }
 
-\section{What it does not have, and why}{
+\section{Arguments the family does not take}{
 \code{degree} is a B-spline's, and a Fourier basis has none.
 
 \code{constrain} in the form "the polynomials up to degree c" has no reading
 here: a periodic basis contains no linear function, so a derivative
 penalty's null space is the \strong{constant at every order}, not a space
-growing with the order. Measured on the Gram matrix of a nine-function
-Fourier basis at orders 1, 2 and 3, the null function has a standard
-deviation of exactly zero, which is to say it is constant, and the null
-space is one-dimensional in all three.
+growing with the order: the null space of the Gram matrix of a Fourier
+basis is one-dimensional at every order, spanned by the constant.
 }
 
-\section{Which operators this family accepts}{
-The constant is always removed, so a model carrying an intercept spans
+\section{Accepted operators}{
+The constant is always removed, including when the operator penalizes it,
+as \code{\link[=oscillator_operator]{oscillator_operator()}} does, so a model carrying an intercept spans
 the level and the smooth carries the shape. Every \strong{other} function of
 the operator's null space is restored as a free column, and it must be
-periodic on the basis's own period, which means a pure sine or cosine at a
-whole multiple of the fundamental frequency. An operator whose null space
-holds \eqn{t}, or \eqn{e^{at}}, or a frequency that is not a multiple, is
-rejected: restoring such a column is what makes a fit on a periodic basis
-lose the property the basis was chosen for.
+periodic on the period of the basis, which means a pure sine or cosine at
+a whole multiple of the fundamental frequency. An operator whose null
+space holds \eqn{t}, or \eqn{e^{at}}, or a frequency that is not a
+multiple, is rejected, because such a column would make the fit
+non-periodic.
 
 So \code{harmonic_operator()} and \code{oscillator_operator()} are accepted at any
-number of harmonics the basis is wide enough to hold, \code{deriv_operator(m)}
-is accepted and restores nothing, and
-\code{deriv_operator(2) * oscillator_operator()} is rejected with the reason,
-being right for a B-spline and wrong here.
+number of harmonics that leaves at least one function to penalize, which
+\code{\link[=fourier_smooth]{fourier_smooth()}} checks at construction; \code{deriv_operator(m)} is
+accepted and restores nothing; and \code{deriv_operator(2) * oscillator_operator(p)}, with a period \code{p}, is rejected because its null
+space holds \eqn{t}, which suits a B-spline and not a periodic basis.
 }
 
 \section{The interval is the period}{
-A periodic basis needs its interval fixed by the modeller, not read from
-the data: the period is a fact about the covariate, and the range of one
-sample is not it. Give \code{lower} and \code{upper}, as in
-\code{fourier_smooth(k = 9, lower = 0, upper = 365)} for a day of the year.
-Without them the interval is the padded range of the data, which makes
-the basis periodic on an interval nothing else knows about.
+The interval of a periodic basis is fixed by the modeler and not read
+from the data, because the period is a property of the covariate and the
+range of one sample does not determine it. \code{lower} and \code{upper} give it, as
+in \code{fourier_smooth(k = 9, lower = 0, upper = 365)} for a day of the year.
+Without them the interval is the range of the data padded by a thousandth
+of its width, and the basis is periodic on that interval.
 }
 
 \examples{

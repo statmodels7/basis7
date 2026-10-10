@@ -16,8 +16,8 @@ TransformedBasis(
 }
 \arguments{
 \item{basis_name}{A single string naming the family, printed by
-\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
-any computation.}
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Its first
+two characters form the default column names of \code{\link[=basis_colnames]{basis_colnames()}}.}
 
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
@@ -28,12 +28,12 @@ length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
 \code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 
 \item{parent_basis}{The basis being transformed, any object inheriting from
-\link{basis}. Kept whole, so it can still be evaluated and asked what it is.}
+\link{basis}. Kept whole, so that it can still be evaluated and inspected.}
 
 \item{transform}{The matrix \eqn{T}, numeric, with one row per parent
 function and one column per function of the result.}
@@ -45,12 +45,12 @@ with the five properties of a basis plus \code{parent_basis} and \code{transform
 \description{
 The S7 class of bases obtained from another by a fixed linear map of its
 functions, \eqn{\tilde{B}(x) = B(x)\,T}. It carries the parent and the
-matrix, and it is itself a basis, so a constrained or rotated basis goes on
-answering every generic and nothing downstream has to know a
-transformation happened. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
+matrix, and it is itself a basis, so every generic applies to a
+constrained or rotated basis and code that receives it works in the same
+way as for the parent. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
 \code{\link[=constrain_basis]{constrain_basis()}} or \code{\link[=dr_basis]{dr_basis()}}.
 }
-\section{Three operations, one class}{
+\section{Orthonormalization, constraints and rotations}{
 Orthonormalizing a basis, restricting it to satisfy a linear constraint,
 and rebuilding it so that it diagonalizes an inner product are the same
 operation with different matrices. Each generic follows from linearity:
@@ -63,10 +63,10 @@ Differentiation and integration are linear and \eqn{T} does not depend on
 \eqn{x}, so both transform by the same matrix; the Gram matrix transforms
 by congruence. A parent with exact derivatives and an exact Gram matrix
 therefore passes its exactness on, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports the
-parent's answer in place of this class's own methods.
+parent's flags in place of those of this class's own methods.
 
-The anchored integral survives too: a linear combination of columns that
-are all zero at the lower endpoint is zero there.
+The anchoring of the integral is kept as well: a linear combination of
+columns that are all zero at the lower endpoint is zero there.
 }
 
 \section{Fewer columns than rows}{

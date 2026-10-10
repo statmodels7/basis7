@@ -18,28 +18,28 @@ numerically.
 }
 \description{
 Reports, for each of \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}},
-whether this basis computes the quantity numerically. It is what
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} asks once it has dealt with the two wrapper classes,
-and it is the generic a family overrides when its route depends on its own
-parameters rather than on which class its method is registered on.
+whether this basis computes the quantity numerically. \code{\link[=basis_is_numerical]{basis_is_numerical()}}
+calls it once it has handled the two wrapper classes, and a family
+overrides it when its route depends on its own parameters instead of the
+class on which its method is registered.
 }
-\section{Why it is a generic}{
-The default answer reads which class each method is registered on, and that
-says where a method came from rather than what it does. A method registered
-on a concrete class may still call the fallback: \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}}
-does, whenever the period is not the interval width, and the owner is
-\code{FourierBasis} in both branches. Such a family answers for itself by
-registering a method here.
+\section{Purpose of the generic}{
+The default method reads the class on which each method is registered,
+which records where a method came from and not what it does. A method
+registered on a concrete class may still call the fallback:
+\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} does, whenever the period is not the interval
+width, and the owner is \code{FourierBasis} in both branches. Such a family
+reports its own route by registering a method here. The generic is
+exported so that a basis written outside the package can do the same.
 
-\pkg{distributions7} met the same defect in its expected information and
-resolved it the same way. What differs is that this generic is exported,
-because a basis written outside the package is an ordinary thing to write
-and has the same need.
+The two wrapper classes, \link{TransformedBasis} and \link{TensorBasis}, are handled
+by \code{\link[=basis_is_numerical]{basis_is_numerical()}} before this generic is reached; called directly
+on a wrapper, the default method reports the wrapper's own methods.
 }
 
 \section{Writing one}{
-Take the default through \code{\link[S7:super]{S7::super()}} and set the entries your own
-branching decides:
+A method takes the default through \code{\link[S7:super]{S7::super()}} and sets the entries
+decided by its own branching:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{S7::method(basis_numerical_route, MyBasis) <- function(basis, ...) \{
   out <- basis_numerical_route(S7::super(basis, basis7::basis))
@@ -50,16 +50,17 @@ branching decides:
 
 The package's own override calls \code{\link[=route_by_owner]{route_by_owner()}} instead, which is that
 default under a name: inside a method the formal \code{basis} shadows the class
-of the same name, so reaching the class through \code{S7::super()} would mean
-naming its own package.
+of the same name, so reaching the class through \code{S7::super()} would require
+naming the package inside itself.
 }
 
 \examples{
-# Every shipped family answers through the default method.
+# A B-spline basis uses the default method.
 basis_numerical_route(bspline_basis(dimension = 5))
 
 # A Fourier basis whose period is not the interval width computes its Gram
-# matrix by quadrature, and says so, where reading the owner would not.
+# matrix by quadrature, which its own method reports and the owner test
+# would not.
 basis_numerical_route(fourier_basis(dimension = 5, omega = 0.7))
 
 }

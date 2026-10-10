@@ -24,7 +24,8 @@ the matrix whose Gram matrix is the roughness the penalty measures.
 \details{
 It is one weighted sum of derivative evaluations,
 \eqn{\sum_j w_j D^j b + D^m b}, and every term of it comes from
-\code{\link[=basis_deriv]{basis_deriv()}}, so a basis that answers its derivatives answers this.
+\code{\link[=basis_deriv]{basis_deriv()}}, so it is available for every basis whose derivatives
+are.
 Terms whose weight is exactly zero are skipped, which is why the pure
 derivative operator costs one call and not \eqn{m + 1}.
 }

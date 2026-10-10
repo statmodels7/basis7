@@ -20,9 +20,8 @@ column per column of \code{coef}.
 }
 \description{
 Returns \code{basis_eval(basis, x) \%*\% coef}. For a basis of one variable the
-design matrix has \code{basis@dimension} columns and there is nothing worth
-avoiding, so the definition is the computation. The method every class
-inherits except \link{TensorBasis}.
+design matrix has \code{basis@dimension} columns, which is small enough to
+form. Every class inherits this method except \link{TensorBasis}.
 }
 \details{
 \code{coef} is taken in the design's own column order, there being one obvious
@@ -31,7 +30,7 @@ and the result then has one column each.
 }
 \seealso{
 \code{\link[=basis_contract]{basis_contract()}} for the generic;
-\code{\link[=basis_contract.TensorBasis]{basis_contract.TensorBasis()}} for the case where the design matrix is
-worth avoiding.
+\code{\link[=basis_contract.TensorBasis]{basis_contract.TensorBasis()}} for the case in which the design matrix
+is not formed.
 }
 \keyword{internal}

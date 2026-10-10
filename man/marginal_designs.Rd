@@ -14,7 +14,7 @@ marginal_designs(basis, x, order = NULL, integral = FALSE)
 \item{order}{An integer vector with one entry per variable, or \code{NULL} for
 the functions themselves.}
 
-\item{integral}{\code{TRUE} to ask each margin for its anchored integral.}
+\item{integral}{\code{TRUE} to use the anchored integral of each margin.}
 }
 \value{
 A list of \code{basis_nvar(basis)} numeric matrices, the \eqn{j}th with
@@ -22,7 +22,8 @@ A list of \code{basis_nvar(basis)} numeric matrices, the \eqn{j}th with
 }
 \description{
 Returns a list of the margins' design matrices, each evaluated at its own
-column of the points, and each differentiated or integrated as asked. The
+column of the points, and each differentiated or integrated as \code{order} and
+\code{integral} specify. The
 first step of \code{\link[=tensor_design]{tensor_design()}}.
 }
 \seealso{

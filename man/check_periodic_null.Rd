@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother_families.R
 \name{check_periodic_null}
 \alias{check_periodic_null}
-\title{Refuse an Operator Whose Null Space a Periodic Basis Cannot Carry}
+\title{Check That the Null Space of an Operator Is Periodic}
 \usage{
 check_periodic_null(sm, op, x)
 }
@@ -27,9 +27,8 @@ in front of it.
 \details{
 Restoring anything else gives a block whose columns are not all periodic,
 and a fit on it no longer takes the same value at the two ends of the
-interval, which is the one property a Fourier basis is chosen for. The
-check is on the operator's own null space, read analytically, rather than
-on the rank of the assembled penalty: the two are different questions and
-the second gives an answer that moves with the tolerance.
+interval, the property for which a Fourier basis is chosen. The check is
+made on the null space of the operator, read analytically, and not on the
+rank of the assembled penalty, which depends on the tolerance.
 }
 \keyword{internal}

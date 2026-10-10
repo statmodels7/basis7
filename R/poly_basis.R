@@ -8,9 +8,10 @@ NULL
 #' The S7 class of Legendre polynomial bases, the objects [poly_basis()]
 #' returns. It adds no property to [basis] and exists as the class the
 #' Legendre methods dispatch on: every one of [basis_eval()],
-#' [basis_deriv()], [basis_int()], [basis_gram()] and [basis_colnames()] has a
-#' closed-form method registered here, so nothing about a Legendre basis is
-#' computed by finite differences.
+#' [basis_deriv()], [basis_int()], [basis_gram()] and [basis_colnames()] has
+#' an exact method registered here, so nothing about a Legendre basis is
+#' computed by finite differences. The Gram matrix above order zero is a
+#' Gauss-Legendre quadrature that is exact for the polynomials involved.
 #'
 #' @details
 #' # Where the numbers come from
@@ -61,27 +62,27 @@ PolyBasis <- S7::new_class("PolyBasis", parent = basis)
 #' @description
 #' Returns a basis of the polynomials of degree below `dimension` on
 #' \eqn{[\ell, u]}, written in the Legendre polynomials and not in raw powers.
-#' The two span the same space, so a fit through either gives the same curve;
-#' the Legendre form is the one that survives being fitted, its Gram matrix
-#' being diagonal where the raw powers' is a Hilbert matrix.
+#' The two span the same space, so a fit through either gives the same curve.
+#' The Legendre form is better conditioned, because its Gram matrix is
+#' diagonal, whereas the Gram matrix of the raw powers is a Hilbert matrix.
 #'
 #' @details
 #' # Why not raw powers
 #'
 #' Fitting \eqn{1, x, x^2, \ldots} on \eqn{[0, 1]} gives the Gram matrix
 #' \eqn{H_{mn} = 1/(m + n + 1)}, the Hilbert matrix, whose condition number
-#' grows geometrically. The condition numbers of the two order-0 Gram
-#' matrices, measured on \eqn{[0, 1]}:
+#' grows geometrically. The 2-norm condition numbers of the two order-0 Gram
+#' matrices on \eqn{[0, 1]} are:
 #'
 #' | `dimension` | Legendre | raw powers |
 #' |---|---|---|
 #' | 5 | 9 | 4.8e+05 |
 #' | 10 | 19 | 1.6e+13 |
-#' | 15 | 29 | 2.5e+17 |
+#' | 15 | 29 | 6.1e+20 |
 #'
-#' At ten raw powers a least-squares solve has already lost most of its
-#' digits; at fifteen the matrix is numerically singular. The Legendre
-#' condition number is \eqn{2K - 1}, growing linearly.
+#' At ten raw powers a least-squares solve has lost most of its digits, and
+#' at fifteen the matrix is numerically singular in double precision. The
+#' Legendre condition number is \eqn{2K - 1}, growing linearly.
 #'
 #' # The Gram matrix
 #'
@@ -100,7 +101,7 @@ PolyBasis <- S7::new_class("PolyBasis", parent = basis)
 #'
 #' @param lower,upper The endpoints of the interval, each a single finite
 #'   number with `lower < upper`. Default \eqn{[0, 1]}. Evaluating outside
-#'   throws.
+#'   the interval signals an error.
 #' @param dimension The number of polynomials, a single whole number of at
 #'   least 1, default `4`. The highest degree is `dimension - 1`, so `1` gives
 #'   the constant alone.
@@ -254,17 +255,18 @@ S7::method(basis_deriv, PolyBasis) <- function(basis, x, order = 1L, ...) {
 #'
 #' @description
 #' Returns \eqn{\int_{\ell}^{x} P_n(t)\,\mathrm{d}t} for every polynomial,
-#' in closed form and with no quadrature. The zero at the lower endpoint that
-#' [basis_int()] promises falls out of the identity used and needs no
+#' in closed form and with no quadrature. The zero at the lower endpoint
+#' required by [basis_int()] follows from the identity used and needs no
 #' correction term.
 #'
 #' @details
 #' The identity is \eqn{\int P_n = (P_{n+1} - P_{n-1})/(2n+1)} for
-#' \eqn{n \ge 1}, with \eqn{\int P_0 = t}, so one table of \eqn{K + 1}
+#' \eqn{n \ge 1}, with \eqn{\int_{-1}^{t} P_0 = t + 1}, so one table of
+#' \eqn{K + 1}
 #' polynomials supplies all \eqn{K} integrals: the integral of the last one
 #' reaches one degree beyond the basis.
 #'
-#' The anchoring is automatic. At \eqn{t = -1}, which is the lower endpoint,
+#' At \eqn{t = -1}, which is the lower endpoint,
 #' \eqn{P_{n+1} - P_{n-1}} is \eqn{(-1)^{n+1} - (-1)^{n-1} = 0}, and the
 #' \eqn{n = 0} column is written as \eqn{(t + 1)/2 \cdot (u - \ell)}, which
 #' also vanishes there. Every column is therefore exactly zero at
@@ -325,9 +327,8 @@ S7::method(basis_int, PolyBasis) <- function(basis, x, ...) {
 #' full. The integrand \eqn{P_m^{(d)} P_n^{(d)}} is a polynomial of degree at
 #' most \eqn{2(K - 1 - d)}, and a \eqn{K}-node Gauss-Legendre rule is exact
 #' to degree \eqn{2K - 1}, which is larger for every \eqn{d \ge 1}. The
-#' quadrature is therefore exact to rounding, and the result is symmetrized as
-#' `(G + t(G))/2` because the two triangles of a crossproduct differ in their
-#' last bits.
+#' quadrature is therefore exact to rounding. The result is symmetrized as
+#' `(G + t(G))/2`.
 #'
 #' An `order` above `dimension - 1` returns the zero matrix, every derivative
 #' having vanished.
@@ -338,7 +339,8 @@ S7::method(basis_int, PolyBasis) <- function(basis, x, ...) {
 #' @param at,weight Handled in the body of [basis_gram()] before dispatch, so
 #'   they never arrive here. Named only because S7 requires a method's formals
 #'   to contain the generic's.
-#' @param ... Unused, and accepted so that the signature matches the generic's.
+#' @param ... Unused, and accepted so that the signature matches the
+#'   generic's. `panels` or `nodes` signals an error, the matrix being exact.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns,
 #'   with column names `P0`, `P1`, and so on. Diagonal at `order = 0`,
@@ -350,6 +352,7 @@ S7::method(basis_int, PolyBasis) <- function(basis, x, ...) {
 #' @keywords internal
 S7::method(basis_gram, PolyBasis) <- function(basis, order = 0L, at = NULL,
                                               weight = NULL, ...) {
+  reject_quadrature(...)
   k <- basis@dimension
   nm <- basis_colnames(basis)
   width <- basis@upper - basis@lower
@@ -377,9 +380,9 @@ S7::method(basis_gram, PolyBasis) <- function(basis, order = 0L, at = NULL,
 #' Builds a table of \eqn{P_0, \ldots, P_{k-1}} evaluated at `t` on
 #' \eqn{[-1, 1]}, one column per polynomial, from the three-term recurrence
 #' \deqn{(n+1) P_{n+1}(t) = (2n+1)\, t\, P_n(t) - n\, P_{n-1}(t),}
-#' seeded with \eqn{P_0 = 1} and \eqn{P_1 = t}. Used by
-#' [basis_eval.PolyBasis()] and, at one extra column, by
-#' [basis_int.PolyBasis()].
+#' seeded with \eqn{P_0 = 1} and \eqn{P_1 = t}. Used by [legendre_deriv()],
+#' and through it by [basis_eval.PolyBasis()] and [basis_deriv.PolyBasis()],
+#' and, at one extra column, by [basis_int.PolyBasis()].
 #'
 #' @details
 #' The recurrence is evaluated in the standard variable, never in the basis

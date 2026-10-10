@@ -14,15 +14,15 @@ The named logical vector \code{\link[=basis_numerical_route]{basis_numerical_rou
 }
 \description{
 Reports \code{basis_gram} as \code{TRUE} when \code{basis_params$full_period} is \code{FALSE},
-where the owner test would read \code{FourierBasis} and answer \code{FALSE}.
+where the owner test would read \code{FourierBasis} and give \code{FALSE}.
 \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} delegates to \code{\link[=numerical_gram]{numerical_gram()}} in that case, so
 the matrix is a composite Gauss-Legendre quadrature and carries its error.
 The evaluation, the derivatives and the anchored integral are closed form at
-any period and are left as the owner test finds them.
+any period, and their entries keep the value of the owner test.
 
-What this buys is that \code{\link[=check_basis]{check_basis()}} holds the Gram matrix to the tolerance
-a quadrature deserves rather than the one meant for a closed form, and that
-\code{\link[=print.basis]{print.basis()}} names the route in use.
+As a consequence \code{\link[=check_basis]{check_basis()}} tests this Gram matrix only for symmetry
+and positive semidefiniteness, and \code{\link[=print.basis]{print.basis()}} names the route in
+use.
 }
 \seealso{
 \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} for the two branches, and

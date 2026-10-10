@@ -5,7 +5,7 @@
 \title{Numerical Integral of a Basis}
 \arguments{
 \item{basis}{A basis object of one variable, of any class inheriting from
-\link{basis}. More than one variable throws.}
+\link{basis}. More than one variable signals an error.}
 
 \item{x}{A numeric vector of evaluation points inside the basis interval,
 the upper limits of the integrals. Need not be sorted or unique. \code{NA}
@@ -24,13 +24,13 @@ columns, with column names \code{\link[=basis_colnames]{basis_colnames()}}, exac
 \description{
 The integration method every basis inherits from the abstract \link{basis}
 class: composite Gauss-Legendre from the lower endpoint, accumulated over
-the sorted evaluation points, so the whole set costs one pass where a
-quadrature each would cost as many.
+the sorted evaluation points, so the whole set costs one pass instead of
+one quadrature per point.
 }
 \details{
 Numerical Integral of a Basis
 }
-\section{How it is accumulated}{
+\section{Accumulation}{
 The points are sorted and made unique, the rule is placed on each segment
 between consecutive ones, and the segment integrals are cumulated. A point
 equal to \code{basis@lower} gives an empty first segment, so its row is exactly
@@ -41,18 +41,17 @@ matched back.
 
 \section{Accuracy}{
 The \code{nodes}-point rule integrates a polynomial of degree up to
-\code{2 * nodes - 1} exactly on each segment, so on a polynomial family the
-result is exact to rounding: measured against the closed-form Legendre
-integrals at 21 points, 3.3e-16. On a family that is not polynomial the
-error is the rule's own on each segment, which shrinks with the spacing of
-the evaluation points; a single distant point is integrated by one rule
-over the whole span.
+\code{2 * nodes - 1} exactly on each segment, so on a polynomial family of
+lower degree the result is exact to rounding. On a family that is not
+polynomial the error is that of the rule on each segment, which shrinks
+with the spacing of the evaluation points; a single distant point is
+integrated by one rule over the whole span.
 }
 
 \section{One variable only}{
-A basis of several variables throws. The integral there is over a box, one
-iterated integral per variable, and a family that wants it supplies its
-own, as \code{\link[=basis_int.TensorBasis]{basis_int.TensorBasis()}} does from its margins.
+A basis of several variables signals an error. The integral there is over
+a box, one iterated integral per variable, and a family that needs it
+supplies its own, as \code{\link[=basis_int.TensorBasis]{basis_int.TensorBasis()}} does from its margins.
 }
 
 \seealso{

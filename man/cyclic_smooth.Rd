@@ -27,18 +27,18 @@ derivatives.}
 \item{order}{What the penalty measures: a \link{LinearOperator} from
 \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
 \code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
-\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
-toward, which for \code{m} is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.
-Its order is at most \code{degree}.}
+\code{deriv_operator(m)}. The block is constrained against the constant
+only, so with a derivative penalty a strongly penalized fit contracts to
+a constant at every order. Its order is at most \code{degree}.}
 
-\item{measure}{The measure the roughness is integrated against.}
+\item{measure}{The measure against which the roughness is integrated.}
 
-\item{null_space}{What becomes of the directions the penalty does not see.
-A periodic basis restores none, so the settings differ only in what they
-refuse.}
+\item{null_space}{What happens to the directions that the penalty does
+not see. A periodic basis restores no free column, so the three settings
+give the same block, and \code{"shrink"} differs only in that it cannot be
+combined with a \code{penalty} factory.}
 
-\item{reparam}{The coordinates the coefficients live in.}
+\item{reparam}{The coordinates in which the coefficients are expressed.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
 building a penalty from a coefficient count. See the section on the
@@ -69,8 +69,8 @@ splines are therefore a subspace of an ordinary spline space, and the
 whole construction is \code{\link[=constrain_basis]{constrain_basis()}} applied to a B-spline of
 dimension \code{k + degree}, whose null space has dimension \code{k}.
 
-Building it this way rather than by folding a widened knot sequence is
-what makes every quantity exact. The parent basis lives on \eqn{[a, b]},
+Building it this way instead of by folding a widened knot sequence makes
+every quantity exact. The parent basis lives on \eqn{[a, b]},
 the period itself, so its Gram matrix integrates over one period and the
 penalty needs no numerical fallback: the roughness matrix is
 \eqn{T^\top G T} with \eqn{G} the parent's own exact Gram. A folded
@@ -78,68 +78,38 @@ construction puts its parent on a widened interval, and its Gram then
 integrates over more than one period.
 }
 
-\section{What it buys over a Fourier basis, and where it buys nothing}{
-Both families are periodic, so the choice between them is locality and
-nothing else, and what it is worth depends entirely on the truth. The
-measurement sweeps the concentration of a seasonal peak,
-\eqn{\exp(\kappa \cos t)}, at 400 observations with both bases ten columns
-wide and both smoothing parameters chosen by \eqn{\mathrm{REML}}, three
-samples per setting, reporting the root mean square error against the
-truth:
+\section{Comparison with the Fourier basis}{
+Both families are periodic and differ in locality: a Fourier basis is
+global and a periodic B-spline basis is local. For a smooth periodic
+function, such as \eqn{\exp(\kappa \cos t)} at a low concentration
+\eqn{\kappa}, whose Fourier coefficients are modified Bessel functions
+and decay rapidly, the two give the same fit. A narrow seasonal feature,
+at a higher concentration, is represented better by the local basis at
+the same number of columns.
 
-\tabular{lrrr}{
-\eqn{\kappa} \tab cyclic \tab fourier \tab ratio \cr
-1  \tab 0.0600 \tab 0.0612 \tab 1.02 \cr
-3  \tab 0.0652 \tab 0.0655 \tab 1.00 \cr
-8  \tab 0.0717 \tab 0.1783 \tab \strong{2.49} \cr
-20 \tab 0.3962 \tab 0.6156 \tab 1.55 \cr
-50 \tab 0.9282 \tab 1.1168 \tab 1.20
+At the two ends of the period the basis functions agree in value and in
+their first \code{degree - 1} derivatives, up to rounding.
 }
 
-At a low concentration the two are the same fit: \eqn{\exp(\kappa \cos t)}
-is a von Mises density, whose Fourier coefficients are modified Bessel
-functions and decay geometrically, so it is the function a global basis is
-best at. The gain appears where the peak becomes narrow against what ten
-columns can carry, and falls back again at \eqn{\kappa = 50}, where
-neither basis of that width represents the spike at all and the comparison
-stops being about locality. So the family is worth choosing for a
-localized seasonal feature and is worth nothing for a smooth one, which is
-the same reading \code{\link[=bspline_smooth]{bspline_smooth()}} and \code{\link[=legendre_smooth]{legendre_smooth()}} have against
-each other away from the circle.
-
-Measured on a cubic with \code{k = 9} over \eqn{[0, 1]}: the basis functions
-agree at the two ends to 5.6e-17 in value, 7.1e-15 in the first
-derivative and 8.5e-14 in the second, where an ordinary B-spline of the
-same \code{k} disagrees by 4.12. The roughness matrix agrees with a fine
-trapezoid of the second derivatives over one period, the gap falling by
-exactly 4.00 at each halving of the step, which is the reference's own
-order of convergence rather than an error of the matrix. Integrating over
-99 per cent of the period instead moves that matrix by 167.6 against a
-size of 2820.4.
-}
-
-\section{What it does not have, and why}{
-\code{constrain} in the form "the polynomials up to degree c" has no reading
-here, for the reason it has none on \code{\link[=fourier_smooth]{fourier_smooth()}}: a non-constant
+\section{Arguments the family does not take}{
+\code{constrain} in the form "the polynomials up to degree c" has no meaning
+here, for the same reason as on \code{\link[=fourier_smooth]{fourier_smooth()}}: a non-constant
 periodic function is never a polynomial, so the null space of the
-roughness matrix is the constant at every order rather than a space
-growing with the order. Measured on the pair at orders 1, 2 and 3, the
-null space is one-dimensional in all three and its function is constant to
-2.7e-15.
+roughness matrix of a derivative penalty is the constant at every order,
+instead of a space growing with the order.
 
 The constant is removed, so a model carrying an intercept spans the level
-and the smooth carries the shape, and nothing is restored as a free
-column: a linear column is not periodic, and restoring one is what makes a
-fit lose the property the basis was chosen for. A block therefore carries
-\code{k - 1} columns.
+and the smooth carries the shape, and no free column is restored: a
+linear column is not periodic. A block therefore carries \code{k - 1}
+columns.
 }
 
 \section{The interval is the period}{
 \code{lower} and \code{upper} are the ends of one cycle, and they are a property of
 the problem rather than of the sample: day-of-year data run over
 \eqn{[0, 365]} whether or not an observation falls on the first day of the
-year. Left \code{NULL} they are read from the data, which makes the fitted
-period the observed range and is almost never what a periodic model means.
+year. Left \code{NULL} they are read from the data, which makes the period the
+observed range.
 }
 
 \examples{

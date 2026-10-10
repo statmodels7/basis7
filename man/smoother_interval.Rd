@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R
 \name{smoother_interval}
 \alias{smoother_interval}
-\title{The Interval a Smoother Expands Over}
+\title{The Interval of a Smoother}
 \usage{
 smoother_interval(sm, x)
 }
@@ -12,13 +12,15 @@ smoother_interval(sm, x)
 \item{x}{The covariate, a numeric vector.}
 }
 \value{
-A list of two numbers, the lower and upper endpoints.
+A list of two numbers, the lower and upper endpoints. A covariate
+that takes a single value, with neither endpoint given, signals an
+error.
 }
 \description{
-Returns the interval a smoother's basis is built on: the endpoints stored
-on the object when both are given, and otherwise the range of \code{x} padded
-by a thousandth of its width. The padding keeps the observed values
-strictly inside the interval, which is what a basis whose validator
-requires an open interval needs at its endpoints.
+Returns the interval on which the basis of a smoother is built. An
+endpoint stored on the object is used as it stands, and an endpoint
+stored as \code{NULL} is the corresponding end of the range of \code{x}, moved
+outward by a thousandth of the width of that range. The padding places
+the observed values strictly inside the interval.
 }
 \keyword{internal}

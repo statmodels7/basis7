@@ -21,10 +21,10 @@ between "fall outside" and the interval. Callers pass
 endpoint set to that endpoint exactly.
 }
 \description{
-Throws if any entry of \code{z} lies outside \verb{[lo, hi]} by more than \code{1e-8}
-times the width of the range, and otherwise returns \code{z} with anything
-inside that tolerance moved onto the nearer endpoint. The one place the
-range rule of the package is written; \code{\link[=check_eval_points]{check_eval_points()}} calls it once
+Signals an error if any entry of \code{z} lies outside \verb{[lo, hi]} by more than
+\code{1e-8} times the width of the range, and otherwise returns \code{z} with any
+entry inside that tolerance moved onto the nearer endpoint. The range rule
+of the package is written here only; \code{\link[=check_eval_points]{check_eval_points()}} calls it once
 per variable.
 }
 \details{
@@ -34,8 +34,8 @@ means the same on \eqn{[0, 1]} and on \eqn{[0, 1000]}. Entries that are
 
 The error message names the count and the range, as in
 \verb{2 of 5 evaluation points fall outside the basis interval [0, 1].}, and is
-raised with \code{call. = FALSE}, so the phrase \code{what} supplies is what a user
-sees in place of this function's name.
+raised with \code{call. = FALSE}, so the message shows the phrase \code{what} and
+not this function's name.
 }
 \seealso{
 \code{\link[=check_eval_points]{check_eval_points()}}, its only caller.

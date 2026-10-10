@@ -10,14 +10,13 @@ check_basis(basis, n = 41L, orders = 1:2, tol = 1e-06, verbose = TRUE)
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
 \item{n}{The number of points to test at, default \code{41}. They are equally
-spaced across the interval with five per cent trimmed off each end,
+spaced across the interval with five percent trimmed off each end,
 because a one-sided stencil at an endpoint carries a larger error that
 would read as a failure of the basis. Passed through \code{as.integer()}.}
 
 \item{orders}{The derivative orders to check, default \code{1:2}. Each is
 compared against one differentiation of the order below it, never against
-a chain of lower-order differences. Raising it tests more and costs one
-pass per order.}
+a chain of lower-order differences. Each order costs one pass.}
 
 \item{tol}{The relative tolerance for the derivative and integral checks,
 default \code{1e-6}. Relative to the values themselves, with the denominator
@@ -56,12 +55,14 @@ property and
 
 The checks are:
 \enumerate{
-\item \strong{shape}: every generic returns a matrix of the declared size,
-with the declared column names, for a vector and for a single point;
+\item \strong{shape}: the evaluation returns a matrix of the declared size and
+column names for a vector, and of one row for a single point, and the
+first derivative returns a matrix of the declared size;
 \item \strong{derivatives}: each analytic order agrees with one numerical
 differentiation of the order below it;
-\item \strong{integral}: it differentiates back to the basis, and is
-exactly zero at the lower endpoint;
+\item \strong{integral}: it differentiates back to the basis and is exactly zero
+at the lower endpoint; for a basis of several variables only the zero
+at the lower corner is checked;
 \item \strong{partition of unity}: the rows sum to one, for the families
 that have that property;
 \item \strong{Gram}: symmetric, positive semidefinite, and equal to an
@@ -70,56 +71,53 @@ independent quadrature;
 row and nothing else.
 }
 }
-\section{What is skipped, and what is weakened}{
+\section{Checks on numerical quantities}{
 Where a quantity comes from the numerical fallback, checking it against a
-numerical reference would be the same arithmetic twice, agreeing however
-wrong the basis is. The \code{deriv} and \code{integral} checks are therefore not run
-at all in that case: they report \code{NA} and print \verb{[numerical]}.
+numerical reference would repeat the same arithmetic, and the two would
+agree however wrong the basis is. The \code{deriv} and \code{integral} checks are
+therefore not run in that case: they report \code{NA} and print \verb{[numerical]}.
 
-The \code{gram} check is \strong{weakened, not skipped}. Symmetry and positive
-semidefiniteness are properties of the matrix whatever produced it, so they
-are still tested and the row still prints \verb{[PASSED]}; what is dropped is the
-comparison against an independent quadrature. The \code{shape} and \code{missing}
-checks read nothing about the fallback and always run.
+When the Gram matrix comes from the numerical fallback, the \code{gram} check
+still tests symmetry and positive semidefiniteness, which are properties of
+the matrix whatever produced it, and omits the comparison against an
+independent quadrature. The \code{shape} and \code{missing} checks do not depend on
+the fallback and always run.
 
 The independent quadrature is 401 panels of 7 nodes, a rule no basis in the
 package uses for its own answer, so a family whose own Gram matrix is a
 quadrature is still compared against different arithmetic.
 
 \code{partition} is \code{NA} and prints \verb{[not claimed]} for a family that is not a
-partition of unity. That is a different thing from \verb{[numerical]}, and the
-printout distinguishes them: a property the family never claimed was not
-applicable, where a numerical value was simply not verified.
+partition of unity. The printout distinguishes this from \verb{[numerical]},
+which marks a value that was not verified.
 }
 
-\section{How the reference's own error is allowed for}{
+\section{The error of the reference}{
 A central difference assumes derivatives the function may not have. At a
 knot a spline's third derivative jumps, and a stencil straddling it returns
 a number of the order of the jump, which compared against an exact value
 reads as a failure of the basis. Each reference is therefore computed
-twice, at a step and at half of it, and the gap between them bounds its own
-uncertainty; the comparison is allowed that much slack point by point, so
-each point contributes exactly the accuracy its reference supports. See
-\code{\link[=fd_reference]{fd_reference()}}.
-
-A deliberate error of five per cent is still caught by four orders of
-magnitude, which is the check that the allowance has not blunted anything.
+twice, at a step and at half of it, and four times the gap between the two
+estimates is taken as a bound on its error. The comparison is allowed that
+bound point by point; see \code{\link[=fd_reference]{fd_reference()}}. A derivative wrong by five
+percent is still reported as failed, as the last example shows.
 }
 
 \examples{
-# Every shipped family passes all six checks.
+# The shipped families pass every check that applies to them; a Fourier
+# basis is not a partition of unity and does not claim to be one.
 invisible(check_basis(bspline_basis(dimension = 6)))
 invisible(check_basis(fourier_basis(dimension = 5)))
 
-# The result is a logical vector, and the attribute says which quantities
-# were computed from a formula.
+# The result is a logical vector, and the attribute marks the quantities
+# computed numerically rather than from a formula.
 r <- check_basis(poly_basis(dimension = 5), verbose = FALSE)
 r
 attr(r, "numerical")
 
 # A basis defined from its evaluation alone: the two checks that would
 # compare a difference against a difference are not run, and the Gram check
-# keeps its symmetry and definiteness half.
+# tests symmetry and definiteness only.
 Bumps <- S7::new_class("Bumps", parent = basis)
 S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
   out <- exp(-0.5 * outer(x, seq(0, 1, length.out = basis@dimension),
@@ -130,7 +128,7 @@ S7::method(basis_eval, Bumps) <- function(basis, x, ...) {
 invisible(check_basis(Bumps(basis_name = "bumps", dimension = 4L,
                             lower = 0, upper = 1)))
 
-# A derivative five per cent wrong is caught.
+# A derivative wrong by five percent is reported as failed.
 Wrong <- S7::new_class("Wrong", parent = BsplineBasis)
 S7::method(basis_deriv, Wrong) <- function(basis, x, order = 1L, ...) {
   1.05 * S7::method(basis_deriv, BsplineBasis)(basis, x, order = order)

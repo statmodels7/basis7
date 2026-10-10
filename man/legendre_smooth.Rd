@@ -23,19 +23,21 @@ highest degree is \code{k - 1}.}
 \item{order}{What the penalty measures: a \link{LinearOperator} from
 \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
 \code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
-\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
-toward, which for \code{m} is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.
-Its order is at most \code{k - 1}, the highest degree the basis carries.}
+\code{deriv_operator(m)}. It determines the functions toward which a
+strongly penalized fit contracts: a constant for \code{m = 1}, a straight
+line for 2, a parabola for 3, and the functions of \code{\link[=operator_null]{operator_null()}}
+for any operator. Its order is at most \code{k - 1}, the highest degree the
+basis carries.}
 
-\item{measure}{The measure the roughness is integrated against.}
+\item{measure}{The measure against which the roughness is integrated.}
 
-\item{constrain}{The directions the smooth is made orthogonal to, \code{NULL}
-for the null space of the penalty.}
+\item{constrain}{The directions to which the smooth is made orthogonal,
+\code{NULL} for the null space of the penalty.}
 
-\item{null_space}{What becomes of the directions the penalty does not see.}
+\item{null_space}{What happens to the directions that the penalty does
+not see.}
 
-\item{reparam}{The coordinates the coefficients live in.}
+\item{reparam}{The coordinates in which the coefficients are expressed.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
 building a penalty from a coefficient count. See the section on the
@@ -58,9 +60,7 @@ interval, so a feature at one end moves the fit at the other.
 The null space of the roughness matrix is the polynomials of degree below
 \code{order}, exactly as for a B-spline, so \code{order} and \code{constrain} mean what
 they mean there and \code{null_space = "keep"} restores \code{order - 1} free
-columns. Measured, the null space of the order-2 Gram matrix of an
-eight-function Legendre basis is spanned by the constant and the linear
-function to an R-squared of 1.0000000000.
+columns.
 }
 \examples{
 set.seed(3)

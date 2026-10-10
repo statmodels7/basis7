@@ -14,6 +14,7 @@ A single logical.
 }
 \description{
 Reports whether the weights are numbers rather than the \code{NA} placeholder
-\code{\link[=harmonic_operator]{harmonic_operator()}} leaves when it is given no period.
+that \code{\link[=harmonic_operator]{harmonic_operator()}} and \code{\link[=oscillator_operator]{oscillator_operator()}} leave when they are
+given no period.
 }
 \keyword{internal}

@@ -24,7 +24,7 @@ first, before anything family-specific, so the three report the same errors
 in the same words.
 }
 \details{
-Three conditions, each throwing with \code{call. = FALSE}:
+Three conditions, each signalling an error with \code{call. = FALSE}:
 \itemize{
 \item \code{lower} and \code{upper} must each be a single finite number, else
 \verb{'lower' and 'upper' must be single finite numbers.}
@@ -34,8 +34,8 @@ Three conditions, each throwing with \code{call. = FALSE}:
 \verb{'dimension' must be a single positive integer.}
 }
 
-A whole-valued double passes and is converted, so a caller writing \code{6}
-rather than \code{6L} is served. The multivariate case is not reachable here:
+A whole-valued double passes and is converted, so \code{6} is accepted as well
+as \code{6L}. The multivariate case does not arise here, because
 \code{\link[=tensor_basis]{tensor_basis()}} builds its endpoints from margins already validated.
 }
 \seealso{

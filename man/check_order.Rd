@@ -23,18 +23,20 @@ from the bodies of \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=ba
 same errors in the same words.
 }
 \details{
-Anything failing the first test throws
+Anything failing the first test signals the error
 \verb{'order' must be a non-negative integer.}; that covers a negative value, a
 fraction, an infinity, an \code{NA} and a non-numeric.
 
 A vector of length \code{nvar} is returned as it stands, and a single \code{0} is
 repeated to that length. For a basis of several variables a single
-\strong{non-zero} order throws with a longer message, because a scalar has two
-readings there: that order in every coordinate, or that total order.
-Choosing one silently would fit a different model from the one the caller
-wrote. Zero is exempt, meaning no derivative under either reading.
+\strong{non-zero} order signals an error, because a scalar has two readings
+there: that order in every coordinate, or that total order. Zero is exempt,
+meaning no derivative under either reading. A vector of any other length
+signals an error naming the length expected.
 }
 \seealso{
-\code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_gram]{basis_gram()}}, its two callers.
+\code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_gram]{basis_gram()}} and \code{\link[=orthonorm_basis]{orthonorm_basis()}}, its
+callers, together with \code{\link[=numerical_gram]{numerical_gram()}} and the Gram method of a
+tensor basis.
 }
 \keyword{internal}

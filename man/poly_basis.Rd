@@ -9,7 +9,7 @@ poly_basis(lower = 0, upper = 1, dimension = 4)
 \arguments{
 \item{lower, upper}{The endpoints of the interval, each a single finite
 number with \code{lower < upper}. Default \eqn{[0, 1]}. Evaluating outside
-throws.}
+the interval signals an error.}
 
 \item{dimension}{The number of polynomials, a single whole number of at
 least 1, default \code{4}. The highest degree is \code{dimension - 1}, so \code{1} gives
@@ -23,25 +23,25 @@ An object of class \link{PolyBasis}, with \code{basis_name} \code{"legendre"},
 \description{
 Returns a basis of the polynomials of degree below \code{dimension} on
 \eqn{[\ell, u]}, written in the Legendre polynomials and not in raw powers.
-The two span the same space, so a fit through either gives the same curve;
-the Legendre form is the one that survives being fitted, its Gram matrix
-being diagonal where the raw powers' is a Hilbert matrix.
+The two span the same space, so a fit through either gives the same curve.
+The Legendre form is better conditioned, because its Gram matrix is
+diagonal, whereas the Gram matrix of the raw powers is a Hilbert matrix.
 }
 \section{Why not raw powers}{
 Fitting \eqn{1, x, x^2, \ldots} on \eqn{[0, 1]} gives the Gram matrix
 \eqn{H_{mn} = 1/(m + n + 1)}, the Hilbert matrix, whose condition number
-grows geometrically. The condition numbers of the two order-0 Gram
-matrices, measured on \eqn{[0, 1]}:\tabular{lll}{
+grows geometrically. The 2-norm condition numbers of the two order-0 Gram
+matrices on \eqn{[0, 1]} are:\tabular{lll}{
    \code{dimension} \tab Legendre \tab raw powers \cr
    5 \tab 9 \tab 4.8e+05 \cr
    10 \tab 19 \tab 1.6e+13 \cr
-   15 \tab 29 \tab 2.5e+17 \cr
+   15 \tab 29 \tab 6.1e+20 \cr
 }
 
 
-At ten raw powers a least-squares solve has already lost most of its
-digits; at fifteen the matrix is numerically singular. The Legendre
-condition number is \eqn{2K - 1}, growing linearly.
+At ten raw powers a least-squares solve has lost most of its digits, and
+at fifteen the matrix is numerically singular in double precision. The
+Legendre condition number is \eqn{2K - 1}, growing linearly.
 }
 
 \section{The Gram matrix}{

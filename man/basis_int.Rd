@@ -14,7 +14,7 @@ the integrals: a numeric vector for a basis of one variable, or a matrix
 of \code{\link[=basis_nvar]{basis_nvar()}} columns for a basis of several.}
 
 \item{...}{Passed to methods. The numerical fallback reads \code{nodes} from it,
-the number of Gauss-Legendre nodes per panel, default \code{12}.}
+the number of Gauss-Legendre nodes per segment, default \code{12}.}
 }
 \value{
 A numeric matrix of \code{n} rows and \code{basis@dimension} columns, with
@@ -40,12 +40,12 @@ The integral over the whole interval is the row at \code{basis@upper}, and the
 integral over \eqn{[u, v]} is the difference of two rows.
 }
 
-\section{Why the anchor is fixed}{
+\section{The fixed anchor}{
 The value at \code{basis@lower} is exactly zero, for every basis and every
-column, and that is part of the contract every implementation owes. Any
+column, and every implementation is required to satisfy this. Any
 antiderivative satisfies the differentiation check, so with the constant of
-integration left free two bases could disagree while both being right, and
-a sum of them would be wrong with nothing to report it.
+integration left free two bases could disagree while both being correct,
+and a sum of them would be wrong without any sign of it.
 }
 
 \section{A basis of several variables}{
@@ -56,9 +56,11 @@ iterated integral per variable, so on two variables column \eqn{j} is
 
 \section{The numerical fallback}{
 A subclass registering no method gets the one on the abstract \link{basis}
-class: composite Gauss-Legendre from the lower endpoint to each point,
-\code{nodes = 12} per panel by default. Exact for a polynomial integrand of
-degree up to \code{2 * nodes - 1}, and accurate to the panel width elsewhere.
+class: a Gauss-Legendre rule of \code{nodes = 12} nodes by default on each
+segment between consecutive sorted evaluation points, starting at the
+lower endpoint, with the segment integrals accumulated. The rule is exact
+for a polynomial integrand of degree up to \code{2 * nodes - 1} on each
+segment.
 }
 
 \examples{

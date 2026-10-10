@@ -15,8 +15,8 @@ basis of several.}
 
 \item{order}{The derivative order. A single non-negative whole number for a
 basis of one variable, default \code{1}; a vector of \code{\link[=basis_nvar]{basis_nvar()}} such
-numbers for a basis of several, or a single \code{0}. A negative, fractional
-or missing order throws.}
+numbers for a basis of several, or a single \code{0}. A negative, fractional,
+infinite or \code{NA} order signals an error.}
 
 \item{...}{Passed to methods. No shipped family and no fallback reads
 anything from it.}
@@ -38,7 +38,7 @@ Derivative order is an argument, not a family of generics, because it is
 unbounded: a Fourier basis is differentiable to any order, and a spline of
 degree \eqn{k} has \eqn{k} non-trivial derivatives and zeros above that.
 An order beyond what the family carries returns the zero matrix, which is
-the value of the derivative; nothing is thrown, and the zeros are exact.
+the value of the derivative, with exact zeros and no error.
 
 \code{order = 0} short-circuits to \code{\link[=basis_eval]{basis_eval()}} in the generic body, so a loop
 over orders needs no special case and pays nothing for the zero.
@@ -48,24 +48,26 @@ over orders needs no special case and pays nothing for the zero.
 For a product basis \code{order} has one entry per variable and names a mixed
 partial: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
 \eqn{\partial^2/\partial x_1 \partial x_2}. A single non-zero number is
-refused, having two readings; \code{0} alone is accepted, meaning no derivative
-under either. See \code{\link[=check_order]{check_order()}}.
+rejected, because it has two readings; \code{0} alone is accepted, meaning no
+derivative under either. See \code{\link[=check_order]{check_order()}}.
 }
 
 \section{The numerical fallback}{
 A subclass registering no method gets the one on the abstract \link{basis}
-class, which applies \strong{one} stencil of the order asked for to
+class, which applies \strong{one} stencil of the requested order to
 \code{\link[=basis_eval]{basis_eval()}}, never a composition of lower-order differences. The
 offsets, weights and step come from \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}},
 \code{\link[numericals7:fd_weights]{numericals7::fd_weights()}} and \code{\link[numericals7:fd_step]{numericals7::fd_step()}}, and the stencil
 is shifted to one side near an endpoint so that no node leaves the
-interval. \code{\link[=basis_is_numerical]{basis_is_numerical()}} says whether this is the route in use, and
-\code{\link[=check_basis]{check_basis()}} measures the agreement.
+interval, with one node more than the central stencil so that it keeps
+the same order of accuracy. \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports whether this is
+the route in use, and \code{\link[=check_basis]{check_basis()}} measures the agreement.
 
 For a basis of several variables the fallback differentiates one coordinate
-at a time, so a mixed partial such as \code{c(1, 1)} throws there: a stencil in
-the plane has the product of two errors, and the one family that needs
-mixed partials, \code{\link[=tensor_basis]{tensor_basis()}}, computes them exactly from its margins.
+at a time, so a mixed partial such as \code{c(1, 1)} signals an error there: a
+stencil in the plane has the product of two errors, and \code{\link[=tensor_basis]{tensor_basis()}},
+the family that needs mixed partials, computes them exactly from its
+margins.
 }
 
 \examples{
@@ -95,5 +97,5 @@ try(basis_deriv(tb, cbind(0.5, 0.5), order = 1))
 \seealso{
 \code{\link[=basis_eval]{basis_eval()}}, which is \code{order = 0}; \code{\link[=basis_int]{basis_int()}} for the
 opposite direction; \code{\link[=basis_is_numerical]{basis_is_numerical()}} to learn whether a family
-answers this from a formula or a stencil.
+computes this from a formula or a stencil.
 }

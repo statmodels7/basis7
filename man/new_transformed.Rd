@@ -28,8 +28,8 @@ An object of class \link{TransformedBasis}.
 \description{
 Wraps a basis in a \link{TransformedBasis}, collapsing the transform into the
 parent's when the parent is already one, so that a chain of transformations
-is stored as a single matrix. The one constructor \code{\link[=orthonorm_basis]{orthonorm_basis()}},
-\code{\link[=constrain_basis]{constrain_basis()}} and \code{\link[=dr_basis]{dr_basis()}} all go through.
+is stored as a single matrix. \code{\link[=orthonorm_basis]{orthonorm_basis()}}, \code{\link[=constrain_basis]{constrain_basis()}}
+and \code{\link[=dr_basis]{dr_basis()}} all build their result through it.
 }
 \details{
 When \code{basis} is itself a \code{TransformedBasis}, the result holds
@@ -37,10 +37,9 @@ When \code{basis} is itself a \code{TransformedBasis}, the result holds
 the result is \code{ncol(transform)}, and its interval is the parent's, a linear
 map of the functions leaving the domain alone.
 
-Nothing is validated. The callers have already checked the shape of their
-own matrix, and a \code{transform} whose row count disagrees with the parent's
-dimension gives R's own non-conformable-arguments error at the first
-evaluation.
+The function itself checks nothing. The validator of \link{TransformedBasis}
+rejects a \code{transform} whose row count differs from the parent's dimension
+when the object is built.
 }
 \seealso{
 \link{TransformedBasis}, the class it builds.

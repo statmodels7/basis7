@@ -20,19 +20,19 @@ A numeric matrix of \code{dimension} rows and one column per
 direction that survives the constraint.
 }
 \description{
-An orthonormal basis of the null space of \code{cm}, the columns a
-constrained basis is built from. It is the transform \strong{relative to the
-basis being constrained}, which is not always the one the resulting
-object stores.
+An orthonormal basis of the null space of \code{cm}, from whose columns a
+constrained basis is built. It is the transform \strong{relative to the basis
+being constrained}, which is not always the one stored by the resulting
+object.
 }
 \details{
 \code{\link[=new_transformed]{new_transformed()}} flattens a nested transform, so a basis that is
 itself transformed comes back carrying the product against its own
 parent: constraining a cyclic smoother's twelve periodic functions,
 which are a transform of fifteen B-splines, gives an object whose
-transform is 15 by 11 and not 12 by 11. That is right for evaluating
-it and wrong for carrying a matrix defined on the twelve, which is why
-the local transform is available here rather than read off the object.
+transform is 15 by 11 and not 12 by 11. The stored transform serves the
+evaluation, and a matrix defined on the twelve functions needs the local
+one, which is why it is returned here.
 }
 \seealso{
 \code{\link[=constrain_basis]{constrain_basis()}} and \code{\link[=smoother_reparam]{smoother_reparam()}}, the two callers.

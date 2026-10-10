@@ -19,19 +19,13 @@ is a numerical fallback, from one a subclass supplied.
 }
 \details{
 Identity is tried first, being the usual case and costing nothing, and the
-name and package are compared when it fails. The second test is necessary:
-\code{identical()} on an S7 class is object identity, so it is \code{FALSE} for a
-class re-created from the same definition, and that is what happens
-whenever a package's code is evaluated instead of loaded. Coverage tools do exactly
-that, so an identity-only test passes every ordinary check and fails under
-\code{covr} alone.
-
-The same defect in \code{linkfunctions7} made every fallback differentiate the
-order below it, and the log link's fourth derivative came back wrong by a
-factor of 900 while the whole five-platform check matrix stayed green.
+name and package are compared when it fails. The second test is needed
+because \code{identical()} can return \code{FALSE} for a class re-created from the
+same definition, which happens when the code of a package is evaluated
+instead of loaded, as coverage tools do.
 }
 \seealso{
 \code{\link[=route_by_owner]{route_by_owner()}}, its only caller, and
-\code{\link[=basis_is_numerical]{basis_is_numerical()}}, which that answers for.
+\code{\link[=basis_is_numerical]{basis_is_numerical()}}, which relies on it.
 }
 \keyword{internal}

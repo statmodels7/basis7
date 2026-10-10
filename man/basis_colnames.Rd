@@ -23,7 +23,8 @@ their own overrides it.
 }
 \details{
 The default method takes the first two characters of \verb{@basis_name} and
-appends \code{1} to \verb{@dimension}, giving \verb{bs1 ... bs6} for a B-spline.
+appends the numbers from 1 to \verb{@dimension}, giving \verb{bs1 ... bs6} for a
+B-spline.
 \code{\link[=fourier_basis]{fourier_basis()}} and \code{\link[=poly_basis]{poly_basis()}} override it with names carrying
 meaning: \code{const}, \code{sin1}, \code{cos1}, \code{sin2} for the first, \code{P0}, \code{P1}, \code{P2}
 for the second.
@@ -31,13 +32,13 @@ for the second.
 A wrapper numbers its own columns under a short prefix, so an
 orthonormalized basis reads \verb{on1 ... on5}. A \code{\link[=tensor_basis]{tensor_basis()}} pastes its
 margins' names, one term per pair, as \code{bs1.const}, \code{bs1.sin1},
-\code{bs2.const}, so a coefficient's name says which marginal function it
-belongs to in each variable.
+\code{bs2.const}, so the name of a coefficient gives its marginal function in
+each variable.
 
-Overriding it is how a subclass gives its columns meaning. The method must
-return exactly \code{basis@dimension} strings; \code{\link[=name_columns]{name_columns()}} sets them
-without checking, so a shorter vector is recycled by R and silently
-mislabels.
+A subclass gives its columns meaningful names by overriding the method,
+which must return exactly \code{basis@dimension} strings; \code{\link[=name_columns]{name_columns()}}
+assigns them with \verb{colnames<-}, and a vector of another length signals an
+error.
 }
 \examples{
 # The default numbers the functions after the family name.

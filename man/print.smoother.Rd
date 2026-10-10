@@ -12,8 +12,10 @@
 \code{x}, invisibly. Called for the printing.
 }
 \description{
-Prints the family, the number of basis functions and the four decisions
-the smoother carries.
+Prints the family, the number of basis functions, the penalty, the
+treatment of the null space, the coordinates and the interval. With a
+penalty factory the line \code{roughness} names the matrix that sets the
+coordinates, and a further line records the factory.
 }
 \examples{
 bspline_smooth(k = 12)

@@ -21,8 +21,8 @@ can carry: \verb{sin(0.0172 t)} becomes \code{sin1}, \verb{cos(0.0344 t)} become
 \details{
 The number is the rank of the frequency among those restored, not the
 frequency itself, so the columns of a two-harmonic smooth read \code{sin1},
-\code{cos1}, \code{sin2}, \code{cos2} and match what a reader of a Fourier basis
-expects. A column from a real root keeps its label, \code{t} and \code{t^2}
-passing through \code{\link[=make.names]{make.names()}} as they stand.
+\code{cos1}, \code{sin2}, \code{cos2}, as the columns of a Fourier basis do. A column
+from a real root keeps its label after \code{\link[=make.names]{make.names()}}, so \code{t} stays \code{t}
+and \code{t^2} becomes \code{t.2}.
 }
 \keyword{internal}

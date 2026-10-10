@@ -12,8 +12,10 @@
 \code{x}, invisibly.
 }
 \description{
-Three lines: the order, the operator written out, and the functions its
-null space holds.
+Three lines: the order, the operator written out, and the functions of
+its null space. For an operator whose period is unresolved, the third line
+states that the period is taken from the interval of the smoother, with the
+number of harmonics.
 }
 \examples{
 harmonic_operator(365)

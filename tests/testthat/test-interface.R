@@ -90,7 +90,8 @@ test_that("an invalid order is refused", {
   expect_error(basis_gram(b, order = -1), "non-negative integer")
   # a basis of one variable takes one order, so two is a mistake about the
   # basis rather than about the number
-  expect_error(basis_deriv(b, 0.5, order = c(1, 2)), "one entry per variable")
+  expect_error(basis_deriv(b, 0.5, order = c(1, 2)),
+               "single non-negative integer for a basis of one variable")
 })
 
 
@@ -135,6 +136,10 @@ test_that("plot draws without error for every order it accepts", {
   expect_silent(plot(b))
   expect_silent(plot(b, order = 1))
   expect_silent(plot(b, order = -1))
+  # the label of an order above one is built by bquote(), whose call
+  # do.call() evaluated: "object 'B' not found"
+  expect_silent(plot(b, order = 2))
+  expect_silent(plot(b, order = 4))
   expect_error(plot(b, order = -2), "must be -1")
 })
 

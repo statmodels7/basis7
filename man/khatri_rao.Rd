@@ -8,11 +8,12 @@ khatri_rao(a, b)
 }
 \arguments{
 \item{a, b}{Numeric matrices with the same number of rows. The row counts
-are not checked; a mismatch gives R's own recycling behavior.}
+are not checked here; a mismatch gives R's error for non-conformable
+arrays.}
 }
 \value{
 A numeric matrix with \code{nrow(a)} rows and \code{ncol(a) * ncol(b)}
-columns, no dimnames.
+columns, carrying the column names of \code{a} repeated when \code{a} has them.
 }
 \description{
 For two matrices with the same number of rows, returns the matrix whose
@@ -27,8 +28,7 @@ column-order convention of a tensor basis, and the reason \code{\link[=basis_con
 reverses an array's dimensions before flattening it.
 
 The result has \code{ncol(a) * ncol(b)} columns, so reducing across several
-margins grows geometrically; nothing here bounds that, and
-\code{\link[=basis_contract]{basis_contract()}} is what avoids paying it.
+margins grows geometrically; \code{\link[=basis_contract]{basis_contract()}} avoids forming it.
 }
 \seealso{
 \code{\link[=tensor_design]{tensor_design()}}, its only caller;

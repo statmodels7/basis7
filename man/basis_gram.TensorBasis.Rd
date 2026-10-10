@@ -7,7 +7,7 @@
 \item{basis}{A \link{TensorBasis} object.}
 
 \item{order}{The derivative order, an integer vector with one entry per
-variable, or a single \code{0}. Each margin is asked for its own entry.}
+variable, or a single \code{0}. Each margin receives its own entry.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
 they never arrive here. Named only because S7 requires a method's formals
@@ -33,10 +33,10 @@ into one-dimensional integrals, so
 matrix at that margin's own order. It costs one marginal Gram matrix per
 variable and no integration over the box at all.
 
-The result is symmetrized as \code{(G + t(G))/2}, a Kronecker product of
-symmetric matrices being symmetric only up to the order its entries were
-formed in. It is singular whenever any margin's is, so an \code{order} with any
-non-zero entry gives a singular matrix.
+The result is symmetrized as \code{(G + t(G))/2}. It is singular whenever any
+margin's is; for the shipped families every Gram matrix above order zero
+is singular, so an \code{order} with a non-zero entry gives a singular matrix
+when the margins are shipped families.
 }
 \seealso{
 \code{\link[=basis_gram]{basis_gram()}} for the generic and the alternative measures;

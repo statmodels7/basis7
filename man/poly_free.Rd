@@ -16,17 +16,15 @@ A list of \code{free}, the matrix of \code{m} columns, and \code{params}, what
 \code{\link[=poly_free_apply]{poly_free_apply()}} needs to rebuild it at new values.
 }
 \description{
-Builds the columns \code{null_space = "keep"} restores for a family whose null
-space is the polynomials of degree below \code{order}: the powers
+Builds the columns that \code{null_space = "keep"} restores for a family whose
+null space is the polynomials of degree below \code{order}: the powers
 \eqn{x, \ldots, x^{m}} made orthogonal to the constant and to one another
 over the observed covariate, then standardized.
 }
 \details{
-The first column is written as \code{(x - mean(x)) / sd(x)} rather than as the
-general regression it is a case of. The two agree to the last bit for the
-quantities themselves, and the literal form is what the construction has
-always computed at \code{order = 2}, which is every smooth the toolkit has
-fitted; a change of arithmetic there would move fits that are not being
-asked to move.
+The first column is written as \code{(x - mean(x)) / sd(x)} instead of as the
+general regression of which it is a case. The two agree to rounding, and
+the literal form keeps the arithmetic of the default \code{order = 2}
+unchanged.
 }
 \keyword{internal}

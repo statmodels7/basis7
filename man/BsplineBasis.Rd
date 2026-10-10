@@ -14,8 +14,8 @@ BsplineBasis(
 }
 \arguments{
 \item{basis_name}{A single string naming the family, printed by
-\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
-any computation.}
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Its first
+two characters form the default column names of \code{\link[=basis_colnames]{basis_colnames()}}.}
 
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
@@ -26,7 +26,7 @@ length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
 \code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 }
@@ -43,8 +43,9 @@ dispatch on. A B-spline basis is piecewise polynomial, each function
 supported on a few knot intervals, and its functions sum to one.
 }
 \section{The Cox-de Boor recurrence}{
-On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
-defined from the indicators upward:
+On a knot sequence \eqn{t_1 \le \cdots \le t_{K+m+1}}, for a basis of
+\eqn{K} functions of degree \eqn{m}, the functions are defined from the
+indicators upward:
 
 \deqn{B_{j,0}(x) = \mathbf{1}\{t_j \le x < t_{j+1}\},}
 
@@ -55,16 +56,16 @@ defined from the indicators upward:
 a term with a zero denominator being taken as zero.
 }
 
-\section{The two properties that follow}{
+\section{Local support and partition of unity}{
 \eqn{B_{j,m}} vanishes outside \eqn{[t_j, t_{j+m+1}]}, so at most
 \eqn{m + 1} columns are non-zero in any row and the design matrix is
-banded: at \code{degree = 3} exactly four of them, whatever the dimension. And
-\eqn{\sum_j B_{j,m}(x) = 1} on the interval, measured to 2.2e-16, so the
-basis carries its own constant and is collinear with an intercept in the
-same design.
+banded: at \code{degree = 3} at most four of them, whatever the dimension.
+Moreover \eqn{\sum_j B_{j,m}(x) = 1} on the interval, up to rounding, so
+the basis carries its own constant and is collinear with an intercept in
+the same design.
 }
 
-\section{Where the numbers come from}{
+\section{Computation}{
 Evaluation, derivatives and integrals come from
 \code{\link[splines2:bSpline]{splines2::bSpline()}}, through the single wrapper \code{\link[=bspline_design]{bspline_design()}}, which
 computes all three from the recurrence and takes no differences. The Gram

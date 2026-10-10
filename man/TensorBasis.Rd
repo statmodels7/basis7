@@ -15,8 +15,8 @@ TensorBasis(
 }
 \arguments{
 \item{basis_name}{A single string naming the family, printed by
-\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
-any computation.}
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Its first
+two characters form the default column names of \code{\link[=basis_colnames]{basis_colnames()}}.}
 
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
@@ -27,13 +27,13 @@ length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
 \code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 
 \item{marginals}{The list of bases being multiplied, one per variable, each
-of one variable itself. Kept whole, so each can still be evaluated and
-asked what it is.}
+of one variable itself. Kept whole, so that each can still be evaluated
+and inspected.}
 }
 \value{
 An object of class \code{TensorBasis}, inheriting from \link{basis}, with the
@@ -44,27 +44,27 @@ five properties of a basis plus \code{marginals}, and \code{basis_params} holdin
 The S7 class of tensor product bases: all products of the functions of
 several bases, one basis per variable,
 \deqn{B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).}
-It carries the marginals whole, and every quantity it answers with is built
+It carries the marginals whole, and every quantity it returns is built
 from theirs, so a product of exactly integrated marginals is itself exact
 at any number of variables. Constructed by \code{\link[=tensor_basis]{tensor_basis()}}.
 }
-\section{Everything follows from the marginals}{
+\section{Reduction to the marginals}{
 The product separates, so each generic reduces to its marginals':
 \itemize{
 \item a partial derivative differentiates one marginal to its own order and
 leaves the others alone, \code{order} being a multi-index;
 \item the integral over the box from the lower corner is the product of the
-marginal integrals, and the anchor survives, a product whose every factor
-is zero at the corner being zero there;
+marginal integrals, and the anchoring is kept, a product whose every
+factor is zero at the corner being zero there;
 \item the Gram matrix is the Kronecker product of the marginal Gram matrices,
 which is a product of one-dimensional integrals and never a quadrature
 over the box.
 }
 
-That last point is what keeps the construction affordable. A quadrature
-over a box of \eqn{D} variables costs a node count exponential in \eqn{D}
-and carries an error to match; a Kronecker product of exact marginal
-matrices is exact, and costs one marginal Gram matrix per variable.
+The last point keeps the construction affordable. A quadrature over a box
+of \eqn{D} variables costs a node count exponential in \eqn{D} and carries
+an error, whereas a Kronecker product of exact marginal matrices is exact
+and costs one marginal Gram matrix per variable.
 }
 
 \section{Column order}{
@@ -74,13 +74,14 @@ At two variables of 3 and 2 functions the names are \code{bs1.P0}, \code{bs1.P1}
 
 That order matters when coefficients are supplied as an array, R storing an
 array with its \emph{first} index fastest. \code{\link[=basis_contract]{basis_contract()}} reverses the
-dimensions for you; a hand-written \code{as.numeric(coef)} does not, and pairs
-every coefficient with the wrong function.
+dimensions; a hand-written \code{as.numeric(coef)} does not, and pairs most
+coefficients with the wrong function.
 }
 
 \section{What the validator enforces}{
-\verb{@marginals} must be non-empty and hold only bases, and \verb{@dimension} must
-equal the product of their dimensions.
+\verb{@marginals} must be non-empty and hold only bases of one variable each,
+\verb{@lower} and \verb{@upper} must be their endpoints in the same order, and
+\verb{@dimension} must equal the product of their dimensions.
 }
 
 \examples{

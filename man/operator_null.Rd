@@ -9,14 +9,15 @@ operator_null(op, tol = 1e-06)
 \arguments{
 \item{op}{A \link{LinearOperator}.}
 
-\item{tol}{The relative tolerance at which two roots count as one, a
-positive number.}
+\item{tol}{The tolerance at which two roots count as one, relative to the
+size of the roots, a positive number.}
 }
 \value{
 A data frame of one row per function in the null space, with
 columns \code{label} (how the function reads), \code{rate} (the real part of the
-root), \code{freq} (the imaginary part) and \code{degree} (the power of \eqn{t}
-multiplying it).
+root), \code{freq} (the imaginary part), \code{degree} (the power of \eqn{t}
+multiplying it) and \code{part} (\code{"sin"} or \code{"cos"} for the two halves of a
+conjugate pair, \code{""} for a real root).
 }
 \description{
 The functions a maximal penalty leaves untouched, that is the solutions of
@@ -32,13 +33,12 @@ contributes \eqn{t^i e^{at}} for \eqn{i < \mu}, and a complex pair
 \eqn{t^i e^{at}\cos(bt)} and \eqn{t^i e^{at}\sin(bt)}.
 
 The null space is a property of the \strong{operator} and is computed from it,
-never from the rank of an assembled penalty matrix. The two are different
-questions and they give different answers: the same two-harmonic operator
-has a penalty of null dimension 5 on a Fourier basis and 3 on a cubic
-B-spline at a relative tolerance of 1e-10, because a spline represents a
-sine only approximately, while the operator's own null space is
-five-dimensional in both cases. Which of those functions a \strong{basis} can
-carry is a separate question, and \code{\link[=smoother_build]{smoother_build()}} is where it is asked.
+never from the rank of an assembled penalty matrix, and the two differ:
+the one-harmonic operator has a penalty of null dimension 3 on a Fourier
+basis and 1 on a cubic B-spline at a relative tolerance of 1e-10, because
+a spline represents a sine only approximately, while the null space of the
+operator is three-dimensional in both cases. Whether a \strong{basis} can carry
+those functions is a separate question, settled in \code{\link[=smoother_build]{smoother_build()}}.
 }
 \examples{
 # a straight line
@@ -47,7 +47,8 @@ operator_null(deriv_operator(2))
 # a constant plus the fundamental of a yearly cycle
 operator_null(harmonic_operator(365))
 
-# both at once
+# the product: five functions, with t^2 because both factors hold the
+# constant
 operator_null(deriv_operator(2) * harmonic_operator(365))
 
 # the dimension is always the order

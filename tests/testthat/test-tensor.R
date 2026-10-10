@@ -86,6 +86,8 @@ test_that("a single non-zero order is refused as ambiguous", {
   x <- cbind(0.3, 0.4)
   expect_error(basis_deriv(b, x, order = 1), "one entry per variable")
   expect_error(basis_deriv(b, x, order = c(1, 2, 3)), "one entry per variable")
+  expect_no_match(tryCatch(basis_deriv(b, x, order = c(1, 2, 3)),
+                           error = conditionMessage), "ambiguous")
   expect_silent(basis_deriv(b, x, order = c(1, 2)))
 })
 
@@ -225,4 +227,26 @@ test_that("check_basis accepts a point count given as a double", {
 
 test_that("plot refuses a product, and says why", {
   expect_error(plot(tb2()), "one variable")
+})
+
+test_that("a flat vector that is not a whole number of points is rejected", {
+  # three values on two variables were recycled into two points, with a warning
+  b <- tensor_basis(bspline_basis(dimension = 4), bspline_basis(dimension = 4))
+  expect_error(basis_eval(b, c(0.1, 0.2, 0.5)), "not a whole number of points")
+  expect_identical(dim(basis_eval(b, c(0.1, 0.2, 0.5, 0.6))), c(2L, 16L))
+})
+
+test_that("the class validator checks the marginals against the object", {
+  m <- list(bspline_basis(dimension = 4), poly_basis(dimension = 3))
+  mk <- function(marginals, lower, upper, dimension) {
+    TensorBasis(basis_name = "t", dimension = as.integer(dimension),
+                lower = lower, upper = upper,
+                basis_params = list(marginal_dimensions = c(4L, 3L)),
+                marginals = marginals)
+  }
+  expect_s3_class(mk(m, c(0, 0), c(1, 1), 12), "basis7::TensorBasis")
+  expect_error(mk(m, c(0, 0, 0), c(1, 1, 1), 12), "endpoints of the marginals")
+  expect_error(mk(m, c(0, 0), c(2, 1), 12), "endpoints of the marginals")
+  nested <- list(tensor_basis(m), bspline_basis(dimension = 4))
+  expect_error(mk(nested, c(0, 0, 0), c(1, 1, 1), 48), "one variable")
 })

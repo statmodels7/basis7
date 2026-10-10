@@ -119,6 +119,21 @@ test_that("one stencil is used, never a chain of first differences", {
 })
 
 
+test_that("the one-sided stencils keep second-order accuracy at the ends", {
+  # with three nodes a one-sided second derivative is first-order accurate,
+  # and a cubic left an error of about 6h at the endpoints (7e-4)
+  f <- function(x) cbind(x^3, exp(x))
+  x <- c(0, 0.5, 1)
+  ref <- list(cbind(3 * x^2, exp(x)), cbind(6 * x, exp(x)),
+              cbind(6, exp(x)), cbind(0, exp(x)))
+  tol <- c(1e-9, 1e-6, 1e-4, 1e-3)
+  for (k in 1:4) {
+    got <- basis7:::numerical_deriv_matrix(f, x, k, lower = 0, upper = 1)
+    expect_lt(max(abs(got - ref[[k]])), tol[[k]])
+  }
+})
+
+
 test_that("the finite-difference weights are exact on polynomials", {
   # The weights come from a Vandermonde solve, so the classic stencils must
   # fall out of it rather than being coincidences.
@@ -249,4 +264,14 @@ test_that("a basis written outside the package can answer for itself", {
   # the two orders it does not register still read as numerical, so S7::super()
   # really did supply the default rather than a constant
   expect_true(all(basis_is_numerical(mk(TRUE))[c("basis_deriv", "basis_int")]))
+})
+
+
+test_that("the Gauss-Legendre rule rejects a count that is not whole", {
+  # 2.7 was truncated to a two-point rule and NA failed inside the comparison
+  for (bad in list(2.7, NA, NA_integer_, 0, -1, Inf, c(2, 3), "3")) {
+    expect_error(basis7:::gauss_legendre(bad), "positive whole number")
+  }
+  expect_length(basis7:::gauss_legendre(3)$nodes, 3L)
+  expect_error(basis_int(bumps(), 0.5, nodes = 2.7), "positive whole number")
 })

@@ -27,7 +27,7 @@ recurrence, with no quadrature anywhere.
 
 The row at \code{basis@upper} holds the area under each function. Because the
 basis is a partition of unity, those areas sum to the width of the
-interval, which is a cheap check that the two conventions agree.
+interval.
 }
 \seealso{
 \code{\link[=basis_int]{basis_int()}} for the generic and the anchoring convention;

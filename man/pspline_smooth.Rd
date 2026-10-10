@@ -25,12 +25,13 @@ pspline_smooth(
 \item{diff}{The order of difference the penalty takes, \code{2} for the usual
 construction. The fit contracts to a polynomial of degree \code{diff - 1}.}
 
-\item{constrain}{The directions the smooth is made orthogonal to, \code{NULL}
-for the null space of the penalty.}
+\item{constrain}{The directions to which the smooth is made orthogonal,
+\code{NULL} for the null space of the penalty.}
 
-\item{null_space}{What becomes of the directions the penalty does not see.}
+\item{null_space}{What happens to the directions that the penalty does
+not see.}
 
-\item{reparam}{The coordinates the coefficients live in.}
+\item{reparam}{The coordinates in which the coefficients are expressed.}
 
 \item{penalty}{\code{NULL} for the quadratic difference penalty, or a factory
 building a penalty from a coefficient count. See the section on the
@@ -45,10 +46,9 @@ An S7 object of class \link{PsplineSmoother}, inheriting from
 \description{
 The Eilers-Marx smoother: a B-spline basis of \code{k} functions over equally
 spaced knots, penalized by the sum of squared \code{diff}-th differences of its
-coefficients rather than by an integrated squared derivative. A rich basis
-and a cheap penalty, which is the construction's own argument: \code{k} is
-chosen large enough not to matter and the smoothing parameter does the
-rest.
+coefficients instead of an integrated squared derivative. The basis is
+rich and the penalty cheap to compute: \code{k} is chosen large enough not to
+limit the fit, and the smoothing parameter controls the roughness.
 }
 \section{The penalty is a functional of the coefficients}{
 Where \code{\link[=bspline_smooth]{bspline_smooth()}} integrates \eqn{f^{(m)}} against a measure, this
@@ -58,18 +58,17 @@ coefficient vector. Nothing is integrated, which is why the family has no
 \code{measure} and no \code{order}: there is no measure to integrate against and no
 derivative whose order to name.
 
-That is also the reason the argument belongs to this family and not to
-every one. A difference penalty reads the coefficients as an ordered
-sequence in which neighbours are comparable, which a B-spline's are and a
-Fourier basis's are not -- there "adjacent" is a sine, a cosine and the
-next sine, and their difference means nothing.
+The argument \code{diff} belongs to this family alone. A difference penalty
+reads the coefficients as an ordered sequence in which neighbors are
+comparable. This holds for the coefficients of a B-spline and not for
+those of a Fourier basis, where adjacent coefficients are a sine, a cosine
+and the next sine, and their difference has no meaning.
 }
 
-\section{What it contracts to}{
+\section{The null space}{
 \eqn{D_d c = 0} exactly when the coefficients are a polynomial of degree
-below \eqn{d} in their index, and the null space of the roughness matrix
-has dimension exactly \code{diff}: measured at \code{k = 20}, \code{degree = 3}, it is 1,
-2 and 3 at \code{diff} of 1, 2 and 3.
+below \eqn{d} in their index, so the null space of the roughness matrix
+has dimension \code{diff}.
 
 The differences are taken on the coefficients of the basis of Eilers and
 Marx, whose knots are equally spaced with the same step beyond the
@@ -77,33 +76,19 @@ interval as inside it, and the penalty is carried onto the clamped basis
 the package evaluates (the two span the same splines on the interval, so
 only the coordinates change). On those knots the Greville abscissae are
 equally spaced, and Marsden's identity makes the null space exactly the
-polynomials of degree below \code{diff}: measured at \code{k = 20} over 300 points,
-the functions spanning it are those polynomials to an \eqn{R^2} of 1 at
-\code{diff} of 2 and 3. It is also the penalty of \pkg{mgcv}'s \code{bs = "ps"}:
-on \code{MASS::Boston}, \code{medv ~ s(lstat)} has 6.98906, 8.75744 and 9.41421
-effective degrees of freedom at \code{k} of 10, 20 and 40 against
-\pkg{mgcv}'s 6.98927, 8.75783 and 9.41421.
-
-Up to basis7 0.13.1 the differences were taken on the clamped
-coefficients, whose Greville abscissae are not equally spaced near the
-ends, so the null space was only approximately the polynomials and the
-fit differed from \pkg{mgcv}'s (8.29 effective degrees of freedom against
-8.76 in the example above).
+polynomials of degree below \code{diff}. It is also the penalty of
+\pkg{mgcv}'s \code{bs = "ps"} smooths, up to the normalization that
+\pkg{mgcv} applies to its penalty matrices.
 }
 
-\section{Against the integrated penalty on the same basis}{
-The two are different penalties and neither contains the other. Measured
-at \code{k = 25}, \code{degree = 3} over 300 uniform observations, the raw
-roughness matrices correlate at 0.987 and their scales differ by more
-than three orders (83 against 2.7e+05), the difference operator carrying
-no factor of the knot spacing.
-
-The smoothing parameters nevertheless mean nearly the same thing, since
-after the Demmler-Reinsch rotation both penalties are the identity. At
-matched effective degrees of freedom of 5, 8 and 12 the two smoothing
-parameters stand in a ratio of 0.92, 0.81 and 0.65, and the fitted
-functions differ by a root mean square of 0.0044, 0.0021 and 0.0027
-against a signal whose own standard deviation is 0.61.
+\section{Comparison with the integrated penalty on the same basis}{
+The two are different penalties, and neither contains the other. The
+difference operator carries no factor of the knot spacing, so the raw
+P-spline roughness matrix is on a scale several orders of magnitude
+smaller than the integrated-derivative matrix on the same basis. After the
+Demmler-Reinsch rotation both penalties are the identity on the penalized
+directions, so equal smoothing parameters give similar amounts of
+smoothing.
 }
 
 \examples{

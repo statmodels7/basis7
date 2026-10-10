@@ -17,15 +17,14 @@ columns, with column names \code{bs1}, \code{bs2}, and so on.
 \description{
 Returns the B-spline design matrix at the given points, evaluated by
 \code{\link[splines2:bSpline]{splines2::bSpline()}} from the Cox-de Boor recurrence. At most
-\code{degree + 1} entries of any row are non-zero, and the row sums are one to
-2.2e-16.
+\code{degree + 1} entries of any row are non-zero, and the row sums are one up
+to rounding.
 }
 \details{
 The call goes through \code{\link[=bspline_design]{bspline_design()}} with \code{intercept = TRUE}, so all
 \code{dimension} functions are returned and none is dropped for
-identifiability. The result is stripped of the ten attributes
-\pkg{splines2} attaches and of its \code{BSpline} class, leaving a plain
-matrix, so a consumer never has to know where the numbers came from.
+identifiability. The result is stripped of the attributes and of the
+\code{BSpline} class that \pkg{splines2} attaches, leaving a plain matrix.
 }
 \seealso{
 \code{\link[=bspline_design]{bspline_design()}}, the one call into \pkg{splines2};

@@ -20,13 +20,15 @@ reference has. \code{NULL}, the default, allows none.}
 }
 \value{
 A single \code{TRUE} or \code{FALSE}: \code{TRUE} when every informative entry
-agrees within its own allowance.
+agrees within its own allowance. An entry whose allowance is infinite is
+not compared, and a missing value in any other entry gives \code{FALSE}.
 }
 \description{
 Reports whether two matrices agree to a relative tolerance, with the
 denominator taken from the values themselves and floored at a millionth of
-the column's own scale. The one comparison \code{\link[=check_basis]{check_basis()}} makes, so that
-its derivative, integral and Gram checks all read agreement the same way.
+the column's own scale. It is the only comparison \code{\link[=check_basis]{check_basis()}} makes,
+so its derivative, integral and Gram checks read agreement in the same
+way.
 }
 \section{Why the denominator is not floored at one}{
 Flooring at one would flatten a disagreement between two small numbers into
@@ -38,16 +40,15 @@ B-spline is exactly zero on most of its interval. The denominator is
 \section{Why it is floored at all}{
 A basis function's derivative crosses zero, and at the crossing the
 pointwise value vanishes while the numerical reference carries its usual
-rounding error. Dividing that error by nothing reports a failure of the
-reference as a failure of the basis. The floor is \code{1e-6} times the largest
-absolute value in the same column, so a proportional error stays detectable
-wherever the curve is large, which is where a wrong formula shows itself.
+rounding error, and dividing that error by a value near zero would report
+an error of the reference as a failure of the basis. The floor is \code{1e-6}
+times the largest absolute value in the same column, so a proportional
+error remains detectable wherever the curve is large.
 }
 
-\section{Columns with nothing to say}{
+\section{Columns of negligible scale}{
 A column whose whole scale is below \code{1e-8} of the largest column's is
-skipped: neither side carries information there. If every column is
-skipped the answer is \code{TRUE}.
+skipped. If every column is skipped the result is \code{TRUE}.
 }
 
 \seealso{

@@ -9,7 +9,8 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator}, with its period resolved. An operator whose
+period is still \code{NULL} signals an error.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
 
@@ -22,10 +23,11 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 A symmetric numeric matrix of \code{basis@dimension} rows and columns.
 }
 \description{
-The Gram matrix of \eqn{Lb}, that is
-\deqn{R = \int_a^b (Lb)(Lb)^\top \, \mathrm{d}\mu,}
-the matrix for which \eqn{\lVert Lx \rVert^2 = c^\top R c} when
-\eqn{x = b^\top c}. It is what \code{\link[=basis_gram]{basis_gram()}} returns when its \code{order} is
+The Gram matrix of \eqn{L\varphi}, with \eqn{\varphi} the vector of basis
+functions, that is
+\deqn{R = \int_{\ell}^{u} (L\varphi)(L\varphi)^\top \, \mathrm{d}\mu,}
+the matrix for which \eqn{\lVert Lf \rVert^2 = c^\top R c} when
+\eqn{f = \varphi^\top c}. It is what \code{\link[=basis_gram]{basis_gram()}} returns when its \code{order} is
 a \link{LinearOperator}, and the generic exists so that a family with a closed
 form can declare one.
 }

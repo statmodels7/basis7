@@ -17,9 +17,10 @@ columns, with column names \code{on1}, \code{cn1} or \code{dr1} and so on.
 }
 \description{
 Evaluates the parent and multiplies by the transform,
-\eqn{\tilde{B}(x) = B(x)\,T}. Nothing is recomputed and no property of the
-parent is lost: the result spans a subspace of what the parent spans, and
-spans all of it when \eqn{T} is square and invertible.
+\eqn{\tilde{B}(x) = B(x)\,T}, with no further computation. The result
+spans a subspace of what the parent spans, and all of it when \eqn{T} is
+square and invertible. Properties of the individual columns, such as the
+partition of unity of a B-spline, are in general not kept.
 }
 \details{
 Cost is one parent evaluation plus one \code{length(x)} by \code{K} by \code{m} matrix

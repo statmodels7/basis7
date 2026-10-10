@@ -26,17 +26,17 @@ whose null space is the first \eqn{h} harmonics of the period \eqn{T}
 harmonic motion, \eqn{L x = \nu^2 x + D^2 x}.
 }
 \details{
-It exists to be composed. \code{\link[=harmonic_operator]{harmonic_operator()}} is this operator with a
-leading \eqn{D}, which is what puts the constant into the null space, so
-the two are related by
+This operator is meant to be composed. \code{\link[=harmonic_operator]{harmonic_operator()}} is this
+operator with a leading \eqn{D}, which puts the constant into the null
+space, so the two are related by
 \code{harmonic_operator(T, h)} being \code{deriv_operator(1) * oscillator_operator(T, h)}
 exactly, and a penalty that should leave a \strong{linear trend} and a cycle
 alone rather than a level and a cycle is
 \code{deriv_operator(2) * oscillator_operator(T)}.
 
 Composing with \code{\link[=harmonic_operator]{harmonic_operator()}} instead would raise the order by one
-and put an extra power of \eqn{t} in the null space, which is why the
-factor is offered separately rather than left to be written out by hand.
+and put an extra power of \eqn{t} in the null space, which is why this
+factor is offered separately.
 }
 \examples{
 oscillator_operator(365)

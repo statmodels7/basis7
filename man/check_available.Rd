@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R
 \name{check_available}
 \alias{check_available}
-\title{Check What a Smoother Asks For Against What Is Built}
+\title{Check the Settings of a Smoother Against Each Other}
 \usage{
 check_available(sm)
 }
@@ -13,10 +13,7 @@ check_available(sm)
 \code{NULL}, invisibly. Called for the error it signals.
 }
 \description{
-Signals an error for a smoother whose settings contradict each other or
-reach arithmetic this version does not write. The arguments are on the
-constructor because they are part of its interface, and an argument
-accepted and ignored would report a fit of a model the caller did not ask
-for.
+Signals an error for a smoother that combines a \code{penalty} factory with
+\code{null_space = "shrink"}, two settings that contradict each other.
 }
 \keyword{internal}

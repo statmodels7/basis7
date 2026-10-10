@@ -17,12 +17,13 @@ smoother_apply(sm, blueprint, newx, ...)
 }
 \value{
 A numeric matrix of \code{length(newx)} rows and as many columns as the
-block the blueprint came from, with no dimnames.
+block from which the blueprint came, with no dimnames.
 }
 \description{
 Evaluates the construction recorded by \code{\link[=smoother_build]{smoother_build()}} at new covariate
-values. The basis, the constraint and the reparametrization are the ones
-computed on the original data: nothing is recomputed from \code{newx}.
+values. The basis, the constraint and the reparametrization are those
+computed on the original data and are not recomputed at \code{newx}; only the
+functions are evaluated there.
 }
 \examples{
 set.seed(1)

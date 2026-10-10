@@ -215,3 +215,40 @@ test_that("every family and size passes the derivative and integral checks", {
     expect_false(isFALSE(r[["integral"]]), label = b@basis_name)
   }
 })
+
+
+test_that("a missing value makes the comparison fail, not return NA", {
+  a <- matrix(c(1, 1), 2, 1)
+  expect_false(basis7:::rel_close(a, matrix(c(1, NA), 2, 1), 1e-6))
+  expect_false(basis7:::rel_close(a, matrix(NA_real_, 2, 1), 1e-6))
+  expect_false(basis7:::rel_close(a, matrix(c(1, NA), 2, 1), 1e-6,
+                                  matrix(c(0, 0), 2, 1)))
+  # an infinite allowance, which fd_reference() gives where its estimate is
+  # missing, leaves the entry out of the comparison
+  expect_true(basis7:::rel_close(a, matrix(c(1, NA), 2, 1), 1e-6,
+                                 matrix(c(0, Inf), 2, 1)))
+  expect_true(basis7:::rel_close(a, a, 1e-6))
+})
+
+test_that("a missing analytic derivative is reported as a failure", {
+  # rel_close() returned NA, and the table printed [numerical] for a
+  # derivative that has a method
+  NaB <- S7::new_class("NaB", parent = BsplineBasis)
+  S7::method(basis_deriv, NaB) <- function(basis, x, order = 1L, ...) {
+    out <- S7::method(basis_deriv, BsplineBasis)(basis, x, order = order)
+    if (order >= 1L) out[x > 0.6 & x < 0.7, ] <- NaN
+    out
+  }
+  b <- bspline_basis(dimension = 6)
+  nb <- NaB(basis_name = "nab", dimension = b@dimension, lower = 0, upper = 1,
+            basis_params = b@basis_params)
+  expect_false(check_basis(nb, verbose = FALSE)[["deriv"]])
+})
+
+test_that("a numerical Gram matrix is not reported as compared with quadrature", {
+  out <- capture.output(check_basis(fourier_basis(dimension = 5, omega = 3)))
+  expect_true(any(grepl("Gram symmetric and PSD ", out)))
+  expect_false(any(grepl("matches quadrature", out)))
+  out2 <- capture.output(check_basis(bspline_basis(dimension = 6)))
+  expect_true(any(grepl("matches quadrature", out2)))
+})

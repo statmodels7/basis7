@@ -6,11 +6,12 @@
 #'
 #' @details
 #' It matters here for `print` and `plot`, the two S3 generics in \pkg{base}
-#' that `methods.R` writes methods for. An `S7::method()` assignment on an S3
-#' generic records the method in the package's own tables; only the load hook
-#' puts it where S3 dispatch will find it. Without this hook, printing a basis
-#' falls back to S7's default display of the object's properties and
-#' `plot()` on a basis reaches `plot.default()`.
+#' on which the package registers methods: `print` for bases, operators and
+#' smoothers, `plot` for bases. An `S7::method()` assignment on an S3 generic
+#' records the method in the package's own tables, and the load hook puts it
+#' where S3 dispatch finds it. Without the hook, printing a basis falls back
+#' to S7's default display of the object's properties and `plot()` on a basis
+#' reaches `plot.default()`.
 #'
 #' Standard R load hook; not called directly.
 #'

@@ -12,8 +12,8 @@ operator_span(op, x)
 \item{x}{The covariate, a numeric vector.}
 }
 \value{
-A list of \code{constraint}, \code{free} and \code{params}, as \code{\link[=smoother_span]{smoother_span()}}
-returns.
+A list of \code{constraint}, \code{free}, \code{free_names} and \code{params}, as
+described on the page of \code{\link[=smoother_span]{smoother_span()}}.
 }
 \description{
 Splits the null space of a general operator into what is constrained away
@@ -21,8 +21,8 @@ and what is restored as free columns: the constraint is the whole null
 space, and the free columns are all of it except the constant.
 }
 \details{
-The rule is the one the polynomial families have always followed, read for
-an arbitrary operator. The penalized part is made orthogonal to every
+The rule is that of the polynomial families, read for an arbitrary
+operator. The penalized part is made orthogonal to every
 direction the penalty does not see, because a direction that is neither
 penalized nor constrained is one the pencil cannot separate; and the
 constant is not restored, a model carrying an intercept already spanning

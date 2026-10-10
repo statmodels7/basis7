@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R, R/smoother_families.R
 \name{smoother_basis}
 \alias{smoother_basis}
-\title{The Basis a Smoother Builds On}
+\title{The Basis of a Smoother}
 \usage{
 smoother_basis(sm, x, ...)
 }
@@ -18,10 +18,10 @@ fixed on the object reads it from these values.}
 A \link{basis} of \code{sm@dimension} functions.
 }
 \description{
-Returns the \link{basis} a smoother expands the covariate in, before any
+Returns the \link{basis} in which a smoother expands the covariate, before any
 constraint or reparametrization. It is the one step of the construction
 that differs between families, so a family is added by registering a
-method here rather than by rewriting \code{\link[=smoother_build]{smoother_build()}}.
+method here instead of rewriting \code{\link[=smoother_build]{smoother_build()}}.
 }
 \examples{
 set.seed(1)

@@ -9,7 +9,7 @@ bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 \arguments{
 \item{lower, upper}{The endpoints of the interval, each a single finite
 number with \code{lower < upper}. Default \eqn{[0, 1]}. They are the boundary
-knots, and evaluating outside them throws.}
+knots, and evaluating outside them signals an error.}
 
 \item{dimension}{The number of basis functions, a single whole number of at
 least \code{degree + 1}, default \code{5}. It is the number of columns, so it fixes
@@ -36,27 +36,28 @@ conditioning does not deteriorate as the dimension grows.
 }
 \section{Dimension, degree and knots}{
 A basis of \eqn{K} functions of degree \eqn{m} has \eqn{K - m - 1}
-interior knots, so \eqn{K \ge m + 1}; a smaller \code{dimension} throws, naming
-both numbers. At equality there is no interior knot and the basis is the
+interior knots, so \eqn{K \ge m + 1}; a smaller \code{dimension} signals an
+error that states both numbers. At equality there is no interior knot and the basis is the
 polynomials of degree \eqn{m} on the whole interval, which it spans
 exactly. The knots are \code{seq(lower, upper, length.out = K - m + 1)} with the
-endpoints dropped, so they are equally spaced; a quantile placement is not
-offered, and a caller wanting one can build the class directly.
+endpoints dropped, so they are equally spaced. A quantile placement is not
+offered by the constructor, and is obtained by building the class
+directly.
 
 \code{degree = 0} gives indicator functions of the knot intervals, a step basis,
 and \code{degree = 1} the piecewise linear hat functions.
 }
 
-\section{The basis is complete}{
+\section{A complete basis}{
 All \code{dimension} functions are kept, so the rows of \code{\link[=basis_eval]{basis_eval()}} sum to
 one and the basis spans the constant. Beside an intercept the design is
-therefore rank deficient by one. Dropping a function is a linear
-transformation of the basis: use \code{\link[=constrain_basis]{constrain_basis()}}, which keeps the
-object a basis, and leave the choice of constraint to whatever owns the
-meaning of the term.
+therefore rank deficient by one. Removing a direction is a linear
+transformation of the basis, carried out by \code{\link[=constrain_basis]{constrain_basis()}}, which
+keeps the object a basis; the choice of constraint belongs to the layer
+that gives the term its meaning.
 }
 
-\section{Where each quantity comes from}{
+\section{Computation of each quantity}{
 \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_int]{basis_int()}} call
 \code{\link[splines2:bSpline]{splines2::bSpline()}}, which evaluates the recurrence and its exact
 derivative and integral. The Gram matrix is integrated in this package,
@@ -88,7 +89,8 @@ max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
 # Degree 0 gives indicators of the knot intervals.
 basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
 
-# Too few functions for the degree is refused, with both numbers named.
+# Too few functions for the degree signal an error that states both
+# numbers.
 try(bspline_basis(dimension = 3, degree = 3))
 
 }

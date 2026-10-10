@@ -8,11 +8,11 @@ NULL
 #' The S7 class of Fourier bases, the objects [fourier_basis()] returns. It
 #' adds no property to [basis] and exists as the class the trigonometric
 #' methods dispatch on. A Fourier basis holds a constant function and pairs of
-#' sines and cosines of increasing frequency, and answers every derivative and
-#' its integral from one identity.
+#' sines and cosines of increasing frequency, and its derivatives and integral
+#' all follow from one identity.
 #'
 #' @details
-#' # One identity for every order
+#' # The phase-shift identity
 #'
 #' Writing \eqn{z = 2\pi (x - \ell)/\omega} for the phase and \eqn{\omega}
 #' for the period,
@@ -20,8 +20,8 @@ NULL
 #'       = \left(\frac{2\pi j}{\omega}\right)^{k}
 #'         \sin\!\left(j z + \frac{k\pi}{2}\right),}
 #' and the same for the cosine. Differentiating a sinusoid shifts its phase by
-#' a quarter turn and multiplies it by its frequency, so no order is a special
-#' case and the fourth derivative costs exactly what the first does.
+#' a quarter turn and multiplies it by its frequency, so every order follows
+#' the same rule and the fourth derivative costs what the first does.
 #'
 #' The identity holds for negative \eqn{k}, which is where the antiderivative
 #' comes from: [basis_int.FourierBasis()] evaluates it at \eqn{k = -1} and
@@ -31,7 +31,8 @@ NULL
 #'
 #' Three entries. `omega` is the period, `n_pairs` is
 #' `(dimension - 1) %/% 2`, and `full_period` records whether `omega` equals
-#' the width of the interval. The last decides which route
+#' the width of the interval, up to the tolerance of [all.equal()]. The last
+#' decides which route
 #' [basis_gram.FourierBasis()] takes: a closed diagonal matrix when it is
 #' `TRUE`, a quadrature when it is not.
 #'
@@ -65,9 +66,9 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #'
 #' @description
 #' Returns a basis of a constant function and \eqn{(K-1)/2} sine-cosine pairs
-#' of increasing frequency on \eqn{[\ell, u]}. It is the basis to reach for
-#' when the function being modeled is periodic or nearly so: over a whole
-#' period the functions are mutually orthogonal, and stay orthogonal after
+#' of increasing frequency on \eqn{[\ell, u]}, \eqn{K} being `dimension`. It
+#' suits a function that is periodic or nearly so: over a whole period the
+#' functions are mutually orthogonal, and stay orthogonal after
 #' differentiation, so the Gram matrix is diagonal at every order and a
 #' roughness penalty is one vector of numbers.
 #'
@@ -82,12 +83,10 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #'
 #' A sine without its cosine represents a wave at one phase but not at the
 #' next, so the fitted function would depend on where the interval was cut.
-#' An even dimension throws, naming the two odd numbers on either side. It is
-#' not adjusted silently: growing it would return a basis of a size the caller
-#' did not ask for, and the constructor is the only place the mismatch can be
-#' caught.
+#' An even dimension signals an error that names the two odd numbers on
+#' either side, and is not adjusted to one of them.
 #'
-#' # The period, and what changes when it is not the interval
+#' # A period other than the width of the interval
 #'
 #' `omega` defaults to `upper - lower`, so the interval is exactly one period
 #' and the functions are orthogonal on it. The order-\eqn{d} Gram matrix is
@@ -95,30 +94,29 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #' for it above, and \eqn{(\omega/2)(2\pi j/\omega)^{2d}} for both members
 #' of pair \eqn{j}, written in closed form.
 #'
-#' Any other positive period is accepted and every generic still answers, but
-#' the interval is no longer a whole number of periods, the orthogonality
-#' fails, and the Gram matrix is computed by composite Gauss-Legendre instead.
-#' `basis_params$full_period` records which case the object is in, and
-#' [basis_is_numerical()] reports `basis_gram` as `TRUE` there: the family
-#' says so itself through [basis_numerical_route.FourierBasis()], where
-#' reading which class the method is registered on would answer `FALSE`,
-#' the owner being `FourierBasis` either way.
+#' Any other positive period is accepted and every generic remains
+#' available. The Gram matrix is then computed by composite Gauss-Legendre,
+#' the interval being in general no longer a whole number of periods and the
+#' orthogonality failing. `basis_params$full_period` records which case the
+#' object is in, and [basis_is_numerical()] reports `basis_gram` as `TRUE` in
+#' the second, through [basis_numerical_route.FourierBasis()]; the class on
+#' which the method is registered is `FourierBasis` in both cases.
 #'
-#' # Periodic by construction
+#' # Periodicity
 #'
-#' Every column except the constant takes the same value at both ends of a
-#' full period, so a fitted curve joins up. That is the property to want here,
-#' and the reason not to reach for [bspline_basis()], whose ends are free.
+#' Every column takes the same value at both ends of a full period, so a
+#' fitted curve joins up. A B-spline basis, whose ends are free, does not
+#' have this property.
 #'
 #' @param lower,upper The endpoints of the interval, each a single finite
 #'   number with `lower < upper`. Default \eqn{[0, 1]}. Evaluating outside
-#'   throws.
+#'   the interval signals an error.
 #' @param dimension The number of basis functions, a single **odd** whole
 #'   number of at least 1, default `5`. `1` is the constant alone, `5` is the
-#'   constant and two pairs. An even value throws.
+#'   constant and two pairs. An even value signals an error.
 #' @param omega The period, a single positive finite number. `NULL`, the
 #'   default, uses `upper - lower`, the value that makes the basis orthogonal
-#'   on its interval. Anything not a single positive number throws.
+#'   on its interval. Any other value signals an error.
 #'
 #' @return An object of class [FourierBasis], with `basis_name` `"fourier"`,
 #'   `basis_params` holding `omega`, `n_pairs` and `full_period`, and column
@@ -147,8 +145,8 @@ FourierBasis <- S7::new_class("FourierBasis", parent = basis)
 #' # An even dimension would leave half a pair, and is rejected.
 #' try(fourier_basis(dimension = 4))
 #'
-#' # A period that is not the interval width gives up the orthogonality, and
-#' # the Gram matrix is then a quadrature and no longer diagonal.
+#' # With a period other than the interval width the basis is not
+#' # orthogonal, and the Gram matrix is a quadrature and no longer diagonal.
 #' f <- fourier_basis(dimension = 5, omega = 0.7)
 #' f@basis_params$full_period
 #' round(basis_gram(f), 4)
@@ -196,12 +194,11 @@ fourier_basis <- function(lower = 0, upper = 1, dimension = 5, omega = NULL) {
 #' @description
 #' Names the columns `const`, `sin1`, `cos1`, `sin2`, `cos2`, and so on: the
 #' constant first, then the sine and cosine of each frequency in the order the
-#' matrix holds them. A coefficient's name therefore says which harmonic it
-#' belongs to, where the default `fo1 ... fo5` of [basis_colnames.basis()]
-#' would leave the reader counting.
+#' matrix holds them, so the name of a coefficient gives its harmonic. The
+#' default of [basis_colnames.basis()] would be `fo1` to `fo5`.
 #'
 #' @details
-#' At `n_pairs == 0`, which is `dimension = 1`, the answer is the single name
+#' At `n_pairs == 0`, which is `dimension = 1`, the result is the single name
 #' `"const"` and the general branch is skipped. Falling through it would give
 #' `"sin"` and `"cos"` with no number, `paste0()` recycling a zero-length
 #' argument to the empty string.
@@ -237,9 +234,9 @@ S7::method(basis_colnames, FourierBasis) <- function(basis, ...) {
 #' with \eqn{z = 2\pi (x - \ell)/\omega}.
 #'
 #' @details
-#' Cost is two `sin()` and `cos()` calls per frequency per point, with no
-#' recurrence and no accumulation, so a high frequency is evaluated as
-#' accurately as a low one. Missing points give missing rows.
+#' Each frequency costs one call of `sin()` and one of `cos()` per point,
+#' with no recurrence over the frequencies. Missing points give missing
+#' rows.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
@@ -268,19 +265,18 @@ S7::method(basis_eval, FourierBasis) <- function(basis, x, ...) {
 #' order, from the phase-shift identity of [FourierBasis]: differentiating
 #' \eqn{\sin(jz)} shifts its phase by \eqn{k\pi/2} and multiplies it by
 #' \eqn{(2\pi j/\omega)^{k}}. The constant column is zero at every order
-#' above 0.
+#' above 0. Order 0 is handled by the generic, which returns the evaluation.
 #'
 #' @details
 #' Reaching order \eqn{k} costs the same as reaching order 1: the shift and
 #' the scale are both computed directly from \eqn{k}, with no recursion over
-#' the orders below it. A Fourier basis therefore has no order at which its
-#' derivatives stop being available, in contrast with a spline, whose
-#' derivatives run out at its degree.
+#' the orders below it. Every derivative of a Fourier basis is therefore
+#' available, whereas the derivatives of a spline vanish above its degree.
 #'
 #' The scale grows as \eqn{j^{k}}, so a high frequency differentiated many
-#' times is a large number: at `dimension = 21` and `order = 4` the largest
-#' entry is \eqn{(20\pi)^4}, about 1.6e+06 on the unit interval. That is the
-#' value, not a loss of accuracy.
+#' times gives a large number: at `dimension = 21` and `order = 4` the largest
+#' entry is \eqn{(20\pi)^4}, about 1.6e+07 on the unit interval. This is the
+#' value of the derivative, with no loss of accuracy.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
@@ -313,16 +309,17 @@ S7::method(basis_deriv, FourierBasis) <- function(basis, x, order = 1L, ...) {
 #' [FourierBasis] taken at order \eqn{-1}.
 #'
 #' @details
-#' The identity at \eqn{k = -1} gives *an* antiderivative, which is not the
-#' one [basis_int()] promises. The two differ by a constant that is not the
+#' The identity at \eqn{k = -1} gives an antiderivative that is not the one
+#' defined by [basis_int()]. The two differ by a constant that is not the
 #' same in every column: at the lower endpoint the sine columns of the raw
 #' antiderivative are \eqn{-\omega/(2\pi j)} while the cosine columns are
 #' already zero. Subtracting the row at the lower endpoint corrects every
 #' column at once and makes the anchoring exact.
 #'
 #' Over a full period every sinusoid integrates to zero, so the row at
-#' `basis@upper` is \eqn{(\omega, 0, 0, \ldots)}, which is the area under a
-#' fitted curve being the constant's coefficient times the period.
+#' `basis@upper` is \eqn{(\omega, 0, 0, \ldots)}, and the integral of a
+#' fitted curve over the period is the coefficient of the constant times the
+#' period.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
@@ -375,10 +372,11 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #' result is a full matrix.
 #'
 #' [basis_is_numerical()] reports `basis_gram` as `TRUE` on such a basis,
-#' the family answering through [basis_numerical_route.FourierBasis()]
-#' rather than through the class the method is registered on, which is
-#' `FourierBasis` in both branches. [check_basis()] reads the same predicate,
-#' so it holds this matrix to the tolerance a quadrature deserves.
+#' through [basis_numerical_route.FourierBasis()], although the method is
+#' registered on `FourierBasis` in both branches. [check_basis()] reads the
+#' same predicate, and on this branch tests the matrix for symmetry and
+#' positive semidefiniteness without comparing it with a second
+#' quadrature.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param order The derivative order, a single non-negative whole number,
@@ -387,8 +385,8 @@ S7::method(basis_int, FourierBasis) <- function(basis, x, ...) {
 #'   they never arrive here. Named only because S7 requires a method's formals
 #'   to contain the generic's.
 #' @param ... Passed to [numerical_gram()] on the non-full-period branch,
-#'   where `panels` and `nodes` control the quadrature. Ignored on the closed
-#'   branch.
+#'   where `panels` and `nodes` control the quadrature. On the closed branch
+#'   `panels` or `nodes` signals an error.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns,
 #'   with column names `const`, `sin1`, and so on. Diagonal when the interval
@@ -405,6 +403,7 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
   if (!p$full_period) {
     return(numerical_gram(basis, order, ...))
   }
+  reject_quadrature(...)
 
   omega <- p$omega
   j <- seq_len(p$n_pairs)
@@ -424,8 +423,10 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 #' @name basis_operator_gram.FourierBasis
 #'
 #' @description
-#' Exact and diagonal, at any operator, whenever the interval is a full
-#' period. The diagonal entry of the pair at frequency \eqn{j} is
+#' Exact and diagonal, at any operator, when the interval is a full period
+#' and neither `at` nor `weight` is given; otherwise the matrix is computed by
+#' [numerical_operator_gram()] and is in general full. The diagonal entry of
+#' the pair at frequency \eqn{j} is
 #' \deqn{\lvert P(i\nu_j)\rvert^2 \, \frac{T}{2}, \qquad
 #'   \nu_j = \frac{2\pi j}{T},}
 #' with \eqn{P(r) = r^m + \sum_{k<m} w_k r^k} the operator's characteristic
@@ -442,27 +443,28 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 #' everything at one frequency is orthogonal to everything at another, so the
 #' matrix is diagonal.
 #'
-#' ⚠️ The book this operator comes from states that the harmonic penalty
-#' makes \eqn{R} structurally different and **more complex** than the
-#' diagonal matrix the derivative penalty gives. The first half is right and
-#' the second is not: measured on a nine-function basis, the largest
-#' off-diagonal entry is 1.7e-16 of the largest entry, and it stays that way
-#' for a two-harmonic operator and for a composed one. What changes is the
-#' null space, which goes from the constant alone to the constant and the
-#' harmonics the operator keeps.
+#' The matrix is diagonal for a harmonic operator, as it is for a derivative
+#' penalty, at any number of harmonics and for a composed operator. The two
+#' differ in the null space, which is the constant alone for a derivative
+#' penalty and the constant together with the retained harmonics for the
+#' harmonic operator.
 #'
-#' The operator's own period does not have to be the basis's. Only the
-#' basis's enters the orthogonality; the operator's enters through its
-#' weights, and an operator tuned to another cycle simply gives a diagonal
-#' with no exact zeros.
+#' The period of the operator need not be that of the basis. Only the period
+#' of the basis enters the orthogonality, and the period of the operator
+#' enters through its weights. An operator tuned to another cycle gives a
+#' diagonal with no zero at the sines and cosines; the entry of the constant
+#' is zero whenever \eqn{w_0 = 0}, as for [harmonic_operator()].
 #'
 #' @param basis A [basis].
 #' @param op A [LinearOperator], with its period resolved.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
 #' @param weight A density to integrate against, or `NULL`.
-#' @param ... Passed on to the quadrature (`panels`, `nodes`).
+#' @param ... Passed on to the quadrature (`panels`, `nodes`) on the
+#'   numerical route. On the exact route `panels` or `nodes` signals an
+#'   error.
 #'
-#' @return A diagonal numeric matrix of `basis@dimension` rows and columns.
+#' @return A numeric matrix of `basis@dimension` rows and columns, diagonal
+#'   on the exact route.
 #'
 #' @seealso [basis_operator_gram()] for the generic and the numerical route,
 #'   [basis_gram.FourierBasis()] for the derivative case.
@@ -487,6 +489,7 @@ S7::method(basis_operator_gram, FourierBasis) <- function(basis, op, at = NULL,
   if (!p$full_period || !is.null(at) || !is.null(weight)) {
     return(numerical_operator_gram(basis, op, at = at, weight = weight, ...))
   }
+  reject_quadrature(...)
   w <- operator_weights(op)
   m <- length(w)
   period <- p$omega
@@ -518,9 +521,9 @@ S7::method(basis_operator_gram, FourierBasis) <- function(basis, op, at = NULL,
 #' own.
 #'
 #' @details
-#' At `d = -1` the identity gives an antiderivative whose constant is not the
-#' one [basis_int()] promises; the caller subtracts the row at the lower
-#' endpoint. Columns are interleaved sine-then-cosine per frequency, matching
+#' At `d = -1` the identity gives an antiderivative that differs from the
+#' one defined by [basis_int()] by a constant in each column; the caller
+#' subtracts the row at the lower endpoint. Columns are interleaved sine-then-cosine per frequency, matching
 #' [basis_colnames.FourierBasis()].
 #'
 #' At `n_pairs == 0` the result is a `length(x)` by 0 matrix, and the loop is
@@ -559,15 +562,15 @@ fourier_trig <- function(basis, x, d) {
 #' @name basis_numerical_route.FourierBasis
 #' @description
 #' Reports `basis_gram` as `TRUE` when `basis_params$full_period` is `FALSE`,
-#' where the owner test would read `FourierBasis` and answer `FALSE`.
+#' where the owner test would read `FourierBasis` and give `FALSE`.
 #' [basis_gram.FourierBasis()] delegates to [numerical_gram()] in that case, so
 #' the matrix is a composite Gauss-Legendre quadrature and carries its error.
 #' The evaluation, the derivatives and the anchored integral are closed form at
-#' any period and are left as the owner test finds them.
+#' any period, and their entries keep the value of the owner test.
 #'
-#' What this buys is that [check_basis()] holds the Gram matrix to the tolerance
-#' a quadrature deserves rather than the one meant for a closed form, and that
-#' [print.basis()] names the route in use.
+#' As a consequence [check_basis()] tests this Gram matrix only for symmetry
+#' and positive semidefiniteness, and [print.basis()] names the route in
+#' use.
 #'
 #' @param basis A [FourierBasis] object.
 #' @param ... Unused, and accepted so the signature matches the generic's.

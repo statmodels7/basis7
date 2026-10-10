@@ -20,19 +20,16 @@ degree below \code{order}. The constraint must \strong{contain} that null space,
 a degree below \code{order - 1} is rejected.
 }
 \details{
-The requirement is not a convention. A direction the penalty does not see
-and the constraint does not remove is neither penalized nor identified,
-and \code{\link[=dr_basis]{dr_basis()}} signals an error there: with \code{order = 3} and a constraint
-spanning only the constant and the linear function, the quadratic
-direction is left free and unpenalized. Reported here, where the two
-numbers were written, rather than several frames down.
+The requirement follows from identifiability. A direction that the
+penalty does not see and that the constraint does not remove is neither
+penalized nor identified, and \code{\link[=dr_basis]{dr_basis()}} signals an error there: with
+\code{order = 3} and a constraint spanning only the constant and the linear
+function, the quadratic direction is left free and unpenalized. The error
+is reported here, at the constructor.
 
-Constraining \strong{beyond} the null space is legitimate. It buys
-orthogonality to a parametric term written in the formula. Measured on
-\code{y ~ 1 + x + x^2 + s(x)} at \code{k = 20} and 400 observations, the largest
-correlation between a column of the block and \code{x^2} falls from 0.995 at
-the default to 1.9e-15 at \code{constrain = 2}, which is exact by
-construction, and the standard error of the quadratic coefficient falls
-with it by more than an order of magnitude. The cost is one dimension.
+Constraining \strong{beyond} the null space is admitted. It makes the block
+orthogonal, over the observed covariate, to the polynomials up to degree
+\code{constrain}, which avoids collinearity with a parametric term of that
+degree written in the formula. The cost is one dimension per degree.
 }
 \keyword{internal}

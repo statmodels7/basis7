@@ -33,14 +33,15 @@ alone. \code{\link[=check_basis]{check_basis()}} uses them to sweep one coordina
 basis takes several.
 }
 \details{
-Both are the identity for a basis of one variable, where \code{x} is a plain
-vector with no coordinate to pick: \code{coord()} returns \code{x} and
-\code{replace_coord()} returns \code{z}, so the caller writes one loop over
-\code{seq_len(basis_nvar(basis))} with no branch for the univariate case.
+For a basis of one variable, where \code{x} is a plain vector, \code{coord()}
+returns \code{x} and \code{replace_coord()} returns \code{z}, so the caller writes one
+loop over \code{seq_len(basis_nvar(basis))} with no branch for the univariate
+case.
 
-Neither validates anything. \code{j} outside the columns of \code{x} gives R's own
-subscript error, and a \code{z} of the wrong length is recycled by R's usual
-rules.
+Neither function validates its arguments. An index \code{j} outside the columns
+of \code{x} gives R's subscript error. A \code{z} of the wrong length is recycled
+into a matrix only when its length divides the number of rows, and is
+returned as it is for a vector \code{x}.
 }
 \seealso{
 \code{\link[=check_basis]{check_basis()}}, their only caller, and \code{\link[=basis_nvar]{basis_nvar()}} for the

@@ -14,14 +14,14 @@ check_penalty(penalty)
 }
 \description{
 Validates the \code{penalty} argument of a smoother constructor: \code{NULL}, or a
-function of one argument.
+function with at least one argument.
 }
 \details{
-The check is deliberately weak, and the reason is the dependency graph.
-\pkg{basis7} sits at the bottom of it and imports \pkg{numericals7} alone,
-so it cannot name \pkg{penalties7} and cannot ask whether what the
-function returns is a penalty. It stores the function and never calls it.
-Whichever layer builds the term calls it, at the coefficient count only
-the data settle, and checks the result there.
+The check is deliberately weak because of the dependency graph: of the
+toolkit \pkg{basis7} imports \pkg{numericals7} only, so it cannot name
+\pkg{penalties7} and cannot test whether the function returns a penalty.
+It stores the function and never calls it. The layer that builds the term
+calls it, at the coefficient count that only the data settle, and checks
+the result there.
 }
 \keyword{internal}

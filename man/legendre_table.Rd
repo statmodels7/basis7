@@ -20,9 +20,9 @@ dimnames. Column 1 is the constant 1.
 Builds a table of \eqn{P_0, \ldots, P_{k-1}} evaluated at \code{t} on
 \eqn{[-1, 1]}, one column per polynomial, from the three-term recurrence
 \deqn{(n+1) P_{n+1}(t) = (2n+1)\, t\, P_n(t) - n\, P_{n-1}(t),}
-seeded with \eqn{P_0 = 1} and \eqn{P_1 = t}. Used by
-\code{\link[=basis_eval.PolyBasis]{basis_eval.PolyBasis()}} and, at one extra column, by
-\code{\link[=basis_int.PolyBasis]{basis_int.PolyBasis()}}.
+seeded with \eqn{P_0 = 1} and \eqn{P_1 = t}. Used by \code{\link[=legendre_deriv]{legendre_deriv()}},
+and through it by \code{\link[=basis_eval.PolyBasis]{basis_eval.PolyBasis()}} and \code{\link[=basis_deriv.PolyBasis]{basis_deriv.PolyBasis()}},
+and, at one extra column, by \code{\link[=basis_int.PolyBasis]{basis_int.PolyBasis()}}.
 }
 \details{
 The recurrence is evaluated in the standard variable, never in the basis

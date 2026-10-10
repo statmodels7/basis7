@@ -26,23 +26,24 @@ An S7 object of class \code{LinearOperator}.
 \description{
 A linear differential operator with constant coefficients,
 \deqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x,}
-which a smoother uses to say what its penalty measures. The leading
+which specifies what the penalty of a smoother measures. The leading
 coefficient is 1 by construction, so an operator is determined by the
 weights \eqn{w_0, \ldots, w_{m-1}} and by nothing else.
 }
 \details{
-Build one with \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} or
-\code{\link[=linear_operator]{linear_operator()}}, and compose two with \code{*}. The properties are not
-meant to be read directly: \code{\link[=operator_order]{operator_order()}}, \code{\link[=operator_weights]{operator_weights()}} and
-\code{\link[=operator_null]{operator_null()}} are the accessors, and they answer for an operator whose
-period is still to be resolved where reading the property would not.
+An operator is built with \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}},
+\code{\link[=oscillator_operator]{oscillator_operator()}} or \code{\link[=linear_operator]{linear_operator()}}, and two are composed with
+\code{*}. The properties are read through the accessors \code{\link[=operator_order]{operator_order()}},
+\code{\link[=operator_weights]{operator_weights()}} and \code{\link[=operator_null]{operator_null()}}. For an operator whose period
+is still to be resolved, the weights are \code{NA} and \code{\link[=operator_null]{operator_null()}}
+signals an error.
 }
 \examples{
 op <- harmonic_operator(365)
 c(class = class(op)[1], order = operator_order(op))
 }
 \seealso{
-\code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} and
-\code{\link[=linear_operator]{linear_operator()}}, which build one; \code{\link[=operator_null]{operator_null()}} for the space a
-maximal penalty leaves untouched.
+\code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}},
+\code{\link[=oscillator_operator]{oscillator_operator()}} and \code{\link[=linear_operator]{linear_operator()}}, which build one;
+\code{\link[=operator_null]{operator_null()}} for the space a maximal penalty leaves untouched.
 }

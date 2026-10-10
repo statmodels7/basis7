@@ -22,19 +22,18 @@ Returns the \code{order}-th derivative of every column, exactly and at any
 order, from the phase-shift identity of \link{FourierBasis}: differentiating
 \eqn{\sin(jz)} shifts its phase by \eqn{k\pi/2} and multiplies it by
 \eqn{(2\pi j/\omega)^{k}}. The constant column is zero at every order
-above 0.
+above 0. Order 0 is handled by the generic, which returns the evaluation.
 }
 \details{
 Reaching order \eqn{k} costs the same as reaching order 1: the shift and
 the scale are both computed directly from \eqn{k}, with no recursion over
-the orders below it. A Fourier basis therefore has no order at which its
-derivatives stop being available, in contrast with a spline, whose
-derivatives run out at its degree.
+the orders below it. Every derivative of a Fourier basis is therefore
+available, whereas the derivatives of a spline vanish above its degree.
 
 The scale grows as \eqn{j^{k}}, so a high frequency differentiated many
-times is a large number: at \code{dimension = 21} and \code{order = 4} the largest
-entry is \eqn{(20\pi)^4}, about 1.6e+06 on the unit interval. That is the
-value, not a loss of accuracy.
+times gives a large number: at \code{dimension = 21} and \code{order = 4} the largest
+entry is \eqn{(20\pi)^4}, about 1.6e+07 on the unit interval. This is the
+value of the derivative, with no loss of accuracy.
 }
 \seealso{
 \code{\link[=fourier_trig]{fourier_trig()}}, which applies the identity;

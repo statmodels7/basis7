@@ -13,7 +13,7 @@ is_deriv_operator(op)
 A single logical.
 }
 \description{
-Reports whether an operator is \eqn{D^m}, which is the case every family
-had before operators existed and the one whose construction must not move.
+Reports whether an operator is \eqn{D^m}, the case that each smoother
+family builds with its own construction for a whole \code{order}.
 }
 \keyword{internal}

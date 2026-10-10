@@ -12,14 +12,19 @@
 
 \item{weight}{A density to integrate against, or \code{NULL}.}
 
-\item{...}{Passed on to the quadrature (\code{panels}, \code{nodes}).}
+\item{...}{Passed on to the quadrature (\code{panels}, \code{nodes}) on the
+numerical route. On the exact route \code{panels} or \code{nodes} signals an
+error.}
 }
 \value{
-A diagonal numeric matrix of \code{basis@dimension} rows and columns.
+A numeric matrix of \code{basis@dimension} rows and columns, diagonal
+on the exact route.
 }
 \description{
-Exact and diagonal, at any operator, whenever the interval is a full
-period. The diagonal entry of the pair at frequency \eqn{j} is
+Exact and diagonal, at any operator, when the interval is a full period
+and neither \code{at} nor \code{weight} is given; otherwise the matrix is computed by
+\code{\link[=numerical_operator_gram]{numerical_operator_gram()}} and is in general full. The diagonal entry of
+the pair at frequency \eqn{j} is
 \deqn{\lvert P(i\nu_j)\rvert^2 \, \frac{T}{2}, \qquad
   \nu_j = \frac{2\pi j}{T},}
 with \eqn{P(r) = r^m + \sum_{k<m} w_k r^k} the operator's characteristic
@@ -36,19 +41,17 @@ squared norms and are orthogonal to each other, and over a full period
 everything at one frequency is orthogonal to everything at another, so the
 matrix is diagonal.
 
-⚠️ The book this operator comes from states that the harmonic penalty
-makes \eqn{R} structurally different and \strong{more complex} than the
-diagonal matrix the derivative penalty gives. The first half is right and
-the second is not: measured on a nine-function basis, the largest
-off-diagonal entry is 1.7e-16 of the largest entry, and it stays that way
-for a two-harmonic operator and for a composed one. What changes is the
-null space, which goes from the constant alone to the constant and the
-harmonics the operator keeps.
+The matrix is diagonal for a harmonic operator, as it is for a derivative
+penalty, at any number of harmonics and for a composed operator. The two
+differ in the null space, which is the constant alone for a derivative
+penalty and the constant together with the retained harmonics for the
+harmonic operator.
 
-The operator's own period does not have to be the basis's. Only the
-basis's enters the orthogonality; the operator's enters through its
-weights, and an operator tuned to another cycle simply gives a diagonal
-with no exact zeros.
+The period of the operator need not be that of the basis. Only the period
+of the basis enters the orthogonality, and the period of the operator
+enters through its weights. An operator tuned to another cycle gives a
+diagonal with no zero at the sines and cosines; the entry of the constant
+is zero whenever \eqn{w_0 = 0}, as for \code{\link[=harmonic_operator]{harmonic_operator()}}.
 }
 \examples{
 b <- fourier_basis(lower = 0, upper = 365, dimension = 9)

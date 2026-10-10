@@ -12,8 +12,8 @@ empirical_gram(basis, order, at)
 \item{order}{The derivative order, already validated by \code{\link[=check_order]{check_order()}}.}
 
 \item{at}{A numeric vector of points, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}}
-columns. Not range-checked here; \code{\link[=basis_deriv]{basis_deriv()}} does that and throws for
-a point outside the interval.}
+columns. Not range-checked here; \code{\link[=basis_deriv]{basis_deriv()}} does that and signals
+an error for a point outside the interval.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
@@ -23,18 +23,17 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 Computes \eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner
 products a design matrix produces, in place of those of the functions on
 their interval. Called from the body of \code{\link[=basis_gram]{basis_gram()}} when \code{at} is
-supplied, so no method ever sees this case.
+supplied, so this case never reaches a method.
 }
 \details{
-Missing points are dropped \strong{before} the basis is evaluated. A basis is
-entitled to refuse a vector that is entirely missing, and its refusal would
-name the wrong thing here, so \code{at} with no usable point throws
+Missing points are dropped \strong{before} the basis is evaluated. A basis may
+reject a vector that is entirely missing, with a message that would name
+the wrong argument here, so \code{at} with no usable point signals the error
 \verb{'at' has no usable points.} instead. For a basis of several variables \code{at}
 is coerced to a matrix and rows with any missing entry are dropped whole.
 
-The result is symmetrized as \code{(G + t(G))/2} before it is returned, the two
-triangles of a crossproduct differing in their last bits, and given
-\code{\link[=basis_colnames]{basis_colnames()}} on both margins.
+The result is symmetrized as \code{(G + t(G))/2} before it is returned, and
+given \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \seealso{
 \code{\link[=basis_gram]{basis_gram()}}, its only caller, and \code{\link[=weighted_gram]{weighted_gram()}} for the

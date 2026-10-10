@@ -13,8 +13,9 @@ NULL
 #' @details
 #' # The Cox-de Boor recurrence
 #'
-#' On a knot sequence \eqn{t_1 \le \cdots \le t_{d+m+1}} the functions are
-#' defined from the indicators upward:
+#' On a knot sequence \eqn{t_1 \le \cdots \le t_{K+m+1}}, for a basis of
+#' \eqn{K} functions of degree \eqn{m}, the functions are defined from the
+#' indicators upward:
 #'
 #' \deqn{B_{j,0}(x) = \mathbf{1}\{t_j \le x < t_{j+1}\},}
 #'
@@ -24,16 +25,16 @@ NULL
 #'
 #' a term with a zero denominator being taken as zero.
 #'
-#' # The two properties that follow
+#' # Local support and partition of unity
 #'
 #' \eqn{B_{j,m}} vanishes outside \eqn{[t_j, t_{j+m+1}]}, so at most
 #' \eqn{m + 1} columns are non-zero in any row and the design matrix is
-#' banded: at `degree = 3` exactly four of them, whatever the dimension. And
-#' \eqn{\sum_j B_{j,m}(x) = 1} on the interval, measured to 2.2e-16, so the
-#' basis carries its own constant and is collinear with an intercept in the
-#' same design.
+#' banded: at `degree = 3` at most four of them, whatever the dimension.
+#' Moreover \eqn{\sum_j B_{j,m}(x) = 1} on the interval, up to rounding, so
+#' the basis carries its own constant and is collinear with an intercept in
+#' the same design.
 #'
-#' # Where the numbers come from
+#' # Computation
 #'
 #' Evaluation, derivatives and integrals come from
 #' [splines2::bSpline()], through the single wrapper [bspline_design()], which
@@ -91,26 +92,27 @@ BsplineBasis <- S7::new_class("BsplineBasis", parent = basis)
 #' # Dimension, degree and knots
 #'
 #' A basis of \eqn{K} functions of degree \eqn{m} has \eqn{K - m - 1}
-#' interior knots, so \eqn{K \ge m + 1}; a smaller `dimension` throws, naming
-#' both numbers. At equality there is no interior knot and the basis is the
+#' interior knots, so \eqn{K \ge m + 1}; a smaller `dimension` signals an
+#' error that states both numbers. At equality there is no interior knot and the basis is the
 #' polynomials of degree \eqn{m} on the whole interval, which it spans
 #' exactly. The knots are `seq(lower, upper, length.out = K - m + 1)` with the
-#' endpoints dropped, so they are equally spaced; a quantile placement is not
-#' offered, and a caller wanting one can build the class directly.
+#' endpoints dropped, so they are equally spaced. A quantile placement is not
+#' offered by the constructor, and is obtained by building the class
+#' directly.
 #'
 #' `degree = 0` gives indicator functions of the knot intervals, a step basis,
 #' and `degree = 1` the piecewise linear hat functions.
 #'
-#' # The basis is complete
+#' # A complete basis
 #'
 #' All `dimension` functions are kept, so the rows of [basis_eval()] sum to
 #' one and the basis spans the constant. Beside an intercept the design is
-#' therefore rank deficient by one. Dropping a function is a linear
-#' transformation of the basis: use [constrain_basis()], which keeps the
-#' object a basis, and leave the choice of constraint to whatever owns the
-#' meaning of the term.
+#' therefore rank deficient by one. Removing a direction is a linear
+#' transformation of the basis, carried out by [constrain_basis()], which
+#' keeps the object a basis; the choice of constraint belongs to the layer
+#' that gives the term its meaning.
 #'
-#' # Where each quantity comes from
+#' # Computation of each quantity
 #'
 #' [basis_eval()], [basis_deriv()] and [basis_int()] call
 #' [splines2::bSpline()], which evaluates the recurrence and its exact
@@ -121,7 +123,7 @@ BsplineBasis <- S7::new_class("BsplineBasis", parent = basis)
 #'
 #' @param lower,upper The endpoints of the interval, each a single finite
 #'   number with `lower < upper`. Default \eqn{[0, 1]}. They are the boundary
-#'   knots, and evaluating outside them throws.
+#'   knots, and evaluating outside them signals an error.
 #' @param dimension The number of basis functions, a single whole number of at
 #'   least `degree + 1`, default `5`. It is the number of columns, so it fixes
 #'   the flexibility of the fit; the interior knot count follows as
@@ -168,7 +170,8 @@ BsplineBasis <- S7::new_class("BsplineBasis", parent = basis)
 #' # Degree 0 gives indicators of the knot intervals.
 #' basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))
 #'
-#' # Too few functions for the degree is refused, with both numbers named.
+#' # Too few functions for the degree signal an error that states both
+#' # numbers.
 #' try(bspline_basis(dimension = 3, degree = 3))
 #'
 #' @export
@@ -219,15 +222,14 @@ bspline_basis <- function(lower = 0, upper = 1, dimension = 5, degree = 3) {
 #' @description
 #' Returns the B-spline design matrix at the given points, evaluated by
 #' [splines2::bSpline()] from the Cox-de Boor recurrence. At most
-#' `degree + 1` entries of any row are non-zero, and the row sums are one to
-#' 2.2e-16.
+#' `degree + 1` entries of any row are non-zero, and the row sums are one up
+#' to rounding.
 #'
 #' @details
 #' The call goes through [bspline_design()] with `intercept = TRUE`, so all
 #' `dimension` functions are returned and none is dropped for
-#' identifiability. The result is stripped of the ten attributes
-#' \pkg{splines2} attaches and of its `BSpline` class, leaving a plain
-#' matrix, so a consumer never has to know where the numbers came from.
+#' identifiability. The result is stripped of the attributes and of the
+#' `BSpline` class that \pkg{splines2} attaches, leaving a plain matrix.
 #'
 #' @param basis A [BsplineBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
@@ -252,15 +254,14 @@ S7::method(basis_eval, BsplineBasis) <- function(basis, x, ...) {
 #' @description
 #' Returns the `order`-th derivative of every B-spline, exactly, from the
 #' derivative form of the Cox-de Boor recurrence in [splines2::bSpline()]. An
-#' order above the degree short-circuits to the zero matrix, which is the
-#' value of that derivative; nothing is thrown.
+#' order above the degree returns the zero matrix, which is the value of that
+#' derivative, without calling \pkg{splines2}.
 #'
 #' @details
 #' A spline of degree \eqn{m} is piecewise polynomial of that degree, so it
 #' has \eqn{m} non-trivial derivatives and the rest vanish: a cubic gives
-#' three, and `order = 4` is exactly zero everywhere. The short-circuit
-#' happens here because \pkg{splines2} rejects a `derivs` above the degree
-#' instead of returning zeros.
+#' three, and `order = 4` is exactly zero everywhere. A missing point gives a
+#' missing row at every order.
 #'
 #' The derivative of order \eqn{m} is a step function, discontinuous at each
 #' interior knot, and the value returned at a knot is the one the recurrence
@@ -272,7 +273,7 @@ S7::method(basis_eval, BsplineBasis) <- function(basis, x, ...) {
 #' @param x A numeric vector of evaluation points inside the basis interval.
 #' @param order The derivative order, a single non-negative whole number,
 #'   default `1`. Above `basis@basis_params$degree` the result is exactly
-#'   zero.
+#'   zero at every point that is not missing.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
 #'
 #' @return A numeric matrix with `length(x)` rows and `basis@dimension`
@@ -309,7 +310,7 @@ S7::method(basis_deriv, BsplineBasis) <- function(basis, x, order = 1L, ...) {
 #'
 #' The row at `basis@upper` holds the area under each function. Because the
 #' basis is a partition of unity, those areas sum to the width of the
-#' interval, which is a cheap check that the two conventions agree.
+#' interval.
 #'
 #' @param basis A [BsplineBasis] object.
 #' @param x A numeric vector of evaluation points inside the basis interval.
@@ -335,27 +336,23 @@ S7::method(basis_int, BsplineBasis) <- function(basis, x, ...) {
 #' Returns the inner products of the `order`-th derivatives exactly, by
 #' integrating over one knot interval at a time with a Gauss-Legendre rule
 #' sized so that it reproduces the integrand exactly. This is the matrix a
-#' roughness penalty on a spline is built from, so its exactness is worth the
-#' small amount of work.
+#' roughness penalty on a spline is built from.
 #'
 #' @details
-#' # Why it is exact
+#' # Exactness
 #'
 #' On one knot interval the order-\eqn{d} derivative of a spline of degree
 #' \eqn{m} is a polynomial of degree \eqn{m - d}, so the integrand
 #' \eqn{B_a^{(d)} B_b^{(d)}} has degree \eqn{2(m - d)}. A Gauss-Legendre
 #' rule with \eqn{m - d + 1} nodes is exact to degree \eqn{2(m - d) + 1},
-#' which is one higher, so the only error left is floating point. Against the
-#' same knot-aligned construction run at 20 nodes instead, the worst entry
-#' agrees to 3.1e-16, 2.1e-14, 8.0e-13 and 7.3e-12 at orders 0 to 3 on a
-#' cubic basis of six functions.
+#' which is one higher, so the only error left is rounding.
 #'
 #' The breaks are the boundary knots and the interior knots, so no panel
-#' straddles a knot, and the exactness claim rests on that: at `order = m` the
-#' derivative is a step function, and a rule spanning a knot would integrate
-#' the wrong thing. Measured on the same basis, the general
-#' `weight` route of [basis_gram()], whose 50 equal panels do not line up with
-#' the knots, is out by 1.4e-3 at order 2 and by 65 at order 3.
+#' straddles a knot, and the exactness depends on that: at `order = m` the
+#' derivative is a step function, which a rule spanning a knot does not
+#' integrate exactly. The `weight` route of [basis_gram()] uses equal panels
+#' that do not line up with the knots, and is therefore approximate for a
+#' spline.
 #'
 #' # Above the degree
 #'
@@ -369,7 +366,8 @@ S7::method(basis_int, BsplineBasis) <- function(basis, x, ...) {
 #' @param at,weight Handled in the body of [basis_gram()] before dispatch, so
 #'   they never arrive here. Named only because S7 requires a method's formals
 #'   to contain the generic's.
-#' @param ... Unused, and accepted so that the signature matches the generic's.
+#' @param ... Unused, and accepted so that the signature matches the
+#'   generic's. `panels` or `nodes` signals an error, the matrix being exact.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns,
 #'   with column names `bs1`, `bs2`, and so on. Banded, entry \eqn{(a, b)}
@@ -381,6 +379,7 @@ S7::method(basis_int, BsplineBasis) <- function(basis, x, ...) {
 #' @keywords internal
 S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
                                                  weight = NULL, ...) {
+  reject_quadrature(...)
   nm <- basis_colnames(basis)
   degree <- basis@basis_params$degree
 
@@ -404,43 +403,43 @@ S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
 #'
 #' @description
 #' Exact for the length measure, integrating knot interval by knot interval
-#' as [basis_gram.BsplineBasis()] does, and with one guard in front of it: an
-#' operator of order above the degree of the spline is rejected rather than
-#' integrated.
+#' as [basis_gram.BsplineBasis()] does. An operator of order above the degree
+#' of the spline is rejected.
 #'
 #' @details
-#' # Why it is exact
+#' # Exactness
 #'
 #' \eqn{Lb} is a linear combination of derivatives of a spline of degree
 #' \eqn{p}, so it is piecewise polynomial of degree at most \eqn{p} with the
 #' same breakpoints, and \eqn{(Lb)(Lb)^\top} is piecewise of degree at most
 #' \eqn{2p}. Gauss-Legendre with \eqn{p + 1} nodes on each knot interval is
 #' exact to degree \eqn{2p + 1}, so nothing is approximated. The panels of
-#' the base method's rule do not line up with the knots, where a derivative
-#' of the spline jumps, and it is that misalignment rather than the node
-#' count that costs the accuracy: measured at `dimension = 10`, `degree = 3`,
-#' the base rule at 50 panels differs from the derivative route by 5e-8
-#' relative, and this one by 3e-15.
+#' the rule of the base method are equally spaced and do not line up with the
+#' knots, where a derivative of the spline jumps, so the base method is
+#' approximate for a spline.
 #'
-#' # The guard
+#' # Operators above the degree
 #'
 #' The \eqn{m}-th derivative of a spline of degree \eqn{p} is identically
 #' zero for \eqn{m > p}, so the leading term of \eqn{Lb} vanishes and what
 #' would be integrated is the operator with its highest derivative deleted.
-#' That is a different penalty with a different null space, and nothing about
-#' the result would say so. [basis_gram()] returns an exact zero matrix in
-#' the same situation for a plain derivative, where the answer is at least
-#' unmistakable; here it is not, so the refusal names the degree to raise.
+#' That is a different penalty with a different null space, and the result
+#' would give no sign of it. For a plain derivative [basis_gram()] returns
+#' the zero matrix in the same situation, which cannot be mistaken for a
+#' penalty. For an operator the method signals an error that names the degree
+#' to raise.
 #'
-#' A spline does not contain the null space of a periodic operator exactly,
-#' which is admissible and is not this guard's business: see the section on
-#' [bspline_smooth()]'s page.
+#' A spline contains the null space of a periodic operator only
+#' approximately. That is admissible, and this method does not test for it;
+#' see [operator_null()].
 #'
 #' @param basis A [basis].
 #' @param op A [LinearOperator], with its period resolved.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
 #' @param weight A density to integrate against, or `NULL`.
-#' @param ... Passed on to the quadrature (`panels`, `nodes`).
+#' @param ... Passed on to the quadrature (`panels`, `nodes`) when `weight`
+#'   is given. Without `at` or `weight` the matrix is exact, and `panels` or
+#'   `nodes` signals an error.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns.
 #'
@@ -450,7 +449,7 @@ S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
 #' b <- bspline_basis(lower = 0, upper = 1, dimension = 10, degree = 3)
 #' dim(basis_gram(b, order = harmonic_operator(1)))
 #'
-#' # an operator of order 5 on a cubic spline is refused, not truncated
+#' # an operator of order 5 on a cubic spline signals an error
 #' try(basis_gram(b, order = harmonic_operator(1, harmonics = 2)))
 #' @keywords internal
 S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
@@ -469,6 +468,7 @@ S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
   if (!is.null(at) || !is.null(weight)) {
     return(numerical_operator_gram(basis, op, at = at, weight = weight, ...))
   }
+  reject_quadrature(...)
   breaks <- unique(c(basis@lower, basis@basis_params$knots, basis@upper))
   r <- quad_rule(breaks, n = degree + 1L)
   lb <- operator_eval(basis, r$nodes, op)
@@ -485,21 +485,19 @@ S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
 #' @description
 #' The single point at which this package talks to \pkg{splines2}. It
 #' assembles the knot arguments from `basis@basis_params`, calls
-#' [splines2::bSpline()] once, and returns a plain matrix, so the dependency
-#' stays behind the S7 interface and no caller has to know its argument names
-#' or its return class.
+#' [splines2::bSpline()] once, and returns a plain matrix, so the argument
+#' names and the return class of \pkg{splines2} stay inside this function.
 #'
 #' @details
 #' `intercept = TRUE` is passed always, so all `dimension` functions come
 #' back; \pkg{splines2} would otherwise drop the first.
 #'
-#' The returned object is of class `BSpline` and carries ten attributes,
-#' among them `x`, `knots`, `degree` and `intercept`. Rebuilding it as
-#' `matrix(as.numeric(out), ...)` strips every one, which matters because
-#' those attributes would survive arithmetic and reappear on a matrix that no
-#' longer describes them. The dimensions are taken from `length(x)` and
-#' `basis@dimension`, so a mismatch with what \pkg{splines2} returned surfaces
-#' here.
+#' The object \pkg{splines2} returns is of class `BSpline` and carries
+#' attributes, among them `x`, `knots`, `degree` and `intercept`. Rebuilding
+#' it as `matrix(as.numeric(out), ...)` strips all of them, since they would
+#' survive arithmetic and reappear on a matrix that they no longer describe.
+#' The dimensions are taken from `length(x)` and `basis@dimension`. An empty
+#' `x`, which \pkg{splines2} rejects, gives a matrix of no rows.
 #'
 #' `derivs` and `integral` are mutually exclusive in practice, each caller
 #' setting at most one.
@@ -525,6 +523,8 @@ S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
 #' @keywords internal
 bspline_design <- function(basis, x, derivs = 0L, integral = FALSE) {
   p <- basis@basis_params
+  # splines2 rejects an empty x as "all NA"; no points is a matrix of no rows
+  if (length(x) == 0L) return(matrix(0, 0L, basis@dimension))
   out <- splines2::bSpline(
     x,
     knots = p$knots,

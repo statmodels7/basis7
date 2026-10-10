@@ -16,15 +16,15 @@ name_columns(m, basis)
 }
 \description{
 Sets \code{colnames(m)} to \code{\link[=basis_colnames]{basis_colnames()}} of the basis and returns the
-matrix. Every method returning an \code{n} by \verb{@dimension} matrix ends with a
-call to it, so the evaluation, the derivatives of every order, the integral
-and the Gram matrix of one basis all carry the same column names in the
-same order.
+matrix. The methods that return an \code{n} by \verb{@dimension} matrix end with a
+call to it, so the evaluation, the derivatives of every order and the
+integral of one basis carry the same column names in the same order; the
+Gram methods set the same names on both margins.
 }
 \details{
-The names come from the basis, so a matrix with the wrong number of
-columns produces R's own recycling error instead of a silently mislabeled
-result. Nothing else is checked.
+A matrix with the wrong number of columns signals R's error that the
+length of the dimnames does not equal the extent of the array. The
+function checks nothing else.
 }
 \seealso{
 \code{\link[=basis_colnames]{basis_colnames()}}, which supplies the names.

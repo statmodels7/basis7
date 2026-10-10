@@ -2,14 +2,14 @@
 % Please edit documentation in R/smoother.R, R/smoother_families.R
 \name{smoother_gram}
 \alias{smoother_gram}
-\title{The Roughness Matrix a Smoother Penalizes With}
+\title{The Roughness Matrix of a Smoother}
 \usage{
 smoother_gram(sm, b, x, ...)
 }
 \arguments{
 \item{sm}{A \link{smoother}.}
 
-\item{b}{The basis \code{\link[=smoother_basis]{smoother_basis()}} returned.}
+\item{b}{The basis returned by \code{\link[=smoother_basis]{smoother_basis()}}.}
 
 \item{x}{The covariate, for the empirical measure.}
 
@@ -22,16 +22,14 @@ smoothing parameter each, as \code{\link[=adaptive_smooth]{adaptive_smooth()}}'s
 }
 \description{
 The Gram matrix of the derivative of order \code{sm@order}, integrated against
-the measure the smoother carries: the length measure on the interval for
+the measure of the smoother: the length measure on the interval for
 \code{"lebesgue"}, the empirical measure of the covariate for \code{"empirical"},
 and the density a function gives otherwise.
 }
 \details{
-The measure is not decorative. Measured on a cubic B-spline of twelve
-functions over \eqn{[-2, 2]} at order 2, the correlation between the
-Lebesgue Gram matrix and the one weighted by a Gaussian of standard
-deviation 0.25 is 0.11: they are different penalties, and a fit under one
-is not a fit under the other.
+The measure changes the penalty: the Gram matrices under two measures are
+different matrices, and a fit under one measure differs from a fit under
+another.
 }
 \examples{
 set.seed(1)
@@ -40,7 +38,7 @@ sm <- bspline_smooth(k = 8, lower = -2, upper = 2)
 g <- smoother_gram(sm, smoother_basis(sm, x), x)
 dim(g)
 
-# the measure is a different penalty, not a detail
+# another measure gives a different penalty
 sme <- bspline_smooth(k = 8, lower = -2, upper = 2,
                       measure = "empirical")
 round(cor(as.vector(g),

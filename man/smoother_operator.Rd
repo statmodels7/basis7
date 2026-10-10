@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R
 \name{smoother_operator}
 \alias{smoother_operator}
-\title{The Operator a Smoother Penalizes With, Resolved}
+\title{The Resolved Penalty Operator of a Smoother}
 \usage{
 smoother_operator(sm, x)
 }

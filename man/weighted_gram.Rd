@@ -8,12 +8,13 @@ weighted_gram(basis, order, weight, panels = 50L, nodes = 12L, ...)
 }
 \arguments{
 \item{basis}{A basis object of one variable, of any class inheriting from
-\link{basis}. More than one variable throws.}
+\link{basis}.}
 
 \item{order}{The derivative order, already validated by \code{\link[=check_order]{check_order()}}.}
 
 \item{weight}{A function of one numeric vector returning one non-negative
-value per point. A wrong length, an \code{NA} or a negative value throws.}
+value per point. A wrong length, an \code{NA} or a negative value signals an
+error.}
 
 \item{panels}{The number of equal subintervals, default \code{50}.}
 
@@ -28,9 +29,9 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
 Computes \eqn{\int_a^b B^{(d)}(t)\, B^{(d)}(t)^\top w(t)\,\mathrm{d}t}
-by composite Gauss-Legendre. A weight is an arbitrary function, so no
-family has a closed form for it and the quadrature is always run. Called
-from the body of \code{\link[=basis_gram]{basis_gram()}} when \code{weight} is supplied.
+by composite Gauss-Legendre. A weight is an arbitrary function, so the
+quadrature is always run. Called from the body of \code{\link[=basis_gram]{basis_gram()}} when
+\code{weight} is supplied.
 }
 \details{
 The interval is cut into \code{panels} equal pieces and an \code{nodes}-point
@@ -40,14 +41,11 @@ into the quadrature weights and the matrix formed as a crossproduct of
 \eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps the result positive
 semidefinite whatever the weight does.
 
-Measured against the closed forms at \eqn{w \equiv 1} with the defaults,
-worst absolute entry: 5e-15 at order 0 and 2e-11 at order 2 for Fourier and
-Legendre; 5e-12 at order 0 and 1.4e-3 at order 2 for a cubic B-spline over
-eight knots, 2e-6 of the matrix's own scale, the second derivative there
-having kinks the panel breaks do not line up with. Raise \code{panels} when a
-family's derivative is not smooth.
+For a spline the accuracy is limited by the kinks of the derivative at
+knots that the panel breaks do not line up with; \code{panels} is raised when a
+derivative is not smooth.
 
-A basis of several variables is refused: the rule above is
+A basis of several variables is rejected, the rule being
 one-dimensional.
 }
 \seealso{

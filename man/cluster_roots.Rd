@@ -7,9 +7,9 @@
 cluster_roots(rt, tol)
 }
 \arguments{
-\item{rt}{The complex roots.}
+\item{rt}{The complex roots, scaled to unit size.}
 
-\item{tol}{The relative tolerance.}
+\item{tol}{The tolerance.}
 }
 \value{
 A list of \code{root} and \code{mult} pairs, ordered by the real part and
@@ -17,7 +17,8 @@ then the imaginary part.
 }
 \description{
 Clusters the output of \code{\link[base:polyroot]{base::polyroot()}} so that roots within \code{tol} of one
-another, relative to their own size, are read as one root of higher
-multiplicity.
+another are read as one root of higher multiplicity. \code{\link[=operator_null]{operator_null()}}
+passes the roots of the polynomial scaled to unit root size, so that \code{tol}
+is relative to the size of the roots.
 }
 \keyword{internal}

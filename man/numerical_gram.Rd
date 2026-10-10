@@ -11,7 +11,7 @@ numerical_gram(basis, order = 0L, panels = 50L, nodes = 12L)
 
 \item{order}{The derivative order, default \code{0}. Passed through
 \code{\link[=check_order]{check_order()}}, so a single non-zero order on a basis of several
-variables throws.}
+variables signals an error.}
 
 \item{panels}{The number of equal subintervals, default \code{50}, divided among
 the coordinates as above for a basis of several variables.}
@@ -34,12 +34,11 @@ Gram matrix against.
 The interval is cut into \code{panels} equal pieces with an \code{nodes}-point rule
 on each, and the matrix is formed as a crossproduct of
 \eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps it positive semidefinite
-whatever the integrand does. It is then symmetrized as \code{(G + t(G))/2}, the
-two triangles of a crossproduct differing in their last bits.
+whatever the integrand does. It is then symmetrized as \code{(G + t(G))/2}.
 }
 
 \section{Several variables}{
-The rule is a product over the box: the nodes are the lattice of the
+The rule is a product over the box: the nodes are the product grid of the
 marginal rules and the weights their products. Each coordinate gets
 \code{max(2, ceiling(panels^(1/d)))} panels, so the total node count stays near
 \code{panels * nodes^d} and does not grow as \code{panels^d}. At the defaults on two
@@ -47,12 +46,10 @@ variables that is 8 panels of 12 nodes per coordinate, 9216 points.
 }
 
 \section{Accuracy}{
-Equal panels line up with nothing in particular, so a family whose
-derivative has kinks is integrated less well than one whose does not. On a
-polynomial family the order-0 matrix agrees with the closed form to
-5.2e-15; on a cubic B-spline at order 2, where the second derivative kinks
-at knots the panels miss, the same comparison is 1.4e-03, or 2.1e-06
-relative. Raising \code{panels} is the remedy where the breaks cannot be aligned.
+Equal panels are not aligned with the knots of a spline, so a family
+whose derivative has kinks is integrated less accurately than a smooth
+one; on a polynomial family the result is exact to rounding. A larger
+\code{panels} reduces the error where the breaks cannot be aligned.
 }
 
 \seealso{

@@ -8,20 +8,20 @@ numerical_deriv_matrix(f, x, order, lower, upper, step_scale = 1)
 }
 \arguments{
 \item{f}{A function of one numeric vector returning a numeric matrix with
-one row per element. Called \code{2 * reach + 1} times, so a costly \code{f} is
-evaluated three or five times over.}
+one row per element. Called \code{max(2 * reach + 1, order + 2)} times, from
+three times at order 1 to six at order 4.}
 
 \item{x}{A numeric vector of evaluation points. \code{NA} entries are given the
 central stencil and propagate to an \code{NA} row.}
 
 \item{order}{The derivative order, a single positive whole number.}
 
-\item{lower, upper}{The endpoints of the interval \code{f} is defined on, used to
-choose each point's stencil and to cap the step.}
+\item{lower, upper}{The endpoints of the interval on which \code{f} is defined,
+used to choose each point's stencil and to cap the step.}
 
 \item{step_scale}{A multiplier on the step, default \code{1}. \code{\link[=fd_reference]{fd_reference()}}
-passes \code{0.5} to measure the reference's own uncertainty by how much the
-answer moves.}
+passes \code{0.5} to measure the uncertainty of the reference by the change in
+the result.}
 }
 \value{
 A numeric matrix with \code{length(x)} rows and as many columns as \code{f}
@@ -32,47 +32,53 @@ Estimates the \code{order}-th derivative of \code{f} at each point of \code{x} b
 finite-difference stencil, symmetric where the interval leaves room for it
 and one-sided where it does not. One stencil of the order wanted, never a
 composition of lower-order differences, so the error is the truncation of
-that one formula. The engine behind every numerical fallback in the
-package.
+that one formula. It computes the numerical derivatives of every basis; the
+numerical integral and Gram matrix use Gauss-Legendre quadrature through
+\code{\link[=quad_rule]{quad_rule()}} instead.
 }
-\section{One stencil per point, chosen by the room available}{
+\section{Choice of the stencil}{
 A basis is evaluated at its endpoints as readily as anywhere else, and a
-symmetric stencil centered on an endpoint would ask for points outside the
-interval, where the basis throws. Each point therefore gets the central
-stencil when both sides have room, and otherwise the one-sided stencil that
-points inward, with the same order and the same number of nodes. All three
-weight vectors come from \code{\link[numericals7:fd_weights]{numericals7::fd_weights()}} on the offsets
-\code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}} supplies.
+symmetric stencil centered on an endpoint would need points outside the
+interval, where the basis signals an error. Each point therefore gets the
+central stencil when both sides have room, and otherwise the one-sided
+stencil that points inward. The one-sided stencils have \code{order + 2} nodes,
+so that they keep the second-order accuracy of the central one, which at an
+even order has one node fewer; the central stencil is padded with zero
+weights to the same length. The weights come from
+\code{\link[numericals7:fd_weights]{numericals7::fd_weights()}}, and the central offsets from
+\code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}}.
 
-Accuracy is not lost at the ends. Measured against exact Legendre
-derivatives on \eqn{[0, 1]}, the first derivative agrees to 5.1e-10
-relative at the two endpoints and to 3.9e-10 in the interior.
+The one-sided stencils carry a larger error constant. Measured against
+exact Legendre derivatives of dimension 5 on \eqn{[0, 1]}, relative to the
+scale of the result, the first derivative agrees to 5.1e-10 at the two
+endpoints and to 3.9e-10 in the interior, the second to 1.3e-07 and
+1.5e-08.
 }
 
 \section{The step}{
-The step is \code{\link[numericals7:fd_step]{numericals7::fd_step()}}'s,
+The step is that of \code{\link[numericals7:fd_step]{numericals7::fd_step()}},
 \eqn{\varepsilon^{1/(d+2)}\max(1, \lvert x\rvert)}, which balances
-truncation against rounding for order \eqn{d}. It is written nowhere in
-this package, a second copy of a rule with one home being how two packages
-come to disagree.
+truncation against rounding for order \eqn{d}. The rule is not repeated in
+this package, so that it has a single definition in \pkg{numericals7}.
 
-It is then capped at \code{0.4 * (upper - lower) / (2 * reach)} so that the
-whole stencil fits inside the interval: \code{0.2} of the width at orders 1 and
-2, where the stencil has three nodes, and \code{0.1} at orders 3 and 4, where it
-has five.
+It is then capped at \code{0.4 * (upper - lower) / (2 * reach)}, \code{reach} being
+the half-width of the central stencil, so that every stencil fits inside
+the interval: \code{0.2} of the width at orders 1 and 2, and \code{0.1} at orders 3
+and 4.
 }
 
 \section{What it costs in accuracy}{
-Measured against exact Legendre derivatives at 21 interior points of
-\eqn{[0, 1]}, relative to the scale of the answer: 3.9e-10 at order 1,
-1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4. That is what
-a family which registers no derivative method gets, and the reason to write
-a closed form where one exists.
+Measured against exact Legendre derivatives of dimension 5 at 21 interior
+points of \eqn{[0, 1]}, relative to the scale of the result: 3.9e-10 at
+order 1, 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4,
+and about ten times more at the endpoints from order 2 on. A closed form,
+where one exists, is exact.
 }
 
 \seealso{
 \code{\link[numericals7:fd_weights]{numericals7::fd_weights()}}, \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}} and
-\code{\link[numericals7:fd_step]{numericals7::fd_step()}}, which supply the three pieces;
+\code{\link[numericals7:fd_step]{numericals7::fd_step()}}, which supply the weights, the central offsets
+and the step;
 \code{\link[=basis_deriv.basis]{basis_deriv.basis()}}, its main caller.
 }
 \keyword{internal}

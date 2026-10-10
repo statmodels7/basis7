@@ -14,8 +14,8 @@ they never arrive here. Named only because S7 requires a method's formals
 to contain the generic's.}
 
 \item{...}{Passed to \code{\link[=numerical_gram]{numerical_gram()}} on the non-full-period branch,
-where \code{panels} and \code{nodes} control the quadrature. Ignored on the closed
-branch.}
+where \code{panels} and \code{nodes} control the quadrature. On the closed branch
+\code{panels} or \code{nodes} signals an error.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
@@ -46,10 +46,11 @@ When \code{basis_params$full_period} is \code{FALSE} the method delegates to
 result is a full matrix.
 
 \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram} as \code{TRUE} on such a basis,
-the family answering through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}
-rather than through the class the method is registered on, which is
-\code{FourierBasis} in both branches. \code{\link[=check_basis]{check_basis()}} reads the same predicate,
-so it holds this matrix to the tolerance a quadrature deserves.
+through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}, although the method is
+registered on \code{FourierBasis} in both branches. \code{\link[=check_basis]{check_basis()}} reads the
+same predicate, and on this branch tests the matrix for symmetry and
+positive semidefiniteness without comparing it with a second
+quadrature.
 }
 
 \seealso{

@@ -16,16 +16,16 @@ variable for a basis of several. A \link{LinearOperator} instead gives
 \eqn{\int (Lb)(Lb)^\top}, the roughness matrix of that operator, and
 routes to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.}
 
-\item{at}{An optional numeric vector of points, or a matrix of
-\code{\link[=basis_nvar]{basis_nvar()}} columns. When given, the inner products are taken against
-the empirical measure of those points and divided by their number.
-Missing values are dropped before evaluation; no usable point left
-throws.}
+\item{at}{An optional numeric vector of points for a basis of one
+variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns. When given, the inner
+products are taken against the empirical measure of those points and
+divided by their number. Missing values are dropped before evaluation,
+and an error is signalled if no usable point is left.}
 
 \item{weight}{An optional function of one numeric vector returning one
-non-negative value per point, a density to weight the integral by.
-Refused for a basis of several variables. A function returning the wrong
-length, an \code{NA} or a negative value throws.}
+non-negative value per point, a density to weight the integral by. A
+basis of several variables is rejected, and so is a function returning
+the wrong length, an \code{NA} or a negative value.}
 
 \item{...}{Passed to methods, and to \code{\link[=weighted_gram]{weighted_gram()}} when \code{weight} is
 given, where \code{panels} and \code{nodes} control the quadrature.}
@@ -33,55 +33,58 @@ given, where \code{panels} and \code{nodes} control the quadrature.}
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
 with \code{\link[=basis_colnames]{basis_colnames()}} on both margins. Positive semidefinite, and
-singular for any \code{order >= 1}.
+singular for \code{order >= 1} when the span of the basis contains the
+constant.
 }
 \description{
 Returns the matrix of inner products of the \code{order}-th derivatives of the
 basis functions,
-\deqn{G_{ab} = \int_{a}^{b} \varphi_a^{(d)}(t)\,\varphi_b^{(d)}(t)\,
+\deqn{G_{ij} = \int_{\ell}^{u} \varphi_i^{(d)}(t)\,\varphi_j^{(d)}(t)\,
   \mathrm{d}t,}
-which is the matrix of a roughness penalty: \eqn{\beta^\top G_2 \beta} is
-exactly \eqn{\int (f'')^2} for the function \eqn{f} the coefficients
-describe. The three shipped families compute it in closed form, so no
-quadrature error enters a penalized fit.
+with \eqn{[\ell, u]} the basis interval. It is the matrix of a roughness
+penalty: \eqn{\beta^\top G_2 \beta} is exactly \eqn{\int (f'')^2} for the
+function \eqn{f} described by the coefficients. The shipped families
+compute it exactly, by formulas or by a quadrature exact for their
+integrands, so no quadrature error enters a penalized fit.
 }
-\section{What it is and what it is not}{
-The Gram matrix is an inner product of basis functions, so it depends on
-the basis and the interval and on nothing else. It says which combinations
-of coefficients are wiggly; how hard to shrink them is a separate decision
-belonging to whatever fits the model.
+\section{Definition and properties}{
+The Gram matrix is an inner product of basis functions, so it depends only
+on the basis and the interval. It identifies which combinations of
+coefficients are rough; how strongly to shrink them is decided separately,
+by the routine that fits the model.
 
 It is symmetric and positive semidefinite by construction. At \code{order = 0}
 it is positive definite for a basis of linearly independent functions. At
-any \code{order >= 1} it is singular, the constant differentiating to zero, and
-its null space has dimension \code{order} for a family that contains the
-polynomials of that degree.
+\code{order >= 1} it is singular whenever the span of the basis contains the
+constant, which differentiates to zero, and its null space has dimension
+\code{order} when the span contains the polynomials of degree below \code{order} and
+\code{order} does not exceed the degree of the family. Above the degree of a
+spline or a polynomial basis the matrix is zero.
 }
 
 \section{Three measures}{
-The default is Lebesgue measure on the basis interval, computed from a
-closed form by every shipped family.
+The default is Lebesgue measure on the basis interval, computed exactly by
+every shipped family (for a Fourier basis, when the interval is a whole
+period).
 
 \code{at} replaces it with the empirical measure of the points given,
-\eqn{B^{(d)\top} B^{(d)} / n}. That is the matrix a design matrix
-produces, and the one to diagonalize against when the construction should
+\eqn{B^{(d)\top} B^{(d)} / n}. That is the matrix produced by a design
+matrix, and the one to diagonalize against when the construction should
 depend on where the data lie; \code{\link[=dr_basis]{dr_basis()}} uses it.
 
 \code{weight} takes a weighted Lebesgue measure \eqn{\int B B^\top w}, by
 composite Gauss-Legendre over 50 panels of 12 nodes. A weight is an
-arbitrary function, so no family has a closed form and the quadrature is
-always run. Measured against the closed forms with \eqn{w \equiv 1}: 5e-15
-for Fourier and Legendre at order 0, and 2e-11 at order 2; for a cubic
-B-spline 5e-12 at order 0 and 2e-6 relative at order 2, where the second
-derivative has kinks at knots that the panel breaks do not line up with.
-Give at most one of \code{at} and \code{weight}; both together throws.
+arbitrary function, so the quadrature is always run, and for a spline it
+is approximate where the derivative has kinks at knots that the panels do
+not line up with. At most one of \code{at} and \code{weight} may be given.
 }
 
-\section{Where the arguments are handled}{
-\code{at} and \code{weight} are dealt with in the body of the generic, before
-dispatch, so a method never sees either and returns the plain Lebesgue
-matrix alone. A method must still carry both names in its signature, S7
-requiring a method's formals to contain the generic's.
+\section{Handling of the arguments}{
+For a whole \code{order}, \code{at} and \code{weight} are handled in the body of the
+generic, before dispatch, so a method receives neither and returns the
+plain Lebesgue matrix. A method must still carry both names in its
+signature, S7 requiring a method's formals to contain the generic's. For
+an operator \code{order} both are passed to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.
 }
 
 \examples{
@@ -92,7 +95,7 @@ round(basis_gram(b), 6)
 round(basis_gram(b, order = 1), 4)
 
 # The order-2 matrix is the penalty matrix: beta' G beta is the integrated
-# squared second derivative, which a fine trapezoid rule confirms to 6e-11.
+# squared second derivative, which a fine trapezoid rule confirms.
 p <- poly_basis(dimension = 5)
 beta <- c(0.2, 1.1, -0.4, 0.8, 0.1)
 tt <- seq(0, 1, length.out = 200001)

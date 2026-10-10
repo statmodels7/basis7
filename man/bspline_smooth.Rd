@@ -18,9 +18,9 @@ bspline_smooth(
 )
 }
 \arguments{
-\item{k}{The number of basis functions, a whole number of at least 3. Two
-directions are removed by the constraint, so a smaller \code{k} leaves
-nothing to smooth.}
+\item{k}{The number of basis functions, a whole number of at least
+\code{degree + 1} and greater than the number of directions the constraint
+removes, which is \code{order} by default.}
 
 \item{degree}{The degree of the B-spline pieces, a whole number of at
 least 1. \code{3}, the default, is the cubic spline.}
@@ -28,31 +28,33 @@ least 1. \code{3}, the default, is the cubic spline.}
 \item{order}{What the penalty measures: a \link{LinearOperator} from
 \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}}, \code{\link[=oscillator_operator]{oscillator_operator()}} or
 \code{\link[=linear_operator]{linear_operator()}}, or a whole number \code{m} as the shorthand for
-\code{deriv_operator(m)}. It says what a strongly penalized fit contracts
-toward, which for \code{m} is a constant at 1, a straight line at 2 and a
-parabola at 3, and for any operator is \code{\link[=operator_null]{operator_null()}}.
-A spline of degree \code{d} has no derivative above \code{d}, so an operator of
-order above \code{degree} is rejected.}
+\code{deriv_operator(m)}. It determines the functions toward which a
+strongly penalized fit contracts: a constant for \code{m = 1}, a straight
+line for 2, a parabola for 3, and the functions of \code{\link[=operator_null]{operator_null()}}
+for any operator. The derivatives of a spline of degree \code{d} vanish above
+order \code{d}, so an operator of order above \code{degree} is rejected.}
 
-\item{measure}{The measure the roughness is integrated against.}
+\item{measure}{The measure against which the roughness is integrated.}
 
-\item{constrain}{The directions the smooth is made orthogonal to. \code{NULL},
-the default, is the null space of the basis and the penalty together.}
+\item{constrain}{The directions to which the smooth is made orthogonal.
+\code{NULL}, the default, is the null space of the penalty, the polynomials
+of degree below \code{order}.}
 
-\item{null_space}{What becomes of the directions the penalty does not
-see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
-\code{"shrink"} penalizes them under the same smoothing parameter.}
+\item{null_space}{What happens to the directions that the penalty does
+not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
+\code{"shrink"} penalizes them under the same smoothing parameter with a
+weight of one tenth.}
 
-\item{reparam}{The coordinates the coefficients live in. \code{"dr"}, the
-default, is the Demmler-Reinsch rotation.}
+\item{reparam}{The coordinates in which the coefficients are expressed.
+\code{"dr"}, the default, is the Demmler-Reinsch rotation.}
 
 \item{penalty}{\code{NULL} for the quadratic roughness penalty, or a factory
 building a penalty from a coefficient count. See the section on the
 smoother's own page.}
 
-\item{lower, upper}{The interval. \code{NULL}, the default for each, reads it
-from the data at build; give both to fix it, which is what a prediction
-outside the observed range needs.}
+\item{lower, upper}{The interval. \code{NULL}, the default for each, reads
+that endpoint from the data at build. A given endpoint is fixed, as a
+prediction beyond that end of the observed range requires.}
 }
 \value{
 An S7 object of class \link{BsplineSmoother}, inheriting from
@@ -62,31 +64,35 @@ covariate to obtain the block and its penalty matrix.
 \description{
 The B-spline smoother: \code{k} B-spline functions of degree \code{degree} over an
 interval, penalized by the integrated squared derivative of order \code{order},
-rotated to the Demmler-Reinsch coordinates and carrying the unpenalized
-direction as a free column. It is the construction \code{\link[modelterms7:s]{modelterms7::s()}} has
-always used, named as an object.
+rotated to the Demmler-Reinsch coordinates and, with the null space kept,
+carrying the unpenalized polynomial directions as free columns. It is the
+construction used by \code{\link[modelterms7:s]{modelterms7::s()}}.
 }
 \section{The construction}{
 At a vector of covariate values \code{\link[=smoother_build]{smoother_build()}} performs, in order:
 \enumerate{
-\item a \code{\link[=bspline_basis]{bspline_basis()}} of \code{k} functions over the interval, which is
-\code{lower} and \code{upper} when both are given and otherwise the range of the
-data padded by a thousandth of its width;
-\item \code{\link[=dr_basis]{dr_basis()}}, which restricts the basis to the orthogonal complement of
-the constant and the linear function over the observed values, then
-diagonalizes the pencil of the empirical Gram matrix against the
+\item a \code{\link[=bspline_basis]{bspline_basis()}} of \code{k} functions over the interval, whose
+endpoints are \code{lower} and \code{upper} where given and otherwise the ends of
+the range of the data, padded by a thousandth of its width;
+\item \code{\link[=dr_basis]{dr_basis()}}, which restricts the basis to the orthogonal complement,
+over the observed values, of the polynomials of degree below \code{order}
+(the constant and the linear function at the default \code{order = 2}),
+then diagonalizes the pencil of the empirical Gram matrix against the
 roughness matrix. The result is a basis whose columns are orthogonal
 over the data and ordered from the smoothest to the most oscillatory,
 and whose penalty is the identity;
-\item with \code{null_space = "keep"}, the standardized covariate prepended as a
-free column, so the penalty is \code{diag(0, 1, ..., 1)} and a strongly
-penalized fit contracts to a straight line rather than to a constant.
+\item with \code{null_space = "keep"}, the polynomial directions of degree 1 to
+\code{order - 1} prepended as free columns. At the default \code{order = 2} this
+is the standardized covariate, so the penalty is \code{diag(0, 1, ..., 1)}
+and a strongly penalized fit contracts to a straight line and not to a
+constant.
 }
 
-A basis of \code{k} functions therefore gives \code{k - 1} columns when the null
-space is kept and \code{k - 2} when it is dropped: the constraint against the
-constant and the linear function removes two directions, and the free
-column adds one back.
+At the default \code{order = 2}, a basis of \code{k} functions therefore gives
+\code{k - 1} columns when the null space is kept and \code{k - 2} when it is
+dropped: the constraint removes two directions, and the free column adds
+one back. At order \eqn{m} the constraint removes \eqn{m} directions and a
+kept null space restores \eqn{m - 1} of them.
 }
 
 \section{What \code{order} means}{

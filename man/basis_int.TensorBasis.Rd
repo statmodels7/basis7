@@ -19,11 +19,11 @@ exactly zero in the row at the lower corner.
 Returns the integral over the box from the lower corner to each point, one
 iterated integral per variable, in closed form wherever the margins have
 one. It is the only integral over a box in the package, the numerical
-fallback taking one variable alone.
+fallback handling one variable alone.
 }
 \details{
 The integrand separates, so the multiple integral is the product of the
-marginal integrals. The anchoring convention of \code{\link[=basis_int]{basis_int()}} survives
+marginal integrals. The anchoring convention of \code{\link[=basis_int]{basis_int()}} holds
 without a correction: a product in which every factor is zero at the corner
 is zero at the corner, so the row at \code{basis@lower} is exactly zero.
 }

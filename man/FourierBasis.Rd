@@ -14,8 +14,8 @@ FourierBasis(
 }
 \arguments{
 \item{basis_name}{A single string naming the family, printed by
-\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Not read by
-any computation.}
+\code{\link[=print.basis]{print.basis()}} and used by wrappers to build their own name. Its first
+two characters form the default column names of \code{\link[=basis_colnames]{basis_colnames()}}.}
 
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
@@ -26,7 +26,7 @@ length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
 \code{\link[=basis_nvar]{basis_nvar()}} reports.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
-knots and degree of a B-spline, the frequency of a Fourier basis, the
+knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 }
@@ -40,18 +40,18 @@ it rejects an even dimension, defaults the period and records all three.
 The S7 class of Fourier bases, the objects \code{\link[=fourier_basis]{fourier_basis()}} returns. It
 adds no property to \link{basis} and exists as the class the trigonometric
 methods dispatch on. A Fourier basis holds a constant function and pairs of
-sines and cosines of increasing frequency, and answers every derivative and
-its integral from one identity.
+sines and cosines of increasing frequency, and its derivatives and integral
+all follow from one identity.
 }
-\section{One identity for every order}{
+\section{The phase-shift identity}{
 Writing \eqn{z = 2\pi (x - \ell)/\omega} for the phase and \eqn{\omega}
 for the period,
 \deqn{\frac{\mathrm{d}^{k}}{\mathrm{d}x^{k}} \sin(j z)
       = \left(\frac{2\pi j}{\omega}\right)^{k}
         \sin\!\left(j z + \frac{k\pi}{2}\right),}
 and the same for the cosine. Differentiating a sinusoid shifts its phase by
-a quarter turn and multiplies it by its frequency, so no order is a special
-case and the fourth derivative costs exactly what the first does.
+a quarter turn and multiplies it by its frequency, so every order follows
+the same rule and the fourth derivative costs what the first does.
 
 The identity holds for negative \eqn{k}, which is where the antiderivative
 comes from: \code{\link[=basis_int.FourierBasis]{basis_int.FourierBasis()}} evaluates it at \eqn{k = -1} and
@@ -61,7 +61,8 @@ subtracts the value at the lower endpoint.
 \section{Its \code{basis_params}}{
 Three entries. \code{omega} is the period, \code{n_pairs} is
 \code{(dimension - 1) \%/\% 2}, and \code{full_period} records whether \code{omega} equals
-the width of the interval. The last decides which route
+the width of the interval, up to the tolerance of \code{\link[=all.equal]{all.equal()}}. The last
+decides which route
 \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} takes: a closed diagonal matrix when it is
 \code{TRUE}, a quadrature when it is not.
 }

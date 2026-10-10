@@ -28,13 +28,10 @@ nor the coefficient array appears anywhere.
 \details{
 Each margin is evaluated once and multiplied by its own factor matrix,
 giving \eqn{D} matrices of size \eqn{n \times F}; their elementwise
-product, summed across columns, is the answer. The cost is
-\eqn{O(nF\sum_j K_j)} in time and memory, linear in the number of variables
-where the array is exponential in it: measured at four margins of eight
-functions, 20000 points and \eqn{F = 3}, 0.03 s against the blocked array
-route's 0.83 s.
-
-Against the array it stands for, the two routes agree to 1.7e-16.
+product, summed across columns, is the result. The cost is
+\eqn{O(nF\sum_j K_j)} in time and memory, linear in the number of
+variables where the array is exponential in it. The result agrees with
+the contraction of the array that the factors define, up to rounding.
 }
 \references{
 Ruegamer, D. (2024). Scalable higher-order tensor product spline models.

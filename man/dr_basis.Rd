@@ -52,51 +52,46 @@ the remaining functions empirically orthogonal to a constant and to
 and the transform is \eqn{T = V_0 A}.
 
 The resulting design matrix \eqn{Z = B T} then has \eqn{Z^\top Z} diagonal
-and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0}. Measured on a B-spline of
-twelve functions at 200 random points: the largest off-diagonal entry of
-\eqn{Z^\top Z} is 8.3e-14 and the largest entry of
-\eqn{(\mathbf{1}, x)^\top Z} is 1.3e-14.
+and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0}, both up to rounding.
 }
 
 \section{What \code{scale} does to the penalty}{
 \eqn{T^\top P T} is \strong{proportional to} the identity, and equal to it only
 when \code{scale = FALSE}. With \code{scale = TRUE}, the default, \eqn{T} is divided
 by \eqn{\sqrt{\sum_j \lambda_j}}, so \eqn{T^\top P T} is
-\eqn{(\sum_j \lambda_j)^{-1} I}: on the example above, 481.6 times the
-identity, with \verb{tr(Z'Z/n)} exactly 1. At \code{scale = FALSE} the two swap,
-\eqn{T^\top P T} being the identity to 8.3e-14 and \verb{tr(Z'Z/n)} being
-0.00208.
+\eqn{(\sum_j \lambda_j)^{-1} I} and \verb{tr(Z'Z/n)} is 1. At \code{scale = FALSE}
+\eqn{T^\top P T} is the identity and \verb{tr(Z'Z/n)} is
+\eqn{\sum_j \lambda_j}.
 
-The scaling is what puts the bases of different terms on a common footing,
-so one smoothing parameter means the same thing across them. A consumer
-that needs the penalty to be exactly \eqn{I} passes \code{scale = FALSE}.
+The scaling puts the bases of different terms on a common footing, so one
+smoothing parameter means the same thing across them. A consumer that
+needs the penalty to be exactly \eqn{I} passes \code{scale = FALSE}.
 
 \code{basis_params$empirical_variance} holds the eigenvalues, normalized to sum
-to one when \code{scale = TRUE}, and they are exactly \verb{diag(Z'Z/n)}: the share
-of empirical variance each column carries, falling from 0.834 for the
-smoothest to 4.4e-05 for the wiggliest on the example above.
+to one when \code{scale = TRUE}. They equal \verb{diag(Z'Z/n)} up to rounding, and
+are the share of empirical variance each column carries, falling from the
+smoothest column to the wiggliest.
 }
 
-\section{What this construction costs}{
+\section{Cost and properties}{
 It factorizes only a \eqn{q \times K} matrix and a
 \eqn{(K-q) \times (K-q)} one, never anything of the size of the sample. It
-tolerates a rank-deficient \eqn{B}, which equally spaced knots produce
-whenever the data leave a knot span empty, the matrix inverted being the
-penalty. And the transform is kept, so prediction at new points is the
+tolerates a rank-deficient \eqn{B}, which equally spaced knots produce when
+the data leave \code{degree + 1} or more consecutive knot spans of a B-spline
+empty, the matrix inverted being the penalty. The transform is kept, so prediction at new points is the
 parent's evaluation multiplied by it, as for any other transformed basis.
 
-That last property is what separating a linear from a nonlinear effect
-needs: a reparametrization not satisfying \eqn{(\mathbf{1}, x)^\top Z = 0}
-estimates the sum of the two correctly and the split between them with
-bias.
+The orthogonality \eqn{(\mathbf{1}, x)^\top Z = 0} is what separates a
+linear from a nonlinear effect: a reparametrization without it estimates
+the sum of the two correctly and the split between them with bias.
 }
 
 \section{Errors}{
 A missing value in \code{x}, a \code{penalty} that is not \code{K} by \code{K}, or a
-\code{constraints} with the wrong number of columns each throw. A penalty
-singular on the constrained space throws with the two remedies named:
-there is then a direction neither penalized nor identified, and no rotation
-can fix it.
+\code{constraints} with the wrong number of columns each signal an error. A
+penalty singular on the constrained space signals an error that names two
+remedies: there is then a direction that is neither penalized nor
+identified, and a rotation of the basis cannot remove it.
 }
 
 \examples{
@@ -114,7 +109,7 @@ max(abs(crossprod(z)[upper.tri(crossprod(z))]))
 max(abs(crossprod(cbind(1, x), z)))
 
 # The columns run from smoothest to wiggliest, and the recorded shares of
-# empirical variance are exactly the diagonal of Z'Z/n.
+# empirical variance are the diagonal of Z'Z/n.
 round(d@basis_params$empirical_variance, 6)
 max(abs(d@basis_params$empirical_variance - diag(crossprod(z)) / length(x)))
 

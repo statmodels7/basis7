@@ -17,7 +17,6 @@ An S7 object of class \link{LinearOperator}.
 \description{
 Normalizes the \code{order} argument every smoother family takes: a whole
 number \code{m} becomes \code{deriv_operator(m)} and an operator is returned
-unchanged. It is what makes \code{order = 2} the shorthand rather than a
-second way of saying the same thing.
+unchanged, so that \code{order = 2} is a shorthand for \code{deriv_operator(2)}.
 }
 \keyword{internal}

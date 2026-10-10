@@ -12,29 +12,27 @@ An S7 object of class \link{LinearOperator}.
 \description{
 \code{L1 * L2} is the operator that applies one after the other. Composition
 multiplies the characteristic polynomials, so the order of the product is
-the sum of the orders and its null space is the union of the two null
-spaces.
+the sum of the orders. Its null space contains the null space of each
+factor; a root common to both factors appears with the sum of its
+multiplicities, which adds powers of \eqn{t}.
 }
 \details{
-The union is what makes composition worth having: an operator whose
-penalty leaves both a linear trend and a seasonal cycle alone is
-\code{deriv_operator(2) * oscillator_operator(365)}, and there is no reason to
-write its four weights by hand. Composition commutes, these operators
-having constant coefficients.
+An operator whose penalty leaves both a linear trend and a seasonal cycle
+unpenalized is \code{deriv_operator(2) * oscillator_operator(365)}, built
+without writing its four weights by hand. Composition commutes, these
+operators having constant coefficients.
 
-⚠️ Compose with \code{\link[=oscillator_operator]{oscillator_operator()}} and not with
-\code{\link[=harmonic_operator]{harmonic_operator()}}, unless the extra power of \eqn{t} is wanted. The
-harmonic operator already carries a leading \eqn{D}, so
-\code{deriv_operator(2) * harmonic_operator(365)} is \eqn{D^3(D^2 + \nu^2)},
-of order 5, whose null space is \eqn{1, t, t^2, \sin\nu t, \cos\nu t}. The
-arithmetic is right either way and the dimension of the null space is
-always the order; which of the two is meant is the thing to read off
-\code{\link[=operator_null]{operator_null()}} before fitting.
+The factor to compose with is \code{\link[=oscillator_operator]{oscillator_operator()}}, unless the extra
+power of \eqn{t} is wanted. The harmonic operator already carries a
+leading \eqn{D}, so \code{deriv_operator(2) * harmonic_operator(365)} is
+\eqn{D^3(D^2 + \nu^2)}, of order 5, whose null space is
+\eqn{1, t, t^2, \sin\nu t, \cos\nu t}. The dimension of the null space is
+always the order, and \code{\link[=operator_null]{operator_null()}} shows which functions it holds.
 
 An operator whose period has not been resolved cannot be composed: the
 weights of the product depend on the period, and resolving afterwards
-would have to know which factor it came from. Give the period, or compose
-after \code{\link[=operator_resolve]{operator_resolve()}}.
+would require knowing which factor it came from. The period is given
+first, or the factors are composed after \code{\link[=operator_resolve]{operator_resolve()}}.
 }
 \examples{
 # a linear trend and a yearly cycle, both left unpenalized
@@ -42,7 +40,7 @@ op <- deriv_operator(2) * oscillator_operator(365)
 op
 operator_null(op)
 
-# the order is the sum, the null space the union
+# the order is the sum of the orders
 c(operator_order(deriv_operator(2)), operator_order(oscillator_operator(365)),
   operator_order(op))
 
@@ -51,6 +49,6 @@ c(operator_order(deriv_operator(2)), operator_order(oscillator_operator(365)),
 operator_null(deriv_operator(2) * harmonic_operator(365))$label
 }
 \seealso{
-\code{\link[=operator_null]{operator_null()}}, which reports the union.
+\code{\link[=operator_null]{operator_null()}}, which reports the null space of the product.
 }
 \keyword{internal}

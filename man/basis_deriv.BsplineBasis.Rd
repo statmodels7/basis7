@@ -10,7 +10,7 @@
 
 \item{order}{The derivative order, a single non-negative whole number,
 default \code{1}. Above \code{basis@basis_params$degree} the result is exactly
-zero.}
+zero at every point that is not missing.}
 
 \item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
@@ -21,15 +21,14 @@ columns, with column names \code{bs1}, \code{bs2}, and so on.
 \description{
 Returns the \code{order}-th derivative of every B-spline, exactly, from the
 derivative form of the Cox-de Boor recurrence in \code{\link[splines2:bSpline]{splines2::bSpline()}}. An
-order above the degree short-circuits to the zero matrix, which is the
-value of that derivative; nothing is thrown.
+order above the degree returns the zero matrix, which is the value of that
+derivative, without calling \pkg{splines2}.
 }
 \details{
 A spline of degree \eqn{m} is piecewise polynomial of that degree, so it
 has \eqn{m} non-trivial derivatives and the rest vanish: a cubic gives
-three, and \code{order = 4} is exactly zero everywhere. The short-circuit
-happens here because \pkg{splines2} rejects a \code{derivs} above the degree
-instead of returning zeros.
+three, and \code{order = 4} is exactly zero everywhere. A missing point gives a
+missing row at every order.
 
 The derivative of order \eqn{m} is a step function, discontinuous at each
 interior knot, and the value returned at a knot is the one the recurrence

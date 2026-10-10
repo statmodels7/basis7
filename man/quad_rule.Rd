@@ -14,8 +14,8 @@ first and last are the ends of the span.}
 }
 \value{
 A list of two numeric vectors of length
-\code{n * (length(breaks) - 1)}: \code{nodes} and \code{weights}, ordered interval by
-interval.
+\code{n * (length(breaks) - 1)}: \code{nodes} and \code{weights}, in the order described
+above.
 }
 \description{
 Places an \code{n}-point Gauss-Legendre rule on each interval between
@@ -31,9 +31,10 @@ exact for any function that is a polynomial of degree at most
 choose their breaks with care: \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} uses the knots,
 so no interval straddles the point where a spline's derivative jumps.
 
-Nothing is validated. \code{breaks} must be increasing and of length at least
-two; the nodes come out in interval order, which is increasing when the
-breaks are.
+The function does not validate its arguments. \code{breaks} must be
+increasing and of length at least two. The nodes are ordered by their
+position within the rule and then by interval: the first node of every
+interval comes first, then the second node of every interval, and so on.
 }
 \seealso{
 \code{\link[=gauss_legendre]{gauss_legendre()}}, which supplies the rule on \eqn{[-1, 1]};

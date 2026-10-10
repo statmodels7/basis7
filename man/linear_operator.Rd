@@ -15,7 +15,7 @@ An S7 object of class \link{LinearOperator}.
 }
 \description{
 The general form: \code{linear_operator(w)} is
-\eqn{L x = w_1 x + w_2 Dx + \cdots + w_m D^{m-1} x + D^m x}, with the
+\eqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x}, with the
 leading coefficient 1 and \code{w} given in increasing order of
 differentiation. It is the vector \code{fda::vec2Lfd()} takes.
 }
@@ -26,9 +26,10 @@ multiplicity \eqn{\mu} contributes \eqn{t^i e^{at}} for \eqn{i < \mu}, and
 a complex pair \eqn{a \pm bi} contributes \eqn{t^i e^{at}\cos(bt)} and
 \eqn{t^i e^{at}\sin(bt)}. \code{\link[=operator_null]{operator_null()}} reports it.
 
-Use \code{\link[=deriv_operator]{deriv_operator()}} and \code{\link[=harmonic_operator]{harmonic_operator()}} where they apply: they
-say what the operator is for, and they carry a period that can be
-resolved from a smoother's interval, which a bare weight vector cannot.
+Where they apply, \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} and
+\code{\link[=oscillator_operator]{oscillator_operator()}} are preferable: they record what the operator is
+for, and the last two carry a period that can be resolved from the
+interval of a smoother, which a bare weight vector cannot.
 }
 \examples{
 # the harmonic acceleration operator written out, as in fda

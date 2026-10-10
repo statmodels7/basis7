@@ -12,7 +12,7 @@ harmonic_weights(period, harmonics)
 \item{harmonics}{How many harmonics to leave in the null space.}
 }
 \value{
-A numeric vector of \code{2 * harmonics} entries, the weights
+A numeric vector of \code{2 * harmonics + 1} entries, the weights
 \eqn{w_0, \ldots, w_{m-1}}.
 }
 \description{

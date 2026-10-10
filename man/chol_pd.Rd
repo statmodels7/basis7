@@ -2,7 +2,7 @@
 % Please edit documentation in R/transformed_basis.R
 \name{chol_pd}
 \alias{chol_pd}
-\title{Cholesky Factorization, With the Rank Decided Before It}
+\title{Cholesky Factor with a Positive-Definiteness Test}
 \usage{
 chol_pd(m, tol = 1e-12)
 }
@@ -16,33 +16,32 @@ counts as zero, default \code{1e-12}. The test is
 }
 \value{
 The upper triangular Cholesky factor \eqn{R} with
-\eqn{m = R^\top R}, or \code{NULL} when \code{m} is empty, holds an \code{NA}, or is not
-positive definite to \code{tol}.
+\eqn{m = R^\top R}, or \code{NULL} when \code{m} is empty, holds a value that is not
+finite, or is not positive definite to \code{tol}.
 }
 \description{
 Returns the upper triangular Cholesky factor of a symmetric matrix, or
 \code{NULL} when the matrix is not positive definite to the given relative
-tolerance. The verdict comes from the eigenvalues and never from whether
-\code{\link[base:chol]{base::chol()}} raised, so it is the same on every platform.
+tolerance. The test is made on the eigenvalues, so that its outcome is the
+same on every platform.
 }
 \details{
 On a matrix with an exactly zero eigenvalue the pivot that should be zero
-comes out positive or negative according to rounding, so \code{chol()} succeeds
-on some platforms and fails on others. A construction that asks it whether
-a Gram matrix or a penalty is usable therefore gets a different answer on
-different machines: \code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}} once disagreed
-with themselves between this machine and the CI runners for exactly that
-reason.
+comes out positive or negative according to rounding, so \code{\link[base:chol]{base::chol()}}
+succeeds on some platforms and fails on others. A construction that relied
+on \code{chol()} to decide whether a Gram matrix or a penalty is usable would
+therefore give different results on different platforms.
 
-Comparing the smallest eigenvalue with the largest is a statement about the
-matrix and gives the same answer everywhere. The eigendecomposition costs
-little beside what both callers already do.
+Comparing the smallest eigenvalue with the largest depends only on the
+matrix and gives the same result everywhere. The eigendecomposition costs
+little beside the other work of the callers.
 
 The \code{chol()} call is still wrapped, so a matrix that passes the eigenvalue
-test and fails the factorization anyway returns \code{NULL} instead of throwing.
+test and fails the factorization returns \code{NULL} instead of signalling an
+error.
 }
 \seealso{
-\code{\link[=orthonorm_basis]{orthonorm_basis()}} and \code{\link[=dr_basis]{dr_basis()}}, its two callers, which turn
-a \code{NULL} into an error naming what to do about it.
+\code{\link[=orthonorm_basis]{orthonorm_basis()}}, \code{\link[=dr_basis]{dr_basis()}} and \code{\link[=smoother_reparam]{smoother_reparam()}}, its
+callers, which turn a \code{NULL} into an error stating what to change.
 }
 \keyword{internal}

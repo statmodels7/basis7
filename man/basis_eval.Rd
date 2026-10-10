@@ -12,7 +12,8 @@ basis_eval(basis, x, ...)
 \item{x}{Evaluation points inside the basis interval: a numeric vector for
 a basis of one variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a
 basis of several, where a plain vector is taken by row. \code{NA} is allowed
-and produces a missing row. A point outside the interval throws.}
+and produces a missing row. A point outside the interval signals an
+error.}
 
 \item{...}{Passed to methods. No shipped family reads anything from it.}
 }
@@ -24,9 +25,9 @@ names \code{\link[=basis_colnames]{basis_colnames()}}.
 \description{
 Returns the design matrix of a basis at the given points: one row per
 evaluation point, one column per basis function, entry \eqn{(i, j)} equal
-to \eqn{\varphi_j(x_i)}. This is the matrix a regression on the basis is
-fitted against, and the one every other generic in the package is defined
-in terms of.
+to \eqn{\varphi_j(x_i)}. A regression on the basis is fitted against this
+matrix, and every other generic of the package is defined in terms of
+it.
 }
 \section{The design matrix}{
 An expansion with coefficients \eqn{\beta} is evaluated as
@@ -34,27 +35,28 @@ An expansion with coefficients \eqn{\beta} is evaluated as
 \deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\,\beta,}
 
 so \code{basis_eval(b, x) \%*\% beta} is the fitted function at \code{x}, and the
-matrix is the design block a linear model on the basis uses. Its columns
+matrix is the design block of a linear model on the basis. Its columns
 carry the names \code{\link[=basis_colnames]{basis_colnames()}} declares, and every other matrix the
 basis produces carries the same ones in the same order.
 }
 
-\section{The one generic a basis must implement}{
+\section{The method every basis implements}{
 \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} all have numerical
 methods registered on the abstract \link{basis} class, computed from this one,
-so a subclass supplying its evaluation alone answers all four. Registering
-a closed form for any of the three later takes over through dispatch;
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which are still on the fallback.
+so all four generics are available for a subclass that supplies its
+evaluation alone. A closed form registered later for any of the three
+takes over through dispatch; \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which are
+still numerical.
 }
 
-\section{What the generic does before dispatching}{
+\section{Validation before dispatch}{
 The generic body validates \code{x} through \code{\link[=check_eval_points]{check_eval_points()}} and passes
 the validated version on, so every method, including one written outside
-the package, gets the same guarantees without writing them: a point outside
-the interval throws, a point that is an endpoint up to a relative \code{1e-8}
-arrives clamped exactly onto that endpoint, and a basis of several
-variables receives a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns whatever shape the
-caller passed.
+the package, receives points checked by the same rule: a point outside the
+interval signals an error, a point within \code{1e-8} times the width of the
+interval from an endpoint is clamped exactly onto that endpoint, and for a
+basis of several variables a plain vector is reshaped by row into a matrix
+of \code{\link[=basis_nvar]{basis_nvar()}} columns.
 
 \code{NA} is neither checked nor clamped and flows through arithmetic, so a
 missing evaluation point gives a row of \code{NA}.
@@ -71,7 +73,8 @@ rowSums(basis_eval(b, seq(0, 1, length.out = 5)))
 beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
 drop(basis_eval(b, c(0.3, 0.7)) \%*\% beta)
 
-# Outside the interval it throws; an endpoint up to rounding is clamped.
+# Outside the interval it signals an error; an endpoint up to rounding is
+# clamped.
 try(basis_eval(b, 1.5))
 all.equal(basis_eval(b, 1 + 5e-9), basis_eval(b, 1))
 

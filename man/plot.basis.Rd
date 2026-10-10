@@ -5,21 +5,20 @@
 \title{Plot a Basis}
 \arguments{
 \item{x}{A basis object of one variable, of any class inheriting from
-\link{basis}. A basis of several variables throws an error naming the
-alternatives.}
+\link{basis}. A basis of several variables signals an error.}
 
 \item{order}{What to draw. \code{0}, the default, draws the basis functions; a
 positive whole number draws that derivative; \code{-1} draws the integral from
-the lower endpoint. Anything else throws, including a fraction, a value
-below \code{-1} and a vector of length other than one.}
+the lower endpoint. Any other value signals an error, including a
+fraction, a value below \code{-1} and a vector of length other than one.}
 
-\item{n}{The number of grid points, default \code{200}. Raise it for a basis
-with many knots or a high frequency, where 200 points leave a curve
-visibly polygonal. The cost is one evaluation on \code{n} points.}
+\item{n}{The number of grid points, default \code{200}. A basis with many
+knots or a high frequency needs more, 200 points leaving a curve visibly
+polygonal there.}
 
 \item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. A value given for \code{type},
-\code{lty}, \code{xlab}, \code{ylab} or \code{main} replaces the method's own choice; see the
-section above for what those choices are.}
+\code{lty}, \code{xlab}, \code{ylab} or \code{main} replaces the method's default; see the
+section above for the defaults.}
 }
 \value{
 \code{x}, invisibly. Called for the plot.
@@ -28,8 +27,8 @@ section above for what those choices are.}
 Draws all \verb{@dimension} functions of a basis on one panel, over an equally
 spaced grid covering the whole interval. \code{order} selects what is drawn: the
 functions themselves, a derivative of any order, or the integral anchored
-at the lower endpoint. One line per basis function, no legend, with the
-family name as the title.
+at the lower endpoint. One line is drawn per basis function, with no legend
+and with \verb{@basis_name} as the title.
 }
 \section{What is drawn}{
 The grid is \code{n} equally spaced points from \verb{@lower} to \verb{@upper}, endpoints
@@ -38,34 +37,32 @@ or \code{\link[=basis_int]{basis_int()}} \code{order} names. The vertical axis i
 \eqn{B(x)} at order \code{0}, \eqn{B'(x)} at order \code{1}, \eqn{B^{(k)}(x)} above
 that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
 
-Nothing distinguishes one curve from another beyond its position:
-\code{matplot()} cycles its default colors and the columns carry no legend, so
-\code{\link[=basis_colnames]{basis_colnames()}} is where a column's identity comes from.
+The curves are distinguished only by the colors \code{matplot()} cycles
+through. The plot carries no legend, and the names of the columns are
+those of \code{\link[=basis_colnames]{basis_colnames()}}.
 }
 
-\section{Which graphical arguments reach \code{matplot()}}{
-All of them. The method chooses \code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main},
-and a value given for any of the five replaces the choice rather than
-colliding with it, so \code{plot(b, main = "my title")} retitles the panel and
-\code{plot(b, type = "p", pch = 16)} draws points. Everything else is passed
-through untouched: \code{col}, \code{lwd}, \code{pch}, \code{cex}, \code{xlim}, \code{ylim}, \code{log},
-\code{add}, \code{bty}, \code{las} and \code{axes} were all checked.
+\section{Graphical arguments}{
+Every graphical argument reaches \code{matplot()}. The method sets defaults for
+\code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main}, and a value given for any of the
+five replaces the default, so \code{plot(b, main = "my title")} retitles the
+panel and \code{plot(b, type = "p", pch = 16)} draws points. Every other
+argument, such as \code{col}, \code{lwd}, \code{xlim} or \code{add}, is passed unchanged.
 
 The defaults are \code{type = "l"}, \code{lty = 1}, \code{xlab = "x"}, \code{main} the basis's
 \verb{@basis_name}, and \code{ylab} the expression matching \code{order}.
 }
 
 \section{Only one variable}{
-A basis of several variables throws. A product of two bases is a surface
-over a rectangle and has no picture of this shape; plot a margin, which is
-\code{tb@marginals[[1]]} for a \code{\link[=tensor_basis]{tensor_basis()}}, or draw one column of the
-product as a surface.
+A basis of several variables signals an error. A product of two bases is
+a surface over a rectangle; a margin can be plotted instead, which is
+\code{tb@marginals[[1]]} for a \code{\link[=tensor_basis]{tensor_basis()}}.
 }
 
-\section{A derivative the family has run out of}{
-An order above the smoothness of the family is legal and draws a flat line
-at zero: the fourth derivative of a piecewise cubic is zero away from the
-knots, and the method reports that instead of refusing.
+\section{Orders above the smoothness of the family}{
+An order above the smoothness of the family is accepted and draws a flat
+line at zero, the fourth derivative of a piecewise cubic being zero away
+from the knots.
 }
 
 \examples{
@@ -83,7 +80,7 @@ basis_int(b, 0)
 # Graphical arguments the method does not set itself reach matplot().
 plot(b, col = "grey40", lwd = 2)
 
-# The five arguments the method chooses itself may be overridden.
+# The five arguments the method sets by default may be replaced.
 plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
 plot(b, type = "p", pch = 16, cex = 0.4)
 

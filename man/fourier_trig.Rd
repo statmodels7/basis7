@@ -30,9 +30,9 @@ the one routine behind \code{\link[=basis_eval.FourierBasis]{basis_eval.FourierB
 own.
 }
 \details{
-At \code{d = -1} the identity gives an antiderivative whose constant is not the
-one \code{\link[=basis_int]{basis_int()}} promises; the caller subtracts the row at the lower
-endpoint. Columns are interleaved sine-then-cosine per frequency, matching
+At \code{d = -1} the identity gives an antiderivative that differs from the
+one defined by \code{\link[=basis_int]{basis_int()}} by a constant in each column; the caller
+subtracts the row at the lower endpoint. Columns are interleaved sine-then-cosine per frequency, matching
 \code{\link[=basis_colnames.FourierBasis]{basis_colnames.FourierBasis()}}.
 
 At \code{n_pairs == 0} the result is a \code{length(x)} by 0 matrix, and the loop is

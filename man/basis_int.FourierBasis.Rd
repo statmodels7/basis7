@@ -21,16 +21,17 @@ in closed form, with no quadrature. The constant integrates to
 \link{FourierBasis} taken at order \eqn{-1}.
 }
 \details{
-The identity at \eqn{k = -1} gives \emph{an} antiderivative, which is not the
-one \code{\link[=basis_int]{basis_int()}} promises. The two differ by a constant that is not the
+The identity at \eqn{k = -1} gives an antiderivative that is not the one
+defined by \code{\link[=basis_int]{basis_int()}}. The two differ by a constant that is not the
 same in every column: at the lower endpoint the sine columns of the raw
 antiderivative are \eqn{-\omega/(2\pi j)} while the cosine columns are
 already zero. Subtracting the row at the lower endpoint corrects every
 column at once and makes the anchoring exact.
 
 Over a full period every sinusoid integrates to zero, so the row at
-\code{basis@upper} is \eqn{(\omega, 0, 0, \ldots)}, which is the area under a
-fitted curve being the constant's coefficient times the period.
+\code{basis@upper} is \eqn{(\omega, 0, 0, \ldots)}, and the integral of a
+fitted curve over the period is the coefficient of the constant times the
+period.
 }
 \seealso{
 \code{\link[=basis_int]{basis_int()}} for the generic and the anchoring convention;
