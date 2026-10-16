@@ -6,11 +6,12 @@
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
 
-\item{weight}{A density to integrate against, or \code{NULL}.}
+\item{weight}{A density with respect to which the integral is taken, or
+\code{NULL}.}
 
 \item{...}{Passed on to the quadrature (\code{panels}, \code{nodes}) on the
 numerical route. On the exact route \code{panels} or \code{nodes} signals an
@@ -21,8 +22,9 @@ A numeric matrix of \code{basis@dimension} rows and columns, diagonal
 on the exact route.
 }
 \description{
-Exact and diagonal, at any operator, when the interval is a full period
-and neither \code{at} nor \code{weight} is given; otherwise the matrix is computed by
+Computes the roughness matrix of an operator. The matrix is exact and
+diagonal, for any operator, when the interval is a full period and \code{at} and
+\code{weight} are not given; otherwise it is computed by
 \code{\link[=numerical_operator_gram]{numerical_operator_gram()}} and is in general full. The diagonal entry of
 the pair at frequency \eqn{j} is
 \deqn{\lvert P(i\nu_j)\rvert^2 \, \frac{T}{2}, \qquad
@@ -57,7 +59,8 @@ is zero whenever \eqn{w_0 = 0}, as for \code{\link[=harmonic_operator]{harmonic_
 b <- fourier_basis(lower = 0, upper = 365, dimension = 9)
 g <- basis_gram(b, order = harmonic_operator(365))
 
-# diagonal, and zero on the constant and the fundamental
+# The matrix is diagonal, and its entries are zero on the constant and the
+# fundamental.
 max(abs(g - diag(diag(g)))) / max(abs(g))
 round(diag(g)[1:3], 10)
 

@@ -24,9 +24,9 @@ zero.
 \description{
 Returns the definite integral of every basis function from the lower
 endpoint of the basis interval up to each evaluation point, as a matrix of
-the same shape \code{\link[=basis_eval]{basis_eval()}} returns. Times a coefficient vector it gives
-the antiderivative of the fitted function that vanishes at the lower
-endpoint.
+the same shape that \code{\link[=basis_eval]{basis_eval()}} returns. Multiplied by a coefficient
+vector, it gives the antiderivative of the fitted function that vanishes at
+the lower endpoint.
 }
 \section{The anchored integral}{
 Column \eqn{j} of the result is
@@ -43,9 +43,9 @@ integral over \eqn{[u, v]} is the difference of two rows.
 \section{The fixed anchor}{
 The value at \code{basis@lower} is exactly zero, for every basis and every
 column, and every implementation is required to satisfy this. Any
-antiderivative satisfies the differentiation check, so with the constant of
-integration left free two bases could disagree while both being correct,
-and a sum of them would be wrong without any sign of it.
+antiderivative satisfies the differentiation check. If the constant of
+integration were free, two bases could disagree although both are correct,
+and a sum of them would be wrong with no sign of the error.
 }
 
 \section{A basis of several variables}{
@@ -55,18 +55,18 @@ iterated integral per variable, so on two variables column \eqn{j} is
 }
 
 \section{The numerical fallback}{
-A subclass registering no method gets the one on the abstract \link{basis}
-class: a Gauss-Legendre rule of \code{nodes = 12} nodes by default on each
-segment between consecutive sorted evaluation points, starting at the
-lower endpoint, with the segment integrals accumulated. The rule is exact
-for a polynomial integrand of degree up to \code{2 * nodes - 1} on each
-segment.
+If a subclass does not register a method, the method on the abstract
+\link{basis} class applies. It uses a Gauss-Legendre rule of \code{nodes = 12} nodes
+by default on each segment between consecutive sorted evaluation points,
+starting at the lower endpoint, and accumulates the segment integrals. The
+rule is exact for a polynomial integrand of degree up to \code{2 * nodes - 1} on
+each segment.
 }
 
 \examples{
 b <- fourier_basis(dimension = 5)
 
-# Zero at the lower endpoint, by the convention above.
+# The integral is zero at the lower endpoint, by the convention above.
 basis_int(b, b@lower)
 round(basis_int(b, c(0.25, 0.5, 1)), 4)
 
@@ -77,7 +77,7 @@ h <- 1e-6
 fd <- (basis_int(bs, x + h) - basis_int(bs, x - h)) / (2 * h)
 max(abs(fd - basis_eval(bs, x)))
 
-# The integral of a fitted curve, and the integral over a subinterval.
+# Integrate a fitted curve over the whole interval and over a subinterval.
 beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
 drop(basis_int(bs, 1) \%*\% beta)
 drop((basis_int(bs, 0.75) - basis_int(bs, 0.25)) \%*\% beta)

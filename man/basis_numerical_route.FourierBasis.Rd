@@ -9,8 +9,9 @@
 \item{...}{Unused, and accepted so the signature matches the generic's.}
 }
 \value{
-The named logical vector \code{\link[=basis_numerical_route]{basis_numerical_route()}} describes, with
-\code{basis_gram} \code{TRUE} for a basis whose period is not the interval width.
+The named logical vector that \code{\link[=basis_numerical_route]{basis_numerical_route()}} describes,
+with \code{basis_gram} \code{TRUE} for a basis whose period is not the interval
+width.
 }
 \description{
 Reports \code{basis_gram} as \code{TRUE} when \code{basis_params$full_period} is \code{FALSE},
@@ -26,6 +27,6 @@ route in use.
 }
 \seealso{
 \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} for the two branches, and
-\code{\link[=basis_numerical_route.basis]{basis_numerical_route.basis()}} for the default this starts from.
+\code{\link[=basis_numerical_route.basis]{basis_numerical_route.basis()}} for the default from which this starts.
 }
 \keyword{internal}

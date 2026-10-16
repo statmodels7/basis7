@@ -10,9 +10,9 @@ shrink_weight()
 A single number.
 }
 \description{
-The penalty that \code{null_space = "shrink"} puts on the directions that the
-roughness matrix does not see: one tenth of the weight of a penalized
-direction.
+Returns the penalty weight that \code{null_space = "shrink"} puts on the
+directions that the roughness matrix does not see, which is one tenth of
+the weight of a penalized direction.
 }
 \details{
 The weight follows the shrinkage construction of the \code{bs = "ts"} smooths

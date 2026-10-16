@@ -18,17 +18,16 @@ experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](h
 Many R packages that fit smooth terms carry their own basis code,
 written inside the routine that needs it and providing only what its
 author needed. A cubic B-spline is a fixed mathematical object, and it
-can be written once with the quantities a modeling routine needs already
-computed.
+can be written once with the quantities that a modeling routine needs
+already computed.
 
-`{basis7}` makes a basis an object that can be **evaluated,
-differentiated to any order, integrated, and used to compute its inner
-products**. The last of these is the Gram matrix
-$G_d = \int B^{(d)} B^{(d)\top}$, the matrix that a roughness penalty
-integrates; for the shipped families it is computed exactly, in closed
-form or by a quadrature that is exact for the integrand. On top of the
-bases the package builds smoothers, which pair a basis with a penalty
-given by a linear differential operator.
+`{basis7}` makes a basis an object that can be evaluated, differentiated
+to any order, integrated, and used to compute its inner products. The
+last of these is the Gram matrix $G_d = \int B^{(d)} B^{(d)\top}$, the
+matrix that a roughness penalty integrates; for the shipped families it
+is computed exactly, in closed form or by a quadrature that is exact for
+the integrand. On top of the bases the package builds smoothers, which
+pair a basis with a penalty given by a linear differential operator.
 
 It is the basis layer of [statmodels7](https://statmodels7.github.io),
 an S7 toolkit for statistical modeling, alongside
@@ -43,8 +42,8 @@ an S7 toolkit for statistical modeling, alongside
 pak::pak("statmodels7/basis7")
 ```
 
-Or the whole toolkit at once, which also installs the other packages of
-the toolkit:
+The following command installs the whole toolkit at once, including the
+other packages of the toolkit:
 
 ``` r
 pak::pak("statmodels7/statmodels7")
@@ -99,8 +98,8 @@ plot(b, order = -1)
 ## The integral is anchored
 
 Its value at the lower endpoint is exactly zero, for every basis. Any
-antiderivative would satisfy a differentiation check, so with the
-constant left free two bases could disagree while both looked correct.
+antiderivative would satisfy a differentiation check, so if the constant
+is left free, two bases could disagree while both looked correct.
 
 ``` r
 basis_int(fourier_basis(lower = -1, upper = 3, dimension = 5), -1)
@@ -218,9 +217,9 @@ max(abs(basis_gram(t2) - kronecker(
 The design matrix, on the other hand, grows as the product of the
 marginal dimensions, which makes interactions expensive.
 `basis_contract()` computes the values described by the coefficients
-from the marginal evaluations alone. Given the coefficients as factor
-matrices, the cost is linear in the number of variables instead of
-exponential:
+using only the marginal evaluations. If the coefficients are given as
+factor matrices, the cost is linear in the number of variables instead
+of exponential:
 
 ``` r
 big <- tensor_basis(rep(list(bspline_basis(dimension = 10)), 6))
@@ -269,8 +268,8 @@ round(basis_int(bumps, 1), 4)
 `check_basis()` runs six numerical checks: the shapes and column names,
 the derivatives against finite differences, the integral differentiating
 back and vanishing at the lower endpoint, the partition of unity where
-the family claims it, the Gram matrix against an independent quadrature,
-and missing values traveling through.
+the family declares it, the Gram matrix against an independent
+quadrature, and missing values traveling through.
 
 For a derivative or an integral that came from a fallback the check is
 not run and the row prints `[numerical]`, because comparing it with a

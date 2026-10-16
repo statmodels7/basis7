@@ -16,7 +16,7 @@ check_constrain(constrain, op)
 }
 \description{
 Validates \code{constrain} for a family whose null space is the polynomials of
-degree below \code{order}. The constraint must \strong{contain} that null space, so
+degree below \code{order}. The constraint must contain that null space, so
 a degree below \code{order - 1} is rejected.
 }
 \details{
@@ -27,7 +27,7 @@ penalized nor identified, and \code{\link[=dr_basis]{dr_basis()}} signals an err
 function, the quadratic direction is left free and unpenalized. The error
 is reported here, at the constructor.
 
-Constraining \strong{beyond} the null space is admitted. It makes the block
+Constraining beyond the null space is admitted. It makes the block
 orthogonal, over the observed covariate, to the polynomials up to degree
 \code{constrain}, which avoids collinearity with a parametric term of that
 degree written in the formula. The cost is one dimension per degree.

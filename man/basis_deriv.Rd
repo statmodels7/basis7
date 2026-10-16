@@ -13,22 +13,23 @@ basis_deriv(basis, x, order = 1L, ...)
 a basis of one variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns for a
 basis of several.}
 
-\item{order}{The derivative order. A single non-negative whole number for a
-basis of one variable, default \code{1}; a vector of \code{\link[=basis_nvar]{basis_nvar()}} such
-numbers for a basis of several, or a single \code{0}. A negative, fractional,
-infinite or \code{NA} order signals an error.}
+\item{order}{The derivative order. For a basis of one variable the order is
+a single non-negative whole number, and the default is \code{1}; for a basis of
+several variables it is a vector of \code{\link[=basis_nvar]{basis_nvar()}} such numbers, or a
+single \code{0}. A negative, fractional, infinite or \code{NA} order signals an
+error.}
 
-\item{...}{Passed to methods. No shipped family and no fallback reads
-anything from it.}
+\item{...}{Passed to methods. The shipped families and the fallback do not
+read anything from it.}
 }
 \value{
 A numeric matrix of \code{n} rows and \code{basis@dimension} columns, with
-column names \code{\link[=basis_colnames]{basis_colnames()}}. All zero above the smoothness of the
-family.
+column names \code{\link[=basis_colnames]{basis_colnames()}}. All entries are zero for an order above
+the smoothness of the family.
 }
 \description{
 Returns the \code{order}-th derivative of every basis function at the given
-points, as a matrix of the same shape \code{\link[=basis_eval]{basis_eval()}} returns. Since an
+points, as a matrix of the same shape that \code{\link[=basis_eval]{basis_eval()}} returns. Since an
 expansion is linear in its coefficients, this matrix times \eqn{\beta} is
 the \code{order}-th derivative of the fitted function, so a derivative of a fit
 needs no refitting.
@@ -40,26 +41,26 @@ degree \eqn{k} has \eqn{k} non-trivial derivatives and zeros above that.
 An order beyond what the family carries returns the zero matrix, which is
 the value of the derivative, with exact zeros and no error.
 
-\code{order = 0} short-circuits to \code{\link[=basis_eval]{basis_eval()}} in the generic body, so a loop
-over orders needs no special case and pays nothing for the zero.
+For \code{order = 0} the generic body returns \code{\link[=basis_eval]{basis_eval()}} directly, so a loop
+over orders needs no special case for zero and incurs no extra cost for it.
 }
 
 \section{A basis of several variables takes a multi-index}{
 For a product basis \code{order} has one entry per variable and names a mixed
 partial: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
 \eqn{\partial^2/\partial x_1 \partial x_2}. A single non-zero number is
-rejected, because it has two readings; \code{0} alone is accepted, meaning no
-derivative under either. See \code{\link[=check_order]{check_order()}}.
+rejected, because it has two readings; a single \code{0} is accepted and means
+no derivative under either. See \code{\link[=check_order]{check_order()}}.
 }
 
 \section{The numerical fallback}{
-A subclass registering no method gets the one on the abstract \link{basis}
-class, which applies \strong{one} stencil of the requested order to
-\code{\link[=basis_eval]{basis_eval()}}, never a composition of lower-order differences. The
-offsets, weights and step come from \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}},
+If a subclass does not register a method, dispatch reaches the method on
+the abstract \link{basis} class, which applies one stencil of the requested
+order to \code{\link[=basis_eval]{basis_eval()}}, never a composition of lower-order differences.
+The offsets, weights and step come from \code{\link[numericals7:fd_offsets]{numericals7::fd_offsets()}},
 \code{\link[numericals7:fd_weights]{numericals7::fd_weights()}} and \code{\link[numericals7:fd_step]{numericals7::fd_step()}}, and the stencil
-is shifted to one side near an endpoint so that no node leaves the
-interval, with one node more than the central stencil so that it keeps
+is shifted to one side near an endpoint so that every node stays inside
+the interval, with one node more than the central stencil so that it keeps
 the same order of accuracy. \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports whether this is
 the route in use, and \code{\link[=check_basis]{check_basis()}} measures the agreement.
 

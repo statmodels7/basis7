@@ -31,8 +31,8 @@ three, and \code{order = 4} is exactly zero everywhere. A missing point gives a
 missing row at every order.
 
 The derivative of order \eqn{m} is a step function, discontinuous at each
-interior knot, and the value returned at a knot is the one the recurrence
-gives there. That matters for a Gram matrix, which is why
+interior knot, and the value returned at a knot is the one that the
+recurrence gives there. That matters for a Gram matrix, which is why
 \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} integrates knot interval by knot interval and
 never across one.
 }

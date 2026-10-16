@@ -20,10 +20,10 @@ two characters form the default column names of \code{\link[=basis_colnames]{bas
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several. Both finite, of the same
-length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
-\code{\link[=basis_nvar]{basis_nvar()}} reports.}
+\item{lower, upper}{The endpoints of the interval on which the basis lives, or
+one endpoint per variable for a basis of several. Both must be finite and of
+the same length, and \code{lower[j] < upper[j]} must hold for every \code{j}.
+\code{\link[=basis_nvar]{basis_nvar()}} returns their length.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
 knots and degree of a B-spline, the period of a Fourier basis, the
@@ -37,15 +37,15 @@ constructed from it is an S7 object with properties \code{basis_name}
 entry per variable) and \code{basis_params} (list).
 }
 \description{
-The abstract parent of every basis in the package, and the class to inherit
-from when writing one of your own. A basis is a finite collection of
+The class \code{basis} is the abstract parent of every basis in the package, and
+a basis written by a user inherits from it. A basis is a finite collection of
 functions on an interval; the object carries the interval, how many
 functions there are, and whatever else the family needs, and the generics
 evaluate that collection, differentiate it, integrate it and take its inner
 products. The class is abstract, so \code{basis(...)} signals an error; an
 object is constructed from one of the concrete families or a subclass.
 }
-\section{What a basis is}{
+\section{Definition of a basis}{
 A basis of dimension \eqn{d} on \eqn{[a, b]} is a collection
 \eqn{\varphi_1, \dots, \varphi_d}, and the object exists so that a
 function may be written as a linear combination of them,
@@ -53,20 +53,19 @@ function may be written as a linear combination of them,
 \deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta,
   \qquad B(x)_{ij} = \varphi_j(x_i),}
 
-with \eqn{B(x)} the \eqn{n \times d} design matrix \code{\link[=basis_eval]{basis_eval()}}
+with \eqn{B(x)} the \eqn{n \times d} design matrix that \code{\link[=basis_eval]{basis_eval()}}
 returns. Fitting \eqn{f} is a linear problem in \eqn{\beta} whatever the
-family, so the derivative, the anchored integral and the Gram matrix are
-all properties of the basis alone and can be computed once, before any
-data arrive.
+family, so the derivative, the anchored integral and the Gram matrix all
+depend only on the basis and can be computed once, before any data arrive.
 }
 
 \section{Writing a subclass}{
 A concrete basis is a subclass of this one. It must implement
 \code{\link[=basis_eval]{basis_eval()}}; \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} have
 numerical methods registered on this class, so a subclass of one variable
-that supplies its evaluation alone has all four generics at once. For a
-subclass of several variables the numerical integral is not available. A
-closed form registered later takes over through dispatch, with no change
+that supplies only its evaluation has all four generics at once. For a
+subclass of several variables the numerical integral is not available. If
+a closed form is registered later, dispatch selects it with no change
 to calling code, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which of the three
 are still numerical. The vignette \code{vignette("defining-a-basis")} works
 through an example.

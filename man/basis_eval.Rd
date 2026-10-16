@@ -15,12 +15,13 @@ basis of several, where a plain vector is taken by row. \code{NA} is allowed
 and produces a missing row. A point outside the interval signals an
 error.}
 
-\item{...}{Passed to methods. No shipped family reads anything from it.}
+\item{...}{Passed to methods. The shipped families do not read anything
+from it.}
 }
 \value{
-A numeric matrix of \code{n} rows and \code{basis@dimension} columns, \code{n}
-being \code{length(x)} for one variable and \code{nrow(x)} for several, with column
-names \code{\link[=basis_colnames]{basis_colnames()}}.
+A numeric matrix of \code{n} rows and \code{basis@dimension} columns, where
+\code{n} is \code{length(x)} for one variable and \code{nrow(x)} for several, with the
+column names that \code{\link[=basis_colnames]{basis_colnames()}} declares.
 }
 \description{
 Returns the design matrix of a basis at the given points: one row per
@@ -36,17 +37,17 @@ An expansion with coefficients \eqn{\beta} is evaluated as
 
 so \code{basis_eval(b, x) \%*\% beta} is the fitted function at \code{x}, and the
 matrix is the design block of a linear model on the basis. Its columns
-carry the names \code{\link[=basis_colnames]{basis_colnames()}} declares, and every other matrix the
-basis produces carries the same ones in the same order.
+carry the names that \code{\link[=basis_colnames]{basis_colnames()}} declares, and every other matrix
+that the basis produces carries the same ones in the same order.
 }
 
-\section{The method every basis implements}{
+\section{The method that every basis implements}{
 \code{\link[=basis_deriv]{basis_deriv()}}, \code{\link[=basis_int]{basis_int()}} and \code{\link[=basis_gram]{basis_gram()}} all have numerical
 methods registered on the abstract \link{basis} class, computed from this one,
-so all four generics are available for a subclass that supplies its
-evaluation alone. A closed form registered later for any of the three
-takes over through dispatch; \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which are
-still numerical.
+so all four generics are available for a subclass that supplies only its
+evaluation. If a closed form is registered later for any of the three,
+dispatch selects it in place of the numerical method;
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports which are still numerical.
 }
 
 \section{Validation before dispatch}{

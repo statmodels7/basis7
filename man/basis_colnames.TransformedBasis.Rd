@@ -12,13 +12,13 @@
 A character vector of length \code{basis@dimension}.
 }
 \description{
-Numbers the columns under the two-letter prefix the transformation
+Numbers the columns under the two-letter prefix that the transformation
 recorded: \verb{on1 ... onk} after \code{\link[=orthonorm_basis]{orthonorm_basis()}}, \verb{cn1 ...} after
 \code{\link[=constrain_basis]{constrain_basis()}}, \verb{dr1 ...} after \code{\link[=dr_basis]{dr_basis()}}.
 }
 \details{
 The parent's names cannot be carried over. Each new function is a
-combination of all the parent's, so none of the parent's names fits it,
+combination of all the parent's, so the parent's names do not fit it,
 and a constraint returns fewer functions than it consumed. The prefix
 records which transformation produced the column. The default
 \code{\link[=basis_colnames.basis]{basis_colnames.basis()}} takes the first two characters of \verb{@basis_name},

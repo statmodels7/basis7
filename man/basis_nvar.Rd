@@ -13,17 +13,17 @@ basis_nvar(basis)
 A single positive integer, of length one and never \code{NA}.
 }
 \description{
-Returns the number of variables a basis is a function of: \code{1} for the three
-shipped families and for any wrapper over them, and the number of margins
-for a \code{\link[=tensor_basis]{tensor_basis()}}. It is the number of columns \code{\link[=basis_eval]{basis_eval()}} expects
-its \code{x} to have.
+Returns the number of variables of which a basis is a function: \code{1} for
+every shipped family and for any wrapper over them, and the number of
+margins for a \code{\link[=tensor_basis]{tensor_basis()}}. It is the number of columns that
+\code{\link[=basis_eval]{basis_eval()}} expects its \code{x} to have.
 }
 \details{
-The count is \code{length(basis@lower)}, the endpoints carrying one entry per
-variable. A basis therefore declares its input dimension by construction:
-there is no separate property that could disagree with the interval, and
-the validator already requires \verb{@lower} and \verb{@upper} to be of the same
-length.
+The count is \code{length(basis@lower)}, because the endpoints carry one entry
+per variable. A basis therefore declares its input dimension by
+construction. The class has no separate property that could disagree with
+the interval, and the validator already requires \verb{@lower} and \verb{@upper} to
+be of the same length.
 
 At \code{basis_nvar(b) == 1} the evaluation points are a plain numeric vector
 and the generics return an \code{n} by \verb{@dimension} matrix. Above one they are a
@@ -33,7 +33,7 @@ two points \verb{(0.1, 0.2)} and \verb{(0.5, 0.6)}. \code{plot()} signals an err
 basis of more than one variable.
 }
 \examples{
-# One variable for every family and every wrapper over one.
+# Every family and every wrapper over one has one variable.
 basis_nvar(bspline_basis(dimension = 5))
 basis_nvar(orthonorm_basis(bspline_basis(dimension = 5)))
 
@@ -41,8 +41,8 @@ basis_nvar(orthonorm_basis(bspline_basis(dimension = 5)))
 tb <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
 basis_nvar(tb)
 
-# Which is the number of columns basis_eval() reads: four numbers are two
-# points on a two-variable basis, one row each.
+# That number is the number of columns that basis_eval() reads: four
+# numbers are two points on a two-variable basis, one row each.
 dim(basis_eval(tb, c(0.1, 0.2, 0.5, 0.6)))
 dim(basis_eval(tb, cbind(c(0.1, 0.5), c(0.2, 0.6))))
 

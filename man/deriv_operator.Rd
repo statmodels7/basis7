@@ -28,7 +28,8 @@ line at \code{m = 2} and to a parabola at \code{m = 3}.
 \examples{
 deriv_operator(2)
 
-# what a strongly penalized fit contracts to
+# The null space is the set of functions to which a strongly penalized fit
+# contracts.
 operator_null(deriv_operator(3))
 
 # `order = 2` on a smoother is this operator, and gives the same block

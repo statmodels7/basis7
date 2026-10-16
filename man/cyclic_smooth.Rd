@@ -18,7 +18,7 @@ cyclic_smooth(
 }
 \arguments{
 \item{k}{The number of periodic functions, a whole number of at least 3.
-The block carries \code{k - 1} columns, the constant being removed.}
+The block carries \code{k - 1} columns because the constant is removed.}
 
 \item{degree}{The degree of the underlying B-spline, \code{3} for a cubic. The
 fit matches at the two ends in its value and its first \code{degree - 1}
@@ -52,14 +52,14 @@ An S7 object of class \link{CyclicSmoother}, inheriting from
 \link{smoother}.
 }
 \description{
-The local periodic smoother: \code{k} B-spline functions over one period,
-constrained so that the fit and its first \code{degree - 1} derivatives take
+The local periodic smoother consists of \code{k} B-spline functions over one
+period, constrained so that the fit and its first \code{degree - 1} derivatives take
 the same value at the two ends of the interval, penalized by the
 integrated squared derivative of order \code{order} and rotated to the
-Demmler-Reinsch coordinates. It is to \code{\link[=fourier_smooth]{fourier_smooth()}} what
-\code{\link[=bspline_smooth]{bspline_smooth()}} is to \code{\link[=legendre_smooth]{legendre_smooth()}}: a local basis where the
-other is global, so a feature at one point of the cycle leaves the rest of
-it alone.
+Demmler-Reinsch coordinates. As \code{\link[=bspline_smooth]{bspline_smooth()}} is local where
+\code{\link[=legendre_smooth]{legendre_smooth()}} is global, this smoother is local where
+\code{\link[=fourier_smooth]{fourier_smooth()}} is global, so a feature at one point of the cycle leaves
+the rest of it alone.
 }
 \section{The construction}{
 A spline of degree \eqn{d} on \eqn{[a, b]} is periodic exactly when
@@ -99,9 +99,9 @@ roughness matrix of a derivative penalty is the constant at every order,
 instead of a space growing with the order.
 
 The constant is removed, so a model carrying an intercept spans the level
-and the smooth carries the shape, and no free column is restored: a
-linear column is not periodic. A block therefore carries \code{k - 1}
-columns.
+and the smooth carries the shape. The construction restores no free
+column, because a linear column is not periodic. A block therefore carries
+\code{k - 1} columns.
 }
 
 \section{The interval is the period}{

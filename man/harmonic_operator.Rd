@@ -10,8 +10,8 @@ harmonic_operator(period = NULL, harmonics = 1)
 \item{period}{The length of one cycle, a positive number, or \code{NULL} to
 take the width of the smoother's interval.}
 
-\item{harmonics}{How many harmonics the penalty leaves unpenalized, a
-whole number of at least 1. The order of the operator is
+\item{harmonics}{The number of harmonics that the penalty leaves
+unpenalized, a whole number of at least 1. The order of the operator is
 \code{2 * harmonics + 1} and the null space has that dimension.}
 }
 \value{
@@ -24,7 +24,7 @@ The operator for periodic data,
 whose null space is the constant together with the first \eqn{h}
 harmonics of the period \eqn{T}. At \code{harmonics = 1} it is the harmonic
 acceleration operator \eqn{L x = \nu^2 Dx + D^3 x} of Ramsay and
-Silverman, which is what \code{fda::vec2Lfd(c(0, (2*pi/T)^2, 0))} builds.
+Silverman, and \code{fda::vec2Lfd(c(0, (2*pi/T)^2, 0))} builds the same operator.
 }
 \section{Use with periodic data}{
 A penalty on the second derivative makes a fit contract toward a straight
@@ -41,10 +41,10 @@ operator keeps it and is a sinusoid.
 \section{The period}{
 \code{period} is \eqn{T}, the length of one cycle, in the units of the
 covariate: 365 for a day of the year, 12 for a month, 24 for an hour.
-It is \strong{not} \eqn{\nu = 2\pi/T}, which some of the literature also calls
-omega. \code{NULL} leaves it to be resolved from the interval of whichever
-smoother the operator is given to, which is what \code{\link[=fourier_smooth]{fourier_smooth()}} does
-by default; \code{\link[=operator_resolve]{operator_resolve()}} fills it in. For an unresolved operator
+It is not \eqn{\nu = 2\pi/T}, which some of the literature also calls
+omega. With \code{NULL}, the period is resolved from the interval of the
+smoother to which the operator is given, as \code{\link[=fourier_smooth]{fourier_smooth()}} does by
+default; \code{\link[=operator_resolve]{operator_resolve()}} fills it in. For an unresolved operator
 \code{\link[=operator_weights]{operator_weights()}} returns \code{NA} and \code{\link[=operator_null]{operator_null()}} signals an
 error.
 }
@@ -55,7 +55,7 @@ harmonic_operator(365)
 # the null space is the constant and the fundamental
 operator_null(harmonic_operator(365))
 
-# two harmonics left free instead of one
+# This operator leaves two harmonics free instead of one.
 harmonic_operator(365, harmonics = 2)
 
 # the weights are fda's: c(w0, w1, w2) = c(0, (2*pi/365)^2, 0)
@@ -70,5 +70,5 @@ second edition. Springer, chapter 5.
 }
 \seealso{
 \code{\link[=fourier_smooth]{fourier_smooth()}}, whose default it is; \code{\link[=deriv_operator]{deriv_operator()}} for
-the non-periodic one; \code{\link[=operator_null]{operator_null()}} for the space it leaves.
+the non-periodic one; \code{\link[=operator_null]{operator_null()}} for the space that it leaves.
 }

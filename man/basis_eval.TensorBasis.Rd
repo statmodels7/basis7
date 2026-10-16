@@ -13,7 +13,7 @@ by row. Each column is checked against its own margin's interval.}
 }
 \value{
 A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns,
-with column names pasting the margins' with dots.
+whose column names paste the margins' names with dots.
 }
 \description{
 Evaluates each margin at its own column of the points and takes the

@@ -19,23 +19,24 @@ multiplicities, which adds powers of \eqn{t}.
 \details{
 An operator whose penalty leaves both a linear trend and a seasonal cycle
 unpenalized is \code{deriv_operator(2) * oscillator_operator(365)}, built
-without writing its four weights by hand. Composition commutes, these
-operators having constant coefficients.
+without writing its four weights by hand. Composition commutes, because
+these operators have constant coefficients.
 
-The factor to compose with is \code{\link[=oscillator_operator]{oscillator_operator()}}, unless the extra
-power of \eqn{t} is wanted. The harmonic operator already carries a
+\code{\link[=oscillator_operator]{oscillator_operator()}} is the factor to use for the composition, unless the
+extra power of \eqn{t} is wanted. The harmonic operator already carries a
 leading \eqn{D}, so \code{deriv_operator(2) * harmonic_operator(365)} is
 \eqn{D^3(D^2 + \nu^2)}, of order 5, whose null space is
 \eqn{1, t, t^2, \sin\nu t, \cos\nu t}. The dimension of the null space is
 always the order, and \code{\link[=operator_null]{operator_null()}} shows which functions it holds.
 
 An operator whose period has not been resolved cannot be composed: the
-weights of the product depend on the period, and resolving afterwards
-would require knowing which factor it came from. The period is given
-first, or the factors are composed after \code{\link[=operator_resolve]{operator_resolve()}}.
+weights of the product depend on the period, and resolving the period
+afterwards would require knowing from which factor it came. The period is
+given first, or the factors are composed after
+\code{\link[=operator_resolve]{operator_resolve()}}.
 }
 \examples{
-# a linear trend and a yearly cycle, both left unpenalized
+# This operator leaves a linear trend and a yearly cycle unpenalized.
 op <- deriv_operator(2) * oscillator_operator(365)
 op
 operator_null(op)

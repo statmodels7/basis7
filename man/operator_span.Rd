@@ -7,7 +7,7 @@
 operator_span(op, x)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 
 \item{x}{The covariate, a numeric vector.}
 }
@@ -23,18 +23,18 @@ space, and the free columns are all of it except the constant.
 \details{
 The rule is that of the polynomial families, read for an arbitrary
 operator. The penalized part is made orthogonal to every
-direction the penalty does not see, because a direction that is neither
-penalized nor constrained is one the pencil cannot separate; and the
-constant is not restored, a model carrying an intercept already spanning
-it.
+direction that the penalty does not see, because a direction that is
+neither penalized nor constrained is one that the pencil cannot separate;
+and the constant is not restored, because a model that carries an
+intercept already spans it.
 
 Each free column is divided by its root mean square over the covariate and
-is \strong{not centered}. Scaling by a positive constant is what a badly scaled
-column such as \eqn{t^3} over \eqn{[0, 365]} needs, and it preserves every
-property the function has; centering does not. A periodic family restores
-sines and cosines here, and subtracting a constant from a sine gives a
-column that is no longer periodic, which is the property the basis was
-chosen for.
+is not centered. A badly scaled column such as \eqn{t^3} over
+\eqn{[0, 365]} needs scaling by a positive constant, which preserves every
+property that the function has, whereas centering does not. A periodic
+family restores sines and cosines here, and subtracting a constant from a
+sine gives a column that is no longer periodic, which is the property for
+which the basis was chosen.
 }
 \seealso{
 \code{\link[=smoother_span]{smoother_span()}}, which calls it, and \code{\link[=operator_null]{operator_null()}} for the

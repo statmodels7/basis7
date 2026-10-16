@@ -7,16 +7,16 @@
 rel_close(a, b, tol, slack = NULL)
 }
 \arguments{
-\item{a, b}{Numeric matrices of the same shape. Neither is privileged; the
-comparison is symmetric.}
+\item{a, b}{Numeric matrices of the same shape. The comparison is
+symmetric, so the two matrices play the same role.}
 
 \item{tol}{The relative tolerance, a single positive number.}
 
 \item{slack}{An optional numeric matrix of the same shape as \code{a}, an
 absolute allowance added entry by entry through \code{pmax(tol * den, slack)}.
 \code{\link[=check_basis]{check_basis()}} passes \code{\link[=fd_reference]{fd_reference()}}'s \code{uncertainty} here, so a point
-whose finite-difference reference is unreliable is allowed the error that
-reference has. \code{NULL}, the default, allows none.}
+whose finite-difference reference is unreliable is allowed the error of
+that reference. \code{NULL}, the default, allows none.}
 }
 \value{
 A single \code{TRUE} or \code{FALSE}: \code{TRUE} when every informative entry
@@ -24,9 +24,9 @@ agrees within its own allowance. An entry whose allowance is infinite is
 not compared, and a missing value in any other entry gives \code{FALSE}.
 }
 \description{
-Reports whether two matrices agree to a relative tolerance, with the
-denominator taken from the values themselves and floored at a millionth of
-the column's own scale. It is the only comparison \code{\link[=check_basis]{check_basis()}} makes,
+Reports whether two matrices agree to a relative tolerance. The denominator
+is taken from the values themselves and is floored at a millionth of the
+column's own scale. It is the only comparison that \code{\link[=check_basis]{check_basis()}} makes,
 so its derivative, integral and Gram checks read agreement in the same
 way.
 }

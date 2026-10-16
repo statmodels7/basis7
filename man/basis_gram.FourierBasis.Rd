@@ -10,8 +10,8 @@
 default \code{0}.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.}
+they never arrive here. They are named only because S7 requires a
+method's formals to contain the generic's.}
 
 \item{...}{Passed to \code{\link[=numerical_gram]{numerical_gram()}} on the non-full-period branch,
 where \code{panels} and \code{nodes} control the quadrature. On the closed branch
@@ -19,9 +19,9 @@ where \code{panels} and \code{nodes} control the quadrature. On the closed branc
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
-with column names \code{const}, \code{sin1}, and so on. Diagonal when the interval
-is one whole period, full otherwise; singular for any \code{order >= 1}, the
-constant differentiating away.
+with column names \code{const}, \code{sin1}, and so on. The matrix is diagonal when
+the interval is one whole period and full otherwise, and it is singular
+for any \code{order >= 1}, because the constant vanishes under differentiation.
 }
 \description{
 Returns the inner products of the \code{order}-th derivatives. On a whole period
@@ -30,8 +30,8 @@ the orthogonality fails and the method computes a quadrature instead.
 }
 \section{The closed form}{
 Over a whole period the trigonometric functions are mutually orthogonal,
-and stay orthogonal after differentiation, a derivative only shifting the
-phase and rescaling. The order-\eqn{d} matrix is therefore diagonal, with
+and stay orthogonal after differentiation, because a derivative only shifts
+the phase and rescales. The order-\eqn{d} matrix is therefore diagonal, with
 
 \deqn{G_{00} = \omega \ (d = 0), \quad 0 \ (d \ge 1), \qquad
   G_{jj} = \frac{\omega}{2}\left(\frac{2\pi j}{\omega}\right)^{2d}}

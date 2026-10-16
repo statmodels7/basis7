@@ -21,41 +21,42 @@ two characters form the default column names of \code{\link[=basis_colnames]{bas
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several. Both finite, of the same
-length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
-\code{\link[=basis_nvar]{basis_nvar()}} reports.}
+\item{lower, upper}{The endpoints of the interval on which the basis lives, or
+one endpoint per variable for a basis of several. Both must be finite and of
+the same length, and \code{lower[j] < upper[j]} must hold for every \code{j}.
+\code{\link[=basis_nvar]{basis_nvar()}} returns their length.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
 knots and degree of a B-spline, the period of a Fourier basis, the
 marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} shows it, abbreviating
 any numeric entry of more than four values. Defaults to an empty list.}
 
-\item{marginals}{The list of bases being multiplied, one per variable, each
-of one variable itself. Kept whole, so that each can still be evaluated
-and inspected.}
+\item{marginals}{The list of bases to multiply, one per variable, in which
+each basis takes one variable. The list is kept whole, so that each basis
+can still be evaluated and inspected.}
 }
 \value{
 An object of class \code{TensorBasis}, inheriting from \link{basis}, with the
-five properties of a basis plus \code{marginals}, and \code{basis_params} holding
+five properties of a basis plus \code{marginals}; \code{basis_params} holds
 \code{marginal_dimensions}.
 }
 \description{
-The S7 class of tensor product bases: all products of the functions of
-several bases, one basis per variable,
+Defines the S7 class of tensor product bases, whose functions are all
+products of the functions of several bases, one basis per variable,
 \deqn{B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).}
-It carries the marginals whole, and every quantity it returns is built
-from theirs, so a product of exactly integrated marginals is itself exact
-at any number of variables. Constructed by \code{\link[=tensor_basis]{tensor_basis()}}.
+The class carries the marginals whole, and every quantity that it returns
+is built from theirs, so a product of exactly integrated marginals is
+itself exact at any number of variables. The class is constructed by
+\code{\link[=tensor_basis]{tensor_basis()}}.
 }
 \section{Reduction to the marginals}{
 The product separates, so each generic reduces to its marginals':
 \itemize{
 \item a partial derivative differentiates one marginal to its own order and
-leaves the others alone, \code{order} being a multi-index;
+leaves the others alone, where \code{order} is a multi-index;
 \item the integral over the box from the lower corner is the product of the
-marginal integrals, and the anchoring is kept, a product whose every
-factor is zero at the corner being zero there;
+marginal integrals, and the anchoring is kept, because a product whose
+every factor is zero at the corner is zero there;
 \item the Gram matrix is the Kronecker product of the marginal Gram matrices,
 which is a product of one-dimensional integrals and never a quadrature
 over the box.
@@ -68,14 +69,14 @@ and costs one marginal Gram matrix per variable.
 }
 
 \section{Column order}{
-Columns follow \code{\link[base:kronecker]{base::kronecker()}}: the \strong{last} marginal varies fastest.
+Columns follow \code{\link[base:kronecker]{base::kronecker()}}: the last marginal varies fastest.
 At two variables of 3 and 2 functions the names are \code{bs1.P0}, \code{bs1.P1},
 \code{bs2.P0}, \code{bs2.P1}, \code{bs3.P0}, \code{bs3.P1}.
 
-That order matters when coefficients are supplied as an array, R storing an
-array with its \emph{first} index fastest. \code{\link[=basis_contract]{basis_contract()}} reverses the
-dimensions; a hand-written \code{as.numeric(coef)} does not, and pairs most
-coefficients with the wrong function.
+That order matters when coefficients are supplied as an array, because R
+stores an array with its \emph{first} index fastest. \code{\link[=basis_contract]{basis_contract()}}
+reverses the dimensions; a hand-written \code{as.numeric(coef)} does not, and
+pairs most coefficients with the wrong function.
 }
 
 \section{What the validator enforces}{

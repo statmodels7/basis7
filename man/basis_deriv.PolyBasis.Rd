@@ -20,9 +20,10 @@ columns, with column names \code{P0}, \code{P1}, and so on.
 \description{
 Returns the \code{order}-th derivative of every Legendre polynomial, exactly and
 at any order, from the recurrence
-\eqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1) P_n^{(d-1)}}. No difference is
-taken anywhere, so the fourth derivative is as accurate as the first, and
-an order above \code{basis@basis_params$degree} returns exact zeros.
+\eqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1) P_n^{(d-1)}}. The computation
+takes no difference at any step, so the fourth derivative is as accurate as
+the first, and the function returns exact zeros for an order above
+\code{basis@basis_params$degree}.
 }
 \details{
 Each order is built from the one below it, so reaching order \eqn{d} costs

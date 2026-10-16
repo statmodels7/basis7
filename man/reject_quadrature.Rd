@@ -7,7 +7,7 @@
 reject_quadrature(...)
 }
 \arguments{
-\item{...}{The arguments a method received through its own \code{...}.}
+\item{...}{The arguments that a method received through its own \code{...}.}
 }
 \value{
 \code{NULL}, invisibly; called for the error.

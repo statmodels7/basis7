@@ -23,13 +23,14 @@ construction, so the default is larger than \code{\link[=pspline_smooth]{pspline
 
 \item{degree}{The degree of the B-spline, \code{3} for a cubic.}
 
-\item{diff}{The order of difference the penalty takes. The fit contracts
-to a polynomial of degree \code{diff - 1}.}
+\item{diff}{The order of difference that the penalty takes. The fit
+contracts to a polynomial of degree \code{diff - 1}.}
 
 \item{m}{The number of weight components, and so the number of smoothing
-parameters. \pkg{mgcv} calls it \code{m} as well, and takes the same default.
-Two gives one weight rising and one falling across the index; more give
-a finer profile at the price of a smoothing parameter each.}
+parameters. In \pkg{mgcv} the same argument is also named \code{m}, with the
+same default. A value of two gives one rising weight and one falling
+weight across the index, and larger values give a finer profile, since each
+additional component adds one smoothing parameter.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
 \code{NULL} for the null space of the penalty.}
@@ -54,11 +55,11 @@ An S7 object of class \link{AdaptiveSmoother}, inheriting from
 \link{smoother}.
 }
 \description{
-A difference penalty whose weight varies along the covariate, so that a
-function may be smoothed hard where it is quiet and left free where it is
-not. Where \code{\link[=pspline_smooth]{pspline_smooth()}} penalizes every difference alike under one
-smoothing parameter, this family carries \code{m} of them, and the data
-determine how the roughness is distributed.
+Returns a smoother with a difference penalty whose weight varies along the
+covariate, so that a function may be smoothed hard where it is quiet and
+left free where it is not. Where \code{\link[=pspline_smooth]{pspline_smooth()}} penalizes every
+difference alike under one smoothing parameter, this family carries \code{m} of
+them, and the data determine how the roughness is distributed.
 }
 \section{The construction}{
 Write \eqn{D} for the matrix of \code{diff}-th differences of the coefficients.
@@ -92,15 +93,16 @@ it.
 On a function whose roughness varies along the covariate the adaptive
 penalty smooths the quiet stretches more strongly than a P-spline with
 one smoothing parameter, and follows the noise less there. On a function
-of constant roughness its additional smoothing parameters have nothing to
-adapt to, and the fit is slightly worse than the P-spline fit.
+of constant roughness its additional smoothing parameters have no
+variation in roughness to which they can adapt, and the fit is slightly
+worse than the P-spline fit.
 
 The differences are taken in the Eilers-Marx coordinates of
 \code{\link[=pspline_smooth]{pspline_smooth()}}, as in the adaptive P-spline of \pkg{mgcv}'s
 \code{bs = "ad"}. At equal smoothing parameters the two sums are the same
-P-spline penalty; the weight functions differ, \pkg{mgcv} building them
-from a different basis over the index, so the two fits are close and not
-identical.
+P-spline penalty; the weight functions differ because \pkg{mgcv} builds
+them from a different basis over the index, so the two fits are close and
+not identical.
 }
 
 \section{The coordinates}{

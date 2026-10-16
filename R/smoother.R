@@ -5,12 +5,12 @@
 #' A smoother is a recipe for a penalized smooth. It carries the four
 #' choices that make up a smooth, which a single basis does not determine:
 #'
-#' 1. which functions span the space, the **basis**;
-#' 2. what counts as roughness, the **penalty**;
+#' 1. which functions span the space, the basis;
+#' 2. what counts as roughness, the penalty;
 #' 3. which directions the penalty leaves unpenalized and what happens to them,
-#'    the **null space**;
+#'    the null space;
 #' 4. in which coordinates the coefficients are expressed, the
-#'    **reparametrization**.
+#'    reparametrization.
 #'
 #' It is a recipe and not a built object because the third and fourth
 #' choices need the data: the Demmler-Reinsch rotation diagonalizes the
@@ -23,24 +23,24 @@
 #' # One object for the basis and the penalty
 #'
 #' The basis and the penalty cannot be chosen independently. The null space
-#' is a property of the **pair**: the second-derivative Gram matrix of a cubic B-spline has a
-#' two-dimensional null space, that of a Fourier basis is one-dimensional at
-#' every order because the basis contains no linear function, and the Gram
-#' matrix of a B-spline of degree \eqn{d} at an order above \eqn{d} is
-#' identically zero, which penalizes nothing. With a basis and a penalty
-#' passed separately, that compatibility would have to be checked at every
-#' call site. A smoother is one object, so each constructor validates its own
-#' arguments.
+#' is a property of the pair: the second-derivative Gram matrix of a cubic
+#' B-spline has a two-dimensional null space, that of a Fourier basis is
+#' one-dimensional at every order because the basis contains no linear
+#' function, and the Gram matrix of a B-spline of degree \eqn{d} at an order
+#' above \eqn{d} is identically zero, which penalizes nothing. If a basis
+#' and a penalty were passed separately, that compatibility would have to be
+#' checked at every call site. A smoother is one object, so each constructor
+#' validates its own arguments.
 #'
 #' # A user-supplied penalty
 #'
 #' `penalty` replaces the roughness matrix with a penalty built by a factory
 #' of the coefficient count: `bspline_smooth(penalty =
 #' penalties7::lasso_penalty)`. It is a factory and not a built penalty
-#' because how many coefficients a smooth has is settled by the data, the
-#' constraint and the null space moving with them.
+#' because the number of coefficients of a smooth is settled by the data,
+#' and the constraint and the null space move with the data.
 #'
-#' A smoother **stores the function and never calls it**. Of the toolkit,
+#' A smoother stores the function and never calls it. Of the toolkit,
 #' this package imports \pkg{numericals7} only, so it cannot name
 #' \pkg{penalties7} and cannot test whether the function returns a penalty;
 #' [check_penalty()] checks only that it is a function with at least one
@@ -51,7 +51,7 @@
 #' matrix in `S` whether or not a factory is given, because the
 #' reparametrization reads that matrix: it orders the coordinates from the
 #' smoothest to the most wiggly and makes the penalty on them the identity,
-#' and that ordering is what gives a penalty of another shape its meaning.
+#' and this ordering gives a penalty of another shape its meaning.
 #' `unpenalized` counts the leading columns that the roughness leaves free,
 #' which a caller building a separable penalty needs, since such a penalty
 #' has no zero row with which to leave a column unpenalized.
@@ -74,9 +74,9 @@
 #' @param measure The measure against which the roughness is integrated.
 #'   `"lebesgue"` is the length measure on the interval.
 #' @param constrain The directions to which the smooth is made orthogonal,
-#'   or `NULL` for the null space of the penalty. The form it takes belongs
-#'   to the family, a periodic basis having no reading for "polynomials up to
-#'   degree c".
+#'   or `NULL` for the null space of the penalty. The form that it takes
+#'   belongs to the family, because a periodic basis has no reading for
+#'   "polynomials up to degree c".
 #' @param null_space What happens to the directions that the penalty does
 #'   not see: `"keep"` leaves them as free columns, `"drop"` removes them,
 #'   `"shrink"` penalizes them under the same smoothing parameter with a
@@ -91,8 +91,8 @@
 #' @param smoother_params A named list of whatever else the family needs.
 #'
 #' @seealso [bspline_smooth()] for the B-spline family, [smoother_build()]
-#'   for what a smoother produces at data, [basis] for the object a smoother
-#'   builds on.
+#'   for what a smoother produces at data, [basis] for the object on which a
+#'   smoother builds.
 #'
 #' @return An S7 class object. `smoother` itself is abstract and cannot be
 #'   constructed; a family constructor such as [bspline_smooth()] returns an
@@ -162,9 +162,9 @@ smoother <- S7::new_class(
 #' @name BsplineSmoother
 #'
 #' @description
-#' The class [bspline_smooth()] returns: a B-spline basis with a roughness
-#' penalty, the Demmler-Reinsch reparametrization and the linear column kept
-#' free. It adds `degree` to the properties of [smoother].
+#' The class that [bspline_smooth()] returns is a B-spline basis with a
+#' roughness penalty, the Demmler-Reinsch reparametrization and the linear
+#' column kept free. It adds `degree` to the properties of [smoother].
 #'
 #' @inheritParams smoother
 #' @param degree The degree of the B-spline pieces, a single positive
@@ -199,16 +199,16 @@ BsplineSmoother <- S7::new_class(
 #' A B-Spline Smoother
 #'
 #' @description
-#' The B-spline smoother: `k` B-spline functions of degree `degree` over an
-#' interval, penalized by the integrated squared derivative of order `order`,
-#' rotated to the Demmler-Reinsch coordinates and, with the null space kept,
-#' carrying the unpenalized polynomial directions as free columns. It is the
-#' construction used by [modelterms7::s()].
+#' The B-spline smoother consists of `k` B-spline functions of degree `degree`
+#' over an interval, penalized by the integrated squared derivative of order
+#' `order`, and rotated to the Demmler-Reinsch coordinates. If the null
+#' space is kept, the unpenalized polynomial directions appear as free
+#' columns. It is the construction used by [modelterms7::s()].
 #'
 #' @details
 #' # The construction
 #'
-#' At a vector of covariate values [smoother_build()] performs, in order:
+#' At a vector of covariate values, [smoother_build()] performs, in order:
 #'
 #' 1. a [bspline_basis()] of `k` functions over the interval, whose
 #'    endpoints are `lower` and `upper` where given and otherwise the ends of
@@ -234,15 +234,16 @@ BsplineSmoother <- S7::new_class(
 #'
 #' # What `order` means
 #'
-#' `order` is the order of derivative the penalty integrates, and it fixes
-#' what a fit contracts toward as the smoothing parameter grows: a constant
-#' at `order = 1`, a straight line at `order = 2`, a parabola at `order = 3`.
+#' `order` is the order of derivative that the penalty integrates, and it
+#' fixes the function toward which a fit contracts as the smoothing parameter
+#' grows: a constant at `order = 1`, a straight line at `order = 2`, a
+#' parabola at `order = 3`.
 #' The null space of the penalty is the polynomials of degree below `order`,
 #' so `order` may not exceed `degree`; above it the roughness matrix is
 #' identically zero and penalizes nothing.
 #'
 #' @param k The number of basis functions, a whole number of at least
-#'   `degree + 1` and greater than the number of directions the constraint
+#'   `degree + 1` and greater than the number of directions that the constraint
 #'   removes, which is `order` by default.
 #' @param degree The degree of the B-spline pieces, a whole number of at
 #'   least 1. `3`, the default, is the cubic spline.
@@ -283,7 +284,7 @@ BsplineSmoother <- S7::new_class(
 #' and penalties. *Statistical Science*, 11, 89--121.
 #'
 #' @seealso [smoother_build()] for what it produces at data, [smoother] for
-#'   the four decisions it carries, [bspline_basis()] for the basis alone.
+#'   the four decisions that it carries, [bspline_basis()] for the basis alone.
 #'
 #' @examples
 #' sm <- bspline_smooth(k = 10)
@@ -308,14 +309,14 @@ BsplineSmoother <- S7::new_class(
 #' # Dropping the null space removes it.
 #' dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
 #'
-#' # A penalty factory is STORED AND NEVER CALLED here: one that raises
-#' # still builds, because it is the model layer that calls it.
+#' # A penalty factory is stored and never called here: one that raises
+#' # still builds, because only the model layer calls it.
 #' sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
 #' out2 <- smoother_build(sm2, x)
 #' identical(out2$S, out$S)
 #'
 #' # It must be a function of the count, and it cannot be combined with a
-#' # shrunk null space, which is a weight inside the matrix it replaces.
+#' # shrunk null space, which is a weight inside the matrix that it replaces.
 #' try(bspline_smooth(k = 10, penalty = 3))
 #' try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
 #'
@@ -350,7 +351,7 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
     stop(sprintf(paste0(
       "'order' (%d) exceeds 'degree' (%d): D^%d of a spline of degree %d",
       " is\n  zero, so the penalty would be the zero matrix, or the operator",
-      " with its\n  leading term deleted. Raise 'degree'."
+      " without\n  its leading term. Raise 'degree'."
     ), m_ord, degree, m_ord, degree), call. = FALSE)
   }
 
@@ -438,9 +439,9 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #' @name smoother_span
 #'
 #' @description
-#' Returns the directions a smoother constrains its block against, and the
-#' ones `null_space = "keep"` restores as free columns. Both are evaluated at
-#' the covariate, one column per direction.
+#' Returns the directions against which a smoother constrains its block, and
+#' the ones that `null_space = "keep"` restores as free columns. Both are
+#' evaluated at the covariate, one column per direction.
 #'
 #' @details
 #' # The basis and the penalty together
@@ -448,10 +449,10 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #' The null space is a property of the basis and the penalty together. The
 #' second-derivative Gram matrix of a cubic B-spline has the polynomials of
 #' degree below 2 in its null space and the order-3 matrix the polynomials
-#' of degree below 3, while a Fourier basis has the constant alone at every
-#' order, the basis containing no linear function. The null space therefore
-#' belongs to the smoother, which carries both, and a family declares it by
-#' registering a method here.
+#' of degree below 3, while a Fourier basis has only the constant at every
+#' order because the basis contains no linear function. The null space
+#' therefore belongs to the smoother, which carries both, and a family
+#' declares it by registering a method here.
 #'
 #' # The default method of the polynomial families
 #'
@@ -466,7 +467,7 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #' is `(x - mean(x)) / sd(x)`, so at `order = 2` there is exactly one and it
 #' is the standardized covariate.
 #'
-#' Directions of the constraint **beyond** the null space are removed and not
+#' Directions of the constraint beyond the null space are removed and not
 #' restored. Returning them as free columns would put a parametric term
 #' inside the smooth instead of in the formula, where a reader sees it.
 #'
@@ -479,11 +480,12 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #'
 #' @return `smoother_span()` returns a list with elements `constraint`, a
 #'   numeric matrix of one column per direction removed; `free`, a numeric
-#'   matrix of one column per direction restored, with zero columns where
-#'   none is; and `params`, which `smoother_span_apply()` needs to rebuild
-#'   `free` at new values. For a penalty that is not a derivative operator
-#'   the list also has `free_names`, the names of the columns of `free`.
-#'   `smoother_span_apply()` returns that matrix at `newx`.
+#'   matrix of one column per direction restored, with zero columns when
+#'   the set of restored directions is empty; and `params`, which `smoother_span_apply()`
+#'   needs to rebuild `free` at new values. For a penalty that is not a
+#'   derivative operator the list also has `free_names`, the names of the
+#'   columns of `free`. `smoother_span_apply()` returns that matrix at
+#'   `newx`.
 #'
 #' @seealso [smoother_build()], which calls both.
 #'
@@ -496,7 +498,8 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #' # the restored column is the standardized covariate
 #' round(c(mean = mean(sp$free), sd = sd(sp$free), cor = cor(sp$free, x)), 12)
 #'
-#' # reapplied at new values rather than rebuilt
+#' # smoother_span_apply() reapplies the restored column at new values
+#' # without rebuilding it.
 #' i <- c(2L, 20L, 55L)
 #' max(abs(smoother_span_apply(bspline_smooth(k = 8), sp$params, x[i]) -
 #'         sp$free[i, , drop = FALSE]))
@@ -540,20 +543,20 @@ S7::method(smoother_span, smoother) <- function(sm, x, ...) {
 #' @details
 #' The rule is that of the polynomial families, read for an arbitrary
 #' operator. The penalized part is made orthogonal to every
-#' direction the penalty does not see, because a direction that is neither
-#' penalized nor constrained is one the pencil cannot separate; and the
-#' constant is not restored, a model carrying an intercept already spanning
-#' it.
+#' direction that the penalty does not see, because a direction that is
+#' neither penalized nor constrained is one that the pencil cannot separate;
+#' and the constant is not restored, because a model that carries an
+#' intercept already spans it.
 #'
 #' Each free column is divided by its root mean square over the covariate and
-#' is **not centered**. Scaling by a positive constant is what a badly scaled
-#' column such as \eqn{t^3} over \eqn{[0, 365]} needs, and it preserves every
-#' property the function has; centering does not. A periodic family restores
-#' sines and cosines here, and subtracting a constant from a sine gives a
-#' column that is no longer periodic, which is the property the basis was
-#' chosen for.
+#' is not centered. A badly scaled column such as \eqn{t^3} over
+#' \eqn{[0, 365]} needs scaling by a positive constant, which preserves every
+#' property that the function has, whereas centering does not. A periodic
+#' family restores sines and cosines here, and subtracting a constant from a
+#' sine gives a column that is no longer periodic, which is the property for
+#' which the basis was chosen.
 #'
-#' @param op A [LinearOperator], with its period resolved.
+#' @param op A [LinearOperator] whose period is resolved.
 #' @param x The covariate, a numeric vector.
 #'
 #' @return A list of `constraint`, `free`, `free_names` and `params`, as
@@ -606,8 +609,8 @@ S7::method(smoother_span_apply, smoother) <- function(sm, params, newx, ...) {
 #' Column Names for an Operator's Restored Columns
 #'
 #' @description
-#' Turns the labels [operator_null()] gives into names a design matrix
-#' can carry: `sin(0.0172 t)` becomes `sin1`, `cos(0.0344 t)` becomes
+#' Turns the labels that [operator_null()] gives into names that a design
+#' matrix can carry: `sin(0.0172 t)` becomes `sin1`, `cos(0.0344 t)` becomes
 #' `cos2`, and anything else keeps a syntactically safe form of its label.
 #'
 #' @details
@@ -740,10 +743,10 @@ poly_free_apply <- function(params, newx) {
 #' The Roughness Matrix of a Smoother
 #'
 #' @description
-#' The Gram matrix of the derivative of order `sm@order`, integrated against
-#' the measure of the smoother: the length measure on the interval for
+#' Returns the Gram matrix of the derivative of order `sm@order`, integrated
+#' against the measure of the smoother: the length measure on the interval for
 #' `"lebesgue"`, the empirical measure of the covariate for `"empirical"`,
-#' and the density a function gives otherwise.
+#' and the density that a function gives otherwise.
 #'
 #' @details
 #' The measure changes the penalty: the Gram matrices under two measures are
@@ -760,7 +763,7 @@ poly_free_apply <- function(params, newx) {
 #'   smoothing parameter each, as [adaptive_smooth()]'s is.
 #'
 #' @seealso [smoother_build()], which calls it, and [basis_gram()], the
-#'   generic it reads.
+#'   generic that it reads.
 #'
 #' @examples
 #' set.seed(1)
@@ -800,10 +803,10 @@ S7::method(smoother_gram, smoother) <- function(sm, b, x, ...) {
 #' The Resolved Penalty Operator of a Smoother
 #'
 #' @description
-#' Returns `sm@order` with its period filled in from the smoother's
-#' interval where it was left `NULL`, which is what makes
-#' `fourier_smooth(lower = 0, upper = 365)` penalize on a cycle of 365
-#' without the period being written twice.
+#' Returns `sm@order`, filling in its period from the smoother's
+#' interval where it was left `NULL`. With this step,
+#' `fourier_smooth(lower = 0, upper = 365)` penalizes on a cycle of 365 and
+#' the period does not have to be written twice.
 #'
 #' @param sm A [smoother].
 #' @param x The covariate, from which the interval is taken where the
@@ -827,14 +830,14 @@ smoother_operator <- function(sm, x) {
 #' @description
 #' Resolves a [smoother] at a vector of covariate values and returns the
 #' design block, the penalty matrix and what a caller needs to reapply the
-#' construction at new values. It is the whole of a penalized smooth's
-#' arithmetic: what comes back is the pair \eqn{(X, S)} of
+#' construction at new values. The returned pair \eqn{(X, S)} carries the
+#' whole arithmetic of a penalized smooth, as in
 #' \eqn{(X'X + \lambda S)^{-1} X'y}.
 #'
 #' @details
 #' The block carries no column names, no `by` expansion and no label: those
 #' belong to whichever model layer places the smooth in a formula. The
-#' column names the family gives its own coordinates are returned separately
+#' column names that the family gives its own coordinates are returned separately
 #' in `names`.
 #'
 #' The transform is computed on `x` and recorded in `blueprint`, so a
@@ -854,15 +857,15 @@ smoother_operator <- function(sm, x) {
 #'     \item{`S`}{The penalty: a matrix square of `ncol(X)`, or, for a family
 #'       whose roughness is a sum of components carrying a smoothing
 #'       parameter each ([adaptive_smooth()]), a list of such matrices.}
-#'     \item{`unpenalized`}{The number of leading columns the penalty does
-#'       not cover, as an integer.}
+#'     \item{`unpenalized`}{The number of leading columns that the penalty
+#'       does not cover, as an integer.}
 #'     \item{`blueprint`}{What [smoother_apply()] needs to reapply the
 #'       construction at new values.}
 #'     \item{`names`}{One name per column of `X`.}
 #'   }
 #'
 #' @seealso [smoother_apply()] for the block at new values,
-#'   [bspline_smooth()] for the smoother this builds.
+#'   [bspline_smooth()] for the smoother that this function builds.
 #'
 #' @examples
 #' set.seed(1)
@@ -871,7 +874,7 @@ smoother_operator <- function(sm, x) {
 #' vapply(out, function(e) class(e)[1], character(1))
 #' dim(out$X)
 #'
-#' # (X, S) is everything a penalized least-squares fit needs.
+#' # (X, S) is everything that a penalized least-squares fit needs.
 #' y <- sin(2 * pi * x) + rnorm(150, sd = 0.2)
 #' b <- solve(crossprod(out$X) + 0.1 * out$S, crossprod(out$X, y))
 #' round(sqrt(mean((out$X %*% b - sin(2 * pi * x))^2)), 3)
@@ -968,9 +971,9 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
 #' The Weight of a Shrunk Null Space
 #'
 #' @description
-#' The penalty that `null_space = "shrink"` puts on the directions that the
-#' roughness matrix does not see: one tenth of the weight of a penalized
-#' direction.
+#' Returns the penalty weight that `null_space = "shrink"` puts on the
+#' directions that the roughness matrix does not see, which is one tenth of
+#' the weight of a penalized direction.
 #'
 #' @details
 #' The weight follows the shrinkage construction of the `bs = "ts"` smooths
@@ -998,8 +1001,8 @@ shrink_weight <- function() 0.1
 #' reapplies.
 #'
 #' @details
-#' The three routes differ in what the coefficients mean, and the fit they
-#' express is the same span in each.
+#' The three routes differ in what the coefficients mean, and the fit that
+#' they express is the same span in each.
 #'
 #' \describe{
 #'   \item{`"dr"`}{[dr_basis()] diagonalizes the pencil of the empirical Gram
@@ -1008,16 +1011,16 @@ shrink_weight <- function() 0.1
 #'     the penalty is the identity. A separable penalty is available under a
 #'     diagonal map and not under a general one, so the rotation makes a
 #'     sparse or heavy-tailed prior on a smooth computationally feasible.}
-#'   \item{`"none"`}{The constrained basis as it stands, with the penalty the
+#'   \item{`"none"`}{The constrained basis as it stands; its penalty is the
 #'     congruence of the roughness matrix by the transform of the constraint.
 #'     The coefficients are those of the constrained basis, one fewer than
 #'     the basis functions for each direction removed.}
 #'   \item{`"orthonorm"`}{The constrained basis rotated so that it satisfies
 #'     \eqn{X'X = I} over the observed covariate. The orthonormality is
-#'     against the **empirical** measure, which makes the design
+#'     against the empirical measure, which makes the design
 #'     orthonormal; [orthonorm_basis()] orthonormalizes against the
 #'     \eqn{L^2} inner product instead and remains available as an operation
-#'     on a basis. It is the **reparametrized part** that is orthonormal:
+#'     on a basis. The reparametrized part of the block is orthonormal:
 #'     with `null_space = "keep"` a free column is prepended afterwards and
 #'     the whole block is then not orthonormal, while `null_space = "drop"`
 #'     gives \eqn{X'X = I} for the block itself, up to rounding.}
@@ -1034,7 +1037,7 @@ shrink_weight <- function() 0.1
 #' @param cons The constraint, one column per direction removed, or `NULL`.
 #'
 #' @return A list of `S`, the penalty on the reparametrized block, and
-#'   `basis`, the object whose evaluation **is** that block and which
+#'   `basis`, the object whose evaluation is that block and which
 #'   [smoother_apply()] evaluates at new values.
 #'
 #' @keywords internal
@@ -1107,11 +1110,11 @@ smoother_reparam <- function(sm, b, x, g, cons) {
 }
 
 
-#' One Operation on a Penalty, However Many Components It Has
+#' One Operation on a Penalty with Any Number of Components
 #'
 #' @description
 #' Applies `f` to a roughness matrix, or to each component of a list of them,
-#' and returns the same shape it was given.
+#' and returns the same shape that it was given.
 #'
 #' @details
 #' [smoother_gram()] returns a matrix for every family whose roughness is
@@ -1189,10 +1192,10 @@ S7::method(smoother_apply, smoother) <- function(sm, blueprint, newx, ...) {
 #' @name null-default
 #'
 #' @description
-#' Returns `a` unless it is `NULL`, in which case `b`. Written here instead
-#' of imported: of the toolkit this package imports \pkg{numericals7} only,
-#' and the operator reached base R only in 4.4.0, later than the version
-#' \file{DESCRIPTION} requires.
+#' Returns `a` unless it is `NULL`, in which case `b`. The function is
+#' written here instead of imported, because this package imports only
+#' \pkg{numericals7} from the toolkit, and the operator reached base R only in
+#' 4.4.0, later than the version that \file{DESCRIPTION} requires.
 #'
 #' @param a,b Any two objects.
 #'
@@ -1238,9 +1241,9 @@ free_names <- function(n) {
 #' @param sm A [smoother].
 #' @param x The covariate, a numeric vector.
 #'
-#' @return A list of two numbers, the lower and upper endpoints. A covariate
-#'   that takes a single value, with neither endpoint given, signals an
-#'   error.
+#' @return A list of two numbers, the lower and upper endpoints. The function
+#'   signals an error for a covariate that takes a single value when `lower`
+#'   and `upper` are both `NULL`.
 #'
 #' @keywords internal
 smoother_interval <- function(sm, x) {
@@ -1321,7 +1324,8 @@ check_whole <- function(v, nm, lo, why = "") {
 #'
 #' @param lower,upper The endpoints.
 #'
-#' @return `NULL`, invisibly. Called for the error it signals.
+#' @return `NULL`, invisibly. The function is called for the error that it
+#'   signals.
 #'
 #' @keywords internal
 check_interval <- function(lower, upper) {
@@ -1348,7 +1352,8 @@ check_interval <- function(lower, upper) {
 #'
 #' @param sm A [smoother].
 #'
-#' @return `NULL`, invisibly. Called for the error it signals.
+#' @return `NULL`, invisibly. The function is called for the error that it
+#'   signals.
 #'
 #' @keywords internal
 check_available <- function(sm) {
@@ -1406,9 +1411,9 @@ check_penalty <- function(penalty) {
 #'
 #' @description
 #' Validates the `measure` argument of a smoother constructor: one of the
-#' names that the package integrates against, or a function of the points.
-#' For a function only the presence of an argument is checked here; its
-#' weights are checked when the Gram matrix is computed.
+#' names of the measures against which the package integrates, or a function
+#' of the points. For a function only the presence of an argument is checked
+#' here; its weights are checked when the Gram matrix is computed.
 #'
 #' @param measure The value given.
 #'
@@ -1439,7 +1444,7 @@ check_measure <- function(measure) {
 #'
 #' @description
 #' Validates `constrain` for a family whose null space is the polynomials of
-#' degree below `order`. The constraint must **contain** that null space, so
+#' degree below `order`. The constraint must contain that null space, so
 #' a degree below `order - 1` is rejected.
 #'
 #' @details
@@ -1450,7 +1455,7 @@ check_measure <- function(measure) {
 #' function, the quadratic direction is left free and unpenalized. The error
 #' is reported here, at the constructor.
 #'
-#' Constraining **beyond** the null space is admitted. It makes the block
+#' Constraining beyond the null space is admitted. It makes the block
 #' orthogonal, over the observed covariate, to the polynomials up to degree
 #' `constrain`, which avoids collinearity with a parametric term of that
 #' degree written in the formula. The cost is one dimension per degree.
@@ -1499,7 +1504,7 @@ check_constrain <- function(constrain, op) {
 #' @param x A [smoother].
 #' @param ... Ignored.
 #'
-#' @return `x`, invisibly. Called for the printing.
+#' @return `x`, invisibly. The method is called for the printing.
 #'
 #' @examples
 #' bspline_smooth(k = 12)

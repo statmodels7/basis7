@@ -20,10 +20,10 @@ two characters form the default column names of \code{\link[=basis_colnames]{bas
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several. Both finite, of the same
-length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
-\code{\link[=basis_nvar]{basis_nvar()}} reports.}
+\item{lower, upper}{The endpoints of the interval on which the basis lives, or
+one endpoint per variable for a basis of several. Both must be finite and of
+the same length, and \code{lower[j] < upper[j]} must hold for every \code{j}.
+\code{\link[=basis_nvar]{basis_nvar()}} returns their length.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
 knots and degree of a B-spline, the period of a Fourier basis, the
@@ -32,15 +32,16 @@ any numeric entry of more than four values. Defaults to an empty list.}
 }
 \value{
 An object of class \code{BsplineBasis}, inheriting from \link{basis}, with
-the same five properties and \code{basis_params} holding \code{degree}, \code{knots} and
+the same five properties, where \code{basis_params} holds \code{degree}, \code{knots} and
 \code{boundary_knots}. Call \code{\link[=bspline_basis]{bspline_basis()}} instead of this class directly;
 it places the knots and checks the dimension against the degree.
 }
 \description{
-The S7 class of B-spline bases, the objects \code{\link[=bspline_basis]{bspline_basis()}} returns. It
-adds no property to \link{basis} and exists as the class the spline methods
-dispatch on. A B-spline basis is piecewise polynomial, each function
-supported on a few knot intervals, and its functions sum to one.
+\code{BsplineBasis} is the S7 class of B-spline bases, the objects that
+\code{\link[=bspline_basis]{bspline_basis()}} returns. It adds no property to \link{basis} and exists as the
+class on which the spline methods dispatch. A B-spline basis is piecewise
+polynomial. Each of its functions is supported on a few knot intervals, and
+the functions sum to one.
 }
 \section{The Cox-de Boor recurrence}{
 On a knot sequence \eqn{t_1 \le \cdots \le t_{K+m+1}}, for a basis of
@@ -51,9 +52,9 @@ indicators upward:
 
 \deqn{B_{j,q}(x) = \frac{x - t_j}{t_{j+q} - t_j} B_{j,q-1}(x)
   + \frac{t_{j+q+1} - x}{t_{j+q+1} - t_{j+1}} B_{j+1,q-1}(x),
-  \qquad q = 1, \dots, m,}
+  \qquad q = 1, \dots, m.}
 
-a term with a zero denominator being taken as zero.
+A term with a zero denominator is taken as zero.
 }
 
 \section{Local support and partition of unity}{
@@ -74,8 +75,8 @@ exact: see \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}}.
 }
 
 \section{Its \code{basis_params}}{
-Three entries: \code{degree}, the interior \code{knots} as a numeric vector, and
-\code{boundary_knots}, which is \code{c(lower, upper)}.
+The list has three entries: \code{degree}, the interior \code{knots} as a numeric
+vector, and \code{boundary_knots}, which is \code{c(lower, upper)}.
 }
 
 \examples{

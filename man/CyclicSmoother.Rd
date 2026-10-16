@@ -39,9 +39,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -67,9 +67,9 @@ An S7 object of class \code{CyclicSmoother}, inheriting from
 \link{smoother}. Construct one with \code{\link[=cyclic_smooth]{cyclic_smooth()}}.
 }
 \description{
-The class \code{\link[=cyclic_smooth]{cyclic_smooth()}} returns: a periodic B-spline basis with a
-roughness penalty and the Demmler-Reinsch reparametrization. It carries
-\code{degree} beside the properties every \link{smoother} has.
+The class that \code{\link[=cyclic_smooth]{cyclic_smooth()}} returns combines a periodic B-spline basis
+with a roughness penalty and the Demmler-Reinsch reparametrization. It
+carries \code{degree} beside the properties that every \link{smoother} has.
 }
 \examples{
 sm <- cyclic_smooth(k = 10)

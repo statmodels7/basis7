@@ -22,7 +22,7 @@ differences or quadrature, so they carry that method's error and cannot be
 verified against a numerical reference.
 }
 \section{Use}{
-\code{\link[=check_basis]{check_basis()}} reads it to decide which of its checks are informative.
+\code{\link[=check_basis]{check_basis()}} uses it to determine which of its checks are informative.
 Comparing a finite difference against a finite difference repeats the same
 arithmetic, and the two agree however wrong the basis is, so the \code{deriv}
 and \code{integral} checks are not run where this reports \code{TRUE}.
@@ -38,10 +38,10 @@ numerical.
 
 Two classes are handled by delegation instead. A \link{TransformedBasis}
 reports its parent's: all three of its methods are registered, but each one
-calls the parent and multiplies, so what is exact about it is whatever was
-exact about the parent. A \link{TensorBasis} reports \code{TRUE} for a quantity that
-is numerical in \strong{any} margin, every one of its methods being a product of
-its margins'.
+calls the parent and multiplies, so a quantity is exact for the transformed
+basis when it was exact for the parent. A \link{TensorBasis} reports \code{TRUE} for
+a quantity that is numerical in any margin, because every one of its
+methods is a product of the methods of its margins.
 }
 
 \section{A method that branches}{
@@ -76,7 +76,7 @@ basis_is_numerical(tensor_basis(bump, poly_basis(dimension = 3)))
 
 }
 \seealso{
-\code{\link[=check_basis]{check_basis()}}, which reads it to decide what to test;
-\code{\link[=print.basis]{print.basis()}}, which prints it; \code{vignette("defining-a-basis")}, where a
-basis is taken from all three \code{TRUE} to all three \code{FALSE}.
+\code{\link[=check_basis]{check_basis()}}, which uses it to determine what to test;
+\code{\link[=print.basis]{print.basis()}}, which prints it; \code{vignette("defining-a-basis")}, in
+which a basis is taken from all three \code{TRUE} to all three \code{FALSE}.
 }

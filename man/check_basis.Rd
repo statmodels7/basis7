@@ -9,19 +9,20 @@ check_basis(basis, n = 41L, orders = 1:2, tol = 1e-06, verbose = TRUE)
 \arguments{
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{n}{The number of points to test at, default \code{41}. They are equally
-spaced across the interval with five percent trimmed off each end,
+\item{n}{The number of points at which to test, default \code{41}. They are
+equally spaced across the interval after trimming five percent off each end,
 because a one-sided stencil at an endpoint carries a larger error that
-would read as a failure of the basis. Passed through \code{as.integer()}.}
+would read as a failure of the basis. The value is passed through
+\code{as.integer()}.}
 
 \item{orders}{The derivative orders to check, default \code{1:2}. Each is
 compared against one differentiation of the order below it, never against
 a chain of lower-order differences. Each order costs one pass.}
 
 \item{tol}{The relative tolerance for the derivative and integral checks,
-default \code{1e-6}. Relative to the values themselves, with the denominator
-taken from them; see \code{\link[=rel_close]{rel_close()}}. The Gram comparison uses
-\code{1e-6} regardless.}
+default \code{1e-6}. The tolerance is relative to the values themselves, and
+the denominator is taken from them; see \code{\link[=rel_close]{rel_close()}}. The Gram
+comparison uses \code{1e-6} regardless.}
 
 \item{verbose}{Whether to print the table, default \code{TRUE}. The result is
 returned invisibly either way.}
@@ -30,7 +31,7 @@ returned invisibly either way.}
 Invisibly, a named logical vector of length 6, in the order
 \code{shape}, \code{deriv}, \code{integral}, \code{partition}, \code{gram}, \code{missing}, with \code{NA}
 for a check that was not run. It carries the attribute \code{"numerical"}, the
-named logical vector \code{\link[=basis_is_numerical]{basis_is_numerical()}} returns.
+named logical vector that \code{\link[=basis_is_numerical]{basis_is_numerical()}} returns.
 }
 \description{
 Runs the numerical checks that a basis must pass, and prints the outcome of
@@ -55,19 +56,19 @@ property and
 
 The checks are:
 \enumerate{
-\item \strong{shape}: the evaluation returns a matrix of the declared size and
+\item shape: the evaluation returns a matrix of the declared size and
 column names for a vector, and of one row for a single point, and the
 first derivative returns a matrix of the declared size;
-\item \strong{derivatives}: each analytic order agrees with one numerical
+\item derivatives: each analytic order agrees with one numerical
 differentiation of the order below it;
-\item \strong{integral}: it differentiates back to the basis and is exactly zero
+\item integral: it differentiates back to the basis and is exactly zero
 at the lower endpoint; for a basis of several variables only the zero
 at the lower corner is checked;
-\item \strong{partition of unity}: the rows sum to one, for the families
+\item partition of unity: the rows sum to one, for the families
 that have that property;
-\item \strong{Gram}: symmetric, positive semidefinite, and equal to an
+\item Gram: symmetric, positive semidefinite, and equal to an
 independent quadrature;
-\item \strong{missing values}: a missing evaluation point gives a missing
+\item missing values: a missing evaluation point gives a missing
 row and nothing else.
 }
 }
@@ -78,14 +79,14 @@ agree however wrong the basis is. The \code{deriv} and \code{integral} checks ar
 therefore not run in that case: they report \code{NA} and print \verb{[numerical]}.
 
 The \code{gram} check always runs. The independent quadrature is 401 panels of
-7 nodes, a rule no basis in the package uses for its own result, so a
-family whose own Gram matrix is a quadrature is still compared against
-different arithmetic. When the Gram matrix is numerical, each entry is
-allowed, besides the relative tolerance, four times the difference
-between the package's own fallback (\code{\link[=numerical_gram]{numerical_gram()}} at its defaults)
-and the finer rule: a quadrature that is correct but limited by the kinks
-of a basis passes, and a matrix that is wrong by more than the quadrature
-error fails. The \code{shape} and \code{missing} checks do not depend on the
+7 nodes, a rule that the bases in the package never use for their own
+results, so a family whose own Gram matrix is a quadrature is still
+compared against different arithmetic. When the Gram matrix is numerical,
+each entry is allowed, besides the relative tolerance, four times the
+difference between the package's own fallback (\code{\link[=numerical_gram]{numerical_gram()}} at its
+defaults) and the finer rule: a quadrature that is correct but limited by
+the kinks of a basis passes, and a matrix that is wrong by more than the
+quadrature error fails. The \code{shape} and \code{missing} checks do not depend on the
 fallback and always run.
 
 \code{partition} is \code{NA} and prints \verb{[not claimed]} for a family that is not a
@@ -94,7 +95,7 @@ which marks a value that was not verified.
 }
 
 \section{The error of the reference}{
-A central difference assumes derivatives the function may not have. At a
+A central difference assumes derivatives that the function may not have. At a
 knot a spline's third derivative jumps, and a stencil straddling it returns
 a number of the order of the jump, which compared against an exact value
 reads as a failure of the basis. Each reference is therefore computed
@@ -105,8 +106,9 @@ percent is still reported as failed, as the last example shows.
 }
 
 \examples{
-# The shipped families pass every check that applies to them; a Fourier
-# basis is not a partition of unity and does not claim to be one.
+# The shipped families pass every check that applies to them; the
+# partition-of-unity check is not applied to a Fourier basis, which is not a
+# partition of unity.
 invisible(check_basis(bspline_basis(dimension = 6)))
 invisible(check_basis(fourier_basis(dimension = 5)))
 

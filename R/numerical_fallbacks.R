@@ -9,9 +9,9 @@ NULL
 #' @description
 #' Estimates the `order`-th derivative of `f` at each point of `x` by a single
 #' finite-difference stencil, symmetric where the interval leaves room for it
-#' and one-sided where it does not. One stencil of the order wanted, never a
-#' composition of lower-order differences, so the error is the truncation of
-#' that one formula. It computes the numerical derivatives of every basis; the
+#' and one-sided where it does not. The function uses one stencil of the
+#' requested order and never a composition of lower-order differences, so the
+#' error is the truncation error of that one formula. It computes the numerical derivatives of every basis; the
 #' numerical integral and Gram matrix use Gauss-Legendre quadrature through
 #' [quad_rule()] instead.
 #'
@@ -20,9 +20,9 @@ NULL
 #'
 #' A basis is evaluated at its endpoints as readily as anywhere else, and a
 #' symmetric stencil centered on an endpoint would need points outside the
-#' interval, where the basis signals an error. Each point therefore gets the
-#' central stencil when both sides have room, and otherwise the one-sided
-#' stencil that points inward. The one-sided stencils have `order + 2` nodes,
+#' interval, where the basis signals an error. The function therefore applies
+#' the central stencil to a point when both sides have room, and otherwise
+#' the one-sided stencil that points inward. The one-sided stencils have `order + 2` nodes,
 #' so that they keep the second-order accuracy of the central one, which at an
 #' even order has one node fewer; the central stencil is padded with zero
 #' weights to the same length. The weights come from
@@ -42,22 +42,22 @@ NULL
 #' truncation against rounding for order \eqn{d}. The rule is not repeated in
 #' this package, so that it has a single definition in \pkg{numericals7}.
 #'
-#' It is then capped at `0.4 * (upper - lower) / (2 * reach)`, `reach` being
-#' the half-width of the central stencil, so that every stencil fits inside
+#' It is then capped at `0.4 * (upper - lower) / (2 * reach)`, where `reach`
+#' is the half-width of the central stencil, so that every stencil fits inside
 #' the interval: `0.2` of the width at orders 1 and 2, and `0.1` at orders 3
 #' and 4.
 #'
 #' # What it costs in accuracy
 #'
-#' Measured against exact Legendre derivatives of dimension 5 at 21 interior
-#' points of \eqn{[0, 1]}, relative to the scale of the result: 3.9e-10 at
-#' order 1, 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at order 4,
-#' and about ten times more at the endpoints from order 2 on. A closed form,
-#' where one exists, is exact.
+#' Against exact Legendre derivatives of dimension 5 at 21 interior points of
+#' \eqn{[0, 1]}, the measured error relative to the scale of the result is
+#' 3.9e-10 at order 1, 1.5e-08 at order 2, 3.3e-09 at order 3 and 5.6e-08 at
+#' order 4, and about ten times larger at the endpoints from order 2 on. A
+#' closed form, where one exists, is exact.
 #'
 #' @param f A function of one numeric vector returning a numeric matrix with
-#'   one row per element. Called `max(2 * reach + 1, order + 2)` times, from
-#'   three times at order 1 to six at order 4.
+#'   one row per element. The function calls it `max(2 * reach + 1, order + 2)`
+#'   times, from three times at order 1 to six times at order 4.
 #' @param x A numeric vector of evaluation points. `NA` entries are given the
 #'   central stencil and propagate to an `NA` row.
 #' @param order The derivative order, a single positive whole number.
@@ -186,16 +186,18 @@ gauss_legendre <- function(n) {
 #' @description
 #' Places an `n`-point Gauss-Legendre rule on each interval between
 #' consecutive breakpoints and returns the pooled nodes and weights, so that
-#' `sum(weights * f(nodes))` is the integral over the whole span. The
-#' composite rule every quadrature in the package is built from.
+#' `sum(weights * f(nodes))` is the integral over the whole span. This
+#' composite rule is the one from which every quadrature in the package is
+#' built.
 #'
 #' @details
-#' Each interval gets the same `n` nodes, affinely mapped from
-#' \eqn{[-1, 1]}, and its weights scaled by half its width. The result is
-#' exact for any function that is a polynomial of degree at most
-#' \eqn{2n - 1} **on each interval separately**, which is why the callers
-#' choose their breaks with care: [basis_gram.BsplineBasis()] uses the knots,
-#' so no interval straddles the point where a spline's derivative jumps.
+#' The function places the same `n` nodes on each interval, affinely mapped
+#' from \eqn{[-1, 1]}, and scales the weights by half the width of the
+#' interval. The result is exact for any function that is a polynomial of
+#' degree at most \eqn{2n - 1} on each interval separately, which is why the
+#' callers choose their breaks with care: [basis_gram.BsplineBasis()] uses the
+#' knots, so each interval lies on one side of the point where a spline's
+#' derivative jumps.
 #'
 #' The function does not validate its arguments. `breaks` must be
 #' increasing and of length at least two. The nodes are ordered by their
@@ -233,11 +235,11 @@ quad_rule <- function(breaks, n) {
 #' @title Numerical Derivatives of a Basis
 #'
 #' @description
-#' The derivative method every basis inherits from the abstract [basis] class:
-#' one finite-difference stencil of the requested order, applied to
-#' [basis_eval()]. [basis_deriv()] is therefore available for a subclass that
-#' supplies its evaluation alone, and a closed form registered later takes
-#' over through dispatch with no change to calling code.
+#' This is the derivative method that every basis inherits from the abstract
+#' [basis] class. It applies one finite-difference stencil of the requested
+#' order to [basis_eval()]. [basis_deriv()] is therefore available for a
+#' subclass that supplies only its evaluation, and if a closed form is
+#' registered later, dispatch selects it with no change to calling code.
 #'
 #' @details
 #' # Accuracy
@@ -312,10 +314,10 @@ S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
 #' @title Numerical Integral of a Basis
 #'
 #' @description
-#' The integration method every basis inherits from the abstract [basis]
-#' class: composite Gauss-Legendre from the lower endpoint, accumulated over
-#' the sorted evaluation points, so the whole set costs one pass instead of
-#' one quadrature per point.
+#' This is the integration method that every basis inherits from the abstract
+#' [basis] class. It applies composite Gauss-Legendre quadrature from the
+#' lower endpoint, accumulated over the sorted evaluation points, so the whole
+#' set costs one pass instead of one quadrature per point.
 #'
 #' @details
 #' # Accumulation
@@ -345,8 +347,8 @@ S7::method(basis_deriv, basis) <- function(basis, x, order = 1L, ...) {
 #' @param basis A basis object of one variable, of any class inheriting from
 #'   [basis]. More than one variable signals an error.
 #' @param x A numeric vector of evaluation points inside the basis interval,
-#'   the upper limits of the integrals. Need not be sorted or unique. `NA`
-#'   gives an `NA` row.
+#'   the upper limits of the integrals. The points need not be sorted or
+#'   unique. `NA` gives an `NA` row.
 #' @param nodes The number of Gauss-Legendre nodes per segment, default `12`,
 #'   so a polynomial integrand of degree up to 23 is integrated exactly.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
@@ -397,31 +399,32 @@ S7::method(basis_int, basis) <- function(basis, x, nodes = 12L, ...) {
 #' @title Numerical Gram Matrix of a Basis
 #'
 #' @description
-#' The inner-product method every basis inherits from the abstract [basis]
-#' class: composite Gauss-Legendre over `panels` equal subintervals of the
-#' interval, applied to the requested derivatives. A one-line wrapper over
-#' [numerical_gram()], which does the work and which [basis_gram.FourierBasis()]
-#' also calls when the period is not the width of the interval.
+#' This is the inner-product method that every basis inherits from the
+#' abstract [basis] class. It applies composite Gauss-Legendre quadrature over
+#' `panels` equal subintervals of the interval to the requested derivatives.
+#' The method is a one-line wrapper over [numerical_gram()], which does the
+#' work and which [basis_gram.FourierBasis()] also calls when the period is
+#' not the width of the interval.
 #'
 #' @details
-#' Its accuracy is bounded by that of the derivatives it integrates, which
-#' come from [basis_deriv()]: a family with a closed-form derivative gets the
-#' accuracy of the quadrature, and one with the finite-difference derivative
-#' carries that error into the matrix.
+#' Its accuracy is bounded by that of the derivatives that it integrates,
+#' which come from [basis_deriv()]. A family with a closed-form derivative has
+#' the accuracy of the quadrature, and a family with the finite-difference
+#' derivative carries that error into the matrix.
 #'
-#' All three shipped families and both wrappers register their own method, so
+#' Every shipped family and every wrapper registers its own method, so
 #' this one is reached only by a basis defined outside the package.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
 #' @param order The derivative order, a single non-negative whole number,
 #'   default `0`, or one per variable.
 #' @param at,weight Handled in the body of [basis_gram()] before dispatch, so
-#'   they never arrive here. Named only because S7 requires a method's formals
-#'   to contain the generic's.
+#'   they never arrive here. The arguments are named only because S7 requires
+#'   a method's formals to contain the generic's.
 #' @param panels The number of equal subintervals, default `50`. For a basis
-#'   of several variables the rule is a product and each coordinate gets
-#'   `max(2, ceiling(panels^(1/d)))` panels, so 8 apiece at `panels = 50` on
-#'   two variables.
+#'   of several variables the rule is a product and uses
+#'   `max(2, ceiling(panels^(1/d)))` panels for each coordinate, which is 8
+#'   panels per coordinate at `panels = 50` on two variables.
 #' @param nodes The number of Gauss-Legendre nodes per subinterval, default
 #'   `12`.
 #' @param ... Unused, and accepted so that the signature matches the generic's.
@@ -444,10 +447,11 @@ S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
 #'
 #' @description
 #' Computes the inner products of the order-`order` derivatives by
-#' Gauss-Legendre on equal subintervals. Shared by [basis_gram.basis()], by
-#' [basis_gram.FourierBasis()] when the period is not the interval width, and
-#' by [check_basis()] as the independent reference it compares a family's own
-#' Gram matrix against.
+#' Gauss-Legendre on equal subintervals. The function is shared by
+#' [basis_gram.basis()], by [basis_gram.FourierBasis()] when the period is not
+#' the interval width, and by [check_basis()], which uses it as the
+#' independent reference against which it compares a family's own Gram
+#' matrix.
 #'
 #' @details
 #' # One variable
@@ -460,10 +464,11 @@ S7::method(basis_gram, basis) <- function(basis, order = 0L, at = NULL,
 #' # Several variables
 #'
 #' The rule is a product over the box: the nodes are the product grid of the
-#' marginal rules and the weights their products. Each coordinate gets
-#' `max(2, ceiling(panels^(1/d)))` panels, so the total node count stays near
-#' `panels * nodes^d` and does not grow as `panels^d`. At the defaults on two
-#' variables that is 8 panels of 12 nodes per coordinate, 9216 points.
+#' marginal rules and the weights their products. The rule uses
+#' `max(2, ceiling(panels^(1/d)))` panels for each coordinate, so the total
+#' node count stays near `panels * nodes^d` and does not grow as `panels^d`.
+#' At the defaults on two variables, the rule has 8 panels of 12 nodes per
+#' coordinate, which gives 9216 points.
 #'
 #' # Accuracy
 #'
@@ -532,21 +537,25 @@ S7::method(basis_operator_gram, basis) <- function(basis, op, at = NULL,
 #' Integrates \eqn{(Lb)(Lb)^\top} numerically: over Gauss-Legendre panels for
 #' the length measure, over the covariate values for the empirical measure,
 #' and against a density where one is given. It is the base method of
-#' [basis_operator_gram()] and the route a family with no closed form takes.
+#' [basis_operator_gram()] and the route that a family with no closed form
+#' takes.
 #'
 #' @details
-#' The nodes are those of the rule used by [numerical_gram()], and the only
-#' difference is what is evaluated at them: \eqn{Lb} from [operator_eval()]
-#' instead of one derivative. A piecewise polynomial basis therefore gets an
-#' approximation here where its own derivative Gram matrix is exact, with the
-#' accuracy of the quadrature.
+#' The nodes are those of the rule used by [numerical_gram()], and the two
+#' functions differ only in what they evaluate at the nodes: this function
+#' evaluates \eqn{Lb} through [operator_eval()] instead of one derivative.
+#' For a piecewise polynomial basis this function therefore returns an
+#' approximation, with the accuracy of the quadrature, where the derivative
+#' Gram matrix of the basis itself is exact.
 #'
 #' @param basis A [basis] of one variable.
-#' @param op A [LinearOperator], with its period resolved.
+#' @param op A [LinearOperator] whose period is resolved.
 #' @param at The covariate values for the empirical measure, or `NULL`.
-#' @param weight A density to integrate against, or `NULL`.
-#' @param panels,nodes The quadrature: how many equal panels the interval is
-#'   split into and how many Gauss-Legendre nodes each carries.
+#' @param weight A density with respect to which the integral is taken, or
+#'   `NULL`.
+#' @param panels,nodes The quadrature rule: the number of equal panels into
+#'   which the interval is split and the number of Gauss-Legendre nodes that
+#'   each panel carries.
 #' @param ... Ignored.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns.
@@ -560,8 +569,8 @@ numerical_operator_gram <- function(basis, op, at = NULL, weight = NULL,
   if (basis_nvar(basis) > 1L) {
     stop(paste0(
       "a differential operator is not defined for a basis of several",
-      " variables:\n  which variable it differentiates is not said. Give",
-      " a whole 'order' instead."
+      " variables:\n  the operator does not indicate which variable to",
+      " differentiate. Give a whole 'order' instead."
     ), call. = FALSE)
   }
   nm <- basis_colnames(basis)
@@ -602,13 +611,14 @@ numerical_operator_gram <- function(basis, op, at = NULL, weight = NULL,
 #' Is This the Package's Own Base Class?
 #'
 #' @description
-#' Reports whether an S7 class is the abstract [basis] class. That is how
-#' [basis_is_numerical()] tells a method registered on the base class, which
-#' is a numerical fallback, from one a subclass supplied.
+#' Reports whether an S7 class is the abstract [basis] class.
+#' [basis_is_numerical()] uses this test to distinguish a method registered on
+#' the base class, which is a numerical fallback, from a method that a
+#' subclass supplied.
 #'
 #' @details
-#' Identity is tried first, being the usual case and costing nothing, and the
-#' name and package are compared when it fails. The second test is needed
+#' Identity is tried first, because it is the usual case and costs nothing,
+#' and the name and package are compared when it fails. The second test is needed
 #' because `identical()` can return `FALSE` for a class re-created from the
 #' same definition, which happens when the code of a package is evaluated
 #' instead of loaded, as coverage tools do.
@@ -640,7 +650,7 @@ is_base_basis_class <- function(cls) {
 #' @details
 #' # Use
 #'
-#' [check_basis()] reads it to decide which of its checks are informative.
+#' [check_basis()] uses it to determine which of its checks are informative.
 #' Comparing a finite difference against a finite difference repeats the same
 #' arithmetic, and the two agree however wrong the basis is, so the `deriv`
 #' and `integral` checks are not run where this reports `TRUE`.
@@ -656,10 +666,10 @@ is_base_basis_class <- function(cls) {
 #'
 #' Two classes are handled by delegation instead. A [TransformedBasis]
 #' reports its parent's: all three of its methods are registered, but each one
-#' calls the parent and multiplies, so what is exact about it is whatever was
-#' exact about the parent. A [TensorBasis] reports `TRUE` for a quantity that
-#' is numerical in **any** margin, every one of its methods being a product of
-#' its margins'.
+#' calls the parent and multiplies, so a quantity is exact for the transformed
+#' basis when it was exact for the parent. A [TensorBasis] reports `TRUE` for
+#' a quantity that is numerical in any margin, because every one of its
+#' methods is a product of the methods of its margins.
 #'
 #' # A method that branches
 #'
@@ -677,9 +687,9 @@ is_base_basis_class <- function(cls) {
 #'   `basis_int` and `basis_gram`, `TRUE` where the numerical fallback is in
 #'   force.
 #'
-#' @seealso [check_basis()], which reads it to decide what to test;
-#'   [print.basis()], which prints it; `vignette("defining-a-basis")`, where a
-#'   basis is taken from all three `TRUE` to all three `FALSE`.
+#' @seealso [check_basis()], which uses it to determine what to test;
+#'   [print.basis()], which prints it; `vignette("defining-a-basis")`, in
+#'   which a basis is taken from all three `TRUE` to all three `FALSE`.
 #'
 #' @examples
 #' # The shipped families at their default arguments, and wrappers over
@@ -747,8 +757,8 @@ basis_is_numerical <- function(basis) {
 #'
 #' # Writing one
 #'
-#' A method takes the default through [S7::super()] and sets the entries
-#' decided by its own branching:
+#' A method calls the default through [S7::super()] and then sets the entries
+#' that depend on its own branching:
 #'
 #' ```r
 #' S7::method(basis_numerical_route, MyBasis) <- function(basis, ...) {
@@ -770,7 +780,7 @@ basis_is_numerical <- function(basis) {
 #'   `basis_int` and `basis_gram`, `TRUE` where the quantity is computed
 #'   numerically.
 #'
-#' @seealso [basis_is_numerical()], the predicate consumers call;
+#' @seealso [basis_is_numerical()], the predicate that consumers call;
 #'   [route_by_owner()] for the default computation; and
 #'   [basis_numerical_route.FourierBasis()] for the one family that overrides.
 #'
@@ -800,7 +810,7 @@ basis_numerical_route <- S7::new_generic(
 #' wrappers itself.
 #' @param basis A basis object.
 #' @param ... Unused, and accepted so the signature matches the generic's.
-#' @return The named logical vector [basis_numerical_route()] describes.
+#' @return The named logical vector that [basis_numerical_route()] describes.
 #' @seealso [basis_numerical_route.FourierBasis()], the one family that needs
 #'   more than this.
 #' @keywords internal
@@ -817,7 +827,7 @@ S7::method(basis_numerical_route, basis) <- function(basis, ...) {
 #' each method is registered through `attr(m, "signature")[[1]]` and testing
 #' it with
 #' [is_base_basis_class()]. A generic with no method at all counts as
-#' numerical, the base class being where the fallback lives.
+#' numerical, because the fallback is registered on the base class.
 #'
 #' @details
 #' It is the body of [basis_numerical_route.basis()], kept under a name so that
@@ -826,16 +836,16 @@ S7::method(basis_numerical_route, basis) <- function(basis, ...) {
 #' through `S7::super()` would require naming the package inside itself; a
 #' basis written elsewhere uses `S7::super()`.
 #'
-#' The test does not see which branch a method takes once it has been
-#' reached; [basis_numerical_route()] lets a family report that itself.
+#' The test cannot determine which branch a method takes once the method has
+#' been reached; a family can report that through [basis_numerical_route()].
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
 #'
 #' @return A named logical vector of length 3, elements `basis_deriv`,
 #'   `basis_int` and `basis_gram`.
 #'
-#' @seealso [basis_numerical_route()], the generic it is the default of, and
-#'   [is_base_basis_class()], which it tests each owner with.
+#' @seealso [basis_numerical_route()], the generic of which it is the default,
+#'   and [is_base_basis_class()], with which it tests each owner.
 #'
 #' @keywords internal
 route_by_owner <- function(basis) {

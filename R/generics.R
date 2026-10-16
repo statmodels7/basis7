@@ -20,17 +20,17 @@ NULL
 #'
 #' so `basis_eval(b, x) %*% beta` is the fitted function at `x`, and the
 #' matrix is the design block of a linear model on the basis. Its columns
-#' carry the names [basis_colnames()] declares, and every other matrix the
-#' basis produces carries the same ones in the same order.
+#' carry the names that [basis_colnames()] declares, and every other matrix
+#' that the basis produces carries the same ones in the same order.
 #'
-#' # The method every basis implements
+#' # The method that every basis implements
 #'
 #' [basis_deriv()], [basis_int()] and [basis_gram()] all have numerical
 #' methods registered on the abstract [basis] class, computed from this one,
-#' so all four generics are available for a subclass that supplies its
-#' evaluation alone. A closed form registered later for any of the three
-#' takes over through dispatch; [basis_is_numerical()] reports which are
-#' still numerical.
+#' so all four generics are available for a subclass that supplies only its
+#' evaluation. If a closed form is registered later for any of the three,
+#' dispatch selects it in place of the numerical method;
+#' [basis_is_numerical()] reports which are still numerical.
 #'
 #' # Validation before dispatch
 #'
@@ -51,11 +51,12 @@ NULL
 #'   basis of several, where a plain vector is taken by row. `NA` is allowed
 #'   and produces a missing row. A point outside the interval signals an
 #'   error.
-#' @param ... Passed to methods. No shipped family reads anything from it.
+#' @param ... Passed to methods. The shipped families do not read anything
+#'   from it.
 #'
-#' @return A numeric matrix of `n` rows and `basis@dimension` columns, `n`
-#'   being `length(x)` for one variable and `nrow(x)` for several, with column
-#'   names [basis_colnames()].
+#' @return A numeric matrix of `n` rows and `basis@dimension` columns, where
+#'   `n` is `length(x)` for one variable and `nrow(x)` for several, with the
+#'   column names that [basis_colnames()] declares.
 #'
 #' @seealso [basis_deriv()] for its derivatives, [basis_int()] for its
 #'   anchored integral, [basis_gram()] for its inner products, and
@@ -93,7 +94,7 @@ basis_eval <- S7::new_generic("basis_eval", "basis", function(basis, x, ...) {
 #'
 #' @description
 #' Returns the `order`-th derivative of every basis function at the given
-#' points, as a matrix of the same shape [basis_eval()] returns. Since an
+#' points, as a matrix of the same shape that [basis_eval()] returns. Since an
 #' expansion is linear in its coefficients, this matrix times \eqn{\beta} is
 #' the `order`-th derivative of the fitted function, so a derivative of a fit
 #' needs no refitting.
@@ -107,26 +108,26 @@ basis_eval <- S7::new_generic("basis_eval", "basis", function(basis, x, ...) {
 #' An order beyond what the family carries returns the zero matrix, which is
 #' the value of the derivative, with exact zeros and no error.
 #'
-#' `order = 0` short-circuits to [basis_eval()] in the generic body, so a loop
-#' over orders needs no special case and pays nothing for the zero.
+#' For `order = 0` the generic body returns [basis_eval()] directly, so a loop
+#' over orders needs no special case for zero and incurs no extra cost for it.
 #'
 #' # A basis of several variables takes a multi-index
 #'
 #' For a product basis `order` has one entry per variable and names a mixed
 #' partial: `c(2, 0)` is \eqn{\partial^2/\partial x_1^2} and `c(1, 1)` is
 #' \eqn{\partial^2/\partial x_1 \partial x_2}. A single non-zero number is
-#' rejected, because it has two readings; `0` alone is accepted, meaning no
-#' derivative under either. See [check_order()].
+#' rejected, because it has two readings; a single `0` is accepted and means
+#' no derivative under either. See [check_order()].
 #'
 #' # The numerical fallback
 #'
-#' A subclass registering no method gets the one on the abstract [basis]
-#' class, which applies **one** stencil of the requested order to
-#' [basis_eval()], never a composition of lower-order differences. The
-#' offsets, weights and step come from [numericals7::fd_offsets()],
+#' If a subclass does not register a method, dispatch reaches the method on
+#' the abstract [basis] class, which applies one stencil of the requested
+#' order to [basis_eval()], never a composition of lower-order differences.
+#' The offsets, weights and step come from [numericals7::fd_offsets()],
 #' [numericals7::fd_weights()] and [numericals7::fd_step()], and the stencil
-#' is shifted to one side near an endpoint so that no node leaves the
-#' interval, with one node more than the central stencil so that it keeps
+#' is shifted to one side near an endpoint so that every node stays inside
+#' the interval, with one node more than the central stencil so that it keeps
 #' the same order of accuracy. [basis_is_numerical()] reports whether this is
 #' the route in use, and [check_basis()] measures the agreement.
 #'
@@ -140,16 +141,17 @@ basis_eval <- S7::new_generic("basis_eval", "basis", function(basis, x, ...) {
 #' @param x Evaluation points inside the basis interval: a numeric vector for
 #'   a basis of one variable, or a matrix of [basis_nvar()] columns for a
 #'   basis of several.
-#' @param order The derivative order. A single non-negative whole number for a
-#'   basis of one variable, default `1`; a vector of [basis_nvar()] such
-#'   numbers for a basis of several, or a single `0`. A negative, fractional,
-#'   infinite or `NA` order signals an error.
-#' @param ... Passed to methods. No shipped family and no fallback reads
-#'   anything from it.
+#' @param order The derivative order. For a basis of one variable the order is
+#'   a single non-negative whole number, and the default is `1`; for a basis of
+#'   several variables it is a vector of [basis_nvar()] such numbers, or a
+#'   single `0`. A negative, fractional, infinite or `NA` order signals an
+#'   error.
+#' @param ... Passed to methods. The shipped families and the fallback do not
+#'   read anything from it.
 #'
 #' @return A numeric matrix of `n` rows and `basis@dimension` columns, with
-#'   column names [basis_colnames()]. All zero above the smoothness of the
-#'   family.
+#'   column names [basis_colnames()]. All entries are zero for an order above
+#'   the smoothness of the family.
 #'
 #' @seealso [basis_eval()], which is `order = 0`; [basis_int()] for the
 #'   opposite direction; [basis_is_numerical()] to learn whether a family
@@ -197,9 +199,9 @@ basis_deriv <- S7::new_generic(
 #' @description
 #' Returns the definite integral of every basis function from the lower
 #' endpoint of the basis interval up to each evaluation point, as a matrix of
-#' the same shape [basis_eval()] returns. Times a coefficient vector it gives
-#' the antiderivative of the fitted function that vanishes at the lower
-#' endpoint.
+#' the same shape that [basis_eval()] returns. Multiplied by a coefficient
+#' vector, it gives the antiderivative of the fitted function that vanishes at
+#' the lower endpoint.
 #'
 #' @details
 #' # The anchored integral
@@ -218,9 +220,9 @@ basis_deriv <- S7::new_generic(
 #'
 #' The value at `basis@lower` is exactly zero, for every basis and every
 #' column, and every implementation is required to satisfy this. Any
-#' antiderivative satisfies the differentiation check, so with the constant of
-#' integration left free two bases could disagree while both being correct,
-#' and a sum of them would be wrong without any sign of it.
+#' antiderivative satisfies the differentiation check. If the constant of
+#' integration were free, two bases could disagree although both are correct,
+#' and a sum of them would be wrong with no sign of the error.
 #'
 #' # A basis of several variables
 #'
@@ -230,12 +232,12 @@ basis_deriv <- S7::new_generic(
 #'
 #' # The numerical fallback
 #'
-#' A subclass registering no method gets the one on the abstract [basis]
-#' class: a Gauss-Legendre rule of `nodes = 12` nodes by default on each
-#' segment between consecutive sorted evaluation points, starting at the
-#' lower endpoint, with the segment integrals accumulated. The rule is exact
-#' for a polynomial integrand of degree up to `2 * nodes - 1` on each
-#' segment.
+#' If a subclass does not register a method, the method on the abstract
+#' [basis] class applies. It uses a Gauss-Legendre rule of `nodes = 12` nodes
+#' by default on each segment between consecutive sorted evaluation points,
+#' starting at the lower endpoint, and accumulates the segment integrals. The
+#' rule is exact for a polynomial integrand of degree up to `2 * nodes - 1` on
+#' each segment.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
 #' @param x Evaluation points inside the basis interval, the upper limits of
@@ -254,7 +256,7 @@ basis_deriv <- S7::new_generic(
 #' @examples
 #' b <- fourier_basis(dimension = 5)
 #'
-#' # Zero at the lower endpoint, by the convention above.
+#' # The integral is zero at the lower endpoint, by the convention above.
 #' basis_int(b, b@lower)
 #' round(basis_int(b, c(0.25, 0.5, 1)), 4)
 #'
@@ -265,7 +267,7 @@ basis_deriv <- S7::new_generic(
 #' fd <- (basis_int(bs, x + h) - basis_int(bs, x - h)) / (2 * h)
 #' max(abs(fd - basis_eval(bs, x)))
 #'
-#' # The integral of a fitted curve, and the integral over a subinterval.
+#' # Integrate a fitted curve over the whole interval and over a subinterval.
 #' beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
 #' drop(basis_int(bs, 1) %*% beta)
 #' drop((basis_int(bs, 0.75) - basis_int(bs, 0.25)) %*% beta)
@@ -288,15 +290,15 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' penalty: \eqn{\beta^\top G_2 \beta} is exactly \eqn{\int (f'')^2} for the
 #' function \eqn{f} described by the coefficients. The shipped families
 #' compute it exactly, by formulas or by a quadrature exact for their
-#' integrands, so no quadrature error enters a penalized fit.
+#' integrands, so a penalized fit is free of quadrature error.
 #'
 #' @details
 #' # Definition and properties
 #'
 #' The Gram matrix is an inner product of basis functions, so it depends only
-#' on the basis and the interval. It identifies which combinations of
-#' coefficients are rough; how strongly to shrink them is decided separately,
-#' by the routine that fits the model.
+#' on the basis and the interval. It defines which combinations of
+#' coefficients are rough; the amount of shrinkage applied to them is set
+#' separately, by the routine that fits the model.
 #'
 #' It is symmetric and positive semidefinite by construction. At `order = 0`
 #' it is positive definite for a basis of linearly independent functions. At
@@ -314,55 +316,58 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #'
 #' `at` replaces it with the empirical measure of the points given,
 #' \eqn{B^{(d)\top} B^{(d)} / n}. That is the matrix produced by a design
-#' matrix, and the one to diagonalize against when the construction should
-#' depend on where the data lie; [dr_basis()] uses it.
+#' matrix, and the matrix against which to diagonalize when the construction
+#' should depend on where the data lie; [dr_basis()] uses it.
 #'
 #' `weight` takes a weighted Lebesgue measure \eqn{\int B B^\top w}, by
 #' composite Gauss-Legendre over 50 panels of 12 nodes. A weight is an
 #' arbitrary function, so the quadrature is always run, and for a spline it
-#' is approximate where the derivative has kinks at knots that the panels do
-#' not line up with. At most one of `at` and `weight` may be given.
+#' is approximate where the derivative has kinks at knots that do not
+#' coincide with the panel breaks. At most one of `at` and `weight` may be given.
 #'
 #' # Handling of the arguments
 #'
 #' For a whole `order`, `at` and `weight` are handled in the body of the
 #' generic, before dispatch, so a method receives neither and returns the
 #' plain Lebesgue matrix. A method must still carry both names in its
-#' signature, S7 requiring a method's formals to contain the generic's. For
+#' signature, because S7 requires a method's formals to contain the
+#' generic's. For
 #' an operator `order` both are passed to [basis_operator_gram()].
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
-#' @param order What the inner products are taken of. A single non-negative
-#'   whole number, default `0`, giving the inner products of the basis
-#'   functions themselves; `2` is the usual roughness penalty; one entry per
-#'   variable for a basis of several. A [LinearOperator] instead gives
-#'   \eqn{\int (Lb)(Lb)^\top}, the roughness matrix of that operator, and
-#'   routes to [basis_operator_gram()].
+#' @param order The derivative order or the operator applied to the basis
+#'   functions before their inner products are taken. The order is a single
+#'   non-negative whole number, with default `0`, which gives the inner
+#'   products of the basis functions themselves; `2` gives the usual roughness
+#'   penalty, and a basis of several variables takes one entry per variable. A
+#'   [LinearOperator] instead gives \eqn{\int (Lb)(Lb)^\top}, the roughness
+#'   matrix of that operator, and routes to [basis_operator_gram()].
 #' @param at An optional numeric vector of points for a basis of one
 #'   variable, or a matrix of [basis_nvar()] columns. When given, the inner
 #'   products are taken against the empirical measure of those points and
 #'   divided by their number. Missing values are dropped before evaluation,
-#'   and an error is signalled if no usable point is left.
+#'   and an error is signalled if the remaining set of points is empty.
 #' @param weight An optional function of one numeric vector returning one
-#'   non-negative value per point, a density to weight the integral by. A
-#'   basis of several variables is rejected, and so is a function returning
-#'   the wrong length, an `NA` or a negative value.
+#'   non-negative value per point, a density with which to weight the
+#'   integral. A basis of several variables is rejected, and so is a function
+#'   returning the wrong length, an `NA` or a negative value.
 #' @param ... Passed to methods, and to [weighted_gram()] when `weight` is
 #'   given, where `panels` and `nodes` control the quadrature.
 #'
 #' @return A symmetric numeric matrix of `basis@dimension` rows and columns,
-#'   with [basis_colnames()] on both margins. Positive semidefinite, and
-#'   singular for `order >= 1` when the span of the basis contains the
-#'   constant.
+#'   with [basis_colnames()] on both margins. The matrix is positive
+#'   semidefinite, and it is singular for `order >= 1` when the span of the
+#'   basis contains the constant.
 #'
-#' @seealso [basis_deriv()], whose columns it takes the inner products of;
-#'   [orthonorm_basis()], which makes the `order = 0` matrix the identity;
-#'   [dr_basis()], which diagonalizes one against the other.
+#' @seealso [basis_deriv()], which supplies the columns whose inner products
+#'   it takes; [orthonorm_basis()], which makes the `order = 0` matrix the
+#'   identity; [dr_basis()], which diagonalizes one against the other.
 #'
 #' @examples
 #' b <- fourier_basis(dimension = 5)
 #'
-#' # Diagonal at order 0, the Fourier functions being orthogonal.
+#' # The matrix is diagonal at order 0, because the Fourier functions are
+#' # orthogonal.
 #' round(basis_gram(b), 6)
 #' round(basis_gram(b, order = 1), 4)
 #'
@@ -375,19 +380,21 @@ basis_int <- S7::new_generic("basis_int", "basis", function(basis, x, ...) {
 #' c(quadratic_form = drop(t(beta) %*% basis_gram(p, order = 2) %*% beta),
 #'   quadrature = sum(head(fpp, -1) + tail(fpp, -1)) / 2 * (tt[2] - tt[1]))
 #'
-#' # Singular from order 1 up: order d leaves exactly d zero eigenvalues,
-#' # the polynomials of degree below d differentiating away.
+#' # The matrix is singular from order 1 up: order d leaves exactly d zero
+#' # eigenvalues, because the polynomials of degree below d differentiate to
+#' # zero.
 #' bs <- bspline_basis(dimension = 8)
 #' vapply(0:3, function(d) {
 #'   ev <- eigen(basis_gram(bs, order = d), only.values = TRUE)$values
 #'   sum(abs(ev) < 1e-8 * max(abs(ev)))
 #' }, integer(1))
 #'
-#' # Against the empirical measure of a sample instead of the interval.
+#' # The matrix can be taken against the empirical measure of a sample
+#' # instead of the interval.
 #' set.seed(1)
 #' round(basis_gram(b, at = runif(2000)), 3)
 #'
-#' # And against a weighted Lebesgue measure.
+#' # It can also be taken against a weighted Lebesgue measure.
 #' round(basis_gram(b, weight = function(x) dbeta(x, 2, 5)), 4)
 #'
 #' @export
@@ -417,13 +424,13 @@ basis_gram <- S7::new_generic(
 #' The Roughness Matrix of a Differential Operator
 #'
 #' @description
-#' The Gram matrix of \eqn{L\varphi}, with \eqn{\varphi} the vector of basis
-#' functions, that is
+#' Returns the Gram matrix of \eqn{L\varphi}, with \eqn{\varphi} the vector of
+#' basis functions, that is
 #' \deqn{R = \int_{\ell}^{u} (L\varphi)(L\varphi)^\top \, \mathrm{d}\mu,}
 #' the matrix for which \eqn{\lVert Lf \rVert^2 = c^\top R c} when
-#' \eqn{f = \varphi^\top c}. It is what [basis_gram()] returns when its `order` is
-#' a [LinearOperator], and the generic exists so that a family with a closed
-#' form can declare one.
+#' \eqn{f = \varphi^\top c}. [basis_gram()] returns this matrix when its
+#' `order` is a [LinearOperator], and the generic exists so that a family with
+#' a closed form can declare one.
 #'
 #' @details
 #' The base method integrates numerically, evaluating \eqn{Lb} through
@@ -433,10 +440,10 @@ basis_gram <- S7::new_generic(
 #' [basis_operator_gram.FourierBasis()].
 #'
 #' @param basis A [basis].
-#' @param op A [LinearOperator], with its period resolved. An operator whose
+#' @param op A [LinearOperator] whose period is resolved. An operator whose
 #'   period is still `NULL` signals an error.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
-#' @param weight A density to integrate against, or `NULL`.
+#' @param weight A density with respect to which to integrate, or `NULL`.
 #' @param ... Passed to methods, and on to the quadrature (`panels`,
 #'   `nodes`).
 #'
@@ -472,7 +479,7 @@ basis_operator_gram <- S7::new_generic(
 #' its Gram matrix exactly, where the two would otherwise be accepted and
 #' have no effect.
 #'
-#' @param ... The arguments a method received through its own `...`.
+#' @param ... The arguments that a method received through its own `...`.
 #'
 #' @return `NULL`, invisibly; called for the error.
 #'
@@ -494,12 +501,12 @@ reject_quadrature <- function(...) {
 #'
 #' @description
 #' Computes \eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner
-#' products a design matrix produces, in place of those of the functions on
-#' their interval. Called from the body of [basis_gram()] when `at` is
-#' supplied, so this case never reaches a method.
+#' products that a design matrix produces, in place of those of the functions
+#' on their interval. The function is called from the body of [basis_gram()]
+#' when `at` is supplied, so this case never reaches a method.
 #'
 #' @details
-#' Missing points are dropped **before** the basis is evaluated. A basis may
+#' Missing points are dropped before the basis is evaluated. A basis may
 #' reject a vector that is entirely missing, with a message that would name
 #' the wrong argument here, so `at` with no usable point signals the error
 #' `'at' has no usable points.` instead. For a basis of several variables `at`
@@ -548,8 +555,8 @@ empirical_gram <- function(basis, order, at) {
 #' @description
 #' Computes \eqn{\int_a^b B^{(d)}(t)\, B^{(d)}(t)^\top w(t)\,\mathrm{d}t}
 #' by composite Gauss-Legendre. A weight is an arbitrary function, so the
-#' quadrature is always run. Called from the body of [basis_gram()] when
-#' `weight` is supplied.
+#' quadrature is always run. The function is called from the body of
+#' [basis_gram()] when `weight` is supplied.
 #'
 #' @details
 #' The interval is cut into `panels` equal pieces and an `nodes`-point
@@ -559,11 +566,11 @@ empirical_gram <- function(basis, order, at) {
 #' \eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps the result positive
 #' semidefinite whatever the weight does.
 #'
-#' For a spline the accuracy is limited by the kinks of the derivative at
-#' knots that the panel breaks do not line up with; `panels` is raised when a
+#' For a spline, kinks of the derivative at knots that do not coincide with
+#' the panel breaks limit the accuracy, so `panels` should be raised when a
 #' derivative is not smooth.
 #'
-#' A basis of several variables is rejected, the rule being
+#' A basis of several variables is rejected, because the rule is
 #' one-dimensional.
 #'
 #' @param basis A basis object of one variable, of any class inheriting from
@@ -614,9 +621,9 @@ weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) 
 #' Column Names of a Basis Matrix
 #'
 #' @description
-#' Returns the names every matrix the basis produces carries, so that the
-#' evaluation, the derivatives of every order, the anchored integral and the
-#' Gram matrix of one basis agree on their columns. The default numbers the
+#' Returns the names that every matrix produced by the basis carries, so that
+#' the evaluation, the derivatives of every order, the anchored integral and
+#' the Gram matrix of one basis agree on their columns. The default numbers the
 #' functions after the family; a family whose functions have identities of
 #' their own overrides it.
 #'
@@ -640,7 +647,8 @@ weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) 
 #' error.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
-#' @param ... Passed to methods. No shipped family reads anything from it.
+#' @param ... Passed to methods. The shipped families do not read anything
+#'   from it.
 #'
 #' @return A character vector of length `basis@dimension`.
 #'
@@ -655,7 +663,7 @@ weighted_gram <- function(basis, order, weight, panels = 50L, nodes = 12L, ...) 
 #' basis_colnames(fourier_basis(dimension = 5))
 #' basis_colnames(poly_basis(dimension = 4))
 #'
-#' # Every matrix the basis produces carries the same names.
+#' # Every matrix that the basis produces carries the same names.
 #' b <- bspline_basis(dimension = 4)
 #' identical(colnames(basis_eval(b, 0.5)), basis_colnames(b))
 #' identical(colnames(basis_gram(b, order = 2)), basis_colnames(b))
@@ -676,8 +684,8 @@ basis_colnames <- S7::new_generic("basis_colnames", "basis", function(basis, ...
 #' transformed bases do.
 #'
 #' @details
-#' Two characters tell the families apart in a coefficient table without
-#' making the names long. The names are not distinct across bases: a model
+#' Two characters suffice to distinguish the families in a coefficient table
+#' and keep the names short. The names are not distinct across bases: a model
 #' that combines two B-spline blocks has `bs1` twice, unless the code that
 #' assembles the design distinguishes them.
 #'
@@ -698,9 +706,9 @@ S7::method(basis_colnames, basis) <- function(basis, ...) {
 #'
 #' @description
 #' Checks that `order` is a non-negative whole number, or a vector of them of
-#' length `nvar`, and returns it as an integer vector of length `nvar`. Called
-#' from the bodies of [basis_deriv()] and [basis_gram()], so both report the
-#' same errors in the same words.
+#' length `nvar`, and returns it as an integer vector of length `nvar`. The
+#' function is called from the bodies of [basis_deriv()] and [basis_gram()],
+#' so both report the same errors in the same words.
 #'
 #' @details
 #' Anything failing the first test signals the error
@@ -709,15 +717,15 @@ S7::method(basis_colnames, basis) <- function(basis, ...) {
 #'
 #' A vector of length `nvar` is returned as it stands, and a single `0` is
 #' repeated to that length. For a basis of several variables a single
-#' **non-zero** order signals an error, because a scalar has two readings
+#' non-zero order signals an error, because a scalar has two readings
 #' there: that order in every coordinate, or that total order. Zero is exempt,
 #' meaning no derivative under either reading. A vector of any other length
 #' signals an error naming the length expected.
 #'
 #' @param order The value supplied by the caller: a single non-negative whole
 #'   number, or a vector of `nvar` of them.
-#' @param nvar The number of variables the basis takes, from [basis_nvar()].
-#'   Default `1`.
+#' @param nvar The number of variables that the basis takes, from
+#'   [basis_nvar()]. The default is `1`.
 #'
 #' @return `order` as an integer vector of length `nvar`.
 #'

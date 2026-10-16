@@ -45,5 +45,5 @@ c(class = class(op)[1], order = operator_order(op))
 \seealso{
 \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}},
 \code{\link[=oscillator_operator]{oscillator_operator()}} and \code{\link[=linear_operator]{linear_operator()}}, which build one;
-\code{\link[=operator_null]{operator_null()}} for the space a maximal penalty leaves untouched.
+\code{\link[=operator_null]{operator_null()}} for the space that a maximal penalty leaves untouched.
 }

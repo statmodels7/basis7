@@ -6,11 +6,12 @@
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
 
-\item{weight}{A density to integrate against, or \code{NULL}.}
+\item{weight}{A density with respect to which the integral is taken, or
+\code{NULL}.}
 
 \item{...}{Passed on to the quadrature (\code{panels}, \code{nodes}) when \code{weight}
 is given. Without \code{at} or \code{weight} the matrix is exact, and \code{panels} or
@@ -20,8 +21,9 @@ is given. Without \code{at} or \code{weight} the matrix is exact, and \code{pane
 A symmetric numeric matrix of \code{basis@dimension} rows and columns.
 }
 \description{
-Exact for the length measure, integrating knot interval by knot interval
-as \code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} does. An operator of order above the degree
+Computes the roughness matrix of an operator exactly for the length
+measure, integrating knot interval by knot interval as
+\code{\link[=basis_gram.BsplineBasis]{basis_gram.BsplineBasis()}} does. An operator of order above the degree
 of the spline is rejected.
 }
 \section{Exactness}{
@@ -29,7 +31,7 @@ of the spline is rejected.
 \eqn{p}, so it is piecewise polynomial of degree at most \eqn{p} with the
 same breakpoints, and \eqn{(Lb)(Lb)^\top} is piecewise of degree at most
 \eqn{2p}. Gauss-Legendre with \eqn{p + 1} nodes on each knot interval is
-exact to degree \eqn{2p + 1}, so nothing is approximated. The panels of
+exact to degree \eqn{2p + 1}, so the integration is exact. The panels of
 the rule of the base method are equally spaced and do not line up with the
 knots, where a derivative of the spline jumps, so the base method is
 approximate for a spline.
@@ -37,8 +39,8 @@ approximate for a spline.
 
 \section{Operators above the degree}{
 The \eqn{m}-th derivative of a spline of degree \eqn{p} is identically
-zero for \eqn{m > p}, so the leading term of \eqn{Lb} vanishes and what
-would be integrated is the operator with its highest derivative deleted.
+zero for \eqn{m > p}, so the leading term of \eqn{Lb} vanishes and the
+integrand would come from the operator without its highest derivative.
 That is a different penalty with a different null space, and the result
 would give no sign of it. For a plain derivative \code{\link[=basis_gram]{basis_gram()}} returns
 the zero matrix in the same situation, which cannot be mistaken for a

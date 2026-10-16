@@ -9,7 +9,7 @@ check_periodic_null(sm, op, x)
 \arguments{
 \item{sm}{A \link{FourierSmoother}.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 
 \item{x}{The covariate, from which the interval is taken where the
 smoother does not fix it.}
@@ -27,8 +27,9 @@ in front of it.
 \details{
 Restoring anything else gives a block whose columns are not all periodic,
 and a fit on it no longer takes the same value at the two ends of the
-interval, the property for which a Fourier basis is chosen. The check is
-made on the null space of the operator, read analytically, and not on the
-rank of the assembled penalty, which depends on the tolerance.
+interval, the property for which a Fourier basis is chosen. The function
+checks the null space of the operator, which it reads analytically, and
+does not check the rank of the assembled penalty, which depends on the
+tolerance.
 }
 \keyword{internal}

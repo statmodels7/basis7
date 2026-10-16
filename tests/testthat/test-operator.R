@@ -206,7 +206,7 @@ test_that("the closed form is not taken where it does not hold", {
 test_that("an operator above a spline's degree is refused, not truncated", {
   b <- bspline_basis(lower = 0, upper = 1, dimension = 12, degree = 3)
   expect_error(basis_gram(b, order = harmonic_operator(1, harmonics = 2)),
-               "leading\n  term deleted")
+               "without its leading\n  term")
   # at the degree it is admitted
   expect_equal(dim(basis_gram(b, order = harmonic_operator(1))), c(12L, 12L))
 })

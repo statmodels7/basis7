@@ -18,12 +18,12 @@ Reports whether the family is a partition of unity, so that
 property.
 }
 \details{
-\code{TRUE} for a \link{BsplineBasis}, which sums to one by construction, and for a
-\link{TensorBasis} all of whose margins do: the row sums of a Kronecker product
-are the products of the row sums.
+The function returns \code{TRUE} for a \link{BsplineBasis}, which sums to one by
+construction, and for a \link{TensorBasis} all of whose margins do: the row
+sums of a Kronecker product are the products of the row sums.
 
-\code{FALSE} for everything else, including a \link{TransformedBasis} over a
-B-spline: an orthonormalization or a constraint takes linear combinations
+It returns \code{FALSE} for everything else, including a \link{TransformedBasis} over
+a B-spline: an orthonormalization or a constraint takes linear combinations
 of the columns, and the sum of the new columns is generally not one. A
 transformation that happens to preserve the property is therefore not
 tested.

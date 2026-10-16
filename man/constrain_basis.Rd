@@ -24,9 +24,9 @@ column names \code{cn1}, \code{cn2}, and so on, and \code{basis_params$constrain
 }
 \description{
 Returns a basis whose functions are exactly those of the parent satisfying
-\eqn{C\beta = 0}, with the dimension reduced by the rank of \eqn{C}. This
-is how a basis that carries its own constant is made to sit beside an
-intercept, and how a smooth term is made identifiable.
+\eqn{C\beta = 0}, and whose dimension is reduced by the rank of \eqn{C}. The
+restriction lets a basis that carries its own constant sit beside an
+intercept and makes a smooth term identifiable.
 }
 \section{The construction}{
 The transform is an orthonormal basis of the null space of \eqn{C}, taken
@@ -36,8 +36,8 @@ spans precisely the admissible functions, and rescaling or reordering the
 rows of \eqn{C} changes nothing about the space produced.
 
 The rank is counted as the number of singular values above
-\code{tol * max(d)}, and the result has \code{basis@dimension - rank} columns, with
-the rank recorded in \code{basis_params$constraint_rank}.
+\code{tol * max(d)}, and the result has \code{basis@dimension - rank} columns. The
+rank is recorded in \code{basis_params$constraint_rank}.
 }
 
 \section{Writing the constraint}{
@@ -64,8 +64,8 @@ which would leave a basis of zero columns.
 b <- bspline_basis(dimension = 6)
 x <- seq(0, 1, length.out = 200)
 
-# Sum to zero over a grid: the usual identifiability constraint, which
-# removes the constant a B-spline basis carries.
+# The sum-to-zero constraint over a grid is the usual identifiability
+# constraint, and it removes the constant that a B-spline basis carries.
 cs <- constrain_basis(b, colSums(basis_eval(b, x)))
 cs@dimension
 cs@basis_params$constraint_rank

@@ -22,7 +22,7 @@ columns.
 Returns the parent's \code{order}-th derivative multiplied by the transform,
 \eqn{\tilde{B}^{(d)}(x) = B^{(d)}(x)\,T}. Differentiation is linear and
 \eqn{T} does not depend on \code{x}, so the same matrix serves at every order
-and no derivative of the transformation itself enters.
+and the transformation itself is not differentiated.
 }
 \details{
 The accuracy is the parent's. Where the parent differentiates exactly so

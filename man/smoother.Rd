@@ -38,9 +38,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -68,12 +68,12 @@ object inheriting from it.
 A smoother is a recipe for a penalized smooth. It carries the four
 choices that make up a smooth, which a single basis does not determine:
 \enumerate{
-\item which functions span the space, the \strong{basis};
-\item what counts as roughness, the \strong{penalty};
+\item which functions span the space, the basis;
+\item what counts as roughness, the penalty;
 \item which directions the penalty leaves unpenalized and what happens to them,
-the \strong{null space};
+the null space;
 \item in which coordinates the coefficients are expressed, the
-\strong{reparametrization}.
+reparametrization.
 }
 
 It is a recipe and not a built object because the third and fourth
@@ -86,23 +86,23 @@ recorded there at new values.
 }
 \section{One object for the basis and the penalty}{
 The basis and the penalty cannot be chosen independently. The null space
-is a property of the \strong{pair}: the second-derivative Gram matrix of a cubic B-spline has a
-two-dimensional null space, that of a Fourier basis is one-dimensional at
-every order because the basis contains no linear function, and the Gram
-matrix of a B-spline of degree \eqn{d} at an order above \eqn{d} is
-identically zero, which penalizes nothing. With a basis and a penalty
-passed separately, that compatibility would have to be checked at every
-call site. A smoother is one object, so each constructor validates its own
-arguments.
+is a property of the pair: the second-derivative Gram matrix of a cubic
+B-spline has a two-dimensional null space, that of a Fourier basis is
+one-dimensional at every order because the basis contains no linear
+function, and the Gram matrix of a B-spline of degree \eqn{d} at an order
+above \eqn{d} is identically zero, which penalizes nothing. If a basis
+and a penalty were passed separately, that compatibility would have to be
+checked at every call site. A smoother is one object, so each constructor
+validates its own arguments.
 }
 
 \section{A user-supplied penalty}{
 \code{penalty} replaces the roughness matrix with a penalty built by a factory
 of the coefficient count: \code{bspline_smooth(penalty = penalties7::lasso_penalty)}. It is a factory and not a built penalty
-because how many coefficients a smooth has is settled by the data, the
-constraint and the null space moving with them.
+because the number of coefficients of a smooth is settled by the data,
+and the constraint and the null space move with the data.
 
-A smoother \strong{stores the function and never calls it}. Of the toolkit,
+A smoother stores the function and never calls it. Of the toolkit,
 this package imports \pkg{numericals7} only, so it cannot name
 \pkg{penalties7} and cannot test whether the function returns a penalty;
 \code{\link[=check_penalty]{check_penalty()}} checks only that it is a function with at least one
@@ -113,7 +113,7 @@ The construction is unaffected. \code{\link[=smoother_build]{smoother_build()}} 
 matrix in \code{S} whether or not a factory is given, because the
 reparametrization reads that matrix: it orders the coordinates from the
 smoothest to the most wiggly and makes the penalty on them the identity,
-and that ordering is what gives a penalty of another shape its meaning.
+and this ordering gives a penalty of another shape its meaning.
 \code{unpenalized} counts the leading columns that the roughness leaves free,
 which a caller building a separable penalty needs, since such a penalty
 has no zero row with which to leave a column unpenalized.
@@ -132,6 +132,6 @@ try(smoother())
 }
 \seealso{
 \code{\link[=bspline_smooth]{bspline_smooth()}} for the B-spline family, \code{\link[=smoother_build]{smoother_build()}}
-for what a smoother produces at data, \link{basis} for the object a smoother
-builds on.
+for what a smoother produces at data, \link{basis} for the object on which a
+smoother builds.
 }

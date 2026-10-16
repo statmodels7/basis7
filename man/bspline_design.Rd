@@ -17,16 +17,16 @@ generic.}
 above that and never calls here.}
 
 \item{integral}{\code{TRUE} to return the integral anchored at the lower
-boundary knot instead of the functions. Default \code{FALSE}.}
+boundary knot instead of the functions. The default is \code{FALSE}.}
 }
 \value{
 A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
-columns, of class \code{matrix} alone, with no dimnames and none of the
-attributes \pkg{splines2} attaches. Callers add the column names through
-\code{\link[=name_columns]{name_columns()}}.
+columns. Its only class is \code{matrix}, it has no dimnames, and it carries
+no attribute that \pkg{splines2} attaches. Callers add the column names
+through \code{\link[=name_columns]{name_columns()}}.
 }
 \description{
-The single point at which this package talks to \pkg{splines2}. It
+This function is the only place at which the package calls \pkg{splines2}. It
 assembles the knot arguments from \code{basis@basis_params}, calls
 \code{\link[splines2:bSpline]{splines2::bSpline()}} once, and returns a plain matrix, so the argument
 names and the return class of \pkg{splines2} stay inside this function.
@@ -35,15 +35,15 @@ names and the return class of \pkg{splines2} stay inside this function.
 \code{intercept = TRUE} is passed always, so all \code{dimension} functions come
 back; \pkg{splines2} would otherwise drop the first.
 
-The object \pkg{splines2} returns is of class \code{BSpline} and carries
+The object that \pkg{splines2} returns is of class \code{BSpline} and carries
 attributes, among them \code{x}, \code{knots}, \code{degree} and \code{intercept}. Rebuilding
 it as \code{matrix(as.numeric(out), ...)} strips all of them, since they would
 survive arithmetic and reappear on a matrix that they no longer describe.
 The dimensions are taken from \code{length(x)} and \code{basis@dimension}. An empty
 \code{x}, which \pkg{splines2} rejects, gives a matrix of no rows.
 
-\code{derivs} and \code{integral} are mutually exclusive in practice, each caller
-setting at most one.
+\code{derivs} and \code{integral} are mutually exclusive in practice, because each
+caller sets at most one of them.
 }
 \seealso{
 \code{\link[splines2:bSpline]{splines2::bSpline()}}, the function called;

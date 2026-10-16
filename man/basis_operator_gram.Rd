@@ -9,12 +9,12 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved. An operator whose
+\item{op}{A \link{LinearOperator} whose period is resolved. An operator whose
 period is still \code{NULL} signals an error.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
 
-\item{weight}{A density to integrate against, or \code{NULL}.}
+\item{weight}{A density with respect to which to integrate, or \code{NULL}.}
 
 \item{...}{Passed to methods, and on to the quadrature (\code{panels},
 \code{nodes}).}
@@ -23,13 +23,13 @@ period is still \code{NULL} signals an error.}
 A symmetric numeric matrix of \code{basis@dimension} rows and columns.
 }
 \description{
-The Gram matrix of \eqn{L\varphi}, with \eqn{\varphi} the vector of basis
-functions, that is
+Returns the Gram matrix of \eqn{L\varphi}, with \eqn{\varphi} the vector of
+basis functions, that is
 \deqn{R = \int_{\ell}^{u} (L\varphi)(L\varphi)^\top \, \mathrm{d}\mu,}
 the matrix for which \eqn{\lVert Lf \rVert^2 = c^\top R c} when
-\eqn{f = \varphi^\top c}. It is what \code{\link[=basis_gram]{basis_gram()}} returns when its \code{order} is
-a \link{LinearOperator}, and the generic exists so that a family with a closed
-form can declare one.
+\eqn{f = \varphi^\top c}. \code{\link[=basis_gram]{basis_gram()}} returns this matrix when its
+\code{order} is a \link{LinearOperator}, and the generic exists so that a family with
+a closed form can declare one.
 }
 \details{
 The base method integrates numerically, evaluating \eqn{Lb} through

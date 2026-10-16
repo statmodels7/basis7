@@ -10,13 +10,13 @@
 default \code{0}, or one per variable.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.}
+they never arrive here. The arguments are named only because S7 requires
+a method's formals to contain the generic's.}
 
 \item{panels}{The number of equal subintervals, default \code{50}. For a basis
-of several variables the rule is a product and each coordinate gets
-\code{max(2, ceiling(panels^(1/d)))} panels, so 8 apiece at \code{panels = 50} on
-two variables.}
+of several variables the rule is a product and uses
+\code{max(2, ceiling(panels^(1/d)))} panels for each coordinate, which is 8
+panels per coordinate at \code{panels = 50} on two variables.}
 
 \item{nodes}{The number of Gauss-Legendre nodes per subinterval, default
 \code{12}.}
@@ -28,21 +28,22 @@ A symmetric numeric matrix of \code{basis@dimension} rows and columns,
 with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
-The inner-product method every basis inherits from the abstract \link{basis}
-class: composite Gauss-Legendre over \code{panels} equal subintervals of the
-interval, applied to the requested derivatives. A one-line wrapper over
-\code{\link[=numerical_gram]{numerical_gram()}}, which does the work and which \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}}
-also calls when the period is not the width of the interval.
+This is the inner-product method that every basis inherits from the
+abstract \link{basis} class. It applies composite Gauss-Legendre quadrature over
+\code{panels} equal subintervals of the interval to the requested derivatives.
+The method is a one-line wrapper over \code{\link[=numerical_gram]{numerical_gram()}}, which does the
+work and which \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} also calls when the period is
+not the width of the interval.
 }
 \details{
 Numerical Gram Matrix of a Basis
 
-Its accuracy is bounded by that of the derivatives it integrates, which
-come from \code{\link[=basis_deriv]{basis_deriv()}}: a family with a closed-form derivative gets the
-accuracy of the quadrature, and one with the finite-difference derivative
-carries that error into the matrix.
+Its accuracy is bounded by that of the derivatives that it integrates,
+which come from \code{\link[=basis_deriv]{basis_deriv()}}. A family with a closed-form derivative has
+the accuracy of the quadrature, and a family with the finite-difference
+derivative carries that error into the matrix.
 
-All three shipped families and both wrappers register their own method, so
+Every shipped family and every wrapper registers its own method, so
 this one is reached only by a basis defined outside the package.
 }
 \seealso{

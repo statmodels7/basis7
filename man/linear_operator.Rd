@@ -15,9 +15,9 @@ An S7 object of class \link{LinearOperator}.
 }
 \description{
 The general form: \code{linear_operator(w)} is
-\eqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x}, with the
-leading coefficient 1 and \code{w} given in increasing order of
-differentiation. It is the vector \code{fda::vec2Lfd()} takes.
+\eqn{L x = w_0 x + w_1 Dx + \cdots + w_{m-1} D^{m-1} x + D^m x}, where the
+leading coefficient is 1 and \code{w} is given in increasing order of
+differentiation. It is the vector that \code{fda::vec2Lfd()} takes.
 }
 \details{
 The null space is read from the roots of the characteristic polynomial
@@ -27,20 +27,20 @@ a complex pair \eqn{a \pm bi} contributes \eqn{t^i e^{at}\cos(bt)} and
 \eqn{t^i e^{at}\sin(bt)}. \code{\link[=operator_null]{operator_null()}} reports it.
 
 Where they apply, \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} and
-\code{\link[=oscillator_operator]{oscillator_operator()}} are preferable: they record what the operator is
-for, and the last two carry a period that can be resolved from the
+\code{\link[=oscillator_operator]{oscillator_operator()}} are preferable: they record the purpose of the
+operator, and the last two carry a period that can be resolved from the
 interval of a smoother, which a bare weight vector cannot.
 }
 \examples{
-# the harmonic acceleration operator written out, as in fda
+# This is the harmonic acceleration operator written out, as in fda.
 nu2 <- (2 * pi / 365)^2
 linear_operator(c(0, nu2, 0))
 
-# and it is the same operator harmonic_operator() builds
+# and it is the same operator that harmonic_operator() builds
 all.equal(operator_weights(linear_operator(c(0, nu2, 0))),
           operator_weights(harmonic_operator(365)))
 
-# exponential growth left unpenalized: L x = Dx - r x
+# This operator leaves exponential growth unpenalized: L x = Dx - r x.
 operator_null(linear_operator(-0.5))
 }
 \seealso{

@@ -13,9 +13,9 @@ generic's.}
 \code{x}, invisibly.
 }
 \description{
-Prints a summary of a basis object: the family it comes from, how many
-functions it holds and over how many variables, the interval each variable
-runs over, the parameters the family carries, and which of the three
+Prints a summary of a basis object: the family from which it comes, how many
+functions it holds and over how many variables, the interval over which each
+variable runs, the parameters that the family carries, and which of the three
 derived quantities are computed numerically instead of from a formula. The
 summary has four lines, plus a header and one line per parameter when the
 basis carries parameters.
@@ -26,14 +26,15 @@ wrapper or a product names its parents, so an orthonormalized B-spline
 reads \code{orthonorm(bspline)} and a two-way product reads
 \code{tensor(bspline, fourier)}.
 
-\verb{Functions:} is \verb{@dimension}, the number of columns \code{\link[=basis_eval]{basis_eval()}} returns,
-and \verb{Variables:} is \code{\link[=basis_nvar]{basis_nvar()}}, the number of columns of \code{x} it
-expects. Every family here has one variable except \code{\link[=tensor_basis]{tensor_basis()}}.
+\verb{Functions:} is \verb{@dimension}, the number of columns that \code{\link[=basis_eval]{basis_eval()}}
+returns, and \verb{Variables:} is \code{\link[=basis_nvar]{basis_nvar()}}, the number of columns of \code{x}
+that it expects. Every family here has one variable except
+\code{\link[=tensor_basis]{tensor_basis()}}.
 
 \verb{Domain:} is \verb{@lower} and \verb{@upper} as a closed interval per variable,
-separated by \code{x} for a product. It is the interval every generic checks its
-evaluation points against. A point outside signals an error that states
-how many of the points were outside and what the interval is.
+separated by \code{x} for a product. It is the interval against which every
+generic checks its evaluation points. A point outside signals an error that
+states how many of the points were outside and what the interval is.
 
 \verb{Parameters:} appears only when \verb{@basis_params} is non-empty, and prints
 one line per entry. A numeric entry of more than four values is abbreviated
@@ -43,7 +44,7 @@ the knots to \code{b@basis_params$knots}.
 \verb{Numerical:} reads \code{\link[=basis_is_numerical]{basis_is_numerical()}} and names those of \code{basis_deriv},
 \code{basis_int} and \code{basis_gram} that are computed by the numerical route:
 finite differences for the derivatives, quadrature for the integral and the
-Gram matrix. The three shipped families report \code{none}, except a Fourier
+Gram matrix. The shipped families report \code{none}, except a Fourier
 basis whose interval is not a whole period, whose Gram matrix is computed
 by quadrature. A basis defined from its evaluation alone reports all
 three.
@@ -80,5 +81,5 @@ Bumps(basis_name = "bumps", dimension = 4L, lower = 0, upper = 1)
 \seealso{
 \code{\link[=basis_is_numerical]{basis_is_numerical()}} for the last line as a named logical vector,
 \code{\link[=plot.basis]{plot.basis()}} to see the functions themselves, and \code{\link[=check_basis]{check_basis()}} for a
-verification of the components this summary only names.
+verification of the components that this summary only names.
 }

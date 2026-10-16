@@ -7,9 +7,10 @@
 poly_basis(lower = 0, upper = 1, dimension = 4)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval, each a single finite
-number with \code{lower < upper}. Default \eqn{[0, 1]}. Evaluating outside
-the interval signals an error.}
+\item{lower, upper}{The endpoints of the interval. Each must be a single
+finite number, and \code{lower} must be smaller than \code{upper}. The default is
+\eqn{[0, 1]}. Evaluating
+outside the interval signals an error.}
 
 \item{dimension}{The number of polynomials, a single whole number of at
 least 1, default \code{4}. The highest degree is \code{dimension - 1}, so \code{1} gives
@@ -48,7 +49,7 @@ Legendre condition number is \eqn{2K - 1}, growing linearly.
 The polynomials are orthogonal on their own interval,
 \eqn{\int_{-1}^{1} P_m P_n \,\mathrm{d}t = 2\delta_{mn}/(2n+1)}, so
 \code{basis_gram(p)} is diagonal with entries \eqn{(u - \ell)/(2n+1)} for
-\eqn{n = 0, \ldots, K-1}. They are \strong{not} orthonormal: pass the basis
+\eqn{n = 0, \ldots, K-1}. They are not orthonormal: pass the basis
 through \code{\link[=orthonorm_basis]{orthonorm_basis()}} for that.
 }
 
@@ -63,11 +64,12 @@ same design; drop one or the other, or use \code{\link[=constrain_basis]{constra
 p <- poly_basis(dimension = 5)
 p
 
-# Orthogonal, so the Gram matrix is diagonal, with entries (u - l)/(2n + 1).
+# The polynomials are orthogonal, so the Gram matrix is diagonal, with
+# entries (u - l)/(2n + 1).
 round(diag(basis_gram(p)), 8)
 1 / (2 * (0:4) + 1)
 
-# And well conditioned where the raw powers are not.
+# The Legendre basis is well conditioned where the raw powers are not.
 H <- outer(0:9, 0:9, function(a, b) 1 / (a + b + 1))
 c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
   raw_powers = kappa(H, exact = TRUE))
@@ -76,7 +78,7 @@ c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
 
-# P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.
+# At the two ends of the interval, P_n(1) = 1 and P_n(-1) = (-1)^n.
 basis_eval(p, c(0, 1))
 
 # Derivatives above the highest degree are exactly zero.

@@ -19,12 +19,12 @@ A numeric matrix with \code{degree} rows and \code{basis@dimension} columns.
 Returns the matrix whose rows state that a function of \code{basis} and its
 first \code{degree - 1} derivatives take the same value at the two ends of the
 interval: row \eqn{j} is \eqn{B^{(j)}(a) - B^{(j)}(b)} for
-\eqn{j = 0, \ldots, d - 1}. Its null space is the periodic splines, which
-is what \code{\link[=cyclic_smooth]{cyclic_smooth()}} builds on.
+\eqn{j = 0, \ldots, d - 1}. Its null space is the periodic splines, and
+\code{\link[=cyclic_smooth]{cyclic_smooth()}} is built on that space.
 }
 \details{
-The rows are read from \code{\link[=basis_deriv]{basis_deriv()}} at the two endpoints, order zero
-included, so the constraint is evaluated by the same arithmetic that
+The rows are read from \code{\link[=basis_deriv]{basis_deriv()}} at the two endpoints, including
+order zero, so the constraint is evaluated by the same arithmetic that
 evaluates the basis rather than from a formula about knots.
 }
 \keyword{internal}

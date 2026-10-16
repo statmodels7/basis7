@@ -9,10 +9,10 @@ dr_basis(basis, x, penalty = NULL, constraints = NULL, scale = TRUE)
 \arguments{
 \item{basis}{The basis to transform, any object inheriting from \link{basis}.}
 
-\item{x}{The points the empirical inner product is taken at, normally the
-observed covariate. A numeric vector inside the basis interval, with no
-missing values. The construction depends on where they lie, so a basis
-built for one sample is not the basis for another.}
+\item{x}{The points at which the empirical inner product is taken, normally
+the observed covariate. It must be a numeric vector inside the basis
+interval, with no missing values. The construction depends on where they
+lie, so a basis built for one sample is not the basis for another.}
 
 \item{penalty}{A square numeric penalty matrix with one row and column per
 basis function. \code{NULL}, the default, uses \code{basis_gram(basis, order = 2)},
@@ -21,9 +21,9 @@ is passed explicitly, for instance
 \code{crossprod(diff(diag(k), differences = 2))}.}
 
 \item{constraints}{A matrix with one row per constraint and one column per
-element of \code{x}, whose row space the result is made empirically orthogonal
-to. \code{NULL}, the default, uses \code{t(cbind(1, x))}, which is the separation
-of a linear from a nonlinear effect.}
+element of \code{x}. The result is made empirically orthogonal to the row space
+of this matrix. \code{NULL}, the default, uses \code{t(cbind(1, x))}, which is the
+separation of a linear from a nonlinear effect.}
 
 \item{scale}{Whether to rescale so that
 \eqn{\mathrm{tr}(Z^\top Z/n) = 1}, default \code{TRUE}. See above for what it
@@ -31,20 +31,21 @@ does to \eqn{T^\top P T}.}
 }
 \value{
 An object of class \link{TransformedBasis} of dimension
-\code{basis@dimension - rank(C)}, with \code{basis_name} \verb{dr(<parent>)}, column
-names \code{dr1}, \code{dr2}, and so on ordered from smoothest to wiggliest, and
-\code{basis_params} holding \code{empirical_variance} and \code{constraint_rank}.
+\code{basis@dimension - rank(C)}, with \code{basis_name} \verb{dr(<parent>)} and column
+names \code{dr1}, \code{dr2}, and so on ordered from smoothest to wiggliest, where
+\code{basis_params} holds \code{empirical_variance} and \code{constraint_rank}.
 }
 \description{
 Returns the basis that simultaneously diagonalizes the empirical inner
 product at the given points and a penalty, and is empirically orthogonal to
 a constant and to \code{x}. Its columns are ordered from the smoothest to the
-wiggliest, each carrying a known share of the empirical variance, so a
-penalized fit against it is a shrinkage of independent coordinates and the
-linear part of the effect is separated from the nonlinear part exactly.
+wiggliest, and each of them carries a known share of the empirical
+variance, so a penalized fit against it is a shrinkage of independent
+coordinates and the linear part of the effect is separated from the
+nonlinear part exactly.
 }
 \section{The construction}{
-Three steps. The constraint matrix \eqn{C = (\mathbf{1}, x)^\top B} is
+The constraint matrix \eqn{C = (\mathbf{1}, x)^\top B} is
 formed and the basis restricted to its null space \eqn{V_0}, which makes
 the remaining functions empirically orthogonal to a constant and to
 \eqn{x}. The pencil
@@ -56,7 +57,7 @@ and satisfies \eqn{(\mathbf{1}, x)^\top Z = 0}, both up to rounding.
 }
 
 \section{What \code{scale} does to the penalty}{
-\eqn{T^\top P T} is \strong{proportional to} the identity, and equal to it only
+\eqn{T^\top P T} is proportional to the identity, and equal to it only
 when \code{scale = FALSE}. With \code{scale = TRUE}, the default, \eqn{T} is divided
 by \eqn{\sqrt{\sum_j \lambda_j}}, so \eqn{T^\top P T} is
 \eqn{(\sum_j \lambda_j)^{-1} I} and \verb{tr(Z'Z/n)} is 1. At \code{scale = FALSE}
@@ -69,20 +70,21 @@ needs the penalty to be exactly \eqn{I} passes \code{scale = FALSE}.
 
 \code{basis_params$empirical_variance} holds the eigenvalues, normalized to sum
 to one when \code{scale = TRUE}. They equal \verb{diag(Z'Z/n)} up to rounding, and
-are the share of empirical variance each column carries, falling from the
-smoothest column to the wiggliest.
+are the share of empirical variance that each column carries, falling from
+the smoothest column to the wiggliest.
 }
 
 \section{Cost and properties}{
 It factorizes only a \eqn{q \times K} matrix and a
 \eqn{(K-q) \times (K-q)} one, never anything of the size of the sample. It
-tolerates a rank-deficient \eqn{B}, which equally spaced knots produce when
+accepts a rank-deficient \eqn{B}, which equally spaced knots produce when
 the data leave \code{degree + 1} or more consecutive knot spans of a B-spline
-empty, the matrix inverted being the penalty. The transform is kept, so prediction at new points is the
-parent's evaluation multiplied by it, as for any other transformed basis.
+empty, because the matrix that is inverted is the penalty. The transform is
+kept, so prediction at new points is the parent's evaluation multiplied by
+it, as for any other transformed basis.
 
-The orthogonality \eqn{(\mathbf{1}, x)^\top Z = 0} is what separates a
-linear from a nonlinear effect: a reparametrization without it estimates
+The orthogonality \eqn{(\mathbf{1}, x)^\top Z = 0} separates a linear from
+a nonlinear effect: a reparametrization without it estimates
 the sum of the two correctly and the split between them with bias.
 }
 
@@ -128,7 +130,7 @@ Demmler, A. and Reinsch, C. (1975). Oscillation matrices with spline
 smoothing. \emph{Numerische Mathematik} \strong{24}, 375-382.
 }
 \seealso{
-\code{\link[=constrain_basis]{constrain_basis()}}, which does its first step alone;
+\code{\link[=constrain_basis]{constrain_basis()}}, which performs only the first step;
 \code{\link[=basis_gram]{basis_gram()}}, which supplies the default penalty;
 \code{\link[=orthonorm_basis]{orthonorm_basis()}} for a rotation that diagonalizes one matrix.
 }

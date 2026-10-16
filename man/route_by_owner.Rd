@@ -19,7 +19,7 @@ basis takes from the numerical fallback, by reading the class on which
 each method is registered through \code{attr(m, "signature")[[1]]} and testing
 it with
 \code{\link[=is_base_basis_class]{is_base_basis_class()}}. A generic with no method at all counts as
-numerical, the base class being where the fallback lives.
+numerical, because the fallback is registered on the base class.
 }
 \details{
 It is the body of \code{\link[=basis_numerical_route.basis]{basis_numerical_route.basis()}}, kept under a name so that
@@ -28,11 +28,11 @@ the package's own override can start from it. Inside a method the formal
 through \code{S7::super()} would require naming the package inside itself; a
 basis written elsewhere uses \code{S7::super()}.
 
-The test does not see which branch a method takes once it has been
-reached; \code{\link[=basis_numerical_route]{basis_numerical_route()}} lets a family report that itself.
+The test cannot determine which branch a method takes once the method has
+been reached; a family can report that through \code{\link[=basis_numerical_route]{basis_numerical_route()}}.
 }
 \seealso{
-\code{\link[=basis_numerical_route]{basis_numerical_route()}}, the generic it is the default of, and
-\code{\link[=is_base_basis_class]{is_base_basis_class()}}, which it tests each owner with.
+\code{\link[=basis_numerical_route]{basis_numerical_route()}}, the generic of which it is the default,
+and \code{\link[=is_base_basis_class]{is_base_basis_class()}}, with which it tests each owner.
 }
 \keyword{internal}

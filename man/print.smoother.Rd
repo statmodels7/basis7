@@ -9,7 +9,7 @@
 \item{...}{Ignored.}
 }
 \value{
-\code{x}, invisibly. Called for the printing.
+\code{x}, invisibly. The method is called for the printing.
 }
 \description{
 Prints the family, the number of basis functions, the penalty, the

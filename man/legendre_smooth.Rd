@@ -26,8 +26,8 @@ highest degree is \code{k - 1}.}
 \code{deriv_operator(m)}. It determines the functions toward which a
 strongly penalized fit contracts: a constant for \code{m = 1}, a straight
 line for 2, a parabola for 3, and the functions of \code{\link[=operator_null]{operator_null()}}
-for any operator. Its order is at most \code{k - 1}, the highest degree the
-basis carries.}
+for any operator. Its order is at most \code{k - 1}, the highest degree that
+the basis carries.}
 
 \item{measure}{The measure against which the roughness is integrated.}
 
@@ -50,9 +50,10 @@ An S7 object of class \link{LegendreSmoother}, inheriting from
 \link{smoother}.
 }
 \description{
-The orthogonal polynomial smoother: \code{k} shifted Legendre polynomials over
-an interval, penalized by the integrated squared derivative of order
-\code{order}, rotated to the Demmler-Reinsch coordinates. It is a global basis
+Returns the orthogonal polynomial smoother, which consists of \code{k} shifted
+Legendre polynomials over an interval, penalized by the integrated squared
+derivative of order \code{order} and rotated to the Demmler-Reinsch
+coordinates. It is a global basis
 where a B-spline is local: every function is supported on the whole
 interval, so a feature at one end moves the fit at the other.
 }

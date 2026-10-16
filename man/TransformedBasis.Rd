@@ -22,10 +22,10 @@ two characters form the default column names of \code{\link[=basis_colnames]{bas
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several. Both finite, of the same
-length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
-\code{\link[=basis_nvar]{basis_nvar()}} reports.}
+\item{lower, upper}{The endpoints of the interval on which the basis lives, or
+one endpoint per variable for a basis of several. Both must be finite and of
+the same length, and \code{lower[j] < upper[j]} must hold for every \code{j}.
+\code{\link[=basis_nvar]{basis_nvar()}} returns their length.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
 knots and degree of a B-spline, the period of a Fourier basis, the
@@ -33,7 +33,8 @@ marginal dimensions of a product. \code{\link[=print.basis]{print.basis()}} show
 any numeric entry of more than four values. Defaults to an empty list.}
 
 \item{parent_basis}{The basis being transformed, any object inheriting from
-\link{basis}. Kept whole, so that it can still be evaluated and inspected.}
+\link{basis}. It is kept whole, so that it can still be evaluated and
+inspected.}
 
 \item{transform}{The matrix \eqn{T}, numeric, with one row per parent
 function and one column per function of the result.}
@@ -43,11 +44,11 @@ An object of class \code{TransformedBasis}, inheriting from \link{basis},
 with the five properties of a basis plus \code{parent_basis} and \code{transform}.
 }
 \description{
-The S7 class of bases obtained from another by a fixed linear map of its
-functions, \eqn{\tilde{B}(x) = B(x)\,T}. It carries the parent and the
+\code{TransformedBasis} is the S7 class of bases obtained from another by a fixed
+linear map of its functions, \eqn{\tilde{B}(x) = B(x)\,T}. It carries the parent and the
 matrix, and it is itself a basis, so every generic applies to a
 constrained or rotated basis and code that receives it works in the same
-way as for the parent. Constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
+way as for the parent. It is constructed by \code{\link[=orthonorm_basis]{orthonorm_basis()}},
 \code{\link[=constrain_basis]{constrain_basis()}} or \code{\link[=dr_basis]{dr_basis()}}.
 }
 \section{Orthonormalization, constraints and rotations}{

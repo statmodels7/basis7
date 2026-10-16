@@ -7,9 +7,9 @@ NULL
 #' @name print.basis
 #'
 #' @description
-#' Prints a summary of a basis object: the family it comes from, how many
-#' functions it holds and over how many variables, the interval each variable
-#' runs over, the parameters the family carries, and which of the three
+#' Prints a summary of a basis object: the family from which it comes, how many
+#' functions it holds and over how many variables, the interval over which each
+#' variable runs, the parameters that the family carries, and which of the three
 #' derived quantities are computed numerically instead of from a formula. The
 #' summary has four lines, plus a header and one line per parameter when the
 #' basis carries parameters.
@@ -22,14 +22,15 @@ NULL
 #' reads `orthonorm(bspline)` and a two-way product reads
 #' `tensor(bspline, fourier)`.
 #'
-#' `Functions:` is `@dimension`, the number of columns [basis_eval()] returns,
-#' and `Variables:` is [basis_nvar()], the number of columns of `x` it
-#' expects. Every family here has one variable except [tensor_basis()].
+#' `Functions:` is `@dimension`, the number of columns that [basis_eval()]
+#' returns, and `Variables:` is [basis_nvar()], the number of columns of `x`
+#' that it expects. Every family here has one variable except
+#' [tensor_basis()].
 #'
 #' `Domain:` is `@lower` and `@upper` as a closed interval per variable,
-#' separated by `x` for a product. It is the interval every generic checks its
-#' evaluation points against. A point outside signals an error that states
-#' how many of the points were outside and what the interval is.
+#' separated by `x` for a product. It is the interval against which every
+#' generic checks its evaluation points. A point outside signals an error that
+#' states how many of the points were outside and what the interval is.
 #'
 #' `Parameters:` appears only when `@basis_params` is non-empty, and prints
 #' one line per entry. A numeric entry of more than four values is abbreviated
@@ -39,7 +40,7 @@ NULL
 #' `Numerical:` reads [basis_is_numerical()] and names those of `basis_deriv`,
 #' `basis_int` and `basis_gram` that are computed by the numerical route:
 #' finite differences for the derivatives, quadrature for the integral and the
-#' Gram matrix. The three shipped families report `none`, except a Fourier
+#' Gram matrix. The shipped families report `none`, except a Fourier
 #' basis whose interval is not a whole period, whose Gram matrix is computed
 #' by quadrature. A basis defined from its evaluation alone reports all
 #' three.
@@ -52,7 +53,7 @@ NULL
 #'
 #' @seealso [basis_is_numerical()] for the last line as a named logical vector,
 #'   [plot.basis()] to see the functions themselves, and [check_basis()] for a
-#'   verification of the components this summary only names.
+#'   verification of the components that this summary only names.
 #'
 #' @examples
 #' # The parameter block differs by family: the degree and the knots for a
@@ -129,20 +130,21 @@ S7::method(print, basis) <- function(x, ...) {
 #' Draws all `@dimension` functions of a basis on one panel, over an equally
 #' spaced grid covering the whole interval. `order` selects what is drawn: the
 #' functions themselves, a derivative of any order, or the integral anchored
-#' at the lower endpoint. One line is drawn per basis function, with no legend
-#' and with `@basis_name` as the title.
+#' at the lower endpoint. One line is drawn per basis function. The plot has
+#' no legend, and its title is `@basis_name`.
 #'
 #' @details
 #' # What is drawn
 #'
 #' The grid is `n` equally spaced points from `@lower` to `@upper`, endpoints
 #' included, and the curves are whichever of [basis_eval()], [basis_deriv()]
-#' or [basis_int()] `order` names. The vertical axis is labeled to match:
+#' or [basis_int()] is the one that `order` names. The vertical axis is labeled
+#' to match:
 #' \eqn{B(x)} at order `0`, \eqn{B'(x)} at order `1`, \eqn{B^{(k)}(x)} above
 #' that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
 #'
-#' The curves are distinguished only by the colors `matplot()` cycles
-#' through. The plot carries no legend, and the names of the columns are
+#' The curves are distinguished only by the colors through which `matplot()`
+#' cycles. The plot carries no legend, and the names of the columns are
 #' those of [basis_colnames()].
 #'
 #' # Graphical arguments
@@ -165,8 +167,8 @@ S7::method(print, basis) <- function(x, ...) {
 #' # Orders above the smoothness of the family
 #'
 #' An order above the smoothness of the family is accepted and draws a flat
-#' line at zero, the fourth derivative of a piecewise cubic being zero away
-#' from the knots.
+#' line at zero, because the fourth derivative of a piecewise cubic is zero
+#' away from the knots.
 #'
 #' @param x A basis object of one variable, of any class inheriting from
 #'   [basis]. A basis of several variables signals an error.
@@ -175,8 +177,8 @@ S7::method(print, basis) <- function(x, ...) {
 #'   the lower endpoint. Any other value signals an error, including a
 #'   fraction, a value below `-1` and a vector of length other than one.
 #' @param n The number of grid points, default `200`. A basis with many
-#'   knots or a high frequency needs more, 200 points leaving a curve visibly
-#'   polygonal there.
+#'   knots or a high frequency needs more, because 200 points leave a curve
+#'   visibly polygonal there.
 #' @param ... Passed to [graphics::matplot()]. A value given for `type`,
 #'   `lty`, `xlab`, `ylab` or `main` replaces the method's default; see the
 #'   section above for the defaults.
@@ -190,19 +192,20 @@ S7::method(print, basis) <- function(x, ...) {
 #' @examples
 #' b <- bspline_basis(dimension = 6)
 #'
-#' # The six cubic B-splines, their first derivative, and their integrals.
+#' # The three panels show the six cubic B-splines, their first derivative,
+#' # and their integrals.
 #' plot(b)
 #' plot(b, order = 1)
 #' plot(b, order = -1)
 #'
-#' # Every curve in the third panel starts at zero, which is what anchoring
-#' # the integral at the lower endpoint means.
+#' # Every curve in the third panel starts at zero, because the integral is
+#' # anchored at the lower endpoint.
 #' basis_int(b, 0)
 #'
-#' # Graphical arguments the method does not set itself reach matplot().
+#' # Graphical arguments that the method does not set itself reach matplot().
 #' plot(b, col = "grey40", lwd = 2)
 #'
-#' # The five arguments the method sets by default may be replaced.
+#' # The five arguments that the method sets by default may be replaced.
 #' plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
 #' plot(b, type = "p", pch = 16, cex = 0.4)
 #'

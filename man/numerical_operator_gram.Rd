@@ -17,14 +17,16 @@ numerical_operator_gram(
 \arguments{
 \item{basis}{A \link{basis} of one variable.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 
 \item{at}{The covariate values for the empirical measure, or \code{NULL}.}
 
-\item{weight}{A density to integrate against, or \code{NULL}.}
+\item{weight}{A density with respect to which the integral is taken, or
+\code{NULL}.}
 
-\item{panels, nodes}{The quadrature: how many equal panels the interval is
-split into and how many Gauss-Legendre nodes each carries.}
+\item{panels, nodes}{The quadrature rule: the number of equal panels into
+which the interval is split and the number of Gauss-Legendre nodes that
+each panel carries.}
 
 \item{...}{Ignored.}
 }
@@ -35,14 +37,16 @@ A symmetric numeric matrix of \code{basis@dimension} rows and columns.
 Integrates \eqn{(Lb)(Lb)^\top} numerically: over Gauss-Legendre panels for
 the length measure, over the covariate values for the empirical measure,
 and against a density where one is given. It is the base method of
-\code{\link[=basis_operator_gram]{basis_operator_gram()}} and the route a family with no closed form takes.
+\code{\link[=basis_operator_gram]{basis_operator_gram()}} and the route that a family with no closed form
+takes.
 }
 \details{
-The nodes are those of the rule used by \code{\link[=numerical_gram]{numerical_gram()}}, and the only
-difference is what is evaluated at them: \eqn{Lb} from \code{\link[=operator_eval]{operator_eval()}}
-instead of one derivative. A piecewise polynomial basis therefore gets an
-approximation here where its own derivative Gram matrix is exact, with the
-accuracy of the quadrature.
+The nodes are those of the rule used by \code{\link[=numerical_gram]{numerical_gram()}}, and the two
+functions differ only in what they evaluate at the nodes: this function
+evaluates \eqn{Lb} through \code{\link[=operator_eval]{operator_eval()}} instead of one derivative.
+For a piecewise polynomial basis this function therefore returns an
+approximation, with the accuracy of the quadrature, where the derivative
+Gram matrix of the basis itself is exact.
 }
 \seealso{
 \code{\link[=basis_operator_gram]{basis_operator_gram()}}, the generic.

@@ -10,7 +10,8 @@ check_interval(lower, upper)
 \item{lower, upper}{The endpoints.}
 }
 \value{
-\code{NULL}, invisibly. Called for the error it signals.
+\code{NULL}, invisibly. The function is called for the error that it
+signals.
 }
 \description{
 Validates the \code{lower} and \code{upper} arguments of a smoother constructor.

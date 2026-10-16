@@ -39,9 +39,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -69,9 +69,9 @@ An S7 object of class \code{BsplineSmoother}, inheriting from
 its arguments; the class constructor runs only the class validators.
 }
 \description{
-The class \code{\link[=bspline_smooth]{bspline_smooth()}} returns: a B-spline basis with a roughness
-penalty, the Demmler-Reinsch reparametrization and the linear column kept
-free. It adds \code{degree} to the properties of \link{smoother}.
+The class that \code{\link[=bspline_smooth]{bspline_smooth()}} returns is a B-spline basis with a
+roughness penalty, the Demmler-Reinsch reparametrization and the linear
+column kept free. It adds \code{degree} to the properties of \link{smoother}.
 }
 \examples{
 sm <- bspline_smooth(k = 12, degree = 3)

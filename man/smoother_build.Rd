@@ -21,8 +21,8 @@ one column per coordinate, with no dimnames.}
 \item{\code{S}}{The penalty: a matrix square of \code{ncol(X)}, or, for a family
 whose roughness is a sum of components carrying a smoothing
 parameter each (\code{\link[=adaptive_smooth]{adaptive_smooth()}}), a list of such matrices.}
-\item{\code{unpenalized}}{The number of leading columns the penalty does
-not cover, as an integer.}
+\item{\code{unpenalized}}{The number of leading columns that the penalty
+does not cover, as an integer.}
 \item{\code{blueprint}}{What \code{\link[=smoother_apply]{smoother_apply()}} needs to reapply the
 construction at new values.}
 \item{\code{names}}{One name per column of \code{X}.}
@@ -31,14 +31,14 @@ construction at new values.}
 \description{
 Resolves a \link{smoother} at a vector of covariate values and returns the
 design block, the penalty matrix and what a caller needs to reapply the
-construction at new values. It is the whole of a penalized smooth's
-arithmetic: what comes back is the pair \eqn{(X, S)} of
+construction at new values. The returned pair \eqn{(X, S)} carries the
+whole arithmetic of a penalized smooth, as in
 \eqn{(X'X + \lambda S)^{-1} X'y}.
 }
 \details{
 The block carries no column names, no \code{by} expansion and no label: those
 belong to whichever model layer places the smooth in a formula. The
-column names the family gives its own coordinates are returned separately
+column names that the family gives its own coordinates are returned separately
 in \code{names}.
 
 The transform is computed on \code{x} and recorded in \code{blueprint}, so a
@@ -54,7 +54,7 @@ out <- smoother_build(bspline_smooth(k = 10), x)
 vapply(out, function(e) class(e)[1], character(1))
 dim(out$X)
 
-# (X, S) is everything a penalized least-squares fit needs.
+# (X, S) is everything that a penalized least-squares fit needs.
 y <- sin(2 * pi * x) + rnorm(150, sd = 0.2)
 b <- solve(crossprod(out$X) + 0.1 * out$S, crossprod(out$X, y))
 round(sqrt(mean((out$X \%*\% b - sin(2 * pi * x))^2)), 3)
@@ -65,6 +65,6 @@ round(diag(out$S), 6)
 }
 \seealso{
 \code{\link[=smoother_apply]{smoother_apply()}} for the block at new values,
-\code{\link[=bspline_smooth]{bspline_smooth()}} for the smoother this builds.
+\code{\link[=bspline_smooth]{bspline_smooth()}} for the smoother that this function builds.
 }
 \keyword{internal}

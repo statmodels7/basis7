@@ -21,7 +21,7 @@ zero at the lower endpoint, and a linear combination of zeros is zero.
 }
 \details{
 Integration is linear and \eqn{T} does not depend on \code{x}, so the identity
-is exactly the one \code{\link[=basis_deriv.TransformedBasis]{basis_deriv.TransformedBasis()}} uses in the other
+is exactly the one that \code{\link[=basis_deriv.TransformedBasis]{basis_deriv.TransformedBasis()}} uses in the other
 direction. The accuracy is again the parent's.
 }
 \seealso{

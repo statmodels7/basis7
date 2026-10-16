@@ -10,8 +10,8 @@ oscillator_operator(period = NULL, harmonics = 1)
 \item{period}{The length of one cycle, a positive number, or \code{NULL} to
 take the width of the smoother's interval.}
 
-\item{harmonics}{How many harmonics the penalty leaves unpenalized, a
-whole number of at least 1. The order of the operator is
+\item{harmonics}{The number of harmonics that the penalty leaves
+unpenalized, a whole number of at least 1. The order of the operator is
 \code{2 * harmonics}.}
 }
 \value{
@@ -22,16 +22,16 @@ The periodic factor on its own,
 \deqn{L x = \prod_{i=1}^{h}\left(D^2 + (i\nu)^2\right) x,
   \qquad \nu = \frac{2\pi}{T},}
 whose null space is the first \eqn{h} harmonics of the period \eqn{T}
-\strong{without} the constant. At \code{harmonics = 1} it is the equation of simple
+without the constant. At \code{harmonics = 1} it is the equation of simple
 harmonic motion, \eqn{L x = \nu^2 x + D^2 x}.
 }
 \details{
 This operator is meant to be composed. \code{\link[=harmonic_operator]{harmonic_operator()}} is this
 operator with a leading \eqn{D}, which puts the constant into the null
-space, so the two are related by
-\code{harmonic_operator(T, h)} being \code{deriv_operator(1) * oscillator_operator(T, h)}
-exactly, and a penalty that should leave a \strong{linear trend} and a cycle
-alone rather than a level and a cycle is
+space, so that
+\code{harmonic_operator(T, h)} equals \code{deriv_operator(1) * oscillator_operator(T, h)}
+exactly. A penalty that leaves a linear trend and a cycle unpenalized,
+instead of a level and a cycle, is
 \code{deriv_operator(2) * oscillator_operator(T)}.
 
 Composing with \code{\link[=harmonic_operator]{harmonic_operator()}} instead would raise the order by one
@@ -44,7 +44,8 @@ oscillator_operator(365)
 # the null space is the fundamental alone: no constant
 operator_null(oscillator_operator(365))
 
-# a linear trend and a yearly cycle, and nothing else
+# The null space holds a linear trend and a yearly cycle, and no other
+# function.
 op <- deriv_operator(2) * oscillator_operator(365)
 operator_null(op)
 

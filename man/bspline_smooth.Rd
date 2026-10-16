@@ -19,7 +19,7 @@ bspline_smooth(
 }
 \arguments{
 \item{k}{The number of basis functions, a whole number of at least
-\code{degree + 1} and greater than the number of directions the constraint
+\code{degree + 1} and greater than the number of directions that the constraint
 removes, which is \code{order} by default.}
 
 \item{degree}{The degree of the B-spline pieces, a whole number of at
@@ -62,14 +62,14 @@ An S7 object of class \link{BsplineSmoother}, inheriting from
 covariate to obtain the block and its penalty matrix.
 }
 \description{
-The B-spline smoother: \code{k} B-spline functions of degree \code{degree} over an
-interval, penalized by the integrated squared derivative of order \code{order},
-rotated to the Demmler-Reinsch coordinates and, with the null space kept,
-carrying the unpenalized polynomial directions as free columns. It is the
-construction used by \code{\link[modelterms7:s]{modelterms7::s()}}.
+The B-spline smoother consists of \code{k} B-spline functions of degree \code{degree}
+over an interval, penalized by the integrated squared derivative of order
+\code{order}, and rotated to the Demmler-Reinsch coordinates. If the null
+space is kept, the unpenalized polynomial directions appear as free
+columns. It is the construction used by \code{\link[modelterms7:s]{modelterms7::s()}}.
 }
 \section{The construction}{
-At a vector of covariate values \code{\link[=smoother_build]{smoother_build()}} performs, in order:
+At a vector of covariate values, \code{\link[=smoother_build]{smoother_build()}} performs, in order:
 \enumerate{
 \item a \code{\link[=bspline_basis]{bspline_basis()}} of \code{k} functions over the interval, whose
 endpoints are \code{lower} and \code{upper} where given and otherwise the ends of
@@ -96,9 +96,10 @@ kept null space restores \eqn{m - 1} of them.
 }
 
 \section{What \code{order} means}{
-\code{order} is the order of derivative the penalty integrates, and it fixes
-what a fit contracts toward as the smoothing parameter grows: a constant
-at \code{order = 1}, a straight line at \code{order = 2}, a parabola at \code{order = 3}.
+\code{order} is the order of derivative that the penalty integrates, and it
+fixes the function toward which a fit contracts as the smoothing parameter
+grows: a constant at \code{order = 1}, a straight line at \code{order = 2}, a
+parabola at \code{order = 3}.
 The null space of the penalty is the polynomials of degree below \code{order},
 so \code{order} may not exceed \code{degree}; above it the roughness matrix is
 identically zero and penalizes nothing.
@@ -127,14 +128,14 @@ max(abs(crossprod(out$X[, 1], out$X[, -1])))
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
 
-# A penalty factory is STORED AND NEVER CALLED here: one that raises
-# still builds, because it is the model layer that calls it.
+# A penalty factory is stored and never called here: one that raises
+# still builds, because only the model layer calls it.
 sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
 out2 <- smoother_build(sm2, x)
 identical(out2$S, out$S)
 
 # It must be a function of the count, and it cannot be combined with a
-# shrunk null space, which is a weight inside the matrix it replaces.
+# shrunk null space, which is a weight inside the matrix that it replaces.
 try(bspline_smooth(k = 10, penalty = 3))
 try(bspline_smooth(k = 10, penalty = function(n) n, null_space = "shrink"))
 
@@ -150,5 +151,5 @@ and penalties. \emph{Statistical Science}, 11, 89--121.
 }
 \seealso{
 \code{\link[=smoother_build]{smoother_build()}} for what it produces at data, \link{smoother} for
-the four decisions it carries, \code{\link[=bspline_basis]{bspline_basis()}} for the basis alone.
+the four decisions that it carries, \code{\link[=bspline_basis]{bspline_basis()}} for the basis alone.
 }

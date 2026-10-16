@@ -9,15 +9,16 @@ operator_null_design(op, x)
 \arguments{
 \item{op}{A \link{LinearOperator}.}
 
-\item{x}{The points to evaluate at, a numeric vector.}
+\item{x}{The points at which the functions are evaluated, a numeric
+vector.}
 }
 \value{
 A numeric matrix of \code{length(x)} rows and \code{operator_order(op)}
 columns, with the labels of \code{\link[=operator_null]{operator_null()}} as column names.
 }
 \description{
-The design matrix of the functions \code{\link[=operator_null]{operator_null()}} lists, evaluated at
-\code{x}: one column per function, in the order that table gives them.
+Returns the design matrix of the functions that \code{\link[=operator_null]{operator_null()}} lists,
+evaluated at \code{x}, with one column per function in the order of that table.
 }
 \details{
 These are the mathematical functions, unscaled. A smoother that restores
@@ -28,14 +29,14 @@ data; see \code{\link[=smoother_span]{smoother_span()}}.
 A rate far from zero over a wide interval makes \eqn{e^{at}} overflow, so
 the design matrix of an operator with a large real root cannot be formed.
 The operators built by \code{\link[=deriv_operator]{deriv_operator()}}, \code{\link[=harmonic_operator]{harmonic_operator()}} and
-\code{\link[=oscillator_operator]{oscillator_operator()}} have only roots on the imaginary axis, zero
-included, and this difficulty does not arise.
+\code{\link[=oscillator_operator]{oscillator_operator()}} have only roots on the imaginary axis, including
+zero, and this difficulty does not arise.
 }
 \examples{
 x <- seq(0, 365, length.out = 5)
 round(operator_null_design(harmonic_operator(365), x), 4)
 
-# the constant and t, the null space of the second derivative
+# The null space of the second derivative holds the constant and t.
 operator_null_design(deriv_operator(2), 1:5)
 }
 \seealso{

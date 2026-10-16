@@ -27,19 +27,19 @@ NULL
 #'
 #' The checks are:
 #'
-#' 1. **shape**: the evaluation returns a matrix of the declared size and
+#' 1. shape: the evaluation returns a matrix of the declared size and
 #'    column names for a vector, and of one row for a single point, and the
 #'    first derivative returns a matrix of the declared size;
-#' 2. **derivatives**: each analytic order agrees with one numerical
+#' 2. derivatives: each analytic order agrees with one numerical
 #'    differentiation of the order below it;
-#' 3. **integral**: it differentiates back to the basis and is exactly zero
+#' 3. integral: it differentiates back to the basis and is exactly zero
 #'    at the lower endpoint; for a basis of several variables only the zero
 #'    at the lower corner is checked;
-#' 4. **partition of unity**: the rows sum to one, for the families
+#' 4. partition of unity: the rows sum to one, for the families
 #'    that have that property;
-#' 5. **Gram**: symmetric, positive semidefinite, and equal to an
+#' 5. Gram: symmetric, positive semidefinite, and equal to an
 #'    independent quadrature;
-#' 6. **missing values**: a missing evaluation point gives a missing
+#' 6. missing values: a missing evaluation point gives a missing
 #'    row and nothing else.
 #'
 #' # Checks on numerical quantities
@@ -50,14 +50,14 @@ NULL
 #' therefore not run in that case: they report `NA` and print `[numerical]`.
 #'
 #' The `gram` check always runs. The independent quadrature is 401 panels of
-#' 7 nodes, a rule no basis in the package uses for its own result, so a
-#' family whose own Gram matrix is a quadrature is still compared against
-#' different arithmetic. When the Gram matrix is numerical, each entry is
-#' allowed, besides the relative tolerance, four times the difference
-#' between the package's own fallback ([numerical_gram()] at its defaults)
-#' and the finer rule: a quadrature that is correct but limited by the kinks
-#' of a basis passes, and a matrix that is wrong by more than the quadrature
-#' error fails. The `shape` and `missing` checks do not depend on the
+#' 7 nodes, a rule that the bases in the package never use for their own
+#' results, so a family whose own Gram matrix is a quadrature is still
+#' compared against different arithmetic. When the Gram matrix is numerical,
+#' each entry is allowed, besides the relative tolerance, four times the
+#' difference between the package's own fallback ([numerical_gram()] at its
+#' defaults) and the finer rule: a quadrature that is correct but limited by
+#' the kinks of a basis passes, and a matrix that is wrong by more than the
+#' quadrature error fails. The `shape` and `missing` checks do not depend on the
 #' fallback and always run.
 #'
 #' `partition` is `NA` and prints `[not claimed]` for a family that is not a
@@ -66,7 +66,7 @@ NULL
 #'
 #' # The error of the reference
 #'
-#' A central difference assumes derivatives the function may not have. At a
+#' A central difference assumes derivatives that the function may not have. At a
 #' knot a spline's third derivative jumps, and a stencil straddling it returns
 #' a number of the order of the jump, which compared against an exact value
 #' reads as a failure of the basis. Each reference is therefore computed
@@ -76,32 +76,34 @@ NULL
 #' percent is still reported as failed, as the last example shows.
 #'
 #' @param basis A basis object, of any class inheriting from [basis].
-#' @param n The number of points to test at, default `41`. They are equally
-#'   spaced across the interval with five percent trimmed off each end,
+#' @param n The number of points at which to test, default `41`. They are
+#'   equally spaced across the interval after trimming five percent off each end,
 #'   because a one-sided stencil at an endpoint carries a larger error that
-#'   would read as a failure of the basis. Passed through `as.integer()`.
+#'   would read as a failure of the basis. The value is passed through
+#'   `as.integer()`.
 #' @param orders The derivative orders to check, default `1:2`. Each is
 #'   compared against one differentiation of the order below it, never against
 #'   a chain of lower-order differences. Each order costs one pass.
 #' @param tol The relative tolerance for the derivative and integral checks,
-#'   default `1e-6`. Relative to the values themselves, with the denominator
-#'   taken from them; see [rel_close()]. The Gram comparison uses
-#'   `1e-6` regardless.
+#'   default `1e-6`. The tolerance is relative to the values themselves, and
+#'   the denominator is taken from them; see [rel_close()]. The Gram
+#'   comparison uses `1e-6` regardless.
 #' @param verbose Whether to print the table, default `TRUE`. The result is
 #'   returned invisibly either way.
 #'
 #' @return Invisibly, a named logical vector of length 6, in the order
 #'   `shape`, `deriv`, `integral`, `partition`, `gram`, `missing`, with `NA`
 #'   for a check that was not run. It carries the attribute `"numerical"`, the
-#'   named logical vector [basis_is_numerical()] returns.
+#'   named logical vector that [basis_is_numerical()] returns.
 #'
 #' @seealso [basis_is_numerical()] for the attribute and which route each
 #'   quantity takes; `vignette("defining-a-basis")`, which uses this function
 #'   to develop one.
 #'
 #' @examples
-#' # The shipped families pass every check that applies to them; a Fourier
-#' # basis is not a partition of unity and does not claim to be one.
+#' # The shipped families pass every check that applies to them; the
+#' # partition-of-unity check is not applied to a Fourier basis, which is not a
+#' # partition of unity.
 #' invisible(check_basis(bspline_basis(dimension = 6)))
 #' invisible(check_basis(fourier_basis(dimension = 5)))
 #'
@@ -263,12 +265,12 @@ check_basis <- function(basis, n = 41L, orders = 1:2, tol = 1e-6,
 #' property.
 #'
 #' @details
-#' `TRUE` for a [BsplineBasis], which sums to one by construction, and for a
-#' [TensorBasis] all of whose margins do: the row sums of a Kronecker product
-#' are the products of the row sums.
+#' The function returns `TRUE` for a [BsplineBasis], which sums to one by
+#' construction, and for a [TensorBasis] all of whose margins do: the row
+#' sums of a Kronecker product are the products of the row sums.
 #'
-#' `FALSE` for everything else, including a [TransformedBasis] over a
-#' B-spline: an orthonormalization or a constraint takes linear combinations
+#' It returns `FALSE` for everything else, including a [TransformedBasis] over
+#' a B-spline: an orthonormalization or a constraint takes linear combinations
 #' of the columns, and the sum of the new columns is generally not one. A
 #' transformation that happens to preserve the property is therefore not
 #' tested.
@@ -293,10 +295,10 @@ basis_partitions_unity <- function(basis) {
 #' One Coordinate of the Evaluation Points
 #'
 #' @description
-#' A matched pair for reading and writing one variable of a set of evaluation
-#' points. `coord(x, j)` returns the `j`th variable; `replace_coord(x, j, z)`
-#' returns the points with that variable replaced by `z` and the others left
-#' alone. [check_basis()] uses them to sweep one coordinate at a time when the
+#' `coord()` and `replace_coord()` are a matched pair that reads and writes
+#' one variable of a set of evaluation points. `coord(x, j)` returns the `j`th
+#' variable; `replace_coord(x, j, z)` returns the points in which that variable
+#' is replaced by `z` and the others are unchanged. [check_basis()] uses them to sweep one coordinate at a time when the
 #' basis takes several.
 #'
 #' @details
@@ -305,15 +307,15 @@ basis_partitions_unity <- function(basis) {
 #' loop over `seq_len(basis_nvar(basis))` with no branch for the univariate
 #' case.
 #'
-#' Neither function validates its arguments. An index `j` outside the columns
-#' of `x` gives R's subscript error. A `z` of the wrong length is recycled
-#' into a matrix only when its length divides the number of rows, and is
-#' returned as it is for a vector `x`.
+#' `coord()` and `replace_coord()` do not validate their arguments. An index
+#' `j` outside the columns of `x` gives R's subscript error. A `z` of the
+#' wrong length is recycled into a matrix only when its length divides the
+#' number of rows, and is returned as it is for a vector `x`.
 #'
 #' @param x A numeric vector of evaluation points, or a matrix of one column
 #'   per variable.
-#' @param j The coordinate to read or write, a column index. Ignored when `x`
-#'   is a vector.
+#' @param j The coordinate to read or write, a column index. The argument
+#'   is ignored when `x` is a vector.
 #' @param z The replacement values, for `replace_coord()` only: a numeric
 #'   vector as long as `x` has rows.
 #'
@@ -323,7 +325,7 @@ basis_partitions_unity <- function(basis) {
 #'   when `x` is not a matrix.
 #'
 #' @seealso [check_basis()], their only caller, and [basis_nvar()] for the
-#'   count they loop over.
+#'   count over which they loop.
 #'
 #' @keywords internal
 coord <- function(x, j) {
@@ -342,9 +344,9 @@ replace_coord <- function(x, j, z) {
 #' Compare Two Matrices Relative to Their Own Magnitude
 #'
 #' @description
-#' Reports whether two matrices agree to a relative tolerance, with the
-#' denominator taken from the values themselves and floored at a millionth of
-#' the column's own scale. It is the only comparison [check_basis()] makes,
+#' Reports whether two matrices agree to a relative tolerance. The denominator
+#' is taken from the values themselves and is floored at a millionth of the
+#' column's own scale. It is the only comparison that [check_basis()] makes,
 #' so its derivative, integral and Gram checks read agreement in the same
 #' way.
 #'
@@ -370,14 +372,14 @@ replace_coord <- function(x, j, z) {
 #' A column whose whole scale is below `1e-8` of the largest column's is
 #' skipped. If every column is skipped the result is `TRUE`.
 #'
-#' @param a,b Numeric matrices of the same shape. Neither is privileged; the
-#'   comparison is symmetric.
+#' @param a,b Numeric matrices of the same shape. The comparison is
+#'   symmetric, so the two matrices play the same role.
 #' @param tol The relative tolerance, a single positive number.
 #' @param slack An optional numeric matrix of the same shape as `a`, an
 #'   absolute allowance added entry by entry through `pmax(tol * den, slack)`.
 #'   [check_basis()] passes [fd_reference()]'s `uncertainty` here, so a point
-#'   whose finite-difference reference is unreliable is allowed the error that
-#'   reference has. `NULL`, the default, allows none.
+#'   whose finite-difference reference is unreliable is allowed the error of
+#'   that reference. `NULL`, the default, allows none.
 #'
 #' @return A single `TRUE` or `FALSE`: `TRUE` when every informative entry
 #'   agrees within its own allowance. An entry whose allowance is infinite is
@@ -422,12 +424,12 @@ rel_close <- function(a, b, tol, slack = NULL) {
 #'
 #' @details
 #' A central difference is valid only where the function has the derivatives
-#' the stencil assumes. At a knot the third derivative of a cubic spline
+#' that the stencil assumes. At a knot the third derivative of a cubic spline
 #' jumps, so a stencil that straddles the knot returns a number of the order
 #' of the jump and not of the truncation error, and comparing an exact value
 #' against it would report a failure of the reference as one of the basis.
 #'
-#' The estimate is therefore recomputed with the step halved. At a smooth
+#' The estimate is therefore recomputed at half the step. At a smooth
 #' point the two estimates differ by about three quarters of the truncation
 #' error of the first, so four times the gap bounds that error; at a knot the
 #' gap is large. The bound becomes the allowance of the comparison, point by
@@ -444,8 +446,8 @@ rel_close <- function(a, b, tol, slack = NULL) {
 #'
 #' @return A list of two matrices of the same shape as `f(x)`: `value`, the
 #'   first derivative estimated at the full step, and `uncertainty`, four
-#'   times the gap between that estimate and the one at half the step. An
-#'   entry where either estimate is `NA` gets an infinite uncertainty, so the
+#'   times the gap between that estimate and the one at half the step. The
+#'   uncertainty is infinite at an entry where either estimate is `NA`, so the
 #'   comparison there is unconstrained.
 #'
 #' @seealso [check_basis()], its only caller; [rel_close()], which consumes
@@ -468,7 +470,7 @@ fd_reference <- function(f, x, lower, upper) {
 #' Print the Outcome of check_basis
 #'
 #' @description
-#' Prints the six-row table [check_basis()] shows when `verbose` is `TRUE`: a
+#' Prints the six-row table that [check_basis()] shows when `verbose` is `TRUE`: a
 #' header naming the family and its dimension, one line per check with a
 #' description and a verdict, and a closing line listing the quantities that
 #' came from the numerical fallback.
@@ -478,20 +480,20 @@ fd_reference <- function(f, x, lower, upper) {
 #' check that was not run because the quantity is numerical prints
 #' `[numerical]`; the partition-of-unity check on a family that is not a
 #' partition of unity prints `[not claimed]`. The first marks a value that was
-#' not verified, the second a property that does not apply.
+#' not verified, and the second marks a property that does not apply.
 #'
 #' Only `deriv`, `integral` and `partition` can be `NA`. The rows `shape`,
 #' `gram` and `missing` are assigned on every path, so their `[numerical]`
 #' label is never printed.
 #'
-#' @param basis A basis object, of any class inheriting from [basis]. Read for
-#'   its `@basis_name` and `@dimension` only.
+#' @param basis A basis object, of any class inheriting from [basis]. Only its
+#'   `@basis_name` and `@dimension` are read.
 #' @param res The named logical vector of results, in the order `shape`,
 #'   `deriv`, `integral`, `partition`, `gram`, `missing`.
-#' @param num The named logical vector [basis_is_numerical()] returns, printed
-#'   as the closing line when any entry is `TRUE`.
+#' @param num The named logical vector that [basis_is_numerical()] returns,
+#'   printed as the closing line when any entry is `TRUE`.
 #'
-#' @return `NULL`, invisibly. Called for the printed output.
+#' @return `NULL`, invisibly. The function is called for the printed output.
 #'
 #' @seealso [check_basis()], its only caller.
 #'

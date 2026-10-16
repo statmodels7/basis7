@@ -13,8 +13,8 @@ replace_coord(x, j, z)
 \item{x}{A numeric vector of evaluation points, or a matrix of one column
 per variable.}
 
-\item{j}{The coordinate to read or write, a column index. Ignored when \code{x}
-is a vector.}
+\item{j}{The coordinate to read or write, a column index. The argument
+is ignored when \code{x} is a vector.}
 
 \item{z}{The replacement values, for \code{replace_coord()} only: a numeric
 vector as long as \code{x} has rows.}
@@ -26,10 +26,10 @@ same shape as \code{x}: the matrix with column \code{j} overwritten, or \code{z}
 when \code{x} is not a matrix.
 }
 \description{
-A matched pair for reading and writing one variable of a set of evaluation
-points. \code{coord(x, j)} returns the \code{j}th variable; \code{replace_coord(x, j, z)}
-returns the points with that variable replaced by \code{z} and the others left
-alone. \code{\link[=check_basis]{check_basis()}} uses them to sweep one coordinate at a time when the
+\code{coord()} and \code{replace_coord()} are a matched pair that reads and writes
+one variable of a set of evaluation points. \code{coord(x, j)} returns the \code{j}th
+variable; \code{replace_coord(x, j, z)} returns the points in which that variable
+is replaced by \code{z} and the others are unchanged. \code{\link[=check_basis]{check_basis()}} uses them to sweep one coordinate at a time when the
 basis takes several.
 }
 \details{
@@ -38,13 +38,13 @@ returns \code{x} and \code{replace_coord()} returns \code{z}, so the caller writ
 loop over \code{seq_len(basis_nvar(basis))} with no branch for the univariate
 case.
 
-Neither function validates its arguments. An index \code{j} outside the columns
-of \code{x} gives R's subscript error. A \code{z} of the wrong length is recycled
-into a matrix only when its length divides the number of rows, and is
-returned as it is for a vector \code{x}.
+\code{coord()} and \code{replace_coord()} do not validate their arguments. An index
+\code{j} outside the columns of \code{x} gives R's subscript error. A \code{z} of the
+wrong length is recycled into a matrix only when its length divides the
+number of rows, and is returned as it is for a vector \code{x}.
 }
 \seealso{
 \code{\link[=check_basis]{check_basis()}}, their only caller, and \code{\link[=basis_nvar]{basis_nvar()}} for the
-count they loop over.
+count over which they loop.
 }
 \keyword{internal}

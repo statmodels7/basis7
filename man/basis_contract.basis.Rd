@@ -24,9 +24,9 @@ design matrix has \code{basis@dimension} columns, which is small enough to
 form. Every class inherits this method except \link{TensorBasis}.
 }
 \details{
-\code{coef} is taken in the design's own column order, there being one obvious
-one. Several sets of coefficients may be given as the columns of a matrix,
-and the result then has one column each.
+\code{coef} is taken in the design's own column order, because there is only one
+obvious order. Several sets of coefficients may be given as the columns of
+a matrix, and the result then has one column each.
 }
 \seealso{
 \code{\link[=basis_contract]{basis_contract()}} for the generic;

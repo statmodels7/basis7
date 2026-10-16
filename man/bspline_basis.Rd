@@ -7,9 +7,9 @@
 bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval, each a single finite
-number with \code{lower < upper}. Default \eqn{[0, 1]}. They are the boundary
-knots, and evaluating outside them signals an error.}
+\item{lower, upper}{The endpoints of the interval. Each is a single finite
+number, and \code{lower} is smaller than \code{upper}. The default is \eqn{[0, 1]}.
+They are the boundary knots, and evaluating outside them signals an error.}
 
 \item{dimension}{The number of basis functions, a single whole number of at
 least \code{degree + 1}, default \code{5}. It is the number of columns, so it fixes
@@ -23,13 +23,13 @@ spline of degree \eqn{m} has \eqn{m} non-trivial derivatives; above that
 \code{\link[=basis_deriv]{basis_deriv()}} returns exact zeros.}
 }
 \value{
-An object of class \link{BsplineBasis}, with \code{basis_name} \code{"bspline"},
-\code{basis_params} holding \code{degree}, \code{knots} and \code{boundary_knots}, and column
-names \code{bs1}, \code{bs2}, and so on.
+An object of class \link{BsplineBasis}, whose \code{basis_name} is
+\code{"bspline"}, whose \code{basis_params} holds \code{degree}, \code{knots} and
+\code{boundary_knots}, and whose columns are named \code{bs1}, \code{bs2}, and so on.
 }
 \description{
 Returns a basis of \code{dimension} B-splines of the given degree on
-\eqn{[\ell, u]}, with the interior knots placed at equal spacing. This is
+\eqn{[\ell, u]} and places the interior knots at equal spacing. This is
 the general-purpose choice: the functions have local support, so a
 coefficient moves the fitted curve only near its own knots, and the
 conditioning does not deteriorate as the dimension grows.
@@ -37,10 +37,10 @@ conditioning does not deteriorate as the dimension grows.
 \section{Dimension, degree and knots}{
 A basis of \eqn{K} functions of degree \eqn{m} has \eqn{K - m - 1}
 interior knots, so \eqn{K \ge m + 1}; a smaller \code{dimension} signals an
-error that states both numbers. At equality there is no interior knot and the basis is the
-polynomials of degree \eqn{m} on the whole interval, which it spans
-exactly. The knots are \code{seq(lower, upper, length.out = K - m + 1)} with the
-endpoints dropped, so they are equally spaced. A quantile placement is not
+error that states both numbers. At equality there is no interior knot and
+the basis is the polynomials of degree \eqn{m} on the whole interval, which
+it spans exactly. The knots are \code{seq(lower, upper, length.out = K - m + 1)}
+without the endpoints, so they are equally spaced. A quantile placement is not
 offered by the constructor, and is obtained by building the class
 directly.
 
@@ -53,8 +53,8 @@ All \code{dimension} functions are kept, so the rows of \code{\link[=basis_eval]
 one and the basis spans the constant. Beside an intercept the design is
 therefore rank deficient by one. Removing a direction is a linear
 transformation of the basis, carried out by \code{\link[=constrain_basis]{constrain_basis()}}, which
-keeps the object a basis; the choice of constraint belongs to the layer
-that gives the term its meaning.
+keeps the object a basis; the layer that gives the term its meaning chooses
+the constraint.
 }
 
 \section{Computation of each quantity}{
@@ -62,8 +62,9 @@ that gives the term its meaning.
 \code{\link[splines2:bSpline]{splines2::bSpline()}}, which evaluates the recurrence and its exact
 derivative and integral. The Gram matrix is integrated in this package,
 knot interval by knot interval with a rule sized from the degree, and is
-exact to rounding. Nothing about a B-spline basis is differenced, and
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} reports all three \code{FALSE}.
+exact to rounding. Every quantity of a B-spline basis is computed without
+finite differences, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports all three as
+\code{FALSE}.
 }
 
 \examples{
@@ -76,7 +77,8 @@ round(basis_eval(b, c(0.1, 0.5, 0.9)), 3)
 # The basis carries its own constant, so its rows sum to one.
 max(abs(rowSums(basis_eval(b, seq(0, 1, length.out = 25))) - 1))
 
-# The second-derivative Gram matrix, the matrix of a roughness penalty.
+# The Gram matrix of the second derivatives is the matrix of a roughness
+# penalty.
 round(basis_gram(b, order = 2), 2)
 
 # At dimension = degree + 1 there is no interior knot, and the basis is
@@ -101,6 +103,6 @@ Springer.
 \seealso{
 \code{\link[=fourier_basis]{fourier_basis()}} for a periodic basis and \code{\link[=poly_basis]{poly_basis()}} for a
 global polynomial one; \code{\link[=constrain_basis]{constrain_basis()}} to remove the constant;
-\code{\link[=dr_basis]{dr_basis()}} to rotate this basis into the Demmler-Reinsch form a
+\code{\link[=dr_basis]{dr_basis()}} to rotate this basis into the Demmler-Reinsch form that a
 penalized fit uses; \code{\link[=basis_gram]{basis_gram()}} for its roughness penalty.
 }

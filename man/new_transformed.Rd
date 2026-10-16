@@ -15,8 +15,8 @@ new_transformed(basis, transform, name, prefix, params = list())
 \code{orthonorm(...)}, \code{constrained(...)} or \code{dr(...)} wrapped around the
 parent's own name, so the name nests even where the matrices collapse.}
 
-\item{prefix}{The two-letter prefix its column names are numbered under:
-\code{"on"}, \code{"cn"} or \code{"dr"}.}
+\item{prefix}{The two-letter prefix under which its column names are
+numbered: \code{"on"}, \code{"cn"} or \code{"dr"}.}
 
 \item{params}{Extra entries for \code{basis_params}, merged with \code{prefix}.
 \code{\link[=constrain_basis]{constrain_basis()}} adds \code{constraint_rank} and \code{\link[=dr_basis]{dr_basis()}} adds that and
@@ -34,14 +34,14 @@ and \code{\link[=dr_basis]{dr_basis()}} all build their result through it.
 \details{
 When \code{basis} is itself a \code{TransformedBasis}, the result holds
 \code{basis@transform \%*\% transform} and the original's parent. The dimension of
-the result is \code{ncol(transform)}, and its interval is the parent's, a linear
-map of the functions leaving the domain alone.
+the result is \code{ncol(transform)}, and its interval is the parent's, because a
+linear map of the functions leaves the domain unchanged.
 
 The function itself checks nothing. The validator of \link{TransformedBasis}
 rejects a \code{transform} whose row count differs from the parent's dimension
 when the object is built.
 }
 \seealso{
-\link{TransformedBasis}, the class it builds.
+\link{TransformedBasis}, the class that it builds.
 }
 \keyword{internal}

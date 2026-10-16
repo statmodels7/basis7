@@ -14,9 +14,9 @@ a \%||\% b
 \code{a}, or \code{b} where \code{a} is \code{NULL}.
 }
 \description{
-Returns \code{a} unless it is \code{NULL}, in which case \code{b}. Written here instead
-of imported: of the toolkit this package imports \pkg{numericals7} only,
-and the operator reached base R only in 4.4.0, later than the version
-\file{DESCRIPTION} requires.
+Returns \code{a} unless it is \code{NULL}, in which case \code{b}. The function is
+written here instead of imported, because this package imports only
+\pkg{numericals7} from the toolkit, and the operator reached base R only in
+4.4.0, later than the version that \file{DESCRIPTION} requires.
 }
 \keyword{internal}

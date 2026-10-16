@@ -10,7 +10,8 @@ check_available(sm)
 \item{sm}{A \link{smoother}.}
 }
 \value{
-\code{NULL}, invisibly. Called for the error it signals.
+\code{NULL}, invisibly. The function is called for the error that it
+signals.
 }
 \description{
 Signals an error for a smoother that combines a \code{penalty} factory with

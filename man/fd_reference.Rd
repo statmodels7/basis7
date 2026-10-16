@@ -19,8 +19,8 @@ be shifted to one side near an end instead of leaving the domain.}
 \value{
 A list of two matrices of the same shape as \code{f(x)}: \code{value}, the
 first derivative estimated at the full step, and \code{uncertainty}, four
-times the gap between that estimate and the one at half the step. An
-entry where either estimate is \code{NA} gets an infinite uncertainty, so the
+times the gap between that estimate and the one at half the step. The
+uncertainty is infinite at an entry where either estimate is \code{NA}, so the
 comparison there is unconstrained.
 }
 \description{
@@ -31,12 +31,12 @@ is unreliable does not report the basis as wrong.
 }
 \details{
 A central difference is valid only where the function has the derivatives
-the stencil assumes. At a knot the third derivative of a cubic spline
+that the stencil assumes. At a knot the third derivative of a cubic spline
 jumps, so a stencil that straddles the knot returns a number of the order
 of the jump and not of the truncation error, and comparing an exact value
 against it would report a failure of the reference as one of the basis.
 
-The estimate is therefore recomputed with the step halved. At a smooth
+The estimate is therefore recomputed at half the step. At a smooth
 point the two estimates differ by about three quarters of the truncation
 error of the first, so four times the gap bounds that error; at a knot the
 gap is large. The bound becomes the allowance of the comparison, point by

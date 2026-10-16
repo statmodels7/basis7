@@ -13,7 +13,7 @@ operator_formula(op)
 A single string.
 }
 \description{
-Assembles the string \code{print()} shows, dropping the terms whose weight is
+Assembles the string that \code{print()} shows, dropping the terms whose weight is
 zero and writing the leading term without a coefficient.
 }
 \keyword{internal}

@@ -1,8 +1,8 @@
 #' Basis Expansion
 #'
 #' @description
-#' The abstract parent of every basis in the package, and the class to inherit
-#' from when writing one of your own. A basis is a finite collection of
+#' The class `basis` is the abstract parent of every basis in the package, and
+#' a basis written by a user inherits from it. A basis is a finite collection of
 #' functions on an interval; the object carries the interval, how many
 #' functions there are, and whatever else the family needs, and the generics
 #' evaluate that collection, differentiate it, integrate it and take its inner
@@ -10,7 +10,7 @@
 #' object is constructed from one of the concrete families or a subclass.
 #'
 #' @details
-#' # What a basis is
+#' # Definition of a basis
 #'
 #' A basis of dimension \eqn{d} on \eqn{[a, b]} is a collection
 #' \eqn{\varphi_1, \dots, \varphi_d}, and the object exists so that a
@@ -19,20 +19,19 @@
 #' \deqn{f(x) = \sum_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta,
 #'   \qquad B(x)_{ij} = \varphi_j(x_i),}
 #'
-#' with \eqn{B(x)} the \eqn{n \times d} design matrix [basis_eval()]
+#' with \eqn{B(x)} the \eqn{n \times d} design matrix that [basis_eval()]
 #' returns. Fitting \eqn{f} is a linear problem in \eqn{\beta} whatever the
-#' family, so the derivative, the anchored integral and the Gram matrix are
-#' all properties of the basis alone and can be computed once, before any
-#' data arrive.
+#' family, so the derivative, the anchored integral and the Gram matrix all
+#' depend only on the basis and can be computed once, before any data arrive.
 #'
 #' # Writing a subclass
 #'
 #' A concrete basis is a subclass of this one. It must implement
 #' [basis_eval()]; [basis_deriv()], [basis_int()] and [basis_gram()] have
 #' numerical methods registered on this class, so a subclass of one variable
-#' that supplies its evaluation alone has all four generics at once. For a
-#' subclass of several variables the numerical integral is not available. A
-#' closed form registered later takes over through dispatch, with no change
+#' that supplies only its evaluation has all four generics at once. For a
+#' subclass of several variables the numerical integral is not available. If
+#' a closed form is registered later, dispatch selects it with no change
 #' to calling code, and [basis_is_numerical()] reports which of the three
 #' are still numerical. The vignette `vignette("defining-a-basis")` works
 #' through an example.
@@ -68,10 +67,10 @@
 #'   two characters form the default column names of [basis_colnames()].
 #' @param dimension The number of functions in the basis, a single integer of
 #'   at least 1. Must be of storage mode integer.
-#' @param lower,upper The endpoints of the interval the basis lives on, or one
-#'   endpoint per variable for a basis of several. Both finite, of the same
-#'   length, and `lower[j] < upper[j]` for every `j`. Their length is what
-#'   [basis_nvar()] reports.
+#' @param lower,upper The endpoints of the interval on which the basis lives, or
+#'   one endpoint per variable for a basis of several. Both must be finite and of
+#'   the same length, and `lower[j] < upper[j]` must hold for every `j`.
+#'   [basis_nvar()] returns their length.
 #' @param basis_params A named list of whatever else the subclass needs: the
 #'   knots and degree of a B-spline, the period of a Fourier basis, the
 #'   marginal dimensions of a product. [print.basis()] shows it, abbreviating
@@ -152,17 +151,17 @@ basis <- S7::new_class(
 #' How Many Variables a Basis Takes
 #'
 #' @description
-#' Returns the number of variables a basis is a function of: `1` for the three
-#' shipped families and for any wrapper over them, and the number of margins
-#' for a [tensor_basis()]. It is the number of columns [basis_eval()] expects
-#' its `x` to have.
+#' Returns the number of variables of which a basis is a function: `1` for
+#' every shipped family and for any wrapper over them, and the number of
+#' margins for a [tensor_basis()]. It is the number of columns that
+#' [basis_eval()] expects its `x` to have.
 #'
 #' @details
-#' The count is `length(basis@lower)`, the endpoints carrying one entry per
-#' variable. A basis therefore declares its input dimension by construction:
-#' there is no separate property that could disagree with the interval, and
-#' the validator already requires `@lower` and `@upper` to be of the same
-#' length.
+#' The count is `length(basis@lower)`, because the endpoints carry one entry
+#' per variable. A basis therefore declares its input dimension by
+#' construction. The class has no separate property that could disagree with
+#' the interval, and the validator already requires `@lower` and `@upper` to
+#' be of the same length.
 #'
 #' At `basis_nvar(b) == 1` the evaluation points are a plain numeric vector
 #' and the generics return an `n` by `@dimension` matrix. Above one they are a
@@ -180,7 +179,7 @@ basis <- S7::new_class(
 #'   [print.basis()], which shows it on the `Variables:` line.
 #'
 #' @examples
-#' # One variable for every family and every wrapper over one.
+#' # Every family and every wrapper over one has one variable.
 #' basis_nvar(bspline_basis(dimension = 5))
 #' basis_nvar(orthonorm_basis(bspline_basis(dimension = 5)))
 #'
@@ -188,8 +187,8 @@ basis <- S7::new_class(
 #' tb <- tensor_basis(bspline_basis(dimension = 4), fourier_basis(dimension = 3))
 #' basis_nvar(tb)
 #'
-#' # Which is the number of columns basis_eval() reads: four numbers are two
-#' # points on a two-variable basis, one row each.
+#' # That number is the number of columns that basis_eval() reads: four
+#' # numbers are two points on a two-variable basis, one row each.
 #' dim(basis_eval(tb, c(0.1, 0.2, 0.5, 0.6)))
 #' dim(basis_eval(tb, cbind(c(0.1, 0.5), c(0.2, 0.6))))
 #'
@@ -199,17 +198,18 @@ basis_nvar <- function(basis) {
 }
 
 
-#' Validate the Arguments Every Basis Constructor Takes
+#' Validate the Arguments That Every Basis Constructor Takes
 #'
 #' @description
 #' Checks the three arguments common to [bspline_basis()], [fourier_basis()]
 #' and [poly_basis()], and returns the dimension coerced to integer, which is
-#' the storage mode the class validator requires. Every constructor calls it
+#' the storage mode that the class validator requires. Every constructor calls it
 #' first, before anything family-specific, so the three report the same errors
 #' in the same words.
 #'
 #' @details
-#' Three conditions, each signalling an error with `call. = FALSE`:
+#' The function checks three conditions and signals an error with
+#' `call. = FALSE` for each of them:
 #'
 #' - `lower` and `upper` must each be a single finite number, else
 #'   `'lower' and 'upper' must be single finite numbers.`
@@ -229,8 +229,8 @@ basis_nvar <- function(basis) {
 #'
 #' @return `dimension` as an integer of length one.
 #'
-#' @seealso [check_eval_points()], the same role for the points a basis is
-#'   evaluated at.
+#' @seealso [check_eval_points()], which has the same role for the points at
+#'   which a basis is evaluated.
 #'
 #' @keywords internal
 check_basis_args <- function(lower, upper, dimension) {
@@ -253,8 +253,8 @@ check_basis_args <- function(lower, upper, dimension) {
 #'
 #' @description
 #' Checks that `x` is numeric and lies inside the basis interval, reshapes it
-#' for a basis of several variables, and returns it with near-endpoint values
-#' clamped exactly onto the endpoints. The generics that evaluate a basis
+#' for a basis of several variables, clamps near-endpoint values exactly onto
+#' the endpoints, and returns the result. The generics that evaluate a basis
 #' call it before dispatch, so every method receives points validated by the
 #' same rule. Missing values pass through and become a missing row of the
 #' result.
@@ -273,8 +273,8 @@ check_basis_args <- function(lower, upper, dimension) {
 #' extrapolated by \pkg{splines2}, with a warning.
 #'
 #' For a basis of several variables `x` is a matrix of one column per
-#' variable, each column checked against its own endpoints. A plain vector is
-#' accepted there and reshaped **by row**, so on two variables
+#' variable, and each column is checked against its own endpoints. A plain
+#' vector is accepted there and reshaped by row, so on two variables
 #' `c(0.1, 0.2, 0.5, 0.6)` is the two points `(0.1, 0.2)` and `(0.5, 0.6)`. A
 #' vector whose length is not a multiple of the number of variables, and a
 #' matrix of the wrong number of columns, signal an error.
@@ -287,9 +287,9 @@ check_basis_args <- function(lower, upper, dimension) {
 #'   allowed anywhere and is neither range-checked nor clamped; the B-spline
 #'   family signals an error when every point is `NA`.
 #'
-#' @return `x` with near-endpoint values clamped onto the endpoints: a numeric
-#'   vector for a basis of one variable, a numeric matrix of [basis_nvar()]
-#'   columns otherwise.
+#' @return `x`, in which near-endpoint values are clamped onto the endpoints: a
+#'   numeric vector for a basis of one variable, a numeric matrix of
+#'   [basis_nvar()] columns otherwise.
 #'
 #' @seealso [clamp_to_range()], which does the per-variable work;
 #'   [check_basis_args()], the same role for a constructor's arguments.
@@ -339,8 +339,8 @@ check_eval_points <- function(basis, x) {
 #'
 #' @description
 #' Signals an error if any entry of `z` lies outside `[lo, hi]` by more than
-#' `1e-8` times the width of the range, and otherwise returns `z` with any
-#' entry inside that tolerance moved onto the nearer endpoint. The range rule
+#' `1e-8` times the width of the range, and otherwise moves any entry inside
+#' that tolerance onto the nearer endpoint and returns `z`. The range rule
 #' of the package is written here only; [check_eval_points()] calls it once
 #' per variable.
 #'
@@ -355,14 +355,15 @@ check_eval_points <- function(basis, x) {
 #' not this function's name.
 #'
 #' @param z A numeric vector. `NA` entries are ignored.
-#' @param lo,hi The endpoints, single finite numbers with `lo < hi`. Not
-#'   validated here; the class validator has already required it.
+#' @param lo,hi The endpoints, single finite numbers with `lo < hi`. The
+#'   function does not validate them; the class validator has already required
+#'   it.
 #' @param what A phrase naming the range, spliced into the error message
 #'   between "fall outside" and the interval. Callers pass
 #'   `"the basis interval"` or `"the range of variable 2"`.
 #'
-#' @return `z`, of the same length, with entries within tolerance of an
-#'   endpoint set to that endpoint exactly.
+#' @return `z`, of the same length, in which entries within tolerance of an
+#'   endpoint are set to that endpoint exactly.
 #'
 #' @seealso [check_eval_points()], its only caller.
 #'
@@ -399,7 +400,7 @@ clamp_to_range <- function(z, lo, hi, what) {
 #' @param m A numeric matrix with exactly `basis@dimension` columns.
 #' @param basis A basis object, of any class inheriting from [basis].
 #'
-#' @return `m`, with its column names set and its contents untouched.
+#' @return `m`, whose column names are set and whose contents are unchanged.
 #'
 #' @seealso [basis_colnames()], which supplies the names.
 #'

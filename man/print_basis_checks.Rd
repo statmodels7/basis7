@@ -7,20 +7,20 @@
 print_basis_checks(basis, res, num)
 }
 \arguments{
-\item{basis}{A basis object, of any class inheriting from \link{basis}. Read for
-its \verb{@basis_name} and \verb{@dimension} only.}
+\item{basis}{A basis object, of any class inheriting from \link{basis}. Only its
+\verb{@basis_name} and \verb{@dimension} are read.}
 
 \item{res}{The named logical vector of results, in the order \code{shape},
 \code{deriv}, \code{integral}, \code{partition}, \code{gram}, \code{missing}.}
 
-\item{num}{The named logical vector \code{\link[=basis_is_numerical]{basis_is_numerical()}} returns, printed
-as the closing line when any entry is \code{TRUE}.}
+\item{num}{The named logical vector that \code{\link[=basis_is_numerical]{basis_is_numerical()}} returns,
+printed as the closing line when any entry is \code{TRUE}.}
 }
 \value{
-\code{NULL}, invisibly. Called for the printed output.
+\code{NULL}, invisibly. The function is called for the printed output.
 }
 \description{
-Prints the six-row table \code{\link[=check_basis]{check_basis()}} shows when \code{verbose} is \code{TRUE}: a
+Prints the six-row table that \code{\link[=check_basis]{check_basis()}} shows when \code{verbose} is \code{TRUE}: a
 header naming the family and its dimension, one line per check with a
 description and a verdict, and a closing line listing the quantities that
 came from the numerical fallback.
@@ -30,7 +30,7 @@ A verdict is \verb{[PASSED]}, \verb{[FAILED]}, or one of two labels for an \code
 check that was not run because the quantity is numerical prints
 \verb{[numerical]}; the partition-of-unity check on a family that is not a
 partition of unity prints \verb{[not claimed]}. The first marks a value that was
-not verified, the second a property that does not apply.
+not verified, and the second marks a property that does not apply.
 
 Only \code{deriv}, \code{integral} and \code{partition} can be \code{NA}. The rows \code{shape},
 \code{gram} and \code{missing} are assigned on every path, so their \verb{[numerical]}

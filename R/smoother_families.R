@@ -2,9 +2,9 @@
 #' @name FourierSmoother
 #'
 #' @description
-#' The class [fourier_smooth()] returns: a Fourier basis with a roughness
-#' penalty and the Demmler-Reinsch reparametrization. It has no `degree` and
-#' no `constrain`, which have no meaning for a periodic family.
+#' The class that [fourier_smooth()] returns combines a Fourier basis with a
+#' roughness penalty and the Demmler-Reinsch reparametrization. It has no
+#' `degree` and no `constrain`, which have no meaning for a periodic family.
 #'
 #' @inheritParams smoother
 #' @param omega The period. `NULL` takes the width of the interval.
@@ -28,17 +28,17 @@ FourierSmoother <- S7::new_class(
 #' A Fourier Smoother
 #'
 #' @description
-#' The periodic smoother: `k` Fourier functions over an interval, penalized
-#' by a linear differential operator and rotated to the Demmler-Reinsch
-#' coordinates. Every column of the block is periodic, so a fit built on it
-#' takes the same value at the two ends of the interval.
+#' Returns a periodic smoother made of `k` Fourier functions over an interval,
+#' penalized by a linear differential operator and rotated to the
+#' Demmler-Reinsch coordinates. Every column of the block is periodic, so a
+#' fit built on it takes the same value at the two ends of the interval.
 #'
 #' @details
 #' # The penalty is the harmonic acceleration operator
 #'
 #' The default `order` is [harmonic_operator()] and not a derivative, and
 #' the period that it uses is the width of the interval. The two differ in
-#' what a strongly penalized fit contracts **to**. On a periodic basis a
+#' the function to which a strongly penalized fit contracts. On a periodic basis a
 #' derivative penalty has the constant as its only null direction, so the
 #' fit contracts to a constant; the harmonic operator leaves the level and
 #' the fundamental cycle unpenalized and penalizes every higher harmonic, so
@@ -48,8 +48,8 @@ FourierSmoother <- S7::new_class(
 #' others. With `"keep"` the sine and cosine of the fundamental are free
 #' columns, so they are spent whether or not the covariate carries a cycle;
 #' with `"shrink"` they are penalized lightly and can leave the model. The
-#' first suits a cycle known to be present and estimated, the second a cycle
-#' whose presence is a hypothesis.
+#' first setting suits a cycle that is known to be present and is estimated,
+#' and the second suits a cycle whose presence is a hypothesis.
 #'
 #' `order = 2` gives the integrated squared second derivative.
 #'
@@ -58,16 +58,16 @@ FourierSmoother <- S7::new_class(
 #' `degree` is a B-spline's, and a Fourier basis has none.
 #'
 #' `constrain` in the form "the polynomials up to degree c" has no reading
-#' here: a periodic basis contains no linear function, so a derivative
-#' penalty's null space is the **constant at every order**, not a space
-#' growing with the order: the null space of the Gram matrix of a Fourier
-#' basis is one-dimensional at every order, spanned by the constant.
+#' here. A periodic basis contains no linear function, so the null space of a
+#' derivative penalty is the constant at every order, and it does not grow
+#' with the order. The null space of the Gram matrix of a Fourier basis is
+#' one-dimensional at every order and is spanned by the constant.
 #'
 #' # Accepted operators
 #'
 #' The constant is always removed, including when the operator penalizes it,
 #' as [oscillator_operator()] does, so a model carrying an intercept spans
-#' the level and the smooth carries the shape. Every **other** function of
+#' the level and the smooth carries the shape. Every other function of
 #' the operator's null space is restored as a free column, and it must be
 #' periodic on the period of the basis, which means a pure sine or cosine at
 #' a whole multiple of the fundamental frequency. An operator whose null
@@ -91,22 +91,22 @@ FourierSmoother <- S7::new_class(
 #' Without them the interval is the range of the data padded by a thousandth
 #' of its width, and the basis is periodic on that interval.
 #'
-#' @param k The number of basis functions, an **odd** whole number of at
+#' @param k The number of basis functions, an odd whole number of at
 #'   least 3: a Fourier basis holds a constant plus complete sine-cosine
 #'   pairs.
 #' @param order What the penalty measures: a [LinearOperator], or a whole
 #'   number `m` as the shorthand for `deriv_operator(m)`. The default is the
 #'   harmonic acceleration operator at the period of the interval.
-#' @param measure The measure the roughness is integrated against.
+#' @param measure The measure against which the roughness is integrated.
 #' @param null_space What happens to the directions that the penalty does
 #'   not see, other than the constant, which is always removed. `NULL` takes
-#'   `"shrink"`, or `"keep"` where a `penalty` factory is given, the two
-#'   being incompatible. See the section above.
+#'   `"shrink"`, or `"keep"` where a `penalty` factory is given, because
+#'   `"shrink"` and a factory are incompatible. See the section above.
 #' @param reparam The coordinates in which the coefficients are expressed.
 #' @param penalty `NULL` for the quadratic roughness penalty, or a factory
 #'   building a penalty from a coefficient count. See the section on the
 #'   smoother's own page.
-#' @param omega The period **of the basis**, `NULL` for the width of the
+#' @param omega The period of the basis, `NULL` for the width of the
 #'   interval. The period of the operator is carried by
 #'   [harmonic_operator()].
 #' @param lower,upper The interval, which for a periodic basis is the period.
@@ -120,7 +120,7 @@ FourierSmoother <- S7::new_class(
 #'   the non-periodic family, [fourier_basis()] for the basis alone.
 #'
 #' @examples
-#' # A periodic covariate, and a truth that is periodic on [0, 1].
+#' # The covariate is periodic, and the true function is periodic on [0, 1].
 #' set.seed(3)
 #' x <- sort(runif(300))
 #' f <- function(u) sin(2 * pi * u) + 0.4 * cos(4 * pi * u)
@@ -131,13 +131,13 @@ FourierSmoother <- S7::new_class(
 #' out <- smoother_build(sm, x)
 #' dim(out$X)
 #'
-#' # THE FIT IS PERIODIC, which is the property the basis was chosen for.
+#' # The fit is periodic, which is the property for which the basis was chosen.
 #' b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
 #' ends <- smoother_apply(sm, out$blueprint, c(0, 1)) %*% b
 #' format(diff(as.vector(ends)), digits = 3)
 #'
-#' # THE FUNDAMENTAL IS WHAT A STRONG PENALTY LEAVES. With the null space
-#' # kept it is free, and the heavily penalized fit is a pure sinusoid.
+#' # A strong penalty leaves the fundamental. If the null space is kept, the
+#' # fundamental is free, and the heavily penalized fit is a pure sinusoid.
 #' sk <- fourier_smooth(k = 9, lower = 0, upper = 1, null_space = "keep")
 #' ok <- smoother_build(sk, x)
 #' ok$unpenalized
@@ -145,14 +145,14 @@ FourierSmoother <- S7::new_class(
 #' fv <- as.vector(ok$X %*% bk)
 #' round(sqrt(mean(resid(lm(fv ~ sin(2 * pi * x) + cos(2 * pi * x)))^2)), 8)
 #'
-#' # The old construction, in one argument.
+#' # One argument gives the old construction.
 #' fourier_smooth(k = 9, order = 2, lower = 0, upper = 1)
 #'
-#' # Two harmonics left alone instead of one.
+#' # The penalty leaves two harmonics alone instead of one.
 #' fourier_smooth(k = 13, lower = 0, upper = 365,
 #'                order = harmonic_operator(harmonics = 2))
 #'
-#' # An operator whose null space a periodic basis cannot carry.
+#' # The null space of this operator cannot be carried by a periodic basis.
 #' try(smoother_build(
 #'   fourier_smooth(k = 9, lower = 0, upper = 1,
 #'                  order = deriv_operator(2) * oscillator_operator(1)), x))
@@ -294,12 +294,13 @@ S7::method(smoother_span, FourierSmoother) <- function(sm, x, ...) {
 #' @details
 #' Restoring anything else gives a block whose columns are not all periodic,
 #' and a fit on it no longer takes the same value at the two ends of the
-#' interval, the property for which a Fourier basis is chosen. The check is
-#' made on the null space of the operator, read analytically, and not on the
-#' rank of the assembled penalty, which depends on the tolerance.
+#' interval, the property for which a Fourier basis is chosen. The function
+#' checks the null space of the operator, which it reads analytically, and
+#' does not check the rank of the assembled penalty, which depends on the
+#' tolerance.
 #'
 #' @param sm A [FourierSmoother].
-#' @param op A [LinearOperator], with its period resolved.
+#' @param op A [LinearOperator] whose period is resolved.
 #' @param x The covariate, from which the interval is taken where the
 #'   smoother does not fix it.
 #'
@@ -318,7 +319,7 @@ check_periodic_null <- function(sm, op, x) {
       "a periodic basis cannot carry every function of this operator's null",
       " space.\n  It would restore %s as free columns, and a column that is",
       " not periodic on\n  the basis's period costs the fit the property",
-      " the basis was chosen for.\n  Use harmonic_operator() or",
+      " for which the basis was chosen.\n  Use harmonic_operator() or",
       " oscillator_operator() at this period, a whole\n  'order', or a",
       " non-periodic family such as bspline_smooth()."
     ), paste(nl$label[bad], collapse = ", ")), call. = FALSE)
@@ -331,10 +332,10 @@ check_periodic_null <- function(sm, op, x) {
 #' @name LegendreSmoother
 #'
 #' @description
-#' The class [legendre_smooth()] returns: an orthogonal polynomial basis with
-#' a roughness penalty and the Demmler-Reinsch reparametrization. Its null
-#' space is the polynomials of degree below `order`, as a B-spline's is, so
-#' it inherits the default [smoother_span()].
+#' The class that [legendre_smooth()] returns combines an orthogonal
+#' polynomial basis with a roughness penalty and the Demmler-Reinsch
+#' reparametrization. Its null space is the polynomials of degree below
+#' `order`, as a B-spline's is, so it inherits the default [smoother_span()].
 #'
 #' @inheritParams smoother
 #'
@@ -353,9 +354,10 @@ LegendreSmoother <- S7::new_class("LegendreSmoother", parent = smoother)
 #' A Legendre Smoother
 #'
 #' @description
-#' The orthogonal polynomial smoother: `k` shifted Legendre polynomials over
-#' an interval, penalized by the integrated squared derivative of order
-#' `order`, rotated to the Demmler-Reinsch coordinates. It is a global basis
+#' Returns the orthogonal polynomial smoother, which consists of `k` shifted
+#' Legendre polynomials over an interval, penalized by the integrated squared
+#' derivative of order `order` and rotated to the Demmler-Reinsch
+#' coordinates. It is a global basis
 #' where a B-spline is local: every function is supported on the whole
 #' interval, so a feature at one end moves the fit at the other.
 #'
@@ -373,8 +375,8 @@ LegendreSmoother <- S7::new_class("LegendreSmoother", parent = smoother)
 #'   `deriv_operator(m)`. It determines the functions toward which a
 #'   strongly penalized fit contracts: a constant for `m = 1`, a straight
 #'   line for 2, a parabola for 3, and the functions of [operator_null()]
-#'   for any operator. Its order is at most `k - 1`, the highest degree the
-#'   basis carries.
+#'   for any operator. Its order is at most `k - 1`, the highest degree that
+#'   the basis carries.
 #' @param measure The measure against which the roughness is integrated.
 #' @param constrain The directions to which the smooth is made orthogonal,
 #'   `NULL` for the null space of the penalty.
@@ -413,8 +415,8 @@ legendre_smooth <- function(k = 8, order = 2, measure = "lebesgue",
   m_ord <- operator_order(order)
   if (m_ord > k - 1L) {
     stop(sprintf(paste0(
-      "'order' (%d) exceeds the highest degree the basis carries (%d): the",
-      "\n  derivative of that order is zero, so the penalty would be the",
+      "'order' (%d) exceeds the highest degree that the basis carries (%d):",
+      " the\n  derivative of that order is zero, so the penalty would be the",
       " zero matrix."
     ), m_ord, k - 1L), call. = FALSE)
   }
@@ -461,9 +463,9 @@ S7::method(smoother_basis, LegendreSmoother) <- function(sm, x, ...) {
 #' @name CyclicSmoother
 #'
 #' @description
-#' The class [cyclic_smooth()] returns: a periodic B-spline basis with a
-#' roughness penalty and the Demmler-Reinsch reparametrization. It carries
-#' `degree` beside the properties every [smoother] has.
+#' The class that [cyclic_smooth()] returns combines a periodic B-spline basis
+#' with a roughness penalty and the Demmler-Reinsch reparametrization. It
+#' carries `degree` beside the properties that every [smoother] has.
 #'
 #' @inheritParams smoother
 #' @param degree The degree of the underlying B-spline, `3` for a cubic.
@@ -485,14 +487,14 @@ CyclicSmoother <- S7::new_class(
 #' A Cyclic Smoother
 #'
 #' @description
-#' The local periodic smoother: `k` B-spline functions over one period,
-#' constrained so that the fit and its first `degree - 1` derivatives take
+#' The local periodic smoother consists of `k` B-spline functions over one
+#' period, constrained so that the fit and its first `degree - 1` derivatives take
 #' the same value at the two ends of the interval, penalized by the
 #' integrated squared derivative of order `order` and rotated to the
-#' Demmler-Reinsch coordinates. It is to [fourier_smooth()] what
-#' [bspline_smooth()] is to [legendre_smooth()]: a local basis where the
-#' other is global, so a feature at one point of the cycle leaves the rest of
-#' it alone.
+#' Demmler-Reinsch coordinates. As [bspline_smooth()] is local where
+#' [legendre_smooth()] is global, this smoother is local where
+#' [fourier_smooth()] is global, so a feature at one point of the cycle leaves
+#' the rest of it alone.
 #'
 #' @details
 #' # The construction
@@ -534,9 +536,9 @@ CyclicSmoother <- S7::new_class(
 #' instead of a space growing with the order.
 #'
 #' The constant is removed, so a model carrying an intercept spans the level
-#' and the smooth carries the shape, and no free column is restored: a
-#' linear column is not periodic. A block therefore carries `k - 1`
-#' columns.
+#' and the smooth carries the shape. The construction restores no free
+#' column, because a linear column is not periodic. A block therefore carries
+#' `k - 1` columns.
 #'
 #' # The interval is the period
 #'
@@ -547,7 +549,7 @@ CyclicSmoother <- S7::new_class(
 #' observed range.
 #'
 #' @param k The number of periodic functions, a whole number of at least 3.
-#'   The block carries `k - 1` columns, the constant being removed.
+#'   The block carries `k - 1` columns because the constant is removed.
 #' @param degree The degree of the underlying B-spline, `3` for a cubic. The
 #'   fit matches at the two ends in its value and its first `degree - 1`
 #'   derivatives.
@@ -676,12 +678,12 @@ S7::method(smoother_span, CyclicSmoother) <- function(sm, x, ...) {
 #' Returns the matrix whose rows state that a function of `basis` and its
 #' first `degree - 1` derivatives take the same value at the two ends of the
 #' interval: row \eqn{j} is \eqn{B^{(j)}(a) - B^{(j)}(b)} for
-#' \eqn{j = 0, \ldots, d - 1}. Its null space is the periodic splines, which
-#' is what [cyclic_smooth()] builds on.
+#' \eqn{j = 0, \ldots, d - 1}. Its null space is the periodic splines, and
+#' [cyclic_smooth()] is built on that space.
 #'
 #' @details
-#' The rows are read from [basis_deriv()] at the two endpoints, order zero
-#' included, so the constraint is evaluated by the same arithmetic that
+#' The rows are read from [basis_deriv()] at the two endpoints, including
+#' order zero, so the constraint is evaluated by the same arithmetic that
 #' evaluates the basis rather than from a formula about knots.
 #'
 #' @param basis The parent basis, of dimension `k + degree`.
@@ -705,13 +707,13 @@ periodic_constraint <- function(basis, degree) {
 #' @name PsplineSmoother
 #'
 #' @description
-#' The class [pspline_smooth()] returns: a B-spline basis with a difference
-#' penalty on its coefficients. It carries `degree` and `diff` beside the
-#' properties every [smoother] has.
+#' The class that [pspline_smooth()] returns combines a B-spline basis with a
+#' difference penalty on its coefficients. It carries `degree` and `diff`
+#' beside the properties that every [smoother] has.
 #'
 #' @inheritParams smoother
 #' @param degree The degree of the B-spline.
-#' @param diff The order of difference the penalty takes.
+#' @param diff The order of difference that the penalty takes.
 #'
 #' @return An S7 object of class `PsplineSmoother`, inheriting from
 #'   [smoother]. Construct one with [pspline_smooth()].
@@ -730,11 +732,12 @@ PsplineSmoother <- S7::new_class(
 #' A P-spline Smoother
 #'
 #' @description
-#' The Eilers-Marx smoother: a B-spline basis of `k` functions over equally
-#' spaced knots, penalized by the sum of squared `diff`-th differences of its
-#' coefficients instead of an integrated squared derivative. The basis is
-#' rich and the penalty cheap to compute: `k` is chosen large enough not to
-#' limit the fit, and the smoothing parameter controls the roughness.
+#' Returns the Eilers-Marx smoother, which consists of a B-spline basis of `k`
+#' functions over equally spaced knots, penalized by the sum of squared
+#' `diff`-th differences of its coefficients instead of an integrated squared
+#' derivative. The basis is rich and the penalty is cheap to compute: `k` is
+#' chosen large enough not to limit the fit, and the smoothing parameter
+#' controls the roughness.
 #'
 #' @details
 #' # The penalty is a functional of the coefficients
@@ -742,9 +745,9 @@ PsplineSmoother <- S7::new_class(
 #' Where [bspline_smooth()] integrates \eqn{f^{(m)}} against a measure, this
 #' penalizes \eqn{\sum_j (\Delta^d c_j)^2}, so the roughness matrix is
 #' \eqn{D_d^\top D_d} with \eqn{D_d} the difference operator on the
-#' coefficient vector. Nothing is integrated, which is why the family has no
-#' `measure` and no `order`: there is no measure to integrate against and no
-#' derivative whose order to name.
+#' coefficient vector. The penalty does not integrate anything, so the family
+#' has no `measure` and no `order`, since it has no measure against which to
+#' integrate and no derivative whose order could be named.
 #'
 #' The argument `diff` belongs to this family alone. A difference penalty
 #' reads the coefficients as an ordered sequence in which neighbors are
@@ -761,7 +764,7 @@ PsplineSmoother <- S7::new_class(
 #' The differences are taken on the coefficients of the basis of Eilers and
 #' Marx, whose knots are equally spaced with the same step beyond the
 #' interval as inside it, and the penalty is carried onto the clamped basis
-#' the package evaluates (the two span the same splines on the interval, so
+#' that the package evaluates (the two span the same splines on the interval, so
 #' only the coordinates change). On those knots the Greville abscissae are
 #' equally spaced, and Marsden's identity makes the null space exactly the
 #' polynomials of degree below `diff`. It is also the penalty of
@@ -770,7 +773,7 @@ PsplineSmoother <- S7::new_class(
 #'
 #' # Comparison with the integrated penalty on the same basis
 #'
-#' The two are different penalties, and neither contains the other. The
+#' The two are different penalties, and they are not nested. The
 #' difference operator carries no factor of the knot spacing, so the raw
 #' P-spline roughness matrix is on a scale several orders of magnitude
 #' smaller than the integrated-derivative matrix on the same basis. After the
@@ -781,8 +784,8 @@ PsplineSmoother <- S7::new_class(
 #' @param k The number of basis functions, a whole number greater than
 #'   `degree` and greater than `diff`.
 #' @param degree The degree of the B-spline, `3` for a cubic.
-#' @param diff The order of difference the penalty takes, `2` for the usual
-#'   construction. The fit contracts to a polynomial of degree `diff - 1`.
+#' @param diff The order of difference that the penalty takes, `2` for the
+#'   usual construction. The fit contracts to a polynomial of degree `diff - 1`.
 #' @param constrain The directions to which the smooth is made orthogonal,
 #'   `NULL` for the null space of the penalty.
 #' @param null_space What happens to the directions that the penalty does
@@ -952,16 +955,16 @@ pspline_map <- function(b) {
 #' @name AdaptiveSmoother
 #'
 #' @description
-#' The class [adaptive_smooth()] returns: a B-spline basis whose difference
-#' penalty carries a weight that varies along the covariate, so that one
+#' The class that [adaptive_smooth()] returns combines a B-spline basis with a
+#' difference penalty whose weight varies along the covariate, so that one
 #' stretch may be smoothed harder than another. It adds `degree`, `diff` and
 #' `m` to the properties of [smoother].
 #'
 #' @inheritParams smoother
 #' @param degree The degree of the B-spline pieces.
-#' @param diff The order of difference the penalty takes.
-#' @param m The number of components the weight profile is built from, which
-#'   is also the number of smoothing parameters.
+#' @param diff The order of difference that the penalty takes.
+#' @param m The number of components from which the weight profile is built,
+#'   which is also the number of smoothing parameters.
 #'
 #' @return An S7 object of class `AdaptiveSmoother`, inheriting from
 #'   [smoother]. Construct one with [adaptive_smooth()], which validates its
@@ -987,11 +990,11 @@ AdaptiveSmoother <- S7::new_class(
 #' An Adaptive Smoother
 #'
 #' @description
-#' A difference penalty whose weight varies along the covariate, so that a
-#' function may be smoothed hard where it is quiet and left free where it is
-#' not. Where [pspline_smooth()] penalizes every difference alike under one
-#' smoothing parameter, this family carries `m` of them, and the data
-#' determine how the roughness is distributed.
+#' Returns a smoother with a difference penalty whose weight varies along the
+#' covariate, so that a function may be smoothed hard where it is quiet and
+#' left free where it is not. Where [pspline_smooth()] penalizes every
+#' difference alike under one smoothing parameter, this family carries `m` of
+#' them, and the data determine how the roughness is distributed.
 #'
 #' @details
 #' # The construction
@@ -1027,15 +1030,16 @@ AdaptiveSmoother <- S7::new_class(
 #' On a function whose roughness varies along the covariate the adaptive
 #' penalty smooths the quiet stretches more strongly than a P-spline with
 #' one smoothing parameter, and follows the noise less there. On a function
-#' of constant roughness its additional smoothing parameters have nothing to
-#' adapt to, and the fit is slightly worse than the P-spline fit.
+#' of constant roughness its additional smoothing parameters have no
+#' variation in roughness to which they can adapt, and the fit is slightly
+#' worse than the P-spline fit.
 #'
 #' The differences are taken in the Eilers-Marx coordinates of
 #' [pspline_smooth()], as in the adaptive P-spline of \pkg{mgcv}'s
 #' `bs = "ad"`. At equal smoothing parameters the two sums are the same
-#' P-spline penalty; the weight functions differ, \pkg{mgcv} building them
-#' from a different basis over the index, so the two fits are close and not
-#' identical.
+#' P-spline penalty; the weight functions differ because \pkg{mgcv} builds
+#' them from a different basis over the index, so the two fits are close and
+#' not identical.
 #'
 #' # The coordinates
 #'
@@ -1057,12 +1061,13 @@ AdaptiveSmoother <- S7::new_class(
 #' @param k The number of basis functions. A rich basis is the point of the
 #'   construction, so the default is larger than [pspline_smooth()]'s.
 #' @param degree The degree of the B-spline, `3` for a cubic.
-#' @param diff The order of difference the penalty takes. The fit contracts
-#'   to a polynomial of degree `diff - 1`.
+#' @param diff The order of difference that the penalty takes. The fit
+#'   contracts to a polynomial of degree `diff - 1`.
 #' @param m The number of weight components, and so the number of smoothing
-#'   parameters. \pkg{mgcv} calls it `m` as well, and takes the same default.
-#'   Two gives one weight rising and one falling across the index; more give
-#'   a finer profile at the price of a smoothing parameter each.
+#'   parameters. In \pkg{mgcv} the same argument is also named `m`, with the
+#'   same default. A value of two gives one rising weight and one falling
+#'   weight across the index, and larger values give a finer profile, since each
+#'   additional component adds one smoothing parameter.
 #' @param constrain The directions to which the smooth is made orthogonal,
 #'   `NULL` for the null space of the penalty.
 #' @param null_space What happens to the directions that the penalty does

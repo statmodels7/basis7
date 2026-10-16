@@ -12,9 +12,9 @@ smoother_interval(sm, x)
 \item{x}{The covariate, a numeric vector.}
 }
 \value{
-A list of two numbers, the lower and upper endpoints. A covariate
-that takes a single value, with neither endpoint given, signals an
-error.
+A list of two numbers, the lower and upper endpoints. The function
+signals an error for a covariate that takes a single value when \code{lower}
+and \code{upper} are both \code{NULL}.
 }
 \description{
 Returns the interval on which the basis of a smoother is built. An

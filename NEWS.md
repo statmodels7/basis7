@@ -1,3 +1,13 @@
+# basis7 0.15.1
+
+* Documentation and messages: relative clauses without a relative pronoun,
+  stranded prepositions, absolute constructions, sentences without a verb
+  (example captions included), emphasis in bold and personified
+  descriptions of the code rewritten as plain clauses. The error messages
+  of `tensor_basis()`, `operator_resolve()`, `bspline_smooth()`,
+  `legendre_smooth()`, the periodic smoothers' operator check, the B-spline
+  operator Gram matrix and the numerical operator Gram matrix are reworded.
+
 # basis7 0.15.0
 
 ## Repairs

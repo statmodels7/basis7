@@ -20,15 +20,15 @@ columns, no dimnames, \code{NA} in the rows where \code{x} is \code{NA}.
 }
 \description{
 Computes the \code{order}-th derivative of \eqn{P_0, \ldots, P_{K-1}} with
-respect to \code{x} on the basis interval. The one routine behind both
+respect to \code{x} on the basis interval. It is the one routine behind both
 \code{\link[=basis_eval.PolyBasis]{basis_eval.PolyBasis()}}, which calls it at order 0, and
 \code{\link[=basis_deriv.PolyBasis]{basis_deriv.PolyBasis()}}.
 }
 \details{
 Differentiating \eqn{P_{n+1}' - P_{n-1}' = (2n+1) P_n} repeatedly gives
 \deqn{P_{n+1}^{(d)} = P_{n-1}^{(d)} + (2n+1)\, P_n^{(d-1)},}
-which builds order \eqn{d} from order \eqn{d-1} in closed form, with no
-difference taken anywhere. The seeds are \eqn{P_0^{(d)} = 0} for
+which builds order \eqn{d} from order \eqn{d-1} in closed form, without
+taking a difference anywhere. The seeds are \eqn{P_0^{(d)} = 0} for
 \eqn{d \ge 1} and \eqn{P_1' = 1}, \eqn{P_1^{(d)} = 0} above.
 
 The loop runs \code{order} times over a \code{length(x)} by \code{K} table, so the cost is

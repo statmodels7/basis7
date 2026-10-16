@@ -20,9 +20,9 @@ A numeric matrix of \code{dimension} rows and one column per
 direction that survives the constraint.
 }
 \description{
-An orthonormal basis of the null space of \code{cm}, from whose columns a
-constrained basis is built. It is the transform \strong{relative to the basis
-being constrained}, which is not always the one stored by the resulting
+Returns an orthonormal basis of the null space of \code{cm}, from whose columns
+a constrained basis is built. It is the transform relative to the basis
+being constrained, which is not always the one stored by the resulting
 object.
 }
 \details{

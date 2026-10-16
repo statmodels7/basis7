@@ -19,7 +19,7 @@ parity would then come out as two sines.}
 A data frame of five columns.
 }
 \description{
-Builds the data frame \code{\link[=operator_null]{operator_null()}} returns, writing the label of each
+Builds the data frame that \code{\link[=operator_null]{operator_null()}} returns, writing the label of each
 function from its rate, frequency and power of \eqn{t}.
 }
 \keyword{internal}

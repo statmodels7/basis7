@@ -16,10 +16,10 @@ smoother does not fix it.}
 An S7 object of class \link{LinearOperator}, with numeric weights.
 }
 \description{
-Returns \code{sm@order} with its period filled in from the smoother's
-interval where it was left \code{NULL}, which is what makes
-\code{fourier_smooth(lower = 0, upper = 365)} penalize on a cycle of 365
-without the period being written twice.
+Returns \code{sm@order}, filling in its period from the smoother's
+interval where it was left \code{NULL}. With this step,
+\code{fourier_smooth(lower = 0, upper = 365)} penalizes on a cycle of 365 and
+the period does not have to be written twice.
 }
 \seealso{
 \code{\link[=operator_resolve]{operator_resolve()}}, which it calls.

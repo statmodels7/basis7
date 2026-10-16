@@ -14,7 +14,7 @@ A numeric vector of \code{operator_order(op)} entries, or \code{NA} of that
 length where the operator's period has not been resolved.
 }
 \description{
-The coefficients \eqn{w_0, \ldots, w_{m-1}} of
+Returns the coefficients \eqn{w_0, \ldots, w_{m-1}} of
 \eqn{L x = \sum_j w_j D^j x + D^m x}, in increasing order of
 differentiation. The leading coefficient is 1 and is not among them.
 }

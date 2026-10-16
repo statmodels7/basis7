@@ -17,14 +17,14 @@ allowed anywhere and is neither range-checked nor clamped; the B-spline
 family signals an error when every point is \code{NA}.}
 }
 \value{
-\code{x} with near-endpoint values clamped onto the endpoints: a numeric
-vector for a basis of one variable, a numeric matrix of \code{\link[=basis_nvar]{basis_nvar()}}
-columns otherwise.
+\code{x}, in which near-endpoint values are clamped onto the endpoints: a
+numeric vector for a basis of one variable, a numeric matrix of
+\code{\link[=basis_nvar]{basis_nvar()}} columns otherwise.
 }
 \description{
 Checks that \code{x} is numeric and lies inside the basis interval, reshapes it
-for a basis of several variables, and returns it with near-endpoint values
-clamped exactly onto the endpoints. The generics that evaluate a basis
+for a basis of several variables, clamps near-endpoint values exactly onto
+the endpoints, and returns the result. The generics that evaluate a basis
 call it before dispatch, so every method receives points validated by the
 same rule. Missing values pass through and become a missing row of the
 result.
@@ -43,8 +43,8 @@ B-spline evaluated a rounding step past its last knot is otherwise
 extrapolated by \pkg{splines2}, with a warning.
 
 For a basis of several variables \code{x} is a matrix of one column per
-variable, each column checked against its own endpoints. A plain vector is
-accepted there and reshaped \strong{by row}, so on two variables
+variable, and each column is checked against its own endpoints. A plain
+vector is accepted there and reshaped by row, so on two variables
 \code{c(0.1, 0.2, 0.5, 0.6)} is the two points \verb{(0.1, 0.2)} and \verb{(0.5, 0.6)}. A
 vector whose length is not a multiple of the number of variables, and a
 matrix of the wrong number of columns, signal an error.

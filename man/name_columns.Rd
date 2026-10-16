@@ -12,7 +12,7 @@ name_columns(m, basis)
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 }
 \value{
-\code{m}, with its column names set and its contents untouched.
+\code{m}, whose column names are set and whose contents are unchanged.
 }
 \description{
 Sets \code{colnames(m)} to \code{\link[=basis_colnames]{basis_colnames()}} of the basis and returns the

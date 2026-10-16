@@ -15,11 +15,11 @@ operator_resolve(op, lower, upper)
 An S7 object of class \link{LinearOperator}, with numeric weights.
 }
 \description{
-Returns the operator with its period set to the width of \verb{[lower, upper]}
-where it was left \code{NULL}, and unchanged where it was given. It is what a
-smoother calls before building its penalty, so that
-\code{fourier_smooth(lower = 0, upper = 365)} penalizes on a cycle of 365
-without the period having to be written twice.
+Returns the operator after setting its period to the width of
+\verb{[lower, upper]} where the period was left \code{NULL}; an operator given a
+period is returned unchanged. A smoother calls it before building its
+penalty, so that \code{fourier_smooth(lower = 0, upper = 365)} penalizes on a
+cycle of 365 and the period does not have to be written twice.
 }
 \examples{
 operator_weights(harmonic_operator())

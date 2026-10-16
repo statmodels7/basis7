@@ -10,8 +10,8 @@
 default \code{0}, passed to the parent unchanged.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.}
+they never arrive here. They are named only because S7 requires a
+method's formals to contain the generic's.}
 
 \item{...}{Passed to the parent's method, so \code{panels} and \code{nodes} reach a
 parent whose Gram matrix is a quadrature.}
@@ -24,18 +24,18 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 Returns the congruence \eqn{T^\top G\,T} of the parent's Gram matrix. A
 parent whose inner products are exact passes that exactness on, so the
 Gram matrix of an orthonormalized B-spline is the identity up to rounding
-and no quadrature is run.
+and the computation runs no quadrature.
 }
 \details{
 The congruence preserves symmetry and positive semidefiniteness, and its
 rank is at most the smaller of the rank of \eqn{G} and \code{ncol(T)}. The
 result is symmetrized as \code{(G + t(G))/2} before it is returned.
 
-\code{\link[=orthonorm_basis]{orthonorm_basis()}} relies on this: it chooses \eqn{T} so that
+\code{\link[=orthonorm_basis]{orthonorm_basis()}} uses this property and computes \eqn{T} so that
 \eqn{T^\top G\,T} is the identity.
 }
 \seealso{
-\code{\link[=basis_gram]{basis_gram()}} for the generic; \code{\link[=orthonorm_basis]{orthonorm_basis()}}, which chooses
-\eqn{T} to make this the identity.
+\code{\link[=basis_gram]{basis_gram()}} for the generic; \code{\link[=orthonorm_basis]{orthonorm_basis()}}, which
+computes \eqn{T} so that this matrix is the identity.
 }
 \keyword{internal}

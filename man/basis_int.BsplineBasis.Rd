@@ -18,7 +18,8 @@ columns, exactly zero in the row at \code{basis@lower}.
 Returns \eqn{\int_{\ell}^{x} B_j(t)\,\mathrm{d}t} for every function,
 exactly, from \code{\link[splines2:bSpline]{splines2::bSpline()}} with \code{integral = TRUE}. That function
 anchors its integral at the lower boundary knot, which is the same
-convention \code{\link[=basis_int]{basis_int()}} states, so no correction is applied here.
+convention that \code{\link[=basis_int]{basis_int()}} defines, so this method applies no
+correction.
 }
 \details{
 The integral of a spline of degree \eqn{m} is a spline of degree

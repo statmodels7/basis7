@@ -21,10 +21,9 @@ A list of \code{basis_nvar(basis)} numeric matrices, the \eqn{j}th with
 \code{nrow(x)} rows and \code{basis@marginals[[j]]@dimension} columns.
 }
 \description{
-Returns a list of the margins' design matrices, each evaluated at its own
-column of the points, and each differentiated or integrated as \code{order} and
-\code{integral} specify. The
-first step of \code{\link[=tensor_design]{tensor_design()}}.
+Returns a list of the margins' design matrices. Each matrix is evaluated at
+its own column of the points and is differentiated or integrated as \code{order}
+and \code{integral} specify. It is the first step of \code{\link[=tensor_design]{tensor_design()}}.
 }
 \seealso{
 \code{\link[=tensor_design]{tensor_design()}}, its only caller.

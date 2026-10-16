@@ -22,9 +22,9 @@ the margins' design matrices with it gives the product's, one row of
 \eqn{\prod_j K_j} entries per observation.
 }
 \details{
-The columns come out with \code{b} varying fastest, matching
+In the columns, \code{b} varies fastest, as in
 \code{\link[base:kronecker]{base::kronecker()}} and \code{\link[=basis_colnames.TensorBasis]{basis_colnames.TensorBasis()}}. That is the whole
-column-order convention of a tensor basis, and the reason \code{\link[=basis_contract]{basis_contract()}}
+column-order convention of a tensor basis. Because of it, \code{\link[=basis_contract]{basis_contract()}}
 reverses an array's dimensions before flattening it.
 
 The result has \code{ncol(a) * ncol(b)} columns, so reducing across several

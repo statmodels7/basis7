@@ -2,7 +2,7 @@
 % Please edit documentation in R/basis_class.R
 \name{check_basis_args}
 \alias{check_basis_args}
-\title{Validate the Arguments Every Basis Constructor Takes}
+\title{Validate the Arguments That Every Basis Constructor Takes}
 \usage{
 check_basis_args(lower, upper, dimension)
 }
@@ -19,12 +19,13 @@ least 1, integer or double.}
 \description{
 Checks the three arguments common to \code{\link[=bspline_basis]{bspline_basis()}}, \code{\link[=fourier_basis]{fourier_basis()}}
 and \code{\link[=poly_basis]{poly_basis()}}, and returns the dimension coerced to integer, which is
-the storage mode the class validator requires. Every constructor calls it
+the storage mode that the class validator requires. Every constructor calls it
 first, before anything family-specific, so the three report the same errors
 in the same words.
 }
 \details{
-Three conditions, each signalling an error with \code{call. = FALSE}:
+The function checks three conditions and signals an error with
+\code{call. = FALSE} for each of them:
 \itemize{
 \item \code{lower} and \code{upper} must each be a single finite number, else
 \verb{'lower' and 'upper' must be single finite numbers.}
@@ -39,7 +40,7 @@ as \code{6L}. The multivariate case does not arise here, because
 \code{\link[=tensor_basis]{tensor_basis()}} builds its endpoints from margins already validated.
 }
 \seealso{
-\code{\link[=check_eval_points]{check_eval_points()}}, the same role for the points a basis is
-evaluated at.
+\code{\link[=check_eval_points]{check_eval_points()}}, which has the same role for the points at
+which a basis is evaluated.
 }
 \keyword{internal}

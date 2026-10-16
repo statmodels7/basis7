@@ -22,9 +22,10 @@ to rounding.
 }
 \details{
 The call goes through \code{\link[=bspline_design]{bspline_design()}} with \code{intercept = TRUE}, so all
-\code{dimension} functions are returned and none is dropped for
-identifiability. The result is stripped of the attributes and of the
-\code{BSpline} class that \pkg{splines2} attaches, leaving a plain matrix.
+\code{dimension} functions are returned, including the one that \pkg{splines2}
+would otherwise drop for identifiability. The result is stripped of the
+attributes and of the \code{BSpline} class that \pkg{splines2} attaches, leaving
+a plain matrix.
 }
 \seealso{
 \code{\link[=bspline_design]{bspline_design()}}, the one call into \pkg{splines2};

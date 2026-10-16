@@ -21,10 +21,10 @@ list of them where the family's roughness is a sum of components with a
 smoothing parameter each, as \code{\link[=adaptive_smooth]{adaptive_smooth()}}'s is.
 }
 \description{
-The Gram matrix of the derivative of order \code{sm@order}, integrated against
-the measure of the smoother: the length measure on the interval for
+Returns the Gram matrix of the derivative of order \code{sm@order}, integrated
+against the measure of the smoother: the length measure on the interval for
 \code{"lebesgue"}, the empirical measure of the covariate for \code{"empirical"},
-and the density a function gives otherwise.
+and the density that a function gives otherwise.
 }
 \details{
 The measure changes the penalty: the Gram matrices under two measures are
@@ -46,6 +46,6 @@ round(cor(as.vector(g),
 }
 \seealso{
 \code{\link[=smoother_build]{smoother_build()}}, which calls it, and \code{\link[=basis_gram]{basis_gram()}}, the
-generic it reads.
+generic that it reads.
 }
 \keyword{internal}

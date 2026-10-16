@@ -40,9 +40,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -63,16 +63,16 @@ both are given, \code{lower} must be less than \code{upper}.}
 
 \item{degree}{The degree of the B-spline.}
 
-\item{diff}{The order of difference the penalty takes.}
+\item{diff}{The order of difference that the penalty takes.}
 }
 \value{
 An S7 object of class \code{PsplineSmoother}, inheriting from
 \link{smoother}. Construct one with \code{\link[=pspline_smooth]{pspline_smooth()}}.
 }
 \description{
-The class \code{\link[=pspline_smooth]{pspline_smooth()}} returns: a B-spline basis with a difference
-penalty on its coefficients. It carries \code{degree} and \code{diff} beside the
-properties every \link{smoother} has.
+The class that \code{\link[=pspline_smooth]{pspline_smooth()}} returns combines a B-spline basis with a
+difference penalty on its coefficients. It carries \code{degree} and \code{diff}
+beside the properties that every \link{smoother} has.
 }
 \examples{
 sm <- pspline_smooth(k = 20)

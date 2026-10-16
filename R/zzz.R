@@ -1,7 +1,7 @@
 #' Register the Package's S7 Methods on Load
 #'
 #' @description
-#' Calls `S7::methods_register()`, without which a method this package
+#' Calls `S7::methods_register()`, without which a method that this package
 #' registers on another package's generic never takes effect.
 #'
 #' @details
@@ -13,7 +13,7 @@
 #' to S7's default display of the object's properties and `plot()` on a basis
 #' reaches `plot.default()`.
 #'
-#' Standard R load hook; not called directly.
+#' This is the standard R load hook, and it is not called directly.
 #'
 #' @param ... Ignored; the hook is called by R with the library path and package
 #'   name.

@@ -25,10 +25,11 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
 Computes the inner products of the order-\code{order} derivatives by
-Gauss-Legendre on equal subintervals. Shared by \code{\link[=basis_gram.basis]{basis_gram.basis()}}, by
-\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} when the period is not the interval width, and
-by \code{\link[=check_basis]{check_basis()}} as the independent reference it compares a family's own
-Gram matrix against.
+Gauss-Legendre on equal subintervals. The function is shared by
+\code{\link[=basis_gram.basis]{basis_gram.basis()}}, by \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} when the period is not
+the interval width, and by \code{\link[=check_basis]{check_basis()}}, which uses it as the
+independent reference against which it compares a family's own Gram
+matrix.
 }
 \section{One variable}{
 The interval is cut into \code{panels} equal pieces with an \code{nodes}-point rule
@@ -39,10 +40,11 @@ whatever the integrand does. It is then symmetrized as \code{(G + t(G))/2}.
 
 \section{Several variables}{
 The rule is a product over the box: the nodes are the product grid of the
-marginal rules and the weights their products. Each coordinate gets
-\code{max(2, ceiling(panels^(1/d)))} panels, so the total node count stays near
-\code{panels * nodes^d} and does not grow as \code{panels^d}. At the defaults on two
-variables that is 8 panels of 12 nodes per coordinate, 9216 points.
+marginal rules and the weights their products. The rule uses
+\code{max(2, ceiling(panels^(1/d)))} panels for each coordinate, so the total
+node count stays near \code{panels * nodes^d} and does not grow as \code{panels^d}.
+At the defaults on two variables, the rule has 8 panels of 12 nodes per
+coordinate, which gives 9216 points.
 }
 
 \section{Accuracy}{

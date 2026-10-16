@@ -41,9 +41,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -64,10 +64,10 @@ both are given, \code{lower} must be less than \code{upper}.}
 
 \item{degree}{The degree of the B-spline pieces.}
 
-\item{diff}{The order of difference the penalty takes.}
+\item{diff}{The order of difference that the penalty takes.}
 
-\item{m}{The number of components the weight profile is built from, which
-is also the number of smoothing parameters.}
+\item{m}{The number of components from which the weight profile is built,
+which is also the number of smoothing parameters.}
 }
 \value{
 An S7 object of class \code{AdaptiveSmoother}, inheriting from
@@ -75,8 +75,8 @@ An S7 object of class \code{AdaptiveSmoother}, inheriting from
 arguments; the class constructor does not.
 }
 \description{
-The class \code{\link[=adaptive_smooth]{adaptive_smooth()}} returns: a B-spline basis whose difference
-penalty carries a weight that varies along the covariate, so that one
+The class that \code{\link[=adaptive_smooth]{adaptive_smooth()}} returns combines a B-spline basis with a
+difference penalty whose weight varies along the covariate, so that one
 stretch may be smoothed harder than another. It adds \code{degree}, \code{diff} and
 \code{m} to the properties of \link{smoother}.
 }

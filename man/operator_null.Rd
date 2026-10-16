@@ -20,9 +20,10 @@ multiplying it) and \code{part} (\code{"sin"} or \code{"cos"} for the two halves
 conjugate pair, \code{""} for a real root).
 }
 \description{
-The functions a maximal penalty leaves untouched, that is the solutions of
-\eqn{L x = 0}. They are what a strongly penalized fit contracts to, so
-this is the one thing to look at before choosing an operator.
+Returns the functions that a maximal penalty leaves untouched, that is the
+solutions of \eqn{L x = 0}. A strongly penalized fit contracts to these
+functions, so the null space is the one property to examine before
+choosing an operator.
 }
 \details{
 The null space is read from the roots of the characteristic polynomial
@@ -32,23 +33,23 @@ contributes \eqn{t^i e^{at}} for \eqn{i < \mu}, and a complex pair
 \eqn{a \pm bi} of multiplicity \eqn{\mu} contributes both
 \eqn{t^i e^{at}\cos(bt)} and \eqn{t^i e^{at}\sin(bt)}.
 
-The null space is a property of the \strong{operator} and is computed from it,
+The null space is a property of the operator and is computed from it,
 never from the rank of an assembled penalty matrix, and the two differ:
 the one-harmonic operator has a penalty of null dimension 3 on a Fourier
 basis and 1 on a cubic B-spline at a relative tolerance of 1e-10, because
 a spline represents a sine only approximately, while the null space of the
-operator is three-dimensional in both cases. Whether a \strong{basis} can carry
+operator is three-dimensional in both cases. Whether a basis can carry
 those functions is a separate question, settled in \code{\link[=smoother_build]{smoother_build()}}.
 }
 \examples{
-# a straight line
+# The null space is the set of straight lines.
 operator_null(deriv_operator(2))
 
-# a constant plus the fundamental of a yearly cycle
+# The null space is a constant plus the fundamental of a yearly cycle.
 operator_null(harmonic_operator(365))
 
-# the product: five functions, with t^2 because both factors hold the
-# constant
+# The product has five functions, with t^2 because both factors hold the
+# constant.
 operator_null(deriv_operator(2) * harmonic_operator(365))
 
 # the dimension is always the order

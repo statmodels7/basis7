@@ -13,8 +13,8 @@ is_operator(x)
 A single logical.
 }
 \description{
-Reports whether an object is a \link{LinearOperator}, which is how the \code{order}
-argument of a smoother and of \code{\link[=basis_gram]{basis_gram()}} tells the two spellings
-apart.
+Reports whether an object is a \link{LinearOperator}. The \code{order} argument of a
+smoother and of \code{\link[=basis_gram]{basis_gram()}} uses this test to distinguish its two
+spellings, a whole number and an operator.
 }
 \keyword{internal}

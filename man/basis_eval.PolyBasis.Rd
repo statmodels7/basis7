@@ -20,8 +20,8 @@ recurrence
 \deqn{(n+1) P_{n+1}(t) = (2n+1)\, t\, P_n(t) - n\, P_{n-1}(t),}
 after shifting the points from \eqn{[\ell, u]} onto \eqn{[-1, 1]} by
 \eqn{t = 2(x - \ell)/(u - \ell) - 1}. The recurrence is stable on that
-interval, every \eqn{|P_n| \le 1} there, so no rescaling is needed at any
-dimension.
+interval because \eqn{|P_n| \le 1} there for every \eqn{n}, so the
+recurrence can run without rescaling at any dimension.
 }
 \details{
 One pass builds the whole table, column \eqn{n+1} from columns \eqn{n} and

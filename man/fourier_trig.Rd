@@ -9,7 +9,7 @@ fourier_trig(basis, x, d)
 \arguments{
 \item{basis}{A \link{FourierBasis} object.}
 
-\item{x}{A numeric vector of evaluation points. Not range-checked here.}
+\item{x}{A numeric vector of evaluation points. The range is not checked here.}
 
 \item{d}{The order, a single whole number that may be negative. \code{-1} gives
 an antiderivative, \code{0} the functions themselves.}
@@ -32,8 +32,8 @@ own.
 \details{
 At \code{d = -1} the identity gives an antiderivative that differs from the
 one defined by \code{\link[=basis_int]{basis_int()}} by a constant in each column; the caller
-subtracts the row at the lower endpoint. Columns are interleaved sine-then-cosine per frequency, matching
-\code{\link[=basis_colnames.FourierBasis]{basis_colnames.FourierBasis()}}.
+subtracts the row at the lower endpoint. Columns are interleaved
+sine-then-cosine per frequency, matching \code{\link[=basis_colnames.FourierBasis]{basis_colnames.FourierBasis()}}.
 
 At \code{n_pairs == 0} the result is a \code{length(x)} by 0 matrix, and the loop is
 skipped.

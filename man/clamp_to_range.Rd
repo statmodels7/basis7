@@ -9,21 +9,22 @@ clamp_to_range(z, lo, hi, what)
 \arguments{
 \item{z}{A numeric vector. \code{NA} entries are ignored.}
 
-\item{lo, hi}{The endpoints, single finite numbers with \code{lo < hi}. Not
-validated here; the class validator has already required it.}
+\item{lo, hi}{The endpoints, single finite numbers with \code{lo < hi}. The
+function does not validate them; the class validator has already required
+it.}
 
 \item{what}{A phrase naming the range, spliced into the error message
 between "fall outside" and the interval. Callers pass
 \code{"the basis interval"} or \code{"the range of variable 2"}.}
 }
 \value{
-\code{z}, of the same length, with entries within tolerance of an
-endpoint set to that endpoint exactly.
+\code{z}, of the same length, in which entries within tolerance of an
+endpoint are set to that endpoint exactly.
 }
 \description{
 Signals an error if any entry of \code{z} lies outside \verb{[lo, hi]} by more than
-\code{1e-8} times the width of the range, and otherwise returns \code{z} with any
-entry inside that tolerance moved onto the nearer endpoint. The range rule
+\code{1e-8} times the width of the range, and otherwise moves any entry inside
+that tolerance onto the nearer endpoint and returns \code{z}. The range rule
 of the package is written here only; \code{\link[=check_eval_points]{check_eval_points()}} calls it once
 per variable.
 }

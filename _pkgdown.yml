@@ -14,7 +14,7 @@ navbar:
 reference:
 - title: Bases
   desc: >
-    The families the package ships. Each holds all its functions, and
+    The families that the package ships. Each holds all its functions, and
     restricting one is a separate step.
   contents:
   - bspline_basis
@@ -34,7 +34,7 @@ reference:
 
 - title: Smoothers
   desc: >
-    A smoother carries the four choices a penalized smooth is made of (the
+    A smoother carries the four choices of which a penalized smooth is made (the
     basis, the penalty, the treatment of the null space and the
     reparametrization) as one object, because the null space is a property
     of the basis and the penalty together. Built at the covariate, it
@@ -72,7 +72,7 @@ reference:
   desc: >
     What a penalty measures. A smoother's `order` takes one of these in
     place of a whole number, and the operator carries its own null space:
-    the functions a maximal penalty leaves untouched.
+    the functions that a maximal penalty leaves untouched.
   contents:
   - deriv_operator
   - harmonic_operator
@@ -87,7 +87,7 @@ reference:
 
 - title: The interface
   desc: >
-    The generics every basis has methods for. A subclass must implement
+    The generics for which every basis has methods. A subclass must implement
     only `basis_eval()`. The base class supplies numerical methods for the
     derivatives, the integral and the Gram matrices, and default column
     names.
@@ -114,8 +114,8 @@ reference:
 
 - title: Internals
   desc: >
-    The methods registered on the generics and the numerical machinery the
-    fallbacks are built from, documented for anyone writing a basis of their
+    The methods registered on the generics and the numerical machinery from
+    which the fallbacks are built, documented for anyone writing a basis of their
     own. Apart from `smoother_gram()`, the functions listed here are not
     exported and are reached with `basis7:::`.
   contents:

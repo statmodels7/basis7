@@ -30,8 +30,8 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 \description{
 Computes \eqn{\int_a^b B^{(d)}(t)\, B^{(d)}(t)^\top w(t)\,\mathrm{d}t}
 by composite Gauss-Legendre. A weight is an arbitrary function, so the
-quadrature is always run. Called from the body of \code{\link[=basis_gram]{basis_gram()}} when
-\code{weight} is supplied.
+quadrature is always run. The function is called from the body of
+\code{\link[=basis_gram]{basis_gram()}} when \code{weight} is supplied.
 }
 \details{
 The interval is cut into \code{panels} equal pieces and an \code{nodes}-point
@@ -41,11 +41,11 @@ into the quadrature weights and the matrix formed as a crossproduct of
 \eqn{\sqrt{w_i}\,B^{(d)}(t_i)}, which keeps the result positive
 semidefinite whatever the weight does.
 
-For a spline the accuracy is limited by the kinks of the derivative at
-knots that the panel breaks do not line up with; \code{panels} is raised when a
+For a spline, kinks of the derivative at knots that do not coincide with
+the panel breaks limit the accuracy, so \code{panels} should be raised when a
 derivative is not smooth.
 
-A basis of several variables is rejected, the rule being
+A basis of several variables is rejected, because the rule is
 one-dimensional.
 }
 \seealso{

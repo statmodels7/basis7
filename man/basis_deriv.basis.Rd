@@ -21,11 +21,11 @@ A numeric matrix with \code{length(x)} rows and \code{basis@dimension}
 columns, with column names \code{\link[=basis_colnames]{basis_colnames()}}.
 }
 \description{
-The derivative method every basis inherits from the abstract \link{basis} class:
-one finite-difference stencil of the requested order, applied to
-\code{\link[=basis_eval]{basis_eval()}}. \code{\link[=basis_deriv]{basis_deriv()}} is therefore available for a subclass that
-supplies its evaluation alone, and a closed form registered later takes
-over through dispatch with no change to calling code.
+This is the derivative method that every basis inherits from the abstract
+\link{basis} class. It applies one finite-difference stencil of the requested
+order to \code{\link[=basis_eval]{basis_eval()}}. \code{\link[=basis_deriv]{basis_deriv()}} is therefore available for a
+subclass that supplies only its evaluation, and if a closed form is
+registered later, dispatch selects it with no change to calling code.
 }
 \details{
 Numerical Derivatives of a Basis

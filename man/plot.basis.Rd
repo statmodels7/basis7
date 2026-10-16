@@ -13,8 +13,8 @@ the lower endpoint. Any other value signals an error, including a
 fraction, a value below \code{-1} and a vector of length other than one.}
 
 \item{n}{The number of grid points, default \code{200}. A basis with many
-knots or a high frequency needs more, 200 points leaving a curve visibly
-polygonal there.}
+knots or a high frequency needs more, because 200 points leave a curve
+visibly polygonal there.}
 
 \item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. A value given for \code{type},
 \code{lty}, \code{xlab}, \code{ylab} or \code{main} replaces the method's default; see the
@@ -27,18 +27,19 @@ section above for the defaults.}
 Draws all \verb{@dimension} functions of a basis on one panel, over an equally
 spaced grid covering the whole interval. \code{order} selects what is drawn: the
 functions themselves, a derivative of any order, or the integral anchored
-at the lower endpoint. One line is drawn per basis function, with no legend
-and with \verb{@basis_name} as the title.
+at the lower endpoint. One line is drawn per basis function. The plot has
+no legend, and its title is \verb{@basis_name}.
 }
 \section{What is drawn}{
 The grid is \code{n} equally spaced points from \verb{@lower} to \verb{@upper}, endpoints
 included, and the curves are whichever of \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}}
-or \code{\link[=basis_int]{basis_int()}} \code{order} names. The vertical axis is labeled to match:
+or \code{\link[=basis_int]{basis_int()}} is the one that \code{order} names. The vertical axis is labeled
+to match:
 \eqn{B(x)} at order \code{0}, \eqn{B'(x)} at order \code{1}, \eqn{B^{(k)}(x)} above
 that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
 
-The curves are distinguished only by the colors \code{matplot()} cycles
-through. The plot carries no legend, and the names of the columns are
+The curves are distinguished only by the colors through which \code{matplot()}
+cycles. The plot carries no legend, and the names of the columns are
 those of \code{\link[=basis_colnames]{basis_colnames()}}.
 }
 
@@ -61,26 +62,27 @@ a surface over a rectangle; a margin can be plotted instead, which is
 
 \section{Orders above the smoothness of the family}{
 An order above the smoothness of the family is accepted and draws a flat
-line at zero, the fourth derivative of a piecewise cubic being zero away
-from the knots.
+line at zero, because the fourth derivative of a piecewise cubic is zero
+away from the knots.
 }
 
 \examples{
 b <- bspline_basis(dimension = 6)
 
-# The six cubic B-splines, their first derivative, and their integrals.
+# The three panels show the six cubic B-splines, their first derivative,
+# and their integrals.
 plot(b)
 plot(b, order = 1)
 plot(b, order = -1)
 
-# Every curve in the third panel starts at zero, which is what anchoring
-# the integral at the lower endpoint means.
+# Every curve in the third panel starts at zero, because the integral is
+# anchored at the lower endpoint.
 basis_int(b, 0)
 
-# Graphical arguments the method does not set itself reach matplot().
+# Graphical arguments that the method does not set itself reach matplot().
 plot(b, col = "grey40", lwd = 2)
 
-# The five arguments the method sets by default may be replaced.
+# The five arguments that the method sets by default may be replaced.
 plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
 plot(b, type = "p", pch = 16, cex = 0.4)
 

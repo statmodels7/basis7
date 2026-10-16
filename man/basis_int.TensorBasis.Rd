@@ -18,8 +18,8 @@ exactly zero in the row at the lower corner.
 \description{
 Returns the integral over the box from the lower corner to each point, one
 iterated integral per variable, in closed form wherever the margins have
-one. It is the only integral over a box in the package, the numerical
-fallback handling one variable alone.
+one. It is the only integral over a box in the package, since the numerical
+fallback handles only one variable.
 }
 \details{
 The integrand separates, so the multiple integral is the product of the

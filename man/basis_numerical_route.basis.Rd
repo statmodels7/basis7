@@ -9,7 +9,7 @@
 \item{...}{Unused, and accepted so the signature matches the generic's.}
 }
 \value{
-The named logical vector \code{\link[=basis_numerical_route]{basis_numerical_route()}} describes.
+The named logical vector that \code{\link[=basis_numerical_route]{basis_numerical_route()}} describes.
 }
 \description{
 Returns \code{\link[=route_by_owner]{route_by_owner()}}: the class on which each of \code{\link[=basis_deriv]{basis_deriv()}},

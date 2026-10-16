@@ -2,7 +2,7 @@
 % Please edit documentation in R/smoother.R
 \name{over_penalty}
 \alias{over_penalty}
-\title{One Operation on a Penalty, However Many Components It Has}
+\title{One Operation on a Penalty with Any Number of Components}
 \usage{
 over_penalty(s, f)
 }
@@ -16,7 +16,7 @@ What \code{f} returns, or a list of what it returns for each component.
 }
 \description{
 Applies \code{f} to a roughness matrix, or to each component of a list of them,
-and returns the same shape it was given.
+and returns the same shape that it was given.
 }
 \details{
 \code{\link[=smoother_gram]{smoother_gram()}} returns a matrix for every family whose roughness is

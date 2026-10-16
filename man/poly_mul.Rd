@@ -14,8 +14,8 @@ A numeric vector of \code{length(a) + length(b) - 1} coefficients, in
 increasing degree.
 }
 \description{
-Convolves two coefficient vectors written in increasing degree, which is
-what composing two differential operators does to their characteristic
-polynomials.
+Convolves two coefficient vectors written in increasing degree. The
+convolution multiplies the two polynomials, as composing two differential
+operators multiplies their characteristic polynomials.
 }
 \keyword{internal}

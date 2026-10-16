@@ -38,9 +38,9 @@ for any operator.}
 \code{"lebesgue"} is the length measure on the interval.}
 
 \item{constrain}{The directions to which the smooth is made orthogonal,
-or \code{NULL} for the null space of the penalty. The form it takes belongs
-to the family, a periodic basis having no reading for "polynomials up to
-degree c".}
+or \code{NULL} for the null space of the penalty. The form that it takes
+belongs to the family, because a periodic basis has no reading for
+"polynomials up to degree c".}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see: \code{"keep"} leaves them as free columns, \code{"drop"} removes them,
@@ -64,10 +64,10 @@ An S7 object of class \code{LegendreSmoother}, inheriting from
 \link{smoother}. Construct one with \code{\link[=legendre_smooth]{legendre_smooth()}}.
 }
 \description{
-The class \code{\link[=legendre_smooth]{legendre_smooth()}} returns: an orthogonal polynomial basis with
-a roughness penalty and the Demmler-Reinsch reparametrization. Its null
-space is the polynomials of degree below \code{order}, as a B-spline's is, so
-it inherits the default \code{\link[=smoother_span]{smoother_span()}}.
+The class that \code{\link[=legendre_smooth]{legendre_smooth()}} returns combines an orthogonal
+polynomial basis with a roughness penalty and the Demmler-Reinsch
+reparametrization. Its null space is the polynomials of degree below
+\code{order}, as a B-spline's is, so it inherits the default \code{\link[=smoother_span]{smoother_span()}}.
 }
 \examples{
 sm <- legendre_smooth(k = 8)

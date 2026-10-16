@@ -7,11 +7,11 @@
 fourier_basis(lower = 0, upper = 1, dimension = 5, omega = NULL)
 }
 \arguments{
-\item{lower, upper}{The endpoints of the interval, each a single finite
-number with \code{lower < upper}. Default \eqn{[0, 1]}. Evaluating outside
-the interval signals an error.}
+\item{lower, upper}{The endpoints of the interval. Each is a single finite
+number, and \code{lower} is smaller than \code{upper}. The default is \eqn{[0, 1]}.
+Evaluating outside the interval signals an error.}
 
-\item{dimension}{The number of basis functions, a single \strong{odd} whole
+\item{dimension}{The number of basis functions, a single odd whole
 number of at least 1, default \code{5}. \code{1} is the constant alone, \code{5} is the
 constant and two pairs. An even value signals an error.}
 
@@ -20,13 +20,14 @@ default, uses \code{upper - lower}, the value that makes the basis orthogonal
 on its interval. Any other value signals an error.}
 }
 \value{
-An object of class \link{FourierBasis}, with \code{basis_name} \code{"fourier"},
-\code{basis_params} holding \code{omega}, \code{n_pairs} and \code{full_period}, and column
-names \code{const}, \code{sin1}, \code{cos1}, and so on.
+An object of class \link{FourierBasis}, whose \code{basis_name} is
+\code{"fourier"}, whose \code{basis_params} holds \code{omega}, \code{n_pairs} and
+\code{full_period}, and whose columns are named \code{const}, \code{sin1}, \code{cos1}, and so
+on.
 }
 \description{
 Returns a basis of a constant function and \eqn{(K-1)/2} sine-cosine pairs
-of increasing frequency on \eqn{[\ell, u]}, \eqn{K} being \code{dimension}. It
+of increasing frequency on \eqn{[\ell, u]}, where \eqn{K} is \code{dimension}. It
 suits a function that is periodic or nearly so: over a whole period the
 functions are mutually orthogonal, and stay orthogonal after
 differentiation, so the Gram matrix is diagonal at every order and a
@@ -54,11 +55,11 @@ of pair \eqn{j}, written in closed form.
 
 Any other positive period is accepted and every generic remains
 available. The Gram matrix is then computed by composite Gauss-Legendre,
-the interval being in general no longer a whole number of periods and the
-orthogonality failing. \code{basis_params$full_period} records which case the
-object is in, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram} as \code{TRUE} in
-the second, through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}; the class on
-which the method is registered is \code{FourierBasis} in both cases.
+because the interval is in general no longer a whole number of periods and
+the orthogonality fails. \code{basis_params$full_period} records which of the two
+cases applies to the object, and \code{\link[=basis_is_numerical]{basis_is_numerical()}} reports \code{basis_gram}
+as \code{TRUE} in the second, through \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}}; the
+class on which the method is registered is \code{FourierBasis} in both cases.
 }
 
 \section{Periodicity}{
@@ -96,5 +97,5 @@ round(basis_gram(f), 4)
 \seealso{
 \code{\link[=bspline_basis]{bspline_basis()}} for a local basis with free ends and
 \code{\link[=poly_basis]{poly_basis()}} for a global polynomial one; \code{\link[=basis_gram]{basis_gram()}} for the
-roughness penalty this basis diagonalizes.
+roughness penalty that this basis diagonalizes.
 }

@@ -10,17 +10,17 @@ check_order(order, nvar = 1L)
 \item{order}{The value supplied by the caller: a single non-negative whole
 number, or a vector of \code{nvar} of them.}
 
-\item{nvar}{The number of variables the basis takes, from \code{\link[=basis_nvar]{basis_nvar()}}.
-Default \code{1}.}
+\item{nvar}{The number of variables that the basis takes, from
+\code{\link[=basis_nvar]{basis_nvar()}}. The default is \code{1}.}
 }
 \value{
 \code{order} as an integer vector of length \code{nvar}.
 }
 \description{
 Checks that \code{order} is a non-negative whole number, or a vector of them of
-length \code{nvar}, and returns it as an integer vector of length \code{nvar}. Called
-from the bodies of \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_gram]{basis_gram()}}, so both report the
-same errors in the same words.
+length \code{nvar}, and returns it as an integer vector of length \code{nvar}. The
+function is called from the bodies of \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_gram]{basis_gram()}},
+so both report the same errors in the same words.
 }
 \details{
 Anything failing the first test signals the error
@@ -29,7 +29,7 @@ fraction, an infinity, an \code{NA} and a non-numeric.
 
 A vector of length \code{nvar} is returned as it stands, and a single \code{0} is
 repeated to that length. For a basis of several variables a single
-\strong{non-zero} order signals an error, because a scalar has two readings
+non-zero order signals an error, because a scalar has two readings
 there: that order in every coordinate, or that total order. Zero is exempt,
 meaning no derivative under either reading. A vector of any other length
 signals an error naming the length expected.

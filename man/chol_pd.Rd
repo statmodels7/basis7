@@ -28,8 +28,8 @@ same on every platform.
 \details{
 On a matrix with an exactly zero eigenvalue the pivot that should be zero
 comes out positive or negative according to rounding, so \code{\link[base:chol]{base::chol()}}
-succeeds on some platforms and fails on others. A construction that relied
-on \code{chol()} to decide whether a Gram matrix or a penalty is usable would
+succeeds on some platforms and fails on others. A construction that used
+\code{chol()} to test whether a Gram matrix or a penalty is usable would
 therefore give different results on different platforms.
 
 Comparing the smallest eigenvalue with the largest depends only on the

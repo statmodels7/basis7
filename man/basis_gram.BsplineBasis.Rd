@@ -10,22 +10,23 @@
 default \code{0}. \code{2} is the usual roughness penalty for a cubic.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.}
+they never arrive here. They are named only because S7 requires a
+method's formals to contain the generic's.}
 
 \item{...}{Unused, and accepted so that the signature matches the
-generic's. \code{panels} or \code{nodes} signals an error, the matrix being exact.}
+generic's. \code{panels} or \code{nodes} signals an error, because the matrix is
+exact.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
-with column names \code{bs1}, \code{bs2}, and so on. Banded, entry \eqn{(a, b)}
-being zero whenever the two supports do not overlap.
+with column names \code{bs1}, \code{bs2}, and so on. The matrix is banded: entry
+\eqn{(a, b)} is zero whenever the two supports do not overlap.
 }
 \description{
 Returns the inner products of the \code{order}-th derivatives exactly, by
 integrating over one knot interval at a time with a Gauss-Legendre rule
-sized so that it reproduces the integrand exactly. This is the matrix a
-roughness penalty on a spline is built from.
+sized so that it reproduces the integrand exactly. This is the matrix from
+which a roughness penalty on a spline is built.
 }
 \section{Exactness}{
 On one knot interval the order-\eqn{d} derivative of a spline of degree
@@ -34,18 +35,19 @@ On one knot interval the order-\eqn{d} derivative of a spline of degree
 rule with \eqn{m - d + 1} nodes is exact to degree \eqn{2(m - d) + 1},
 which is one higher, so the only error left is rounding.
 
-The breaks are the boundary knots and the interior knots, so no panel
-straddles a knot, and the exactness depends on that: at \code{order = m} the
-derivative is a step function, which a rule spanning a knot does not
-integrate exactly. The \code{weight} route of \code{\link[=basis_gram]{basis_gram()}} uses equal panels
-that do not line up with the knots, and is therefore approximate for a
+The breaks are the boundary knots and the interior knots, so every panel
+lies within one knot interval, and the exactness depends on that: at
+\code{order = m} the derivative is a step function, which a rule spanning a knot
+does not integrate exactly. The \code{weight} route of \code{\link[=basis_gram]{basis_gram()}} uses equal
+panels that do not line up with the knots, and is therefore approximate for a
 spline.
 }
 
 \section{Above the degree}{
-An \code{order} above \code{degree} returns the zero matrix, every derivative having
-vanished. Below it the matrix is singular with an \code{order}-dimensional null
-space, the polynomials of lower degree differentiating away.
+An \code{order} above \code{degree} returns the zero matrix, because every derivative
+vanishes. Below it the matrix is singular with an \code{order}-dimensional null
+space, because the polynomials of lower degree vanish under
+differentiation.
 }
 
 \seealso{

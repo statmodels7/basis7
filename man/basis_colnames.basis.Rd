@@ -19,8 +19,8 @@ method unless it registers its own, as the Fourier, Legendre, tensor and
 transformed bases do.
 }
 \details{
-Two characters tell the families apart in a coefficient table without
-making the names long. The names are not distinct across bases: a model
+Two characters suffice to distinguish the families in a coefficient table
+and keep the names short. The names are not distinct across bases: a model
 that combines two B-spline blocks has \code{bs1} twice, unless the code that
 assembles the design distinguishes them.
 }

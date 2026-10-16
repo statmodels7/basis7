@@ -13,8 +13,8 @@ orthonorm_basis(basis, order = 0L)
 \item{order}{The derivative order whose inner products are made the
 identity, a single non-negative whole number, or one per variable for a
 basis of several variables; default \code{0}. Any value above \code{0} signals an
-error for the shipped families, their higher-order Gram matrices being
-singular.}
+error for the shipped families, because their higher-order Gram matrices
+are singular.}
 }
 \value{
 An object of class \link{TransformedBasis} with \code{basis_name}
@@ -35,15 +35,15 @@ The basis \eqn{B R^{-1}} then has Gram matrix
 \eqn{R^{-\top} R^\top R\, R^{-1} = I}, so \eqn{T = R^{-1}}. The Gram
 matrix of the result is the identity up to rounding.
 
-The span is unchanged, \eqn{R^{-1}} being invertible: a function the parent
-can represent is fitted by the orthonormalized basis to rounding.
+The span is unchanged because \eqn{R^{-1}} is invertible: a function that
+the parent can represent is fitted by the orthonormalized basis to rounding.
 }
 
 \section{Orthonormal in which inner product}{
-\code{order} chooses it. At \code{0}, the default, the functions themselves are
-orthonormal. Above that the \code{order}-th derivatives would be, and the Gram
-matrix there is singular for every family, the constant differentiating
-away, so the factorization fails and an error is signalled.
+The inner product is set by \code{order}. At \code{0}, the default, the functions
+themselves are orthonormal. Above that the \code{order}-th derivatives would be,
+and the Gram matrix there is singular for every family because the constant
+differentiates away, so the factorization fails and an error is signalled.
 Orthonormalizing a derivative therefore needs a basis whose constant has
 already been removed by \code{\link[=constrain_basis]{constrain_basis()}}.
 }
@@ -73,7 +73,7 @@ max(abs(lm.fit(basis_eval(o, x), f)$residuals))
 max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
 class(orthonorm_basis(o)@parent_basis)
 
-# A higher order signals an error, that Gram matrix being singular.
+# A higher order signals an error, because that Gram matrix is singular.
 try(orthonorm_basis(b, order = 2))
 
 }

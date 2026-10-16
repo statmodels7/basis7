@@ -9,15 +9,16 @@ basis_colnames(basis, ...)
 \arguments{
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{...}{Passed to methods. No shipped family reads anything from it.}
+\item{...}{Passed to methods. The shipped families do not read anything
+from it.}
 }
 \value{
 A character vector of length \code{basis@dimension}.
 }
 \description{
-Returns the names every matrix the basis produces carries, so that the
-evaluation, the derivatives of every order, the anchored integral and the
-Gram matrix of one basis agree on their columns. The default numbers the
+Returns the names that every matrix produced by the basis carries, so that
+the evaluation, the derivatives of every order, the anchored integral and
+the Gram matrix of one basis agree on their columns. The default numbers the
 functions after the family; a family whose functions have identities of
 their own overrides it.
 }
@@ -48,7 +49,7 @@ basis_colnames(bspline_basis(dimension = 4))
 basis_colnames(fourier_basis(dimension = 5))
 basis_colnames(poly_basis(dimension = 4))
 
-# Every matrix the basis produces carries the same names.
+# Every matrix that the basis produces carries the same names.
 b <- bspline_basis(dimension = 4)
 identical(colnames(basis_eval(b, 0.5)), basis_colnames(b))
 identical(colnames(basis_gram(b, order = 2)), basis_colnames(b))

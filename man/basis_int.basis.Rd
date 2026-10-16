@@ -8,8 +8,8 @@
 \link{basis}. More than one variable signals an error.}
 
 \item{x}{A numeric vector of evaluation points inside the basis interval,
-the upper limits of the integrals. Need not be sorted or unique. \code{NA}
-gives an \code{NA} row.}
+the upper limits of the integrals. The points need not be sorted or
+unique. \code{NA} gives an \code{NA} row.}
 
 \item{nodes}{The number of Gauss-Legendre nodes per segment, default \code{12},
 so a polynomial integrand of degree up to 23 is integrated exactly.}
@@ -22,10 +22,10 @@ columns, with column names \code{\link[=basis_colnames]{basis_colnames()}}, exac
 \code{basis@lower}.
 }
 \description{
-The integration method every basis inherits from the abstract \link{basis}
-class: composite Gauss-Legendre from the lower endpoint, accumulated over
-the sorted evaluation points, so the whole set costs one pass instead of
-one quadrature per point.
+This is the integration method that every basis inherits from the abstract
+\link{basis} class. It applies composite Gauss-Legendre quadrature from the
+lower endpoint, accumulated over the sorted evaluation points, so the whole
+set costs one pass instead of one quadrature per point.
 }
 \details{
 Numerical Integral of a Basis

@@ -38,8 +38,8 @@ on a wrapper, the default method reports the wrapper's own methods.
 }
 
 \section{Writing one}{
-A method takes the default through \code{\link[S7:super]{S7::super()}} and sets the entries
-decided by its own branching:
+A method calls the default through \code{\link[S7:super]{S7::super()}} and then sets the entries
+that depend on its own branching:
 
 \if{html}{\out{<div class="sourceCode r">}}\preformatted{S7::method(basis_numerical_route, MyBasis) <- function(basis, ...) \{
   out <- basis_numerical_route(S7::super(basis, basis7::basis))
@@ -65,7 +65,7 @@ basis_numerical_route(fourier_basis(dimension = 5, omega = 0.7))
 
 }
 \seealso{
-\code{\link[=basis_is_numerical]{basis_is_numerical()}}, the predicate consumers call;
+\code{\link[=basis_is_numerical]{basis_is_numerical()}}, the predicate that consumers call;
 \code{\link[=route_by_owner]{route_by_owner()}} for the default computation; and
 \code{\link[=basis_numerical_route.FourierBasis]{basis_numerical_route.FourierBasis()}} for the one family that overrides.
 }

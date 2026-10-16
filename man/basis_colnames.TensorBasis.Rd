@@ -12,16 +12,16 @@
 A character vector of length \code{basis@dimension}.
 }
 \description{
-Pastes the margins' column names with dots, in the order the columns come
-out: the last marginal varies fastest, following \code{\link[base:kronecker]{base::kronecker()}}. A
+Pastes the margins' column names with dots, in the order in which the columns
+come out: the last marginal varies fastest, following \code{\link[base:kronecker]{base::kronecker()}}. A
 column named \code{bs2.cos1} is the product of the parent B-spline's second
 function with the Fourier margin's first cosine, so the name of a
 coefficient gives its marginal function in each variable.
 }
 \details{
-The names are built with the same recycling \code{\link[=khatri_rao]{khatri_rao()}} uses, the second
-factor repeated within each element of the first. \code{outer()} would give the
-transpose of this ordering, which mislabels most of the columns.
+The names are built with the same recycling that \code{\link[=khatri_rao]{khatri_rao()}} uses: the
+second factor is repeated within each element of the first. \code{outer()} would
+give the transpose of this ordering, which mislabels most of the columns.
 }
 \seealso{
 \code{\link[=basis_colnames]{basis_colnames()}} for the generic; \code{\link[=khatri_rao]{khatri_rao()}}, whose ordering

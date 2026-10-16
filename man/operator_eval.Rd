@@ -9,9 +9,9 @@ operator_eval(basis, x, op)
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{x}{The points to evaluate at.}
+\item{x}{The points at which the basis is evaluated.}
 
-\item{op}{A \link{LinearOperator}, with its period resolved.}
+\item{op}{A \link{LinearOperator} whose period is resolved.}
 }
 \value{
 A numeric matrix of \code{length(x)} rows and \code{basis@dimension}
@@ -19,7 +19,7 @@ columns.
 }
 \description{
 Evaluates \eqn{Lb(x)}, the operator applied to every function of a basis:
-the matrix whose Gram matrix is the roughness the penalty measures.
+the matrix whose Gram matrix is the roughness that the penalty measures.
 }
 \details{
 It is one weighted sum of derivative evaluations,

@@ -13,8 +13,9 @@
 \code{D} factor matrices in canonical polyadic form.}
 
 \item{block}{The number of rows processed at once when \code{coef} is an array
-or a vector, default \code{1024}. It bounds the peak memory, which is
-otherwise what forming the design matrix would cost. Ignored for a list.}
+or a vector, default \code{1024}. It bounds the peak memory, which would
+otherwise equal the cost of forming the design matrix. It is ignored for
+a list.}
 
 \item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
@@ -22,8 +23,8 @@ otherwise what forming the design matrix would cost. Ignored for a list.}
 A numeric vector with one value per row of \code{x}.
 }
 \description{
-Returns the value of the function the coefficients describe, computed from
-the marginal evaluations. A list of factor matrices goes to
+Returns the value of the function that the coefficients describe, computed
+from the marginal evaluations. A list of factor matrices goes to
 \code{\link[=contract_cp]{contract_cp()}}, which forms nothing; an array or a vector is contracted in
 blocks of \code{block} rows, so the peak memory is one block's design matrix and
 not the whole one.

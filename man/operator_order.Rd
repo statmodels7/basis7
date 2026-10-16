@@ -13,8 +13,8 @@ operator_order(op)
 A single integer.
 }
 \description{
-The highest derivative the operator takes, which is the dimension of its
-null space and the length of its weight vector.
+Returns the highest derivative that the operator takes, which is the
+dimension of its null space and the length of its weight vector.
 }
 \examples{
 c(deriv = operator_order(deriv_operator(2)),

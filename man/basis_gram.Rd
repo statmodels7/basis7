@@ -9,32 +9,33 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 \arguments{
 \item{basis}{A basis object, of any class inheriting from \link{basis}.}
 
-\item{order}{What the inner products are taken of. A single non-negative
-whole number, default \code{0}, giving the inner products of the basis
-functions themselves; \code{2} is the usual roughness penalty; one entry per
-variable for a basis of several. A \link{LinearOperator} instead gives
-\eqn{\int (Lb)(Lb)^\top}, the roughness matrix of that operator, and
-routes to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.}
+\item{order}{The derivative order or the operator applied to the basis
+functions before their inner products are taken. The order is a single
+non-negative whole number, with default \code{0}, which gives the inner
+products of the basis functions themselves; \code{2} gives the usual roughness
+penalty, and a basis of several variables takes one entry per variable. A
+\link{LinearOperator} instead gives \eqn{\int (Lb)(Lb)^\top}, the roughness
+matrix of that operator, and routes to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.}
 
 \item{at}{An optional numeric vector of points for a basis of one
 variable, or a matrix of \code{\link[=basis_nvar]{basis_nvar()}} columns. When given, the inner
 products are taken against the empirical measure of those points and
 divided by their number. Missing values are dropped before evaluation,
-and an error is signalled if no usable point is left.}
+and an error is signalled if the remaining set of points is empty.}
 
 \item{weight}{An optional function of one numeric vector returning one
-non-negative value per point, a density to weight the integral by. A
-basis of several variables is rejected, and so is a function returning
-the wrong length, an \code{NA} or a negative value.}
+non-negative value per point, a density with which to weight the
+integral. A basis of several variables is rejected, and so is a function
+returning the wrong length, an \code{NA} or a negative value.}
 
 \item{...}{Passed to methods, and to \code{\link[=weighted_gram]{weighted_gram()}} when \code{weight} is
 given, where \code{panels} and \code{nodes} control the quadrature.}
 }
 \value{
 A symmetric numeric matrix of \code{basis@dimension} rows and columns,
-with \code{\link[=basis_colnames]{basis_colnames()}} on both margins. Positive semidefinite, and
-singular for \code{order >= 1} when the span of the basis contains the
-constant.
+with \code{\link[=basis_colnames]{basis_colnames()}} on both margins. The matrix is positive
+semidefinite, and it is singular for \code{order >= 1} when the span of the
+basis contains the constant.
 }
 \description{
 Returns the matrix of inner products of the \code{order}-th derivatives of the
@@ -45,13 +46,13 @@ with \eqn{[\ell, u]} the basis interval. It is the matrix of a roughness
 penalty: \eqn{\beta^\top G_2 \beta} is exactly \eqn{\int (f'')^2} for the
 function \eqn{f} described by the coefficients. The shipped families
 compute it exactly, by formulas or by a quadrature exact for their
-integrands, so no quadrature error enters a penalized fit.
+integrands, so a penalized fit is free of quadrature error.
 }
 \section{Definition and properties}{
 The Gram matrix is an inner product of basis functions, so it depends only
-on the basis and the interval. It identifies which combinations of
-coefficients are rough; how strongly to shrink them is decided separately,
-by the routine that fits the model.
+on the basis and the interval. It defines which combinations of
+coefficients are rough; the amount of shrinkage applied to them is set
+separately, by the routine that fits the model.
 
 It is symmetric and positive semidefinite by construction. At \code{order = 0}
 it is positive definite for a basis of linearly independent functions. At
@@ -69,28 +70,30 @@ period).
 
 \code{at} replaces it with the empirical measure of the points given,
 \eqn{B^{(d)\top} B^{(d)} / n}. That is the matrix produced by a design
-matrix, and the one to diagonalize against when the construction should
-depend on where the data lie; \code{\link[=dr_basis]{dr_basis()}} uses it.
+matrix, and the matrix against which to diagonalize when the construction
+should depend on where the data lie; \code{\link[=dr_basis]{dr_basis()}} uses it.
 
 \code{weight} takes a weighted Lebesgue measure \eqn{\int B B^\top w}, by
 composite Gauss-Legendre over 50 panels of 12 nodes. A weight is an
 arbitrary function, so the quadrature is always run, and for a spline it
-is approximate where the derivative has kinks at knots that the panels do
-not line up with. At most one of \code{at} and \code{weight} may be given.
+is approximate where the derivative has kinks at knots that do not
+coincide with the panel breaks. At most one of \code{at} and \code{weight} may be given.
 }
 
 \section{Handling of the arguments}{
 For a whole \code{order}, \code{at} and \code{weight} are handled in the body of the
 generic, before dispatch, so a method receives neither and returns the
 plain Lebesgue matrix. A method must still carry both names in its
-signature, S7 requiring a method's formals to contain the generic's. For
+signature, because S7 requires a method's formals to contain the
+generic's. For
 an operator \code{order} both are passed to \code{\link[=basis_operator_gram]{basis_operator_gram()}}.
 }
 
 \examples{
 b <- fourier_basis(dimension = 5)
 
-# Diagonal at order 0, the Fourier functions being orthogonal.
+# The matrix is diagonal at order 0, because the Fourier functions are
+# orthogonal.
 round(basis_gram(b), 6)
 round(basis_gram(b, order = 1), 4)
 
@@ -103,24 +106,26 @@ fpp <- drop(basis_deriv(p, tt, order = 2) \%*\% beta)^2
 c(quadratic_form = drop(t(beta) \%*\% basis_gram(p, order = 2) \%*\% beta),
   quadrature = sum(head(fpp, -1) + tail(fpp, -1)) / 2 * (tt[2] - tt[1]))
 
-# Singular from order 1 up: order d leaves exactly d zero eigenvalues,
-# the polynomials of degree below d differentiating away.
+# The matrix is singular from order 1 up: order d leaves exactly d zero
+# eigenvalues, because the polynomials of degree below d differentiate to
+# zero.
 bs <- bspline_basis(dimension = 8)
 vapply(0:3, function(d) {
   ev <- eigen(basis_gram(bs, order = d), only.values = TRUE)$values
   sum(abs(ev) < 1e-8 * max(abs(ev)))
 }, integer(1))
 
-# Against the empirical measure of a sample instead of the interval.
+# The matrix can be taken against the empirical measure of a sample
+# instead of the interval.
 set.seed(1)
 round(basis_gram(b, at = runif(2000)), 3)
 
-# And against a weighted Lebesgue measure.
+# It can also be taken against a weighted Lebesgue measure.
 round(basis_gram(b, weight = function(x) dbeta(x, 2, 5)), 4)
 
 }
 \seealso{
-\code{\link[=basis_deriv]{basis_deriv()}}, whose columns it takes the inner products of;
-\code{\link[=orthonorm_basis]{orthonorm_basis()}}, which makes the \code{order = 0} matrix the identity;
-\code{\link[=dr_basis]{dr_basis()}}, which diagonalizes one against the other.
+\code{\link[=basis_deriv]{basis_deriv()}}, which supplies the columns whose inner products
+it takes; \code{\link[=orthonorm_basis]{orthonorm_basis()}}, which makes the \code{order = 0} matrix the
+identity; \code{\link[=dr_basis]{dr_basis()}}, which diagonalizes one against the other.
 }

@@ -10,8 +10,8 @@
 variable, or a single \code{0}. Each margin receives its own entry.}
 
 \item{at, weight}{Handled in the body of \code{\link[=basis_gram]{basis_gram()}} before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.}
+they never arrive here. They are named only because S7 requires a
+method's formals to contain the generic's.}
 
 \item{...}{Passed to each margin's method.}
 }

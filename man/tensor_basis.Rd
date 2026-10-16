@@ -9,18 +9,18 @@ tensor_basis(...)
 \arguments{
 \item{...}{The bases to multiply, or a single list of them. Each must take
 one variable; a \link{TensorBasis} among them is flattened into its own
-margins. A single basis is returned unchanged, and no basis at all
-signals an error.}
+margins. A single basis is returned unchanged, and the function signals
+an error if no basis is given.}
 }
 \value{
-An object of class \link{TensorBasis} with \code{basis_name}
-\verb{tensor(<names>)}, \code{basis_params} holding \code{marginal_dimensions}, and
-column names pasting the margins' with dots. Given a single basis, that
-basis.
+An object of class \link{TensorBasis}. Its \code{basis_name} is
+\verb{tensor(<names>)}, \code{basis_params} holds \code{marginal_dimensions}, and the
+column names paste the margins' names with dots. If a single basis is
+given, the function returns that basis.
 }
 \description{
 Multiplies bases, one per variable, into the basis of all products of their
-functions. This is how a smooth surface of several covariates is built from
+functions. It builds a smooth surface of several covariates from
 one-dimensional pieces: the result is a basis like any other, evaluated at
 a matrix of points instead of a vector, and every generic is exact where
 the margins are.
@@ -46,7 +46,7 @@ basis gives one three-way product with three margins.
 
 \section{The interval}{
 \verb{@lower} and \verb{@upper} hold one entry per variable, taken from the margins,
-so the domain is the box they span and a point outside any margin's
+so the domain is the box that they span and a point outside any margin's
 interval signals an error.
 }
 

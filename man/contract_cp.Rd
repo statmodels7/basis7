@@ -19,11 +19,11 @@ columns \eqn{F}.}
 A numeric vector with one value per row of \code{x}.
 }
 \description{
-The canonical polyadic contraction. With \eqn{\Gamma_j} of size
+Computes the canonical polyadic contraction. With \eqn{\Gamma_j} of size
 \eqn{K_j \times F}, the coefficient array is a sum of \eqn{F} outer
 products and the value is
-\eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}. Neither the design matrix
-nor the coefficient array appears anywhere.
+\eqn{\sum_f \prod_j B_j(x_j)^\top \gamma_{j,f}}. The computation forms
+neither the design matrix nor the coefficient array.
 }
 \details{
 Each margin is evaluated once and multiplied by its own factor matrix,

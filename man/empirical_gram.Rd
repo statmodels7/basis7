@@ -21,12 +21,12 @@ with \code{\link[=basis_colnames]{basis_colnames()}} on both margins.
 }
 \description{
 Computes \eqn{B^{(d)\top} B^{(d)} / n} at the given points: the inner
-products a design matrix produces, in place of those of the functions on
-their interval. Called from the body of \code{\link[=basis_gram]{basis_gram()}} when \code{at} is
-supplied, so this case never reaches a method.
+products that a design matrix produces, in place of those of the functions
+on their interval. The function is called from the body of \code{\link[=basis_gram]{basis_gram()}}
+when \code{at} is supplied, so this case never reaches a method.
 }
 \details{
-Missing points are dropped \strong{before} the basis is evaluated. A basis may
+Missing points are dropped before the basis is evaluated. A basis may
 reject a vector that is entirely missing, with a message that would name
 the wrong argument here, so \code{at} with no usable point signals the error
 \verb{'at' has no usable points.} instead. For a basis of several variables \code{at}

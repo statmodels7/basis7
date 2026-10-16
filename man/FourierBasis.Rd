@@ -20,10 +20,10 @@ two characters form the default column names of \code{\link[=basis_colnames]{bas
 \item{dimension}{The number of functions in the basis, a single integer of
 at least 1. Must be of storage mode integer.}
 
-\item{lower, upper}{The endpoints of the interval the basis lives on, or one
-endpoint per variable for a basis of several. Both finite, of the same
-length, and \code{lower[j] < upper[j]} for every \code{j}. Their length is what
-\code{\link[=basis_nvar]{basis_nvar()}} reports.}
+\item{lower, upper}{The endpoints of the interval on which the basis lives, or
+one endpoint per variable for a basis of several. Both must be finite and of
+the same length, and \code{lower[j] < upper[j]} must hold for every \code{j}.
+\code{\link[=basis_nvar]{basis_nvar()}} returns their length.}
 
 \item{basis_params}{A named list of whatever else the subclass needs: the
 knots and degree of a B-spline, the period of a Fourier basis, the
@@ -32,16 +32,16 @@ any numeric entry of more than four values. Defaults to an empty list.}
 }
 \value{
 An object of class \code{FourierBasis}, inheriting from \link{basis}, with
-the same five properties and \code{basis_params} holding \code{omega}, \code{n_pairs}
+the same five properties, where \code{basis_params} holds \code{omega}, \code{n_pairs}
 and \code{full_period}. Call \code{\link[=fourier_basis]{fourier_basis()}} instead of this class directly;
 it rejects an even dimension, defaults the period and records all three.
 }
 \description{
-The S7 class of Fourier bases, the objects \code{\link[=fourier_basis]{fourier_basis()}} returns. It
-adds no property to \link{basis} and exists as the class the trigonometric
-methods dispatch on. A Fourier basis holds a constant function and pairs of
-sines and cosines of increasing frequency, and its derivatives and integral
-all follow from one identity.
+\code{FourierBasis} is the S7 class of Fourier bases, the objects that
+\code{\link[=fourier_basis]{fourier_basis()}} returns. It adds no property to \link{basis} and exists as the
+class on which the trigonometric methods dispatch. A Fourier basis holds a
+constant function and pairs of sines and cosines of increasing frequency,
+and its derivatives and integral all follow from one identity.
 }
 \section{The phase-shift identity}{
 Writing \eqn{z = 2\pi (x - \ell)/\omega} for the phase and \eqn{\omega}
@@ -59,12 +59,11 @@ subtracts the value at the lower endpoint.
 }
 
 \section{Its \code{basis_params}}{
-Three entries. \code{omega} is the period, \code{n_pairs} is
+The list has three entries. \code{omega} is the period, \code{n_pairs} is
 \code{(dimension - 1) \%/\% 2}, and \code{full_period} records whether \code{omega} equals
-the width of the interval, up to the tolerance of \code{\link[=all.equal]{all.equal()}}. The last
-decides which route
-\code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} takes: a closed diagonal matrix when it is
-\code{TRUE}, a quadrature when it is not.
+the width of the interval, up to the tolerance of \code{\link[=all.equal]{all.equal()}}. The value
+of \code{full_period} determines which route \code{\link[=basis_gram.FourierBasis]{basis_gram.FourierBasis()}} takes:
+a closed diagonal matrix when it is \code{TRUE}, a quadrature when it is not.
 }
 
 \examples{

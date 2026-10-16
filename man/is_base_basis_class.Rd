@@ -13,13 +13,14 @@ is_base_basis_class(cls)
 A single \code{TRUE} or \code{FALSE}.
 }
 \description{
-Reports whether an S7 class is the abstract \link{basis} class. That is how
-\code{\link[=basis_is_numerical]{basis_is_numerical()}} tells a method registered on the base class, which
-is a numerical fallback, from one a subclass supplied.
+Reports whether an S7 class is the abstract \link{basis} class.
+\code{\link[=basis_is_numerical]{basis_is_numerical()}} uses this test to distinguish a method registered on
+the base class, which is a numerical fallback, from a method that a
+subclass supplied.
 }
 \details{
-Identity is tried first, being the usual case and costing nothing, and the
-name and package are compared when it fails. The second test is needed
+Identity is tried first, because it is the usual case and costs nothing,
+and the name and package are compared when it fails. The second test is needed
 because \code{identical()} can return \code{FALSE} for a class re-created from the
 same definition, which happens when the code of a package is evaluated
 instead of loaded, as coverage tools do.

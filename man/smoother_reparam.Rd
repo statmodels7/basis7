@@ -19,7 +19,7 @@ smoother_reparam(sm, b, x, g, cons)
 }
 \value{
 A list of \code{S}, the penalty on the reparametrized block, and
-\code{basis}, the object whose evaluation \strong{is} that block and which
+\code{basis}, the object whose evaluation is that block and which
 \code{\link[=smoother_apply]{smoother_apply()}} evaluates at new values.
 }
 \description{
@@ -28,8 +28,8 @@ matrix on the block and the basis object that \code{\link[=smoother_apply]{smoot
 reapplies.
 }
 \details{
-The three routes differ in what the coefficients mean, and the fit they
-express is the same span in each.
+The three routes differ in what the coefficients mean, and the fit that
+they express is the same span in each.
 
 \describe{
 \item{\code{"dr"}}{\code{\link[=dr_basis]{dr_basis()}} diagonalizes the pencil of the empirical Gram
@@ -38,16 +38,16 @@ over the data, ordered from the smoothest to the most oscillatory, and
 the penalty is the identity. A separable penalty is available under a
 diagonal map and not under a general one, so the rotation makes a
 sparse or heavy-tailed prior on a smooth computationally feasible.}
-\item{\code{"none"}}{The constrained basis as it stands, with the penalty the
+\item{\code{"none"}}{The constrained basis as it stands; its penalty is the
 congruence of the roughness matrix by the transform of the constraint.
 The coefficients are those of the constrained basis, one fewer than
 the basis functions for each direction removed.}
 \item{\code{"orthonorm"}}{The constrained basis rotated so that it satisfies
 \eqn{X'X = I} over the observed covariate. The orthonormality is
-against the \strong{empirical} measure, which makes the design
+against the empirical measure, which makes the design
 orthonormal; \code{\link[=orthonorm_basis]{orthonorm_basis()}} orthonormalizes against the
 \eqn{L^2} inner product instead and remains available as an operation
-on a basis. It is the \strong{reparametrized part} that is orthonormal:
+on a basis. The reparametrized part of the block is orthonormal:
 with \code{null_space = "keep"} a free column is prepended afterwards and
 the whole block is then not orthonormal, while \code{null_space = "drop"}
 gives \eqn{X'X = I} for the block itself, up to rounding.}

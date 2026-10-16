@@ -9,8 +9,8 @@
 \item{x}{A numeric matrix with one column per variable.}
 
 \item{order}{An integer vector with one entry per variable, or a single
-\code{0}. A single non-zero order signals an error, having two readings;
-see \code{\link[=check_order]{check_order()}}.}
+\code{0}. A single non-zero order signals an error because it has two
+readings; see \code{\link[=check_order]{check_order()}}.}
 
 \item{...}{Unused, and accepted so that the signature matches the generic's.}
 }
@@ -20,10 +20,10 @@ A numeric matrix with \code{nrow(x)} rows and \code{basis@dimension} columns.
 \description{
 Returns the mixed partial derivative named by a multi-index, one order per
 variable: \code{c(2, 0)} is \eqn{\partial^2/\partial x_1^2} and \code{c(1, 1)} is
-\eqn{\partial^2/\partial x_1 \partial x_2}. Exact wherever the margins
-are. It is the only method of the package that computes a mixed partial,
-the numerical fallback signalling an error for one; a transformed tensor
-basis obtains it from this method.
+\eqn{\partial^2/\partial x_1 \partial x_2}. The result is exact wherever
+the margins are. It is the only method of the package that computes a mixed
+partial, since the numerical fallback signals an error for one; a
+transformed tensor basis obtains it from this method.
 }
 \details{
 The product separates, so the derivative differentiates each margin to its

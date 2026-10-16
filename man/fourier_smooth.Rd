@@ -17,7 +17,7 @@ fourier_smooth(
 )
 }
 \arguments{
-\item{k}{The number of basis functions, an \strong{odd} whole number of at
+\item{k}{The number of basis functions, an odd whole number of at
 least 3: a Fourier basis holds a constant plus complete sine-cosine
 pairs.}
 
@@ -25,12 +25,12 @@ pairs.}
 number \code{m} as the shorthand for \code{deriv_operator(m)}. The default is the
 harmonic acceleration operator at the period of the interval.}
 
-\item{measure}{The measure the roughness is integrated against.}
+\item{measure}{The measure against which the roughness is integrated.}
 
 \item{null_space}{What happens to the directions that the penalty does
 not see, other than the constant, which is always removed. \code{NULL} takes
-\code{"shrink"}, or \code{"keep"} where a \code{penalty} factory is given, the two
-being incompatible. See the section above.}
+\code{"shrink"}, or \code{"keep"} where a \code{penalty} factory is given, because
+\code{"shrink"} and a factory are incompatible. See the section above.}
 
 \item{reparam}{The coordinates in which the coefficients are expressed.}
 
@@ -38,7 +38,7 @@ being incompatible. See the section above.}
 building a penalty from a coefficient count. See the section on the
 smoother's own page.}
 
-\item{omega}{The period \strong{of the basis}, \code{NULL} for the width of the
+\item{omega}{The period of the basis, \code{NULL} for the width of the
 interval. The period of the operator is carried by
 \code{\link[=harmonic_operator]{harmonic_operator()}}.}
 
@@ -50,15 +50,15 @@ An S7 object of class \link{FourierSmoother}, inheriting from
 \link{smoother}.
 }
 \description{
-The periodic smoother: \code{k} Fourier functions over an interval, penalized
-by a linear differential operator and rotated to the Demmler-Reinsch
-coordinates. Every column of the block is periodic, so a fit built on it
-takes the same value at the two ends of the interval.
+Returns a periodic smoother made of \code{k} Fourier functions over an interval,
+penalized by a linear differential operator and rotated to the
+Demmler-Reinsch coordinates. Every column of the block is periodic, so a
+fit built on it takes the same value at the two ends of the interval.
 }
 \section{The penalty is the harmonic acceleration operator}{
 The default \code{order} is \code{\link[=harmonic_operator]{harmonic_operator()}} and not a derivative, and
 the period that it uses is the width of the interval. The two differ in
-what a strongly penalized fit contracts \strong{to}. On a periodic basis a
+the function to which a strongly penalized fit contracts. On a periodic basis a
 derivative penalty has the constant as its only null direction, so the
 fit contracts to a constant; the harmonic operator leaves the level and
 the fundamental cycle unpenalized and penalizes every higher harmonic, so
@@ -68,8 +68,8 @@ The default null space is \code{"shrink"} for this family and \code{"keep"} for 
 others. With \code{"keep"} the sine and cosine of the fundamental are free
 columns, so they are spent whether or not the covariate carries a cycle;
 with \code{"shrink"} they are penalized lightly and can leave the model. The
-first suits a cycle known to be present and estimated, the second a cycle
-whose presence is a hypothesis.
+first setting suits a cycle that is known to be present and is estimated,
+and the second suits a cycle whose presence is a hypothesis.
 
 \code{order = 2} gives the integrated squared second derivative.
 }
@@ -78,16 +78,16 @@ whose presence is a hypothesis.
 \code{degree} is a B-spline's, and a Fourier basis has none.
 
 \code{constrain} in the form "the polynomials up to degree c" has no reading
-here: a periodic basis contains no linear function, so a derivative
-penalty's null space is the \strong{constant at every order}, not a space
-growing with the order: the null space of the Gram matrix of a Fourier
-basis is one-dimensional at every order, spanned by the constant.
+here. A periodic basis contains no linear function, so the null space of a
+derivative penalty is the constant at every order, and it does not grow
+with the order. The null space of the Gram matrix of a Fourier basis is
+one-dimensional at every order and is spanned by the constant.
 }
 
 \section{Accepted operators}{
 The constant is always removed, including when the operator penalizes it,
 as \code{\link[=oscillator_operator]{oscillator_operator()}} does, so a model carrying an intercept spans
-the level and the smooth carries the shape. Every \strong{other} function of
+the level and the smooth carries the shape. Every other function of
 the operator's null space is restored as a free column, and it must be
 periodic on the period of the basis, which means a pure sine or cosine at
 a whole multiple of the fundamental frequency. An operator whose null
@@ -112,7 +112,7 @@ of its width, and the basis is periodic on that interval.
 }
 
 \examples{
-# A periodic covariate, and a truth that is periodic on [0, 1].
+# The covariate is periodic, and the true function is periodic on [0, 1].
 set.seed(3)
 x <- sort(runif(300))
 f <- function(u) sin(2 * pi * u) + 0.4 * cos(4 * pi * u)
@@ -123,13 +123,13 @@ sm
 out <- smoother_build(sm, x)
 dim(out$X)
 
-# THE FIT IS PERIODIC, which is the property the basis was chosen for.
+# The fit is periodic, which is the property for which the basis was chosen.
 b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
 ends <- smoother_apply(sm, out$blueprint, c(0, 1)) \%*\% b
 format(diff(as.vector(ends)), digits = 3)
 
-# THE FUNDAMENTAL IS WHAT A STRONG PENALTY LEAVES. With the null space
-# kept it is free, and the heavily penalized fit is a pure sinusoid.
+# A strong penalty leaves the fundamental. If the null space is kept, the
+# fundamental is free, and the heavily penalized fit is a pure sinusoid.
 sk <- fourier_smooth(k = 9, lower = 0, upper = 1, null_space = "keep")
 ok <- smoother_build(sk, x)
 ok$unpenalized
@@ -137,14 +137,14 @@ bk <- solve(crossprod(ok$X) + 1e8 * ok$S, crossprod(ok$X, y - mean(y)))
 fv <- as.vector(ok$X \%*\% bk)
 round(sqrt(mean(resid(lm(fv ~ sin(2 * pi * x) + cos(2 * pi * x)))^2)), 8)
 
-# The old construction, in one argument.
+# One argument gives the old construction.
 fourier_smooth(k = 9, order = 2, lower = 0, upper = 1)
 
-# Two harmonics left alone instead of one.
+# The penalty leaves two harmonics alone instead of one.
 fourier_smooth(k = 13, lower = 0, upper = 365,
                order = harmonic_operator(harmonics = 2))
 
-# An operator whose null space a periodic basis cannot carry.
+# The null space of this operator cannot be carried by a periodic basis.
 try(smoother_build(
   fourier_smooth(k = 9, lower = 0, upper = 1,
                  order = deriv_operator(2) * oscillator_operator(1)), x))
