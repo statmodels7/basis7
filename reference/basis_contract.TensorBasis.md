@@ -1,7 +1,8 @@
 # Contract a Tensor Product Basis Against Coefficients
 
-Returns the value of the function the coefficients describe, computed
-from the marginal evaluations. A list of factor matrices goes to
+Returns the value of the function that the coefficients describe,
+computed from the marginal evaluations. A list of factor matrices goes
+to
 [`contract_cp()`](https://statmodels7.github.io/basis7/reference/contract_cp.md),
 which forms nothing; an array or a vector is contracted in blocks of
 `block` rows, so the peak memory is one block's design matrix and not
@@ -28,8 +29,9 @@ the whole one.
 - block:
 
   The number of rows processed at once when `coef` is an array or a
-  vector, default `1024`. It bounds the peak memory, which is otherwise
-  what forming the design matrix would cost. Ignored for a list.
+  vector, default `1024`. It bounds the peak memory, which would
+  otherwise equal the cost of forming the design matrix. It is ignored
+  for a list.
 
 - ...:
 

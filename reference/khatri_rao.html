@@ -13,7 +13,7 @@ the margins' design matrices with it gives the product's, one row of
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,9 +71,9 @@ columns, carrying the column names of <code>a</code> repeated when <code>a</code
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The columns come out with <code>b</code> varying fastest, matching
+    <p>In the columns, <code>b</code> varies fastest, as in
 <code><a href="https://rdrr.io/r/base/kronecker.html" class="external-link">base::kronecker()</a></code> and <code><a href="basis_colnames.TensorBasis.html">basis_colnames.TensorBasis()</a></code>. That is the whole
-column-order convention of a tensor basis, and the reason <code><a href="basis_contract.html">basis_contract()</a></code>
+column-order convention of a tensor basis. Because of it, <code><a href="basis_contract.html">basis_contract()</a></code>
 reverses an array's dimensions before flattening it.</p>
 <p>The result has <code>ncol(a) * ncol(b)</code> columns, so reducing across several
 margins grows geometrically; <code><a href="basis_contract.html">basis_contract()</a></code> avoids forming it.</p>

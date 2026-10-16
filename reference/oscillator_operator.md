@@ -2,8 +2,8 @@
 
 The periodic factor on its own, \$\$L x = \prod\_{i=1}^{h}\left(D^2 +
 (i\nu)^2\right) x, \qquad \nu = \frac{2\pi}{T},\$\$ whose null space is
-the first \\h\\ harmonics of the period \\T\\ **without** the constant.
-At `harmonics = 1` it is the equation of simple harmonic motion, \\L x =
+the first \\h\\ harmonics of the period \\T\\ without the constant. At
+`harmonics = 1` it is the equation of simple harmonic motion, \\L x =
 \nu^2 x + D^2 x\\.
 
 ## Usage
@@ -21,8 +21,8 @@ oscillator_operator(period = NULL, harmonics = 1)
 
 - harmonics:
 
-  How many harmonics the penalty leaves unpenalized, a whole number of
-  at least 1. The order of the operator is `2 * harmonics`.
+  The number of harmonics that the penalty leaves unpenalized, a whole
+  number of at least 1. The order of the operator is `2 * harmonics`.
 
 ## Value
 
@@ -34,10 +34,10 @@ An S7 object of class
 This operator is meant to be composed.
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
 is this operator with a leading \\D\\, which puts the constant into the
-null space, so the two are related by `harmonic_operator(T, h)` being
-`deriv_operator(1) * oscillator_operator(T, h)` exactly, and a penalty
-that should leave a **linear trend** and a cycle alone rather than a
-level and a cycle is `deriv_operator(2) * oscillator_operator(T)`.
+null space, so that `harmonic_operator(T, h)` equals
+`deriv_operator(1) * oscillator_operator(T, h)` exactly. A penalty that
+leaves a linear trend and a cycle unpenalized, instead of a level and a
+cycle, is `deriv_operator(2) * oscillator_operator(T)`.
 
 Composing with
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
@@ -65,7 +65,8 @@ operator_null(oscillator_operator(365))
 #> 1 sin(0.0172142 t)    0 0.01721421      0  sin
 #> 2 cos(0.0172142 t)    0 0.01721421      0  cos
 
-# a linear trend and a yearly cycle, and nothing else
+# The null space holds a linear trend and a yearly cycle, and no other
+# function.
 op <- deriv_operator(2) * oscillator_operator(365)
 operator_null(op)
 #>              label rate       freq degree part

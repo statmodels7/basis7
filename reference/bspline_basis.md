@@ -1,8 +1,8 @@
 # Construct a B-Spline Basis
 
 Returns a basis of `dimension` B-splines of the given degree on
-\\\[\ell, u\]\\, with the interior knots placed at equal spacing. This
-is the general-purpose choice: the functions have local support, so a
+\\\[\ell, u\]\\ and places the interior knots at equal spacing. This is
+the general-purpose choice: the functions have local support, so a
 coefficient moves the fitted curve only near its own knots, and the
 conditioning does not deteriorate as the dimension grows.
 
@@ -16,9 +16,9 @@ bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 
 - lower, upper:
 
-  The endpoints of the interval, each a single finite number with
-  `lower < upper`. Default \\\[0, 1\]\\. They are the boundary knots,
-  and evaluating outside them signals an error.
+  The endpoints of the interval. Each is a single finite number, and
+  `lower` is smaller than `upper`. The default is \\\[0, 1\]\\. They are
+  the boundary knots, and evaluating outside them signals an error.
 
 - dimension:
 
@@ -40,8 +40,9 @@ bspline_basis(lower = 0, upper = 1, dimension = 5, degree = 3)
 
 An object of class
 [BsplineBasis](https://statmodels7.github.io/basis7/reference/BsplineBasis.md),
-with `basis_name` `"bspline"`, `basis_params` holding `degree`, `knots`
-and `boundary_knots`, and column names `bs1`, `bs2`, and so on.
+whose `basis_name` is `"bspline"`, whose `basis_params` holds `degree`,
+`knots` and `boundary_knots`, and whose columns are named `bs1`, `bs2`,
+and so on.
 
 ## Dimension, degree and knots
 
@@ -49,8 +50,8 @@ A basis of \\K\\ functions of degree \\m\\ has \\K - m - 1\\ interior
 knots, so \\K \ge m + 1\\; a smaller `dimension` signals an error that
 states both numbers. At equality there is no interior knot and the basis
 is the polynomials of degree \\m\\ on the whole interval, which it spans
-exactly. The knots are `seq(lower, upper, length.out = K - m + 1)` with
-the endpoints dropped, so they are equally spaced. A quantile placement
+exactly. The knots are `seq(lower, upper, length.out = K - m + 1)`
+without the endpoints, so they are equally spaced. A quantile placement
 is not offered by the constructor, and is obtained by building the class
 directly.
 
@@ -65,8 +66,8 @@ sum to one and the basis spans the constant. Beside an intercept the
 design is therefore rank deficient by one. Removing a direction is a
 linear transformation of the basis, carried out by
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
-which keeps the object a basis; the choice of constraint belongs to the
-layer that gives the term its meaning.
+which keeps the object a basis; the layer that gives the term its
+meaning chooses the constraint.
 
 ## Computation of each quantity
 
@@ -79,9 +80,10 @@ call
 which evaluates the recurrence and its exact derivative and integral.
 The Gram matrix is integrated in this package, knot interval by knot
 interval with a rule sized from the degree, and is exact to rounding.
-Nothing about a B-spline basis is differenced, and
+Every quantity of a B-spline basis is computed without finite
+differences, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-reports all three `FALSE`.
+reports all three as `FALSE`.
 
 ## References
 
@@ -97,7 +99,8 @@ for a global polynomial one;
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
 to remove the constant;
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
-to rotate this basis into the Demmler-Reinsch form a penalized fit uses;
+to rotate this basis into the Demmler-Reinsch form that a penalized fit
+uses;
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 for its roughness penalty.
 
@@ -126,7 +129,8 @@ round(basis_eval(b, c(0.1, 0.5, 0.9)), 3)
 max(abs(rowSums(basis_eval(b, seq(0, 1, length.out = 25))) - 1))
 #> [1] 3.330669e-16
 
-# The second-derivative Gram matrix, the matrix of a roughness penalty.
+# The Gram matrix of the second derivatives is the matrix of a roughness
+# penalty.
 round(basis_gram(b, order = 2), 2)
 #>        bs1     bs2     bs3     bs4     bs5    bs6
 #> bs1  324.0 -445.50   94.50   27.00    0.00    0.0
@@ -143,7 +147,7 @@ length(p@basis_params$knots)
 #> [1] 0
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 5.389027e-16
+#> [1] 1.745023e-16
 
 # Degree 0 gives indicators of the knot intervals.
 basis_eval(bspline_basis(dimension = 4, degree = 0), c(0.1, 0.3, 0.6, 0.9))

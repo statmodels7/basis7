@@ -1,7 +1,7 @@
-# One Operation on a Penalty, However Many Components It Has
+# One Operation on a Penalty with Any Number of Components
 
 Applies `f` to a roughness matrix, or to each component of a list of
-them, and returns the same shape it was given.
+them, and returns the same shape that it was given.
 
 ## Usage
 

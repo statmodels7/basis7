@@ -17,4 +17,4 @@ check_interval(lower, upper)
 
 ## Value
 
-`NULL`, invisibly. Called for the error it signals.
+`NULL`, invisibly. The function is called for the error that it signals.

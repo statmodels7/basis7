@@ -15,7 +15,7 @@ verified against a numerical reference."><meta property="og:image" content="http
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ force.</p>
     </div>
     <div class="section level2">
     <h2 id="use">Use<a class="anchor" aria-label="anchor" href="#use"></a></h2>
-    <p><code><a href="check_basis.html">check_basis()</a></code> reads it to decide which of its checks are informative.
+    <p><code><a href="check_basis.html">check_basis()</a></code> uses it to determine which of its checks are informative.
 Comparing a finite difference against a finite difference repeats the same
 arithmetic, and the two agree however wrong the basis is, so the <code>deriv</code>
 and <code>integral</code> checks are not run where this reports <code>TRUE</code>.
@@ -88,10 +88,10 @@ registered, read through <code>attr(m, "signature")[[1]]</code> and tested with
 numerical.</p>
 <p>Two classes are handled by delegation instead. A <a href="TransformedBasis.html">TransformedBasis</a>
 reports its parent's: all three of its methods are registered, but each one
-calls the parent and multiplies, so what is exact about it is whatever was
-exact about the parent. A <a href="TensorBasis.html">TensorBasis</a> reports <code>TRUE</code> for a quantity that
-is numerical in <strong>any</strong> margin, every one of its methods being a product of
-its margins'.</p>
+calls the parent and multiplies, so a quantity is exact for the transformed
+basis when it was exact for the parent. A <a href="TensorBasis.html">TensorBasis</a> reports <code>TRUE</code> for
+a quantity that is numerical in any margin, because every one of its
+methods is a product of the methods of its margins.</p>
     </div>
     <div class="section level2">
     <h2 id="a-method-that-branches">A method that branches<a class="anchor" aria-label="anchor" href="#a-method-that-branches"></a></h2>
@@ -105,9 +105,9 @@ A basis written outside the package can do the same.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="check_basis.html">check_basis()</a></code>, which reads it to decide what to test;
-<code><a href="print.basis.html">print.basis()</a></code>, which prints it; <code><a href="../articles/defining-a-basis.html">vignette("defining-a-basis")</a></code>, where a
-basis is taken from all three <code>TRUE</code> to all three <code>FALSE</code>.</p></div>
+    <div class="dont-index"><p><code><a href="check_basis.html">check_basis()</a></code>, which uses it to determine what to test;
+<code><a href="print.basis.html">print.basis()</a></code>, which prints it; <code><a href="../articles/defining-a-basis.html">vignette("defining-a-basis")</a></code>, in
+which a basis is taken from all three <code>TRUE</code> to all three <code>FALSE</code>.</p></div>
     </div>
 
     <div class="section level2">

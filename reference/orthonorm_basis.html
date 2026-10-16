@@ -17,7 +17,7 @@ points to choose."><meta property="og:image" content="https://statmodels7.github
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,8 @@ points to choose.</p>
 <dd><p>The derivative order whose inner products are made the
 identity, a single non-negative whole number, or one per variable for a
 basis of several variables; default <code>0</code>. Any value above <code>0</code> signals an
-error for the shipped families, their higher-order Gram matrices being
-singular.</p></dd>
+error for the shipped families, because their higher-order Gram matrices
+are singular.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -89,15 +89,15 @@ dimension is the parent's.</p>
 The basis \(B R^{-1}\) then has Gram matrix
 \(R^{-\top} R^\top R\, R^{-1} = I\), so \(T = R^{-1}\). The Gram
 matrix of the result is the identity up to rounding.</p>
-<p>The span is unchanged, \(R^{-1}\) being invertible: a function the parent
-can represent is fitted by the orthonormalized basis to rounding.</p>
+<p>The span is unchanged because \(R^{-1}\) is invertible: a function that
+the parent can represent is fitted by the orthonormalized basis to rounding.</p>
     </div>
     <div class="section level2">
     <h2 id="orthonormal-in-which-inner-product">Orthonormal in which inner product<a class="anchor" aria-label="anchor" href="#orthonormal-in-which-inner-product"></a></h2>
-    <p><code>order</code> chooses it. At <code>0</code>, the default, the functions themselves are
-orthonormal. Above that the <code>order</code>-th derivatives would be, and the Gram
-matrix there is singular for every family, the constant differentiating
-away, so the factorization fails and an error is signalled.
+    <p>The inner product is set by <code>order</code>. At <code>0</code>, the default, the functions
+themselves are orthonormal. Above that the <code>order</code>-th derivatives would be,
+and the Gram matrix there is singular for every family because the constant
+differentiates away, so the factorization fails and an error is signalled.
 Orthonormalizing a derivative therefore needs a basis whose constant has
 already been removed by <code><a href="constrain_basis.html">constrain_basis()</a></code>.</p>
     </div>
@@ -129,7 +129,7 @@ the identity; <code><a href="constrain_basis.html">constrain_basis()</a></code> 
 <span class="r-out co"><span class="r-pr">#&gt;</span> on5   0   0   0   0   1   0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> on6   0   0   0   0   0   1</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="va">o</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2.220446e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.440892e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># The span is unchanged: a function in the span of the parent is fitted</span></span></span>
 <span class="r-in"><span><span class="co"># exactly.</span></span></span>
@@ -137,7 +137,7 @@ the identity; <code><a href="constrain_basis.html">constrain_basis()</a></code> 
 <span class="r-in"><span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1</span>, length.out <span class="op">=</span> <span class="fl">100</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/drop.html" class="external-link">drop</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">x</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/lmfit.html" class="external-link">lm.fit</a></span><span class="op">(</span><span class="fu"><a href="basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">o</span>, <span class="va">x</span><span class="op">)</span>, <span class="va">f</span><span class="op">)</span><span class="op">$</span><span class="va">residuals</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4.109154e-16</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5.533747e-16</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Orthonormalizing again changes nothing, and keeps one matrix.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="fu">orthonorm_basis</span><span class="op">(</span><span class="va">o</span><span class="op">)</span><span class="op">)</span> <span class="op">-</span> <span class="fu"><a href="https://rdrr.io/r/base/diag.html" class="external-link">diag</a></span><span class="op">(</span><span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
@@ -145,7 +145,7 @@ the identity; <code><a href="constrain_basis.html">constrain_basis()</a></code> 
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="fu">orthonorm_basis</span><span class="op">(</span><span class="va">o</span><span class="op">)</span><span class="op">@</span><span class="va">parent_basis</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "basis7::BsplineBasis" "basis7::basis"        "S7_object"           </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># A higher order signals an error, that Gram matrix being singular.</span></span></span>
+<span class="r-in"><span><span class="co"># A higher order signals an error, because that Gram matrix is singular.</span></span></span>
 <span class="r-in"><span><span class="kw"><a href="https://rdrr.io/r/base/try.html" class="external-link">try</a></span><span class="op">(</span><span class="fu">orthonorm_basis</span><span class="op">(</span><span class="va">b</span>, order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Error : The Gram matrix is singular, so the basis functions are linearly dependent and cannot be orthonormalized. Reduce 'dimension', or orthonormalize at order 0.</span>
 <span class="r-in"><span></span></span>

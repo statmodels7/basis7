@@ -1,10 +1,11 @@
 # A P-spline Smoother
 
-The Eilers-Marx smoother: a B-spline basis of `k` functions over equally
-spaced knots, penalized by the sum of squared `diff`-th differences of
-its coefficients instead of an integrated squared derivative. The basis
-is rich and the penalty cheap to compute: `k` is chosen large enough not
-to limit the fit, and the smoothing parameter controls the roughness.
+Returns the Eilers-Marx smoother, which consists of a B-spline basis of
+`k` functions over equally spaced knots, penalized by the sum of squared
+`diff`-th differences of its coefficients instead of an integrated
+squared derivative. The basis is rich and the penalty is cheap to
+compute: `k` is chosen large enough not to limit the fit, and the
+smoothing parameter controls the roughness.
 
 ## Usage
 
@@ -35,7 +36,7 @@ pspline_smooth(
 
 - diff:
 
-  The order of difference the penalty takes, `2` for the usual
+  The order of difference that the penalty takes, `2` for the usual
   construction. The fit contracts to a polynomial of degree `diff - 1`.
 
 - constrain:
@@ -74,10 +75,10 @@ Where
 [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
 integrates \\f^{(m)}\\ against a measure, this penalizes \\\sum_j
 (\Delta^d c_j)^2\\, so the roughness matrix is \\D_d^\top D_d\\ with
-\\D_d\\ the difference operator on the coefficient vector. Nothing is
-integrated, which is why the family has no `measure` and no `order`:
-there is no measure to integrate against and no derivative whose order
-to name.
+\\D_d\\ the difference operator on the coefficient vector. The penalty
+does not integrate anything, so the family has no `measure` and no
+`order`, since it has no measure against which to integrate and no
+derivative whose order could be named.
 
 The argument `diff` belongs to this family alone. A difference penalty
 reads the coefficients as an ordered sequence in which neighbors are
@@ -94,20 +95,20 @@ has dimension `diff`.
 The differences are taken on the coefficients of the basis of Eilers and
 Marx, whose knots are equally spaced with the same step beyond the
 interval as inside it, and the penalty is carried onto the clamped basis
-the package evaluates (the two span the same splines on the interval, so
-only the coordinates change). On those knots the Greville abscissae are
-equally spaced, and Marsden's identity makes the null space exactly the
-polynomials of degree below `diff`. It is also the penalty of mgcv's
-`bs = "ps"` smooths, up to the normalization that mgcv applies to its
-penalty matrices.
+that the package evaluates (the two span the same splines on the
+interval, so only the coordinates change). On those knots the Greville
+abscissae are equally spaced, and Marsden's identity makes the null
+space exactly the polynomials of degree below `diff`. It is also the
+penalty of mgcv's `bs = "ps"` smooths, up to the normalization that mgcv
+applies to its penalty matrices.
 
 ## Comparison with the integrated penalty on the same basis
 
-The two are different penalties, and neither contains the other. The
-difference operator carries no factor of the knot spacing, so the raw
-P-spline roughness matrix is on a scale several orders of magnitude
-smaller than the integrated-derivative matrix on the same basis. After
-the Demmler-Reinsch rotation both penalties are the identity on the
+The two are different penalties, and they are not nested. The difference
+operator carries no factor of the knot spacing, so the raw P-spline
+roughness matrix is on a scale several orders of magnitude smaller than
+the integrated-derivative matrix on the same basis. After the
+Demmler-Reinsch rotation both penalties are the identity on the
 penalized directions, so equal smoothing parameters give similar amounts
 of smoothing.
 

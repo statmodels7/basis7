@@ -30,14 +30,15 @@ basis_eval(basis, x, ...)
 
 - ...:
 
-  Passed to methods. No shipped family reads anything from it.
+  Passed to methods. The shipped families do not read anything from it.
 
 ## Value
 
-A numeric matrix of `n` rows and `basis@dimension` columns, `n` being
-`length(x)` for one variable and `nrow(x)` for several, with column
-names
-[`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
+A numeric matrix of `n` rows and `basis@dimension` columns, where `n` is
+`length(x)` for one variable and `nrow(x)` for several, with the column
+names that
+[`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
+declares.
 
 ## The design matrix
 
@@ -47,12 +48,12 @@ An expansion with coefficients \\\beta\\ is evaluated as
 
 so `basis_eval(b, x) %*% beta` is the fitted function at `x`, and the
 matrix is the design block of a linear model on the basis. Its columns
-carry the names
+carry the names that
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
-declares, and every other matrix the basis produces carries the same
-ones in the same order.
+declares, and every other matrix that the basis produces carries the
+same ones in the same order.
 
-## The method every basis implements
+## The method that every basis implements
 
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
@@ -61,8 +62,9 @@ and
 all have numerical methods registered on the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class,
 computed from this one, so all four generics are available for a
-subclass that supplies its evaluation alone. A closed form registered
-later for any of the three takes over through dispatch;
+subclass that supplies only its evaluation. If a closed form is
+registered later for any of the three, dispatch selects it in place of
+the numerical method;
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 reports which are still numerical.
 

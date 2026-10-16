@@ -28,7 +28,7 @@ exactly zero in the row at `basis@lower`.
 ## Details
 
 Integration is linear and \\T\\ does not depend on `x`, so the identity
-is exactly the one
+is exactly the one that
 [`basis_deriv.TransformedBasis()`](https://statmodels7.github.io/basis7/reference/basis_deriv.TransformedBasis.md)
 uses in the other direction. The accuracy is again the parent's.
 

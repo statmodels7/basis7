@@ -4,12 +4,12 @@ basis takes from the numerical fallback, by reading the class on which
 each method is registered through attr(m, "signature")[[1]] and testing
 it with
 is_base_basis_class(). A generic with no method at all counts as
-numerical, the base class being where the fallback lives.'><meta property="og:description" content='Reports which of basis_deriv(), basis_int() and basis_gram() this
+numerical, because the fallback is registered on the base class.'><meta property="og:description" content='Reports which of basis_deriv(), basis_int() and basis_gram() this
 basis takes from the numerical fallback, by reading the class on which
 each method is registered through attr(m, "signature")[[1]] and testing
 it with
 is_base_basis_class(). A generic with no method at all counts as
-numerical, the base class being where the fallback lives.'><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
+numerical, because the fallback is registered on the base class.'><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -17,7 +17,7 @@ numerical, the base class being where the fallback lives.'><meta property="og:im
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -52,7 +52,7 @@ basis takes from the numerical fallback, by reading the class on which
 each method is registered through <code>attr(m, "signature")[[1]]</code> and testing
 it with
 <code><a href="is_base_basis_class.html">is_base_basis_class()</a></code>. A generic with no method at all counts as
-numerical, the base class being where the fallback lives.</p>
+numerical, because the fallback is registered on the base class.</p>
     </div>
 
     <div class="section level2">
@@ -80,13 +80,13 @@ the package's own override can start from it. Inside a method the formal
 <code>basis</code> shadows the class of the same name, so reaching that default
 through <code><a href="https://rconsortium.github.io/S7/reference/super.html" class="external-link">S7::super()</a></code> would require naming the package inside itself; a
 basis written elsewhere uses <code><a href="https://rconsortium.github.io/S7/reference/super.html" class="external-link">S7::super()</a></code>.</p>
-<p>The test does not see which branch a method takes once it has been
-reached; <code><a href="basis_numerical_route.html">basis_numerical_route()</a></code> lets a family report that itself.</p>
+<p>The test cannot determine which branch a method takes once the method has
+been reached; a family can report that through <code><a href="basis_numerical_route.html">basis_numerical_route()</a></code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="basis_numerical_route.html">basis_numerical_route()</a></code>, the generic it is the default of, and
-<code><a href="is_base_basis_class.html">is_base_basis_class()</a></code>, which it tests each owner with.</p></div>
+    <div class="dont-index"><p><code><a href="basis_numerical_route.html">basis_numerical_route()</a></code>, the generic of which it is the default,
+and <code><a href="is_base_basis_class.html">is_base_basis_class()</a></code>, with which it tests each owner.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

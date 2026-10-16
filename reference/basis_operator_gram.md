@@ -1,11 +1,11 @@
 # The Roughness Matrix of a Differential Operator
 
-The Gram matrix of \\L\varphi\\, with \\\varphi\\ the vector of basis
-functions, that is \$\$R = \int\_{\ell}^{u} (L\varphi)(L\varphi)^\top \\
-\mathrm{d}\mu,\$\$ the matrix for which \\\lVert Lf \rVert^2 = c^\top R
-c\\ when \\f = \varphi^\top c\\. It is what
+Returns the Gram matrix of \\L\varphi\\, with \\\varphi\\ the vector of
+basis functions, that is \$\$R = \int\_{\ell}^{u}
+(L\varphi)(L\varphi)^\top \\ \mathrm{d}\mu,\$\$ the matrix for which
+\\\lVert Lf \rVert^2 = c^\top R c\\ when \\f = \varphi^\top c\\.
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-returns when its `order` is a
+returns this matrix when its `order` is a
 [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
 and the generic exists so that a family with a closed form can declare
 one.
@@ -25,8 +25,8 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 - op:
 
   A
-  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved. An operator whose period is still `NULL`
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  whose period is resolved. An operator whose period is still `NULL`
   signals an error.
 
 - at:
@@ -35,7 +35,7 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 
 - weight:
 
-  A density to integrate against, or `NULL`.
+  A density with respect to which to integrate, or `NULL`.
 
 - ...:
 

@@ -17,9 +17,9 @@ poly_basis(lower = 0, upper = 1, dimension = 4)
 
 - lower, upper:
 
-  The endpoints of the interval, each a single finite number with
-  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside the interval
-  signals an error.
+  The endpoints of the interval. Each must be a single finite number,
+  and `lower` must be smaller than `upper`. The default is \\\[0, 1\]\\.
+  Evaluating outside the interval signals an error.
 
 - dimension:
 
@@ -57,7 +57,7 @@ Legendre condition number is \\2K - 1\\, growing linearly.
 The polynomials are orthogonal on their own interval, \\\int\_{-1}^{1}
 P_m P_n \\\mathrm{d}t = 2\delta\_{mn}/(2n+1)\\, so `basis_gram(p)` is
 diagonal with entries \\(u - \ell)/(2n+1)\\ for \\n = 0, \ldots, K-1\\.
-They are **not** orthonormal: pass the basis through
+They are not orthonormal: pass the basis through
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
 for that.
 
@@ -97,26 +97,27 @@ p
 #>   degree  4
 #> Numerical: none
 
-# Orthogonal, so the Gram matrix is diagonal, with entries (u - l)/(2n + 1).
+# The polynomials are orthogonal, so the Gram matrix is diagonal, with
+# entries (u - l)/(2n + 1).
 round(diag(basis_gram(p)), 8)
 #>        P0        P1        P2        P3        P4 
 #> 1.0000000 0.3333333 0.2000000 0.1428571 0.1111111 
 1 / (2 * (0:4) + 1)
 #> [1] 1.0000000 0.3333333 0.2000000 0.1428571 0.1111111
 
-# And well conditioned where the raw powers are not.
+# The Legendre basis is well conditioned where the raw powers are not.
 H <- outer(0:9, 0:9, function(a, b) 1 / (a + b + 1))
 c(legendre = kappa(basis_gram(poly_basis(dimension = 10)), exact = TRUE),
   raw_powers = kappa(H, exact = TRUE))
 #>     legendre   raw_powers 
-#> 1.900000e+01 1.602498e+13 
+#> 1.900000e+01 1.602442e+13 
 
 # It spans the same space as the raw powers, so a cubic is fitted exactly.
 x <- seq(0, 1, length.out = 40)
 max(abs(lm.fit(basis_eval(p, x), x^3)$fitted.values - x^3))
-#> [1] 2.270252e-16
+#> [1] 1.193503e-16
 
-# P_n(1) = 1 and P_n(-1) = (-1)^n, at the two ends of the interval.
+# At the two ends of the interval, P_n(1) = 1 and P_n(-1) = (-1)^n.
 basis_eval(p, c(0, 1))
 #>      P0 P1 P2 P3 P4
 #> [1,]  1 -1  1 -1  1

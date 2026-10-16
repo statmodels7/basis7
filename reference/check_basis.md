@@ -20,10 +20,10 @@ check_basis(basis, n = 41L, orders = 1:2, tol = 1e-06, verbose = TRUE)
 
 - n:
 
-  The number of points to test at, default `41`. They are equally spaced
-  across the interval with five percent trimmed off each end, because a
-  one-sided stencil at an endpoint carries a larger error that would
-  read as a failure of the basis. Passed through
+  The number of points at which to test, default `41`. They are equally
+  spaced across the interval after trimming five percent off each end,
+  because a one-sided stencil at an endpoint carries a larger error that
+  would read as a failure of the basis. The value is passed through
   [`as.integer()`](https://rdrr.io/r/base/integer.html).
 
 - orders:
@@ -35,8 +35,8 @@ check_basis(basis, n = 41L, orders = 1:2, tol = 1e-06, verbose = TRUE)
 - tol:
 
   The relative tolerance for the derivative and integral checks, default
-  `1e-6`. Relative to the values themselves, with the denominator taken
-  from them; see
+  `1e-6`. The tolerance is relative to the values themselves, and the
+  denominator is taken from them; see
   [`rel_close()`](https://statmodels7.github.io/basis7/reference/rel_close.md).
   The Gram comparison uses `1e-6` regardless.
 
@@ -50,7 +50,7 @@ check_basis(basis, n = 41L, orders = 1:2, tol = 1e-06, verbose = TRUE)
 Invisibly, a named logical vector of length 6, in the order `shape`,
 `deriv`, `integral`, `partition`, `gram`, `missing`, with `NA` for a
 check that was not run. It carries the attribute `"numerical"`, the
-named logical vector
+named logical vector that
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 returns.
 
@@ -70,25 +70,25 @@ G\_{lj}\\ with \\G \succeq 0\\ for the Gram matrix.
 
 The checks are:
 
-1.  **shape**: the evaluation returns a matrix of the declared size and
+1.  shape: the evaluation returns a matrix of the declared size and
     column names for a vector, and of one row for a single point, and
     the first derivative returns a matrix of the declared size;
 
-2.  **derivatives**: each analytic order agrees with one numerical
+2.  derivatives: each analytic order agrees with one numerical
     differentiation of the order below it;
 
-3.  **integral**: it differentiates back to the basis and is exactly
-    zero at the lower endpoint; for a basis of several variables only
-    the zero at the lower corner is checked;
+3.  integral: it differentiates back to the basis and is exactly zero at
+    the lower endpoint; for a basis of several variables only the zero
+    at the lower corner is checked;
 
-4.  **partition of unity**: the rows sum to one, for the families that
-    have that property;
+4.  partition of unity: the rows sum to one, for the families that have
+    that property;
 
-5.  **Gram**: symmetric, positive semidefinite, and equal to an
-    independent quadrature;
+5.  Gram: symmetric, positive semidefinite, and equal to an independent
+    quadrature;
 
-6.  **missing values**: a missing evaluation point gives a missing row
-    and nothing else.
+6.  missing values: a missing evaluation point gives a missing row and
+    nothing else.
 
 ## Checks on numerical quantities
 
@@ -99,11 +99,11 @@ checks are therefore not run in that case: they report `NA` and print
 `[numerical]`.
 
 The `gram` check always runs. The independent quadrature is 401 panels
-of 7 nodes, a rule no basis in the package uses for its own result, so a
-family whose own Gram matrix is a quadrature is still compared against
-different arithmetic. When the Gram matrix is numerical, each entry is
-allowed, besides the relative tolerance, four times the difference
-between the package's own fallback
+of 7 nodes, a rule that the bases in the package never use for their own
+results, so a family whose own Gram matrix is a quadrature is still
+compared against different arithmetic. When the Gram matrix is
+numerical, each entry is allowed, besides the relative tolerance, four
+times the difference between the package's own fallback
 ([`numerical_gram()`](https://statmodels7.github.io/basis7/reference/numerical_gram.md)
 at its defaults) and the finer rule: a quadrature that is correct but
 limited by the kinks of a basis passes, and a matrix that is wrong by
@@ -116,8 +116,8 @@ a partition of unity. The printout distinguishes this from
 
 ## The error of the reference
 
-A central difference assumes derivatives the function may not have. At a
-knot a spline's third derivative jumps, and a stencil straddling it
+A central difference assumes derivatives that the function may not have.
+At a knot a spline's third derivative jumps, and a stencil straddling it
 returns a number of the order of the jump, which compared against an
 exact value reads as a failure of the basis. Each reference is therefore
 computed twice, at a step and at half of it, and four times the gap
@@ -137,8 +137,9 @@ which uses this function to develop one.
 ## Examples
 
 ``` r
-# The shipped families pass every check that applies to them; a Fourier
-# basis is not a partition of unity and does not claim to be one.
+# The shipped families pass every check that applies to them; the
+# partition-of-unity check is not applied to a Fourier basis, which is not a
+# partition of unity.
 invisible(check_basis(bspline_basis(dimension = 6)))
 #> check_basis: bspline (6 functions)
 #>   shape       shapes and column names                        [PASSED]

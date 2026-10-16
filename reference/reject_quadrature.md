@@ -14,7 +14,7 @@ reject_quadrature(...)
 
 - ...:
 
-  The arguments a method received through its own `...`.
+  The arguments that a method received through its own `...`.
 
 ## Value
 

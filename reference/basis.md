@@ -1,7 +1,7 @@
 # Basis Expansion
 
-The abstract parent of every basis in the package, and the class to
-inherit from when writing one of your own. A basis is a finite
+The class `basis` is the abstract parent of every basis in the package,
+and a basis written by a user inherits from it. A basis is a finite
 collection of functions on an interval; the object carries the interval,
 how many functions there are, and whatever else the family needs, and
 the generics evaluate that collection, differentiate it, integrate it
@@ -38,11 +38,11 @@ basis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on, or one endpoint per
-  variable for a basis of several. Both finite, of the same length, and
-  `lower[j] < upper[j]` for every `j`. Their length is what
+  The endpoints of the interval on which the basis lives, or one
+  endpoint per variable for a basis of several. Both must be finite and
+  of the same length, and `lower[j] < upper[j]` must hold for every `j`.
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  reports.
+  returns their length.
 
 - basis_params:
 
@@ -60,7 +60,7 @@ from it is an S7 object with properties `basis_name` (character),
 `dimension` (integer), `lower` and `upper` (numeric, one entry per
 variable) and `basis_params` (list).
 
-## What a basis is
+## Definition of a basis
 
 A basis of dimension \\d\\ on \\\[a, b\]\\ is a collection \\\varphi_1,
 \dots, \varphi_d\\, and the object exists so that a function may be
@@ -69,12 +69,12 @@ written as a linear combination of them,
 \$\$f(x) = \sum\_{j=1}^{d} \beta_j \varphi_j(x) = B(x)\beta, \qquad
 B(x)\_{ij} = \varphi_j(x_i),\$\$
 
-with \\B(x)\\ the \\n \times d\\ design matrix
+with \\B(x)\\ the \\n \times d\\ design matrix that
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
 returns. Fitting \\f\\ is a linear problem in \\\beta\\ whatever the
-family, so the derivative, the anchored integral and the Gram matrix are
-all properties of the basis alone and can be computed once, before any
-data arrive.
+family, so the derivative, the anchored integral and the Gram matrix all
+depend only on the basis and can be computed once, before any data
+arrive.
 
 ## Writing a subclass
 
@@ -85,9 +85,9 @@ A concrete basis is a subclass of this one. It must implement
 and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 have numerical methods registered on this class, so a subclass of one
-variable that supplies its evaluation alone has all four generics at
+variable that supplies only its evaluation has all four generics at
 once. For a subclass of several variables the numerical integral is not
-available. A closed form registered later takes over through dispatch,
+available. If a closed form is registered later, dispatch selects it
 with no change to calling code, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 reports which of the three are still numerical. The vignette

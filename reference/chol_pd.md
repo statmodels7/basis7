@@ -35,8 +35,8 @@ positive definite to `tol`.
 On a matrix with an exactly zero eigenvalue the pivot that should be
 zero comes out positive or negative according to rounding, so
 [`base::chol()`](https://rdrr.io/r/base/chol.html) succeeds on some
-platforms and fails on others. A construction that relied on
-[`chol()`](https://rdrr.io/r/base/chol.html) to decide whether a Gram
+platforms and fails on others. A construction that used
+[`chol()`](https://rdrr.io/r/base/chol.html) to test whether a Gram
 matrix or a penalty is usable would therefore give different results on
 different platforms.
 

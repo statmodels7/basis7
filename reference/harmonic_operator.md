@@ -4,8 +4,8 @@ The operator for periodic data, \$\$L x = D \prod\_{i=1}^{h} \left(D^2 +
 (i\nu)^2\right) x, \qquad \nu = \frac{2\pi}{T},\$\$ whose null space is
 the constant together with the first \\h\\ harmonics of the period
 \\T\\. At `harmonics = 1` it is the harmonic acceleration operator \\L x
-= \nu^2 Dx + D^3 x\\ of Ramsay and Silverman, which is what
-`fda::vec2Lfd(c(0, (2*pi/T)^2, 0))` builds.
+= \nu^2 Dx + D^3 x\\ of Ramsay and Silverman, and
+`fda::vec2Lfd(c(0, (2*pi/T)^2, 0))` builds the same operator.
 
 ## Usage
 
@@ -22,9 +22,9 @@ harmonic_operator(period = NULL, harmonics = 1)
 
 - harmonics:
 
-  How many harmonics the penalty leaves unpenalized, a whole number of
-  at least 1. The order of the operator is `2 * harmonics + 1` and the
-  null space has that dimension.
+  The number of harmonics that the penalty leaves unpenalized, a whole
+  number of at least 1. The order of the operator is `2 * harmonics + 1`
+  and the null space has that dimension.
 
 ## Value
 
@@ -48,9 +48,9 @@ this operator keeps it and is a sinusoid.
 
 `period` is \\T\\, the length of one cycle, in the units of the
 covariate: 365 for a day of the year, 12 for a month, 24 for an hour. It
-is **not** \\\nu = 2\pi/T\\, which some of the literature also calls
-omega. `NULL` leaves it to be resolved from the interval of whichever
-smoother the operator is given to, which is what
+is not \\\nu = 2\pi/T\\, which some of the literature also calls omega.
+With `NULL`, the period is resolved from the interval of the smoother to
+which the operator is given, as
 [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
 does by default;
 [`operator_resolve()`](https://statmodels7.github.io/basis7/reference/operator_resolve.md)
@@ -72,7 +72,7 @@ whose default it is;
 [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md)
 for the non-periodic one;
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-for the space it leaves.
+for the space that it leaves.
 
 ## Examples
 
@@ -89,7 +89,7 @@ operator_null(harmonic_operator(365))
 #> 2 sin(0.0172142 t)    0 0.01721421      0  sin
 #> 3 cos(0.0172142 t)    0 0.01721421      0  cos
 
-# two harmonics left free instead of one
+# This operator leaves two harmonics free instead of one.
 harmonic_operator(365, harmonics = 2)
 #> <linear differential operator>  order 5
 #>   L x = 3.512e-07 Dx + 0.001482 D^3 x + D^5 x

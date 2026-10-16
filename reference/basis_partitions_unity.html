@@ -11,7 +11,7 @@ property."><meta property="og:image" content="https://statmodels7.github.io/basi
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -65,11 +65,11 @@ property.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p><code>TRUE</code> for a <a href="BsplineBasis.html">BsplineBasis</a>, which sums to one by construction, and for a
-<a href="TensorBasis.html">TensorBasis</a> all of whose margins do: the row sums of a Kronecker product
-are the products of the row sums.</p>
-<p><code>FALSE</code> for everything else, including a <a href="TransformedBasis.html">TransformedBasis</a> over a
-B-spline: an orthonormalization or a constraint takes linear combinations
+    <p>The function returns <code>TRUE</code> for a <a href="BsplineBasis.html">BsplineBasis</a>, which sums to one by
+construction, and for a <a href="TensorBasis.html">TensorBasis</a> all of whose margins do: the row
+sums of a Kronecker product are the products of the row sums.</p>
+<p>It returns <code>FALSE</code> for everything else, including a <a href="TransformedBasis.html">TransformedBasis</a> over
+a B-spline: an orthonormalization or a constraint takes linear combinations
 of the columns, and the sum of the new columns is generally not one. A
 transformation that happens to preserve the property is therefore not
 tested.</p>

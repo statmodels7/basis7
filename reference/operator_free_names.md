@@ -1,8 +1,8 @@
 # Column Names for an Operator's Restored Columns
 
-Turns the labels
+Turns the labels that
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-gives into names a design matrix can carry: `sin(0.0172 t)` becomes
+gives into names that a design matrix can carry: `sin(0.0172 t)` becomes
 `sin1`, `cos(0.0344 t)` becomes `cos2`, and anything else keeps a
 syntactically safe form of its label.
 

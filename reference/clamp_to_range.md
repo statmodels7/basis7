@@ -1,8 +1,8 @@
 # Reject Points Outside a Range, and Clamp Those On Its Edge
 
 Signals an error if any entry of `z` lies outside `[lo, hi]` by more
-than `1e-8` times the width of the range, and otherwise returns `z` with
-any entry inside that tolerance moved onto the nearer endpoint. The
+than `1e-8` times the width of the range, and otherwise moves any entry
+inside that tolerance onto the nearer endpoint and returns `z`. The
 range rule of the package is written here only;
 [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
 calls it once per variable.
@@ -21,8 +21,8 @@ clamp_to_range(z, lo, hi, what)
 
 - lo, hi:
 
-  The endpoints, single finite numbers with `lo < hi`. Not validated
-  here; the class validator has already required it.
+  The endpoints, single finite numbers with `lo < hi`. The function does
+  not validate them; the class validator has already required it.
 
 - what:
 
@@ -32,8 +32,8 @@ clamp_to_range(z, lo, hi, what)
 
 ## Value
 
-`z`, of the same length, with entries within tolerance of an endpoint
-set to that endpoint exactly.
+`z`, of the same length, in which entries within tolerance of an
+endpoint are set to that endpoint exactly.
 
 ## Details
 

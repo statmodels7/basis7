@@ -65,7 +65,7 @@ and
 [`linear_operator()`](https://statmodels7.github.io/basis7/reference/linear_operator.md),
 which build one;
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-for the space a maximal penalty leaves untouched.
+for the space that a maximal penalty leaves untouched.
 
 ## Examples
 

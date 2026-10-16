@@ -1,13 +1,13 @@
 # Fourier Basis
 
-The S7 class of Fourier bases, the objects
+`FourierBasis` is the S7 class of Fourier bases, the objects that
 [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md)
 returns. It adds no property to
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) and
-exists as the class the trigonometric methods dispatch on. A Fourier
-basis holds a constant function and pairs of sines and cosines of
-increasing frequency, and its derivatives and integral all follow from
-one identity.
+exists as the class on which the trigonometric methods dispatch. A
+Fourier basis holds a constant function and pairs of sines and cosines
+of increasing frequency, and its derivatives and integral all follow
+from one identity.
 
 ## Usage
 
@@ -38,11 +38,11 @@ FourierBasis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on, or one endpoint per
-  variable for a basis of several. Both finite, of the same length, and
-  `lower[j] < upper[j]` for every `j`. Their length is what
+  The endpoints of the interval on which the basis lives, or one
+  endpoint per variable for a basis of several. Both must be finite and
+  of the same length, and `lower[j] < upper[j]` must hold for every `j`.
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  reports.
+  returns their length.
 
 - basis_params:
 
@@ -57,7 +57,7 @@ FourierBasis(
 
 An object of class `FourierBasis`, inheriting from
 [basis](https://statmodels7.github.io/basis7/reference/basis.md), with
-the same five properties and `basis_params` holding `omega`, `n_pairs`
+the same five properties, where `basis_params` holds `omega`, `n_pairs`
 and `full_period`. Call
 [`fourier_basis()`](https://statmodels7.github.io/basis7/reference/fourier_basis.md)
 instead of this class directly; it rejects an even dimension, defaults
@@ -81,11 +81,11 @@ endpoint.
 
 ## Its `basis_params`
 
-Three entries. `omega` is the period, `n_pairs` is
+The list has three entries. `omega` is the period, `n_pairs` is
 `(dimension - 1) %/% 2`, and `full_period` records whether `omega`
 equals the width of the interval, up to the tolerance of
-[`all.equal()`](https://rdrr.io/r/base/all.equal.html). The last decides
-which route
+[`all.equal()`](https://rdrr.io/r/base/all.equal.html). The value of
+`full_period` determines which route
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
 takes: a closed diagonal matrix when it is `TRUE`, a quadrature when it
 is not.

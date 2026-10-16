@@ -39,14 +39,14 @@ smoother_reparam(sm, b, x, g, cons)
 ## Value
 
 A list of `S`, the penalty on the reparametrized block, and `basis`, the
-object whose evaluation **is** that block and which
+object whose evaluation is that block and which
 [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
 evaluates at new values.
 
 ## Details
 
-The three routes differ in what the coefficients mean, and the fit they
-express is the same span in each.
+The three routes differ in what the coefficients mean, and the fit that
+they express is the same span in each.
 
 - `"dr"`:
 
@@ -60,7 +60,7 @@ express is the same span in each.
 
 - `"none"`:
 
-  The constrained basis as it stands, with the penalty the congruence of
+  The constrained basis as it stands; its penalty is the congruence of
   the roughness matrix by the transform of the constraint. The
   coefficients are those of the constrained basis, one fewer than the
   basis functions for each direction removed.
@@ -68,13 +68,13 @@ express is the same span in each.
 - `"orthonorm"`:
 
   The constrained basis rotated so that it satisfies \\X'X = I\\ over
-  the observed covariate. The orthonormality is against the
-  **empirical** measure, which makes the design orthonormal;
+  the observed covariate. The orthonormality is against the empirical
+  measure, which makes the design orthonormal;
   [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
   orthonormalizes against the \\L^2\\ inner product instead and remains
-  available as an operation on a basis. It is the **reparametrized
-  part** that is orthonormal: with `null_space = "keep"` a free column
-  is prepended afterwards and the whole block is then not orthonormal,
+  available as an operation on a basis. The reparametrized part of the
+  block is orthonormal: with `null_space = "keep"` a free column is
+  prepended afterwards and the whole block is then not orthonormal,
   while `null_space = "drop"` gives \\X'X = I\\ for the block itself, up
   to rounding.
 

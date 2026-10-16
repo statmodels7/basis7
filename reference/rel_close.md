@@ -1,8 +1,8 @@
 # Compare Two Matrices Relative to Their Own Magnitude
 
-Reports whether two matrices agree to a relative tolerance, with the
-denominator taken from the values themselves and floored at a millionth
-of the column's own scale. It is the only comparison
+Reports whether two matrices agree to a relative tolerance. The
+denominator is taken from the values themselves and is floored at a
+millionth of the column's own scale. It is the only comparison that
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
 makes, so its derivative, integral and Gram checks read agreement in the
 same way.
@@ -17,8 +17,8 @@ rel_close(a, b, tol, slack = NULL)
 
 - a, b:
 
-  Numeric matrices of the same shape. Neither is privileged; the
-  comparison is symmetric.
+  Numeric matrices of the same shape. The comparison is symmetric, so
+  the two matrices play the same role.
 
 - tol:
 
@@ -32,7 +32,7 @@ rel_close(a, b, tol, slack = NULL)
   passes
   [`fd_reference()`](https://statmodels7.github.io/basis7/reference/fd_reference.md)'s
   `uncertainty` here, so a point whose finite-difference reference is
-  unreliable is allowed the error that reference has. `NULL`, the
+  unreliable is allowed the error of that reference. `NULL`, the
   default, allows none.
 
 ## Value

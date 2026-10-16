@@ -1,7 +1,7 @@
 # The Order of a Differential Operator
 
-The highest derivative the operator takes, which is the dimension of its
-null space and the length of its weight vector.
+Returns the highest derivative that the operator takes, which is the
+dimension of its null space and the length of its weight vector.
 
 ## Usage
 

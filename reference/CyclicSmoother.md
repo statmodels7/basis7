@@ -1,10 +1,10 @@
 # The Cyclic Smoother Class
 
-The class
+The class that
 [`cyclic_smooth()`](https://statmodels7.github.io/basis7/reference/cyclic_smooth.md)
-returns: a periodic B-spline basis with a roughness penalty and the
-Demmler-Reinsch reparametrization. It carries `degree` beside the
-properties every
+returns combines a periodic B-spline basis with a roughness penalty and
+the Demmler-Reinsch reparametrization. It carries `degree` beside the
+properties that every
 [smoother](https://statmodels7.github.io/basis7/reference/smoother.md)
 has.
 
@@ -66,8 +66,8 @@ CyclicSmoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:

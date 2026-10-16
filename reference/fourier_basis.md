@@ -1,9 +1,9 @@
 # Construct a Fourier Basis
 
 Returns a basis of a constant function and \\(K-1)/2\\ sine-cosine pairs
-of increasing frequency on \\\[\ell, u\]\\, \\K\\ being `dimension`. It
-suits a function that is periodic or nearly so: over a whole period the
-functions are mutually orthogonal, and stay orthogonal after
+of increasing frequency on \\\[\ell, u\]\\, where \\K\\ is `dimension`.
+It suits a function that is periodic or nearly so: over a whole period
+the functions are mutually orthogonal, and stay orthogonal after
 differentiation, so the Gram matrix is diagonal at every order and a
 roughness penalty is one vector of numbers.
 
@@ -17,15 +17,15 @@ fourier_basis(lower = 0, upper = 1, dimension = 5, omega = NULL)
 
 - lower, upper:
 
-  The endpoints of the interval, each a single finite number with
-  `lower < upper`. Default \\\[0, 1\]\\. Evaluating outside the interval
-  signals an error.
+  The endpoints of the interval. Each is a single finite number, and
+  `lower` is smaller than `upper`. The default is \\\[0, 1\]\\.
+  Evaluating outside the interval signals an error.
 
 - dimension:
 
-  The number of basis functions, a single **odd** whole number of at
-  least 1, default `5`. `1` is the constant alone, `5` is the constant
-  and two pairs. An even value signals an error.
+  The number of basis functions, a single odd whole number of at least
+  1, default `5`. `1` is the constant alone, `5` is the constant and two
+  pairs. An even value signals an error.
 
 - omega:
 
@@ -37,8 +37,9 @@ fourier_basis(lower = 0, upper = 1, dimension = 5, omega = NULL)
 
 An object of class
 [FourierBasis](https://statmodels7.github.io/basis7/reference/FourierBasis.md),
-with `basis_name` `"fourier"`, `basis_params` holding `omega`, `n_pairs`
-and `full_period`, and column names `const`, `sin1`, `cos1`, and so on.
+whose `basis_name` is `"fourier"`, whose `basis_params` holds `omega`,
+`n_pairs` and `full_period`, and whose columns are named `const`,
+`sin1`, `cos1`, and so on.
 
 ## What the columns are
 
@@ -63,9 +64,9 @@ both members of pair \\j\\, written in closed form.
 
 Any other positive period is accepted and every generic remains
 available. The Gram matrix is then computed by composite Gauss-Legendre,
-the interval being in general no longer a whole number of periods and
-the orthogonality failing. `basis_params$full_period` records which case
-the object is in, and
+because the interval is in general no longer a whole number of periods
+and the orthogonality fails. `basis_params$full_period` records which of
+the two cases applies to the object, and
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 reports `basis_gram` as `TRUE` in the second, through
 [`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md);
@@ -85,7 +86,7 @@ for a local basis with free ends and
 [`poly_basis()`](https://statmodels7.github.io/basis7/reference/poly_basis.md)
 for a global polynomial one;
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-for the roughness penalty this basis diagonalizes.
+for the roughness penalty that this basis diagonalizes.
 
 ## Examples
 

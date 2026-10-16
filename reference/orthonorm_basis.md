@@ -25,7 +25,7 @@ orthonorm_basis(basis, order = 0L)
   The derivative order whose inner products are made the identity, a
   single non-negative whole number, or one per variable for a basis of
   several variables; default `0`. Any value above `0` signals an error
-  for the shipped families, their higher-order Gram matrices being
+  for the shipped families, because their higher-order Gram matrices are
   singular.
 
 ## Value
@@ -42,15 +42,16 @@ matrix. The basis \\B R^{-1}\\ then has Gram matrix \\R^{-\top} R^\top
 R\\ R^{-1} = I\\, so \\T = R^{-1}\\. The Gram matrix of the result is
 the identity up to rounding.
 
-The span is unchanged, \\R^{-1}\\ being invertible: a function the
-parent can represent is fitted by the orthonormalized basis to rounding.
+The span is unchanged because \\R^{-1}\\ is invertible: a function that
+the parent can represent is fitted by the orthonormalized basis to
+rounding.
 
 ## Orthonormal in which inner product
 
-`order` chooses it. At `0`, the default, the functions themselves are
-orthonormal. Above that the `order`-th derivatives would be, and the
-Gram matrix there is singular for every family, the constant
-differentiating away, so the factorization fails and an error is
+The inner product is set by `order`. At `0`, the default, the functions
+themselves are orthonormal. Above that the `order`-th derivatives would
+be, and the Gram matrix there is singular for every family because the
+constant differentiates away, so the factorization fails and an error is
 signalled. Orthonormalizing a derivative therefore needs a basis whose
 constant has already been removed by
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md).
@@ -86,7 +87,7 @@ round(basis_gram(o), 12)
 #> on5   0   0   0   0   1   0
 #> on6   0   0   0   0   0   1
 max(abs(basis_gram(o) - diag(6)))
-#> [1] 2.220446e-16
+#> [1] 4.440892e-16
 
 # The span is unchanged: a function in the span of the parent is fitted
 # exactly.
@@ -94,7 +95,7 @@ set.seed(1)
 x <- seq(0, 1, length.out = 100)
 f <- drop(basis_eval(b, x) %*% rnorm(6))
 max(abs(lm.fit(basis_eval(o, x), f)$residuals))
-#> [1] 4.109154e-16
+#> [1] 5.533747e-16
 
 # Orthonormalizing again changes nothing, and keeps one matrix.
 max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
@@ -102,7 +103,7 @@ max(abs(basis_gram(orthonorm_basis(o)) - diag(6)))
 class(orthonorm_basis(o)@parent_basis)
 #> [1] "basis7::BsplineBasis" "basis7::basis"        "S7_object"           
 
-# A higher order signals an error, that Gram matrix being singular.
+# A higher order signals an error, because that Gram matrix is singular.
 try(orthonorm_basis(b, order = 2))
 #> Error : The Gram matrix is singular, so the basis functions are linearly dependent and cannot be orthonormalized. Reduce 'dimension', or orthonormalize at order 0.
 ```

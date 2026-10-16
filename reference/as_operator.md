@@ -1,7 +1,7 @@
 # Read an Order Argument as an Operator
 
-Normalizes the `order` argument every smoother family takes: a whole
-number `m` becomes `deriv_operator(m)` and an operator is returned
+Normalizes the `order` argument that every smoother family takes: a
+whole number `m` becomes `deriv_operator(m)` and an operator is returned
 unchanged, so that `order = 2` is a shorthand for `deriv_operator(2)`.
 
 ## Usage

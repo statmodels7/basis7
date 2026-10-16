@@ -25,11 +25,11 @@ carrying the column names of `a` repeated when `a` has them.
 
 ## Details
 
-The columns come out with `b` varying fastest, matching
+In the columns, `b` varies fastest, as in
 [`base::kronecker()`](https://rdrr.io/r/base/kronecker.html) and
 [`basis_colnames.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_colnames.TensorBasis.md).
-That is the whole column-order convention of a tensor basis, and the
-reason
+That is the whole column-order convention of a tensor basis. Because of
+it,
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
 reverses an array's dimensions before flattening it.
 

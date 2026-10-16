@@ -47,7 +47,8 @@ deriv_operator(2)
 #>   L x = D^2 x
 #>   null space: 1, t
 
-# what a strongly penalized fit contracts to
+# The null space is the set of functions to which a strongly penalized fit
+# contracts.
 operator_null(deriv_operator(3))
 #>   label rate freq degree part
 #> 1     1    0    0      0     

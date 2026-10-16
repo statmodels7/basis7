@@ -1,8 +1,8 @@
 # The Roughness Matrix of an Operator on a Fourier Basis
 
-Exact and diagonal, at any operator, when the interval is a full period
-and neither `at` nor `weight` is given; otherwise the matrix is computed
-by
+Computes the roughness matrix of an operator. The matrix is exact and
+diagonal, for any operator, when the interval is a full period and `at`
+and `weight` are not given; otherwise it is computed by
 [`numerical_operator_gram()`](https://statmodels7.github.io/basis7/reference/numerical_operator_gram.md)
 and is in general full. The diagonal entry of the pair at frequency
 \\j\\ is \$\$\lvert P(i\nu_j)\rvert^2 \\ \frac{T}{2}, \qquad \nu_j =
@@ -19,8 +19,8 @@ column is \\w_0^2 T\\.
 - op:
 
   A
-  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved.
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  whose period is resolved.
 
 - at:
 
@@ -28,7 +28,7 @@ column is \\w_0^2 T\\.
 
 - weight:
 
-  A density to integrate against, or `NULL`.
+  A density with respect to which the integral is taken, or `NULL`.
 
 - ...:
 
@@ -78,7 +78,8 @@ for the derivative case.
 b <- fourier_basis(lower = 0, upper = 365, dimension = 9)
 g <- basis_gram(b, order = harmonic_operator(365))
 
-# diagonal, and zero on the constant and the fundamental
+# The matrix is diagonal, and its entries are zero on the constant and the
+# fundamental.
 max(abs(g - diag(diag(g)))) / max(abs(g))
 #> [1] 0
 round(diag(g)[1:3], 10)

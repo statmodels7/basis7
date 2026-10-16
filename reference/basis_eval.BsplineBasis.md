@@ -30,10 +30,10 @@ with column names `bs1`, `bs2`, and so on.
 
 The call goes through
 [`bspline_design()`](https://statmodels7.github.io/basis7/reference/bspline_design.md)
-with `intercept = TRUE`, so all `dimension` functions are returned and
-none is dropped for identifiability. The result is stripped of the
-attributes and of the `BSpline` class that splines2 attaches, leaving a
-plain matrix.
+with `intercept = TRUE`, so all `dimension` functions are returned,
+including the one that splines2 would otherwise drop for
+identifiability. The result is stripped of the attributes and of the
+`BSpline` class that splines2 attaches, leaving a plain matrix.
 
 ## See also
 

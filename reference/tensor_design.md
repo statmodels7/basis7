@@ -3,12 +3,12 @@
 Evaluates each margin, differentiated or integrated as `order` and
 `integral` specify, and reduces the results with
 [`khatri_rao()`](https://statmodels7.github.io/basis7/reference/khatri_rao.md)
-into the product's own design matrix. The one body behind
+into the product's own design matrix. It is the one body behind
 [`basis_eval.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_eval.TensorBasis.md),
 [`basis_deriv.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_deriv.TensorBasis.md)
 and
 [`basis_int.TensorBasis()`](https://statmodels7.github.io/basis7/reference/basis_int.TensorBasis.md),
-which differ only in the quantity computed from the margins.
+which differ only in the quantity that is computed from the margins.
 
 ## Usage
 
@@ -36,7 +36,8 @@ tensor_design(basis, x, order = NULL, integral = FALSE)
 - integral:
 
   `TRUE` to use the anchored integral of each margin instead of its
-  evaluation. Not combined with `order`; each caller sets at most one.
+  evaluation. It is not combined with `order`; each caller sets at most
+  one of the two.
 
 ## Value
 

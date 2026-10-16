@@ -15,8 +15,8 @@ operator_span(op, x)
 - op:
 
   A
-  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved.
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  whose period is resolved.
 
 - x:
 
@@ -31,18 +31,19 @@ on the page of
 ## Details
 
 The rule is that of the polynomial families, read for an arbitrary
-operator. The penalized part is made orthogonal to every direction the
-penalty does not see, because a direction that is neither penalized nor
-constrained is one the pencil cannot separate; and the constant is not
-restored, a model carrying an intercept already spanning it.
+operator. The penalized part is made orthogonal to every direction that
+the penalty does not see, because a direction that is neither penalized
+nor constrained is one that the pencil cannot separate; and the constant
+is not restored, because a model that carries an intercept already spans
+it.
 
 Each free column is divided by its root mean square over the covariate
-and is **not centered**. Scaling by a positive constant is what a badly
-scaled column such as \\t^3\\ over \\\[0, 365\]\\ needs, and it
-preserves every property the function has; centering does not. A
-periodic family restores sines and cosines here, and subtracting a
-constant from a sine gives a column that is no longer periodic, which is
-the property the basis was chosen for.
+and is not centered. A badly scaled column such as \\t^3\\ over \\\[0,
+365\]\\ needs scaling by a positive constant, which preserves every
+property that the function has, whereas centering does not. A periodic
+family restores sines and cosines here, and subtracting a constant from
+a sine gives a column that is no longer periodic, which is the property
+for which the basis was chosen.
 
 ## See also
 

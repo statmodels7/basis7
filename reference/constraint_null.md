@@ -1,9 +1,9 @@
 # The Null Basis of a Constraint
 
-An orthonormal basis of the null space of `cm`, from whose columns a
-constrained basis is built. It is the transform **relative to the basis
-being constrained**, which is not always the one stored by the resulting
-object.
+Returns an orthonormal basis of the null space of `cm`, from whose
+columns a constrained basis is built. It is the transform relative to
+the basis being constrained, which is not always the one stored by the
+resulting object.
 
 ## Usage
 

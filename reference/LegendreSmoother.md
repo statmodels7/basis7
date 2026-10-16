@@ -1,10 +1,11 @@
 # The Legendre Smoother Class
 
-The class
+The class that
 [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
-returns: an orthogonal polynomial basis with a roughness penalty and the
-Demmler-Reinsch reparametrization. Its null space is the polynomials of
-degree below `order`, as a B-spline's is, so it inherits the default
+returns combines an orthogonal polynomial basis with a roughness penalty
+and the Demmler-Reinsch reparametrization. Its null space is the
+polynomials of degree below `order`, as a B-spline's is, so it inherits
+the default
 [`smoother_span()`](https://statmodels7.github.io/basis7/reference/smoother_span.md).
 
 ## Usage
@@ -64,8 +65,8 @@ LegendreSmoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:

@@ -1,10 +1,10 @@
 # Column Names of a Basis Matrix
 
-Returns the names every matrix the basis produces carries, so that the
-evaluation, the derivatives of every order, the anchored integral and
-the Gram matrix of one basis agree on their columns. The default numbers
-the functions after the family; a family whose functions have identities
-of their own overrides it.
+Returns the names that every matrix produced by the basis carries, so
+that the evaluation, the derivatives of every order, the anchored
+integral and the Gram matrix of one basis agree on their columns. The
+default numbers the functions after the family; a family whose functions
+have identities of their own overrides it.
 
 ## Usage
 
@@ -21,7 +21,7 @@ basis_colnames(basis, ...)
 
 - ...:
 
-  Passed to methods. No shipped family reads anything from it.
+  Passed to methods. The shipped families do not read anything from it.
 
 ## Value
 
@@ -71,7 +71,7 @@ basis_colnames(fourier_basis(dimension = 5))
 basis_colnames(poly_basis(dimension = 4))
 #> [1] "P0" "P1" "P2" "P3"
 
-# Every matrix the basis produces carries the same names.
+# Every matrix that the basis produces carries the same names.
 b <- bspline_basis(dimension = 4)
 identical(colnames(basis_eval(b, 0.5)), basis_colnames(b))
 #> [1] TRUE

@@ -1,11 +1,12 @@
 # Tensor Product Basis
 
-The S7 class of tensor product bases: all products of the functions of
-several bases, one basis per variable, \$\$B(x_1, \ldots, x_D) =
-B_1(x_1) \otimes \cdots \otimes B_D(x_D).\$\$ It carries the marginals
-whole, and every quantity it returns is built from theirs, so a product
-of exactly integrated marginals is itself exact at any number of
-variables. Constructed by
+Defines the S7 class of tensor product bases, whose functions are all
+products of the functions of several bases, one basis per variable,
+\$\$B(x_1, \ldots, x_D) = B_1(x_1) \otimes \cdots \otimes B_D(x_D).\$\$
+The class carries the marginals whole, and every quantity that it
+returns is built from theirs, so a product of exactly integrated
+marginals is itself exact at any number of variables. The class is
+constructed by
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md).
 
 ## Usage
@@ -38,11 +39,11 @@ TensorBasis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on, or one endpoint per
-  variable for a basis of several. Both finite, of the same length, and
-  `lower[j] < upper[j]` for every `j`. Their length is what
+  The endpoints of the interval on which the basis lives, or one
+  endpoint per variable for a basis of several. Both must be finite and
+  of the same length, and `lower[j] < upper[j]` must hold for every `j`.
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  reports.
+  returns their length.
 
 - basis_params:
 
@@ -55,27 +56,27 @@ TensorBasis(
 
 - marginals:
 
-  The list of bases being multiplied, one per variable, each of one
-  variable itself. Kept whole, so that each can still be evaluated and
-  inspected.
+  The list of bases to multiply, one per variable, in which each basis
+  takes one variable. The list is kept whole, so that each basis can
+  still be evaluated and inspected.
 
 ## Value
 
 An object of class `TensorBasis`, inheriting from
 [basis](https://statmodels7.github.io/basis7/reference/basis.md), with
-the five properties of a basis plus `marginals`, and `basis_params`
-holding `marginal_dimensions`.
+the five properties of a basis plus `marginals`; `basis_params` holds
+`marginal_dimensions`.
 
 ## Reduction to the marginals
 
 The product separates, so each generic reduces to its marginals':
 
 - a partial derivative differentiates one marginal to its own order and
-  leaves the others alone, `order` being a multi-index;
+  leaves the others alone, where `order` is a multi-index;
 
 - the integral over the box from the lower corner is the product of the
-  marginal integrals, and the anchoring is kept, a product whose every
-  factor is zero at the corner being zero there;
+  marginal integrals, and the anchoring is kept, because a product whose
+  every factor is zero at the corner is zero there;
 
 - the Gram matrix is the Kronecker product of the marginal Gram
   matrices, which is a product of one-dimensional integrals and never a
@@ -89,13 +90,12 @@ is exact and costs one marginal Gram matrix per variable.
 ## Column order
 
 Columns follow
-[`base::kronecker()`](https://rdrr.io/r/base/kronecker.html): the
-**last** marginal varies fastest. At two variables of 3 and 2 functions
-the names are `bs1.P0`, `bs1.P1`, `bs2.P0`, `bs2.P1`, `bs3.P0`,
-`bs3.P1`.
+[`base::kronecker()`](https://rdrr.io/r/base/kronecker.html): the last
+marginal varies fastest. At two variables of 3 and 2 functions the names
+are `bs1.P0`, `bs1.P1`, `bs2.P0`, `bs2.P1`, `bs3.P0`, `bs3.P1`.
 
-That order matters when coefficients are supplied as an array, R storing
-an array with its *first* index fastest.
+That order matters when coefficients are supplied as an array, because R
+stores an array with its *first* index fastest.
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
 reverses the dimensions; a hand-written `as.numeric(coef)` does not, and
 pairs most coefficients with the wrong function.

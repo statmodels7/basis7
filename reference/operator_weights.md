@@ -1,8 +1,8 @@
 # The Weights of a Differential Operator
 
-The coefficients \\w_0, \ldots, w\_{m-1}\\ of \\L x = \sum_j w_j D^j x +
-D^m x\\, in increasing order of differentiation. The leading coefficient
-is 1 and is not among them.
+Returns the coefficients \\w_0, \ldots, w\_{m-1}\\ of \\L x = \sum_j w_j
+D^j x + D^m x\\, in increasing order of differentiation. The leading
+coefficient is 1 and is not among them.
 
 ## Usage
 

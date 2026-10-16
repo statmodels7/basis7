@@ -26,8 +26,8 @@ evaluates a fit without forming it.
 
 ## Value
 
-A numeric matrix with `nrow(x)` rows and `basis@dimension` columns, with
-column names pasting the margins' with dots.
+A numeric matrix with `nrow(x)` rows and `basis@dimension` columns,
+whose column names paste the margins' names with dots.
 
 ## Details
 

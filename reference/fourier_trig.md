@@ -28,7 +28,7 @@ fourier_trig(basis, x, d)
 
 - x:
 
-  A numeric vector of evaluation points. Not range-checked here.
+  A numeric vector of evaluation points. The range is not checked here.
 
 - d:
 

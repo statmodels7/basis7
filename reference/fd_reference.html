@@ -13,7 +13,7 @@ is unreliable does not report the basis as wrong."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,18 +77,18 @@ be shifted to one side near an end instead of leaving the domain.</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list of two matrices of the same shape as <code>f(x)</code>: <code>value</code>, the
 first derivative estimated at the full step, and <code>uncertainty</code>, four
-times the gap between that estimate and the one at half the step. An
-entry where either estimate is <code>NA</code> gets an infinite uncertainty, so the
+times the gap between that estimate and the one at half the step. The
+uncertainty is infinite at an entry where either estimate is <code>NA</code>, so the
 comparison there is unconstrained.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>A central difference is valid only where the function has the derivatives
-the stencil assumes. At a knot the third derivative of a cubic spline
+that the stencil assumes. At a knot the third derivative of a cubic spline
 jumps, so a stencil that straddles the knot returns a number of the order
 of the jump and not of the truncation error, and comparing an exact value
 against it would report a failure of the reference as one of the basis.</p>
-<p>The estimate is therefore recomputed with the step halved. At a smooth
+<p>The estimate is therefore recomputed at half the step. At a smooth
 point the two estimates differ by about three quarters of the truncation
 error of the first, so four times the gap bounds that error; at a knot the
 gap is large. The bound becomes the allowance of the comparison, point by

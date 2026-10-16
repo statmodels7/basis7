@@ -1,12 +1,12 @@
 # B-Spline Basis
 
-The S7 class of B-spline bases, the objects
+`BsplineBasis` is the S7 class of B-spline bases, the objects that
 [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
 returns. It adds no property to
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) and
-exists as the class the spline methods dispatch on. A B-spline basis is
-piecewise polynomial, each function supported on a few knot intervals,
-and its functions sum to one.
+exists as the class on which the spline methods dispatch. A B-spline
+basis is piecewise polynomial. Each of its functions is supported on a
+few knot intervals, and the functions sum to one.
 
 ## Usage
 
@@ -37,11 +37,11 @@ BsplineBasis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on, or one endpoint per
-  variable for a basis of several. Both finite, of the same length, and
-  `lower[j] < upper[j]` for every `j`. Their length is what
+  The endpoints of the interval on which the basis lives, or one
+  endpoint per variable for a basis of several. Both must be finite and
+  of the same length, and `lower[j] < upper[j]` must hold for every `j`.
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  reports.
+  returns their length.
 
 - basis_params:
 
@@ -56,7 +56,7 @@ BsplineBasis(
 
 An object of class `BsplineBasis`, inheriting from
 [basis](https://statmodels7.github.io/basis7/reference/basis.md), with
-the same five properties and `basis_params` holding `degree`, `knots`
+the same five properties, where `basis_params` holds `degree`, `knots`
 and `boundary_knots`. Call
 [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
 instead of this class directly; it places the knots and checks the
@@ -72,9 +72,9 @@ indicators upward:
 
 \$\$B\_{j,q}(x) = \frac{x - t_j}{t\_{j+q} - t_j} B\_{j,q-1}(x) +
 \frac{t\_{j+q+1} - x}{t\_{j+q+1} - t\_{j+1}} B\_{j+1,q-1}(x), \qquad q =
-1, \dots, m,\$\$
+1, \dots, m.\$\$
 
-a term with a zero denominator being taken as zero.
+A term with a zero denominator is taken as zero.
 
 ## Local support and partition of unity
 
@@ -98,8 +98,8 @@ interval, and is exact: see
 
 ## Its `basis_params`
 
-Three entries: `degree`, the interior `knots` as a numeric vector, and
-`boundary_knots`, which is `c(lower, upper)`.
+The list has three entries: `degree`, the interior `knots` as a numeric
+vector, and `boundary_knots`, which is `c(lower, upper)`.
 
 ## References
 

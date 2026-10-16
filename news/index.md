@@ -1,5 +1,19 @@
 # Changelog
 
+## basis7 0.15.1
+
+- Documentation and messages: relative clauses without a relative
+  pronoun, stranded prepositions, absolute constructions, sentences
+  without a verb (example captions included), emphasis in bold and
+  personified descriptions of the code rewritten as plain clauses. The
+  error messages of
+  [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md),
+  [`operator_resolve()`](https://statmodels7.github.io/basis7/reference/operator_resolve.md),
+  [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md),
+  [`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md),
+  the periodic smoothers’ operator check, the B-spline operator Gram
+  matrix and the numerical operator Gram matrix are reworded.
+
 ## basis7 0.15.0
 
 ### Repairs

@@ -3,8 +3,8 @@
 Returns the inner products of the `order`-th derivatives exactly, with
 no quadrature error at any order. At `order = 0` the matrix is diagonal
 and written down; above that a Gauss-Legendre rule with as many nodes as
-the basis has functions integrates the product exactly, the integrand
-being a polynomial of low enough degree.
+the basis has functions integrates the product exactly, because the
+integrand is a polynomial of low enough degree.
 
 ## Arguments
 
@@ -22,20 +22,21 @@ being a polynomial of low enough degree.
 
   Handled in the body of
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-  before dispatch, so they never arrive here. Named only because S7
-  requires a method's formals to contain the generic's.
+  before dispatch, so they never arrive here. They are named only
+  because S7 requires a method's formals to contain the generic's.
 
 - ...:
 
   Unused, and accepted so that the signature matches the generic's.
-  `panels` or `nodes` signals an error, the matrix being exact.
+  Passing `panels` or `nodes` signals an error, because the matrix is
+  exact.
 
 ## Value
 
 A symmetric numeric matrix of `basis@dimension` rows and columns, with
-column names `P0`, `P1`, and so on. Diagonal at `order = 0`, singular
-with an `order`-dimensional null space above it, and exactly zero above
-`dimension - 1`.
+column names `P0`, `P1`, and so on. The matrix is diagonal at
+`order = 0`, singular with an `order`-dimensional null space above it,
+and exactly zero above `dimension - 1`.
 
 ## Order zero
 
@@ -53,8 +54,8 @@ degree \\2K - 1\\, which is larger for every \\d \ge 1\\. The quadrature
 is therefore exact to rounding. The result is symmetrized as
 `(G + t(G))/2`.
 
-An `order` above `dimension - 1` returns the zero matrix, every
-derivative having vanished.
+An `order` above `dimension - 1` returns the zero matrix, because every
+derivative has vanished.
 
 ## See also
 

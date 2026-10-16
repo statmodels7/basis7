@@ -1,10 +1,11 @@
 # A B-Spline Smoother
 
-The B-spline smoother: `k` B-spline functions of degree `degree` over an
-interval, penalized by the integrated squared derivative of order
-`order`, rotated to the Demmler-Reinsch coordinates and, with the null
-space kept, carrying the unpenalized polynomial directions as free
-columns. It is the construction used by `modelterms7::s()`.
+The B-spline smoother consists of `k` B-spline functions of degree
+`degree` over an interval, penalized by the integrated squared
+derivative of order `order`, and rotated to the Demmler-Reinsch
+coordinates. If the null space is kept, the unpenalized polynomial
+directions appear as free columns. It is the construction used by
+`modelterms7::s()`.
 
 ## Usage
 
@@ -28,7 +29,7 @@ bspline_smooth(
 - k:
 
   The number of basis functions, a whole number of at least `degree + 1`
-  and greater than the number of directions the constraint removes,
+  and greater than the number of directions that the constraint removes,
   which is `order` by default.
 
 - degree:
@@ -100,7 +101,7 @@ with the covariate to obtain the block and its penalty matrix.
 
 ## The construction
 
-At a vector of covariate values
+At a vector of covariate values,
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
 performs, in order:
 
@@ -133,12 +134,13 @@ kept null space restores \\m - 1\\ of them.
 
 ## What `order` means
 
-`order` is the order of derivative the penalty integrates, and it fixes
-what a fit contracts toward as the smoothing parameter grows: a constant
-at `order = 1`, a straight line at `order = 2`, a parabola at
-`order = 3`. The null space of the penalty is the polynomials of degree
-below `order`, so `order` may not exceed `degree`; above it the
-roughness matrix is identically zero and penalizes nothing.
+`order` is the order of derivative that the penalty integrates, and it
+fixes the function toward which a fit contracts as the smoothing
+parameter grows: a constant at `order = 1`, a straight line at
+`order = 2`, a parabola at `order = 3`. The null space of the penalty is
+the polynomials of degree below `order`, so `order` may not exceed
+`degree`; above it the roughness matrix is identically zero and
+penalizes nothing.
 
 ## References
 
@@ -153,7 +155,7 @@ B-splines and penalties. *Statistical Science*, 11, 89–121.
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
 for what it produces at data,
 [smoother](https://statmodels7.github.io/basis7/reference/smoother.md)
-for the four decisions it carries,
+for the four decisions that it carries,
 [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
 for the basis alone.
 
@@ -187,21 +189,21 @@ out$unpenalized
 round(cor(out$X[, 1], x), 12)
 #> [1] 1
 max(abs(crossprod(out$X[, 1], out$X[, -1])))
-#> [1] 5.551115e-15
+#> [1] 2.198242e-14
 
 # Dropping the null space removes it.
 dim(smoother_build(bspline_smooth(k = 10, null_space = "drop"), x)$X)
 #> [1] 200   8
 
-# A penalty factory is STORED AND NEVER CALLED here: one that raises
-# still builds, because it is the model layer that calls it.
+# A penalty factory is stored and never called here: one that raises
+# still builds, because only the model layer calls it.
 sm2 <- bspline_smooth(k = 10, penalty = function(n_coef) stop("not here"))
 out2 <- smoother_build(sm2, x)
 identical(out2$S, out$S)
 #> [1] TRUE
 
 # It must be a function of the count, and it cannot be combined with a
-# shrunk null space, which is a weight inside the matrix it replaces.
+# shrunk null space, which is a weight inside the matrix that it replaces.
 try(bspline_smooth(k = 10, penalty = 3))
 #> Error : 'penalty' must be NULL, or a function of the number of coefficients giving a
 #>   penalty. A penalties7 constructor passes bare -- penalty = penalties7::lasso_penalty

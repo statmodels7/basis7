@@ -23,8 +23,8 @@ in the number of variables and still carry an error.
 
   Handled in the body of
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-  before dispatch, so they never arrive here. Named only because S7
-  requires a method's formals to contain the generic's.
+  before dispatch, so they never arrive here. They are named only
+  because S7 requires a method's formals to contain the generic's.
 
 - ...:
 

@@ -34,9 +34,9 @@ per column of `coef`.
 
 ## Details
 
-`coef` is taken in the design's own column order, there being one
-obvious one. Several sets of coefficients may be given as the columns of
-a matrix, and the result then has one column each.
+`coef` is taken in the design's own column order, because there is only
+one obvious order. Several sets of coefficients may be given as the
+columns of a matrix, and the result then has one column each.
 
 ## See also
 

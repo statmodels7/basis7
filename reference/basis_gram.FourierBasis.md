@@ -21,8 +21,8 @@ quadrature instead.
 
   Handled in the body of
   [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-  before dispatch, so they never arrive here. Named only because S7
-  requires a method's formals to contain the generic's.
+  before dispatch, so they never arrive here. They are named only
+  because S7 requires a method's formals to contain the generic's.
 
 - ...:
 
@@ -34,16 +34,16 @@ quadrature instead.
 ## Value
 
 A symmetric numeric matrix of `basis@dimension` rows and columns, with
-column names `const`, `sin1`, and so on. Diagonal when the interval is
-one whole period, full otherwise; singular for any `order >= 1`, the
-constant differentiating away.
+column names `const`, `sin1`, and so on. The matrix is diagonal when the
+interval is one whole period and full otherwise, and it is singular for
+any `order >= 1`, because the constant vanishes under differentiation.
 
 ## The closed form
 
 Over a whole period the trigonometric functions are mutually orthogonal,
-and stay orthogonal after differentiation, a derivative only shifting
-the phase and rescaling. The order-\\d\\ matrix is therefore diagonal,
-with
+and stay orthogonal after differentiation, because a derivative only
+shifts the phase and rescales. The order-\\d\\ matrix is therefore
+diagonal, with
 
 \$\$G\_{00} = \omega \\ (d = 0), \quad 0 \\ (d \ge 1), \qquad G\_{jj} =
 \frac{\omega}{2}\left(\frac{2\pi j}{\omega}\right)^{2d}\$\$

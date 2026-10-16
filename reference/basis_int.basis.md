@@ -1,10 +1,11 @@
 # Numerical Integral of a Basis
 
-The integration method every basis inherits from the abstract
-[basis](https://statmodels7.github.io/basis7/reference/basis.md) class:
-composite Gauss-Legendre from the lower endpoint, accumulated over the
-sorted evaluation points, so the whole set costs one pass instead of one
-quadrature per point.
+This is the integration method that every basis inherits from the
+abstract
+[basis](https://statmodels7.github.io/basis7/reference/basis.md) class.
+It applies composite Gauss-Legendre quadrature from the lower endpoint,
+accumulated over the sorted evaluation points, so the whole set costs
+one pass instead of one quadrature per point.
 
 ## Arguments
 
@@ -17,8 +18,8 @@ quadrature per point.
 - x:
 
   A numeric vector of evaluation points inside the basis interval, the
-  upper limits of the integrals. Need not be sorted or unique. `NA`
-  gives an `NA` row.
+  upper limits of the integrals. The points need not be sorted or
+  unique. `NA` gives an `NA` row.
 
 - nodes:
 

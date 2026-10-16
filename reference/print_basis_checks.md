@@ -1,6 +1,6 @@
 # Print the Outcome of check_basis
 
-Prints the six-row table
+Prints the six-row table that
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
 shows when `verbose` is `TRUE`: a header naming the family and its
 dimension, one line per check with a description and a verdict, and a
@@ -18,8 +18,8 @@ print_basis_checks(basis, res, num)
 - basis:
 
   A basis object, of any class inheriting from
-  [basis](https://statmodels7.github.io/basis7/reference/basis.md). Read
-  for its `@basis_name` and `@dimension` only.
+  [basis](https://statmodels7.github.io/basis7/reference/basis.md). Only
+  its `@basis_name` and `@dimension` are read.
 
 - res:
 
@@ -28,13 +28,13 @@ print_basis_checks(basis, res, num)
 
 - num:
 
-  The named logical vector
+  The named logical vector that
   [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
   returns, printed as the closing line when any entry is `TRUE`.
 
 ## Value
 
-`NULL`, invisibly. Called for the printed output.
+`NULL`, invisibly. The function is called for the printed output.
 
 ## Details
 
@@ -42,7 +42,7 @@ A verdict is `[PASSED]`, `[FAILED]`, or one of two labels for an `NA`. A
 check that was not run because the quantity is numerical prints
 `[numerical]`; the partition-of-unity check on a family that is not a
 partition of unity prints `[not claimed]`. The first marks a value that
-was not verified, the second a property that does not apply.
+was not verified, and the second marks a property that does not apply.
 
 Only `deriv`, `integral` and `partition` can be `NA`. The rows `shape`,
 `gram` and `missing` are assigned on every path, so their `[numerical]`

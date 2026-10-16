@@ -25,5 +25,6 @@ smoother_interval(sm, x)
 
 ## Value
 
-A list of two numbers, the lower and upper endpoints. A covariate that
-takes a single value, with neither endpoint given, signals an error.
+A list of two numbers, the lower and upper endpoints. The function
+signals an error for a covariate that takes a single value when `lower`
+and `upper` are both `NULL`.

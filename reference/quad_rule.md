@@ -2,8 +2,9 @@
 
 Places an `n`-point Gauss-Legendre rule on each interval between
 consecutive breakpoints and returns the pooled nodes and weights, so
-that `sum(weights * f(nodes))` is the integral over the whole span. The
-composite rule every quadrature in the package is built from.
+that `sum(weights * f(nodes))` is the integral over the whole span. This
+composite rule is the one from which every quadrature in the package is
+built.
 
 ## Usage
 
@@ -29,14 +30,14 @@ A list of two numeric vectors of length `n * (length(breaks) - 1)`:
 
 ## Details
 
-Each interval gets the same `n` nodes, affinely mapped from \\\[-1,
-1\]\\, and its weights scaled by half its width. The result is exact for
-any function that is a polynomial of degree at most \\2n - 1\\ **on each
-interval separately**, which is why the callers choose their breaks with
-care:
+The function places the same `n` nodes on each interval, affinely mapped
+from \\\[-1, 1\]\\, and scales the weights by half the width of the
+interval. The result is exact for any function that is a polynomial of
+degree at most \\2n - 1\\ on each interval separately, which is why the
+callers choose their breaks with care:
 [`basis_gram.BsplineBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.BsplineBasis.md)
-uses the knots, so no interval straddles the point where a spline's
-derivative jumps.
+uses the knots, so each interval lies on one side of the point where a
+spline's derivative jumps.
 
 The function does not validate its arguments. `breaks` must be
 increasing and of length at least two. The nodes are ordered by their

@@ -1,7 +1,7 @@
 # Differentiate a Basis
 
 Returns the `order`-th derivative of every basis function at the given
-points, as a matrix of the same shape
+points, as a matrix of the same shape that
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
 returns. Since an expansion is linear in its coefficients, this matrix
 times \\\beta\\ is the `order`-th derivative of the fitted function, so
@@ -29,23 +29,24 @@ basis_deriv(basis, x, order = 1L, ...)
 
 - order:
 
-  The derivative order. A single non-negative whole number for a basis
-  of one variable, default `1`; a vector of
+  The derivative order. For a basis of one variable the order is a
+  single non-negative whole number, and the default is `1`; for a basis
+  of several variables it is a vector of
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  such numbers for a basis of several, or a single `0`. A negative,
-  fractional, infinite or `NA` order signals an error.
+  such numbers, or a single `0`. A negative, fractional, infinite or
+  `NA` order signals an error.
 
 - ...:
 
-  Passed to methods. No shipped family and no fallback reads anything
-  from it.
+  Passed to methods. The shipped families and the fallback do not read
+  anything from it.
 
 ## Value
 
 A numeric matrix of `n` rows and `basis@dimension` columns, with column
 names
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
-All zero above the smoothness of the family.
+All entries are zero for an order above the smoothness of the family.
 
 ## Order is an argument
 
@@ -55,25 +56,26 @@ of degree \\k\\ has \\k\\ non-trivial derivatives and zeros above that.
 An order beyond what the family carries returns the zero matrix, which
 is the value of the derivative, with exact zeros and no error.
 
-`order = 0` short-circuits to
+For `order = 0` the generic body returns
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
-in the generic body, so a loop over orders needs no special case and
-pays nothing for the zero.
+directly, so a loop over orders needs no special case for zero and
+incurs no extra cost for it.
 
 ## A basis of several variables takes a multi-index
 
 For a product basis `order` has one entry per variable and names a mixed
 partial: `c(2, 0)` is \\\partial^2/\partial x_1^2\\ and `c(1, 1)` is
 \\\partial^2/\partial x_1 \partial x_2\\. A single non-zero number is
-rejected, because it has two readings; `0` alone is accepted, meaning no
-derivative under either. See
+rejected, because it has two readings; a single `0` is accepted and
+means no derivative under either. See
 [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md).
 
 ## The numerical fallback
 
-A subclass registering no method gets the one on the abstract
+If a subclass does not register a method, dispatch reaches the method on
+the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class,
-which applies **one** stencil of the requested order to
+which applies one stencil of the requested order to
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
 never a composition of lower-order differences. The offsets, weights and
 step come from
@@ -81,9 +83,9 @@ step come from
 [`numericals7::fd_weights()`](https://statmodels7.github.io/numericals7/reference/fd_weights.html)
 and
 [`numericals7::fd_step()`](https://statmodels7.github.io/numericals7/reference/fd_step.html),
-and the stencil is shifted to one side near an endpoint so that no node
-leaves the interval, with one node more than the central stencil so that
-it keeps the same order of accuracy.
+and the stencil is shifted to one side near an endpoint so that every
+node stays inside the interval, with one node more than the central
+stencil so that it keeps the same order of accuracy.
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 reports whether this is the route in use, and
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)

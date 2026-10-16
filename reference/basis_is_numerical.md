@@ -34,7 +34,7 @@ force.
 ## Use
 
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-reads it to decide which of its checks are informative. Comparing a
+uses it to determine which of its checks are informative. Comparing a
 finite difference against a finite difference repeats the same
 arithmetic, and the two agree however wrong the basis is, so the `deriv`
 and `integral` checks are not run where this reports `TRUE`.
@@ -53,11 +53,11 @@ A generic with no method at all counts as numerical.
 Two classes are handled by delegation instead. A
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
 reports its parent's: all three of its methods are registered, but each
-one calls the parent and multiplies, so what is exact about it is
-whatever was exact about the parent. A
+one calls the parent and multiplies, so a quantity is exact for the
+transformed basis when it was exact for the parent. A
 [TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
-reports `TRUE` for a quantity that is numerical in **any** margin, every
-one of its methods being a product of its margins'.
+reports `TRUE` for a quantity that is numerical in any margin, because
+every one of its methods is a product of the methods of its margins.
 
 ## A method that branches
 
@@ -74,11 +74,11 @@ written outside the package can do the same.
 ## See also
 
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
-which reads it to decide what to test;
+which uses it to determine what to test;
 [`print.basis()`](https://statmodels7.github.io/basis7/reference/print.basis.md),
 which prints it;
 [`vignette("defining-a-basis")`](https://statmodels7.github.io/basis7/articles/defining-a-basis.md),
-where a basis is taken from all three `TRUE` to all three `FALSE`.
+in which a basis is taken from all three `TRUE` to all three `FALSE`.
 
 ## Examples
 

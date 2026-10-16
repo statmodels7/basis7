@@ -1,8 +1,8 @@
 # The Weight of a Shrunk Null Space
 
-The penalty that `null_space = "shrink"` puts on the directions that the
-roughness matrix does not see: one tenth of the weight of a penalized
-direction.
+Returns the penalty weight that `null_space = "shrink"` puts on the
+directions that the roughness matrix does not see, which is one tenth of
+the weight of a penalized direction.
 
 ## Usage
 

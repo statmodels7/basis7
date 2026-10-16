@@ -35,8 +35,8 @@ new_transformed(basis, transform, name, prefix, params = list())
 
 - prefix:
 
-  The two-letter prefix its column names are numbered under: `"on"`,
-  `"cn"` or `"dr"`.
+  The two-letter prefix under which its column names are numbered:
+  `"on"`, `"cn"` or `"dr"`.
 
 - params:
 
@@ -55,8 +55,8 @@ An object of class
 
 When `basis` is itself a `TransformedBasis`, the result holds
 `basis@transform %*% transform` and the original's parent. The dimension
-of the result is `ncol(transform)`, and its interval is the parent's, a
-linear map of the functions leaving the domain alone.
+of the result is `ncol(transform)`, and its interval is the parent's,
+because a linear map of the functions leaves the domain unchanged.
 
 The function itself checks nothing. The validator of
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
@@ -66,4 +66,4 @@ dimension when the object is built.
 ## See also
 
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md),
-the class it builds.
+the class that it builds.

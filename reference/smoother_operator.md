@@ -1,9 +1,9 @@
 # The Resolved Penalty Operator of a Smoother
 
-Returns `sm@order` with its period filled in from the smoother's
-interval where it was left `NULL`, which is what makes
-`fourier_smooth(lower = 0, upper = 365)` penalize on a cycle of 365
-without the period being written twice.
+Returns `sm@order`, filling in its period from the smoother's interval
+where it was left `NULL`. With this step,
+`fourier_smooth(lower = 0, upper = 365)` penalizes on a cycle of 365 and
+the period does not have to be written twice.
 
 ## Usage
 

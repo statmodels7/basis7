@@ -1,10 +1,10 @@
 # The B-Spline Smoother Class
 
-The class
+The class that
 [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
-returns: a B-spline basis with a roughness penalty, the Demmler-Reinsch
-reparametrization and the linear column kept free. It adds `degree` to
-the properties of
+returns is a B-spline basis with a roughness penalty, the
+Demmler-Reinsch reparametrization and the linear column kept free. It
+adds `degree` to the properties of
 [smoother](https://statmodels7.github.io/basis7/reference/smoother.md).
 
 ## Usage
@@ -65,8 +65,8 @@ BsplineSmoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:

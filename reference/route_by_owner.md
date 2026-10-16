@@ -9,8 +9,8 @@ this basis takes from the numerical fallback, by reading the class on
 which each method is registered through `attr(m, "signature")[[1]]` and
 testing it with
 [`is_base_basis_class()`](https://statmodels7.github.io/basis7/reference/is_base_basis_class.md).
-A generic with no method at all counts as numerical, the base class
-being where the fallback lives.
+A generic with no method at all counts as numerical, because the
+fallback is registered on the base class.
 
 ## Usage
 
@@ -42,14 +42,13 @@ would require naming the package inside itself; a basis written
 elsewhere uses
 [`S7::super()`](https://rconsortium.github.io/S7/reference/super.html).
 
-The test does not see which branch a method takes once it has been
-reached;
-[`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
-lets a family report that itself.
+The test cannot determine which branch a method takes once the method
+has been reached; a family can report that through
+[`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md).
 
 ## See also
 
 [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md),
-the generic it is the default of, and
+the generic of which it is the default, and
 [`is_base_basis_class()`](https://statmodels7.github.io/basis7/reference/is_base_basis_class.md),
-which it tests each owner with.
+with which it tests each owner.

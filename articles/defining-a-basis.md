@@ -1,19 +1,19 @@
 # Defining a basis
 
-The package ships three families of bases, and any other basis can be
+The package ships several families of bases, and any other basis can be
 added by subclassing. This vignette adds one that the package does not
 ship, and shows what the package provides for it at each step.
 
 ## The minimum
 
 A new basis is a subclass of `basis` and a method for
-[`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md).
-Nothing else is required.
+[`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md),
+and these two are all that is required.
 
 Take a basis of Gaussian bumps, $`\exp\{-(x - c_j)^2 / 2s^2\}`$ at
-equally spaced centers $`c_j`$. They are not orthogonal, not a partition
-of unity, and have no compact support, so nothing about them is
-inherited from the families already here.
+equally spaced centers $`c_j`$. They are not orthogonal, they are not a
+partition of unity, and they have no compact support, so they do not
+inherit any property from the families already here.
 
 ``` r
 
@@ -116,9 +116,8 @@ max(abs(basis_deriv(b, x, order = 1) - exact))
 
 The integral is anchored: its value at the lower endpoint is exactly
 zero, for every basis. Any antiderivative satisfies a differentiation
-check, so with the constant left free two bases could disagree while
-both looked correct, and a sum of them would be wrong without any sign
-of it.
+check, so if the constant were free two bases could disagree while both
+looked correct, and a sum of them would be wrong without any sign of it.
 
 ``` r
 
@@ -129,9 +128,9 @@ basis_int(b, b@lower)
 
 ## Adding a closed form
 
-A closed form registered later takes over through dispatch, with no
-change to calling code. Here is the derivative of this family, from the
-Hermite polynomials:
+When a closed form is registered later, dispatch selects it and the
+calling code does not change. Here is the derivative of this family,
+from the Hermite polynomials:
 
 ``` r
 
@@ -166,7 +165,7 @@ from a fallback the check is not run and the row prints `[numerical]`,
 because comparing a finite difference against a finite difference
 repeats the same arithmetic, and the two agree however wrong the basis
 is. A Gram matrix that came from a fallback is compared with a finer
-quadrature, each entry being allowed four times the error of the
+quadrature, and each entry is allowed four times the error of the
 package’s own quadrature.
 
 ``` r
@@ -213,9 +212,9 @@ check_basis(wrong, verbose = FALSE)[["deriv"]]
 ## Inner products
 
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
-returns $`\int B^{(d)} B^{(d)\top}`$, which is what a roughness penalty
-integrates: $`\beta^\top G_d \beta`$ is the integral of the squared
-$`d`$-th derivative of the function the coefficients describe.
+returns $`\int B^{(d)} B^{(d)\top}`$, the matrix used in a roughness
+penalty, since $`\beta^\top G_d \beta`$ is the integral of the squared
+$`d`$-th derivative of the function that the coefficients describe.
 
 ``` r
 
@@ -298,7 +297,7 @@ And
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
 builds the basis that diagonalizes the empirical inner product and the
 penalty at once, and is empirically orthogonal to a constant and to
-$`x`$. It works on any basis, this one included:
+$`x`$. It works on any basis, including this one:
 
 ``` r
 
@@ -311,7 +310,7 @@ c(
   orthogonal_to_1_and_x = max(abs(crossprod(cbind(1, xd), z)))
 )
 #>          off_diagonal orthogonal_to_1_and_x 
-#>          1.125910e-13          7.593925e-14
+#>          7.815970e-14          1.501022e-13
 ```
 
 Transforms compose by multiplying their matrices instead of nesting, so
@@ -358,10 +357,10 @@ max(abs(basis_gram(tb) - kronecker(
 #> [1] 0
 ```
 
-What does not stay cheap is the design matrix, whose columns are the
-product of the marginal dimensions.
+The design matrix does not stay cheap, because its number of columns is
+the product of the marginal dimensions.
 [`basis_contract()`](https://statmodels7.github.io/basis7/reference/basis_contract.md)
-computes the values the coefficients describe without forming it.
+computes the values that the coefficients describe without forming it.
 Coefficients come as an array, whose dimensions line up with the
 marginals:
 
@@ -374,8 +373,8 @@ max(abs(basis_contract(tb, xy, cf) -
 ```
 
 or as factor matrices, one per marginal with a shared number of columns,
-in which case neither the design matrix nor the coefficient array is
-ever formed and the cost is linear in the number of variables:
+in which case the function does not form the design matrix or the
+coefficient array, and the cost is linear in the number of variables:
 
 ``` r
 
@@ -392,19 +391,19 @@ evaluates the contraction for given factors.
 
 ## Summary
 
-- **Minimum to define a basis:** a subclass of `basis` and a
+- The minimum needed to define a basis is a subclass of `basis` and a
   [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
   method whose columns are named by
   [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
-- From the evaluation alone come the derivatives, the integral and the
-  Gram matrix, and
+- The evaluation alone suffices to obtain the derivatives, the integral
+  and the Gram matrix, and
   [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-  reports which are numerical.
-- Closed forms can be registered one at a time; each takes over through
-  dispatch.
+  reports which of them are numerical.
+- Closed forms can be registered one at a time, and dispatch selects
+  each of them as soon as it is registered.
 - [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-  verifies what can be verified, and marks the derivatives and the
-  integral that come from a fallback as `[numerical]`.
+  marks the derivatives and the integral that come from a fallback as
+  `[numerical]`, because it cannot verify them, and checks the rest.
 - Every transform of a basis is one linear map, and it keeps the
   parent’s exactness.
 - A product of bases is a basis of several variables; its Gram matrix is

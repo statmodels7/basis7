@@ -1,11 +1,11 @@
 # Print a Basis
 
-Prints a summary of a basis object: the family it comes from, how many
-functions it holds and over how many variables, the interval each
-variable runs over, the parameters the family carries, and which of the
-three derived quantities are computed numerically instead of from a
-formula. The summary has four lines, plus a header and one line per
-parameter when the basis carries parameters.
+Prints a summary of a basis object: the family from which it comes, how
+many functions it holds and over how many variables, the interval over
+which each variable runs, the parameters that the family carries, and
+which of the three derived quantities are computed numerically instead
+of from a formula. The summary has four lines, plus a header and one
+line per parameter when the basis carries parameters.
 
 ## Arguments
 
@@ -30,18 +30,19 @@ wrapper or a product names its parents, so an orthonormalized B-spline
 reads `orthonorm(bspline)` and a two-way product reads
 `tensor(bspline, fourier)`.
 
-`Functions:` is `@dimension`, the number of columns
+`Functions:` is `@dimension`, the number of columns that
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
 returns, and `Variables:` is
 [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md),
-the number of columns of `x` it expects. Every family here has one
+the number of columns of `x` that it expects. Every family here has one
 variable except
 [`tensor_basis()`](https://statmodels7.github.io/basis7/reference/tensor_basis.md).
 
 `Domain:` is `@lower` and `@upper` as a closed interval per variable,
-separated by `x` for a product. It is the interval every generic checks
-its evaluation points against. A point outside signals an error that
-states how many of the points were outside and what the interval is.
+separated by `x` for a product. It is the interval against which every
+generic checks its evaluation points. A point outside signals an error
+that states how many of the points were outside and what the interval
+is.
 
 `Parameters:` appears only when `@basis_params` is non-empty, and prints
 one line per entry. A numeric entry of more than four values is
@@ -52,10 +53,10 @@ abbreviated to its length, so a B-spline over many knots reads
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
 and names those of `basis_deriv`, `basis_int` and `basis_gram` that are
 computed by the numerical route: finite differences for the derivatives,
-quadrature for the integral and the Gram matrix. The three shipped
-families report `none`, except a Fourier basis whose interval is not a
-whole period, whose Gram matrix is computed by quadrature. A basis
-defined from its evaluation alone reports all three.
+quadrature for the integral and the Gram matrix. The shipped families
+report `none`, except a Fourier basis whose interval is not a whole
+period, whose Gram matrix is computed by quadrature. A basis defined
+from its evaluation alone reports all three.
 
 ## See also
 
@@ -64,7 +65,7 @@ for the last line as a named logical vector,
 [`plot.basis()`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
 to see the functions themselves, and
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-for a verification of the components this summary only names.
+for a verification of the components that this summary only names.
 
 ## Examples
 

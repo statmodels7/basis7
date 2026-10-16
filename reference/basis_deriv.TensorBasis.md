@@ -2,10 +2,10 @@
 
 Returns the mixed partial derivative named by a multi-index, one order
 per variable: `c(2, 0)` is \\\partial^2/\partial x_1^2\\ and `c(1, 1)`
-is \\\partial^2/\partial x_1 \partial x_2\\. Exact wherever the margins
-are. It is the only method of the package that computes a mixed partial,
-the numerical fallback signalling an error for one; a transformed tensor
-basis obtains it from this method.
+is \\\partial^2/\partial x_1 \partial x_2\\. The result is exact
+wherever the margins are. It is the only method of the package that
+computes a mixed partial, since the numerical fallback signals an error
+for one; a transformed tensor basis obtains it from this method.
 
 ## Arguments
 
@@ -22,7 +22,8 @@ basis obtains it from this method.
 - order:
 
   An integer vector with one entry per variable, or a single `0`. A
-  single non-zero order signals an error, having two readings; see
+  single non-zero order signals an error because it has two readings;
+  see
   [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md).
 
 - ...:

@@ -2,7 +2,7 @@
 
 Checks that `order` is a non-negative whole number, or a vector of them
 of length `nvar`, and returns it as an integer vector of length `nvar`.
-Called from the bodies of
+The function is called from the bodies of
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
 and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md),
@@ -23,9 +23,9 @@ check_order(order, nvar = 1L)
 
 - nvar:
 
-  The number of variables the basis takes, from
+  The number of variables that the basis takes, from
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md).
-  Default `1`.
+  The default is `1`.
 
 ## Value
 
@@ -39,7 +39,7 @@ a fraction, an infinity, an `NA` and a non-numeric.
 
 A vector of length `nvar` is returned as it stands, and a single `0` is
 repeated to that length. For a basis of several variables a single
-**non-zero** order signals an error, because a scalar has two readings
+non-zero order signals an error, because a scalar has two readings
 there: that order in every coordinate, or that total order. Zero is
 exempt, meaning no derivative under either reading. A vector of any
 other length signals an error naming the length expected.

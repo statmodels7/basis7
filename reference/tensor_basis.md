@@ -1,10 +1,10 @@
 # Construct a Tensor Product Basis
 
 Multiplies bases, one per variable, into the basis of all products of
-their functions. This is how a smooth surface of several covariates is
-built from one-dimensional pieces: the result is a basis like any other,
-evaluated at a matrix of points instead of a vector, and every generic
-is exact where the margins are.
+their functions. It builds a smooth surface of several covariates from
+one-dimensional pieces: the result is a basis like any other, evaluated
+at a matrix of points instead of a vector, and every generic is exact
+where the margins are.
 
 ## Usage
 
@@ -20,15 +20,16 @@ tensor_basis(...)
   variable; a
   [TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
   among them is flattened into its own margins. A single basis is
-  returned unchanged, and no basis at all signals an error.
+  returned unchanged, and the function signals an error if no basis is
+  given.
 
 ## Value
 
 An object of class
-[TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md)
-with `basis_name` `tensor(<names>)`, `basis_params` holding
-`marginal_dimensions`, and column names pasting the margins' with dots.
-Given a single basis, that basis.
+[TensorBasis](https://statmodels7.github.io/basis7/reference/TensorBasis.md).
+Its `basis_name` is `tensor(<names>)`, `basis_params` holds
+`marginal_dimensions`, and the column names paste the margins' names
+with dots. If a single basis is given, the function returns that basis.
 
 ## Size
 
@@ -54,7 +55,7 @@ one three-way product with three margins.
 ## The interval
 
 `@lower` and `@upper` hold one entry per variable, taken from the
-margins, so the domain is the box they span and a point outside any
+margins, so the domain is the box that they span and a point outside any
 margin's interval signals an error.
 
 ## References

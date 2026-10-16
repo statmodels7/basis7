@@ -1,13 +1,14 @@
 # Numerical Derivatives of a Basis
 
-The derivative method every basis inherits from the abstract
-[basis](https://statmodels7.github.io/basis7/reference/basis.md) class:
-one finite-difference stencil of the requested order, applied to
+This is the derivative method that every basis inherits from the
+abstract
+[basis](https://statmodels7.github.io/basis7/reference/basis.md) class.
+It applies one finite-difference stencil of the requested order to
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md).
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
-is therefore available for a subclass that supplies its evaluation
-alone, and a closed form registered later takes over through dispatch
-with no change to calling code.
+is therefore available for a subclass that supplies only its evaluation,
+and if a closed form is registered later, dispatch selects it with no
+change to calling code.
 
 ## Arguments
 

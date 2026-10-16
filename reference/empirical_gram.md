@@ -1,8 +1,8 @@
 # Gram Matrix Against the Empirical Measure
 
 Computes \\B^{(d)\top} B^{(d)} / n\\ at the given points: the inner
-products a design matrix produces, in place of those of the functions on
-their interval. Called from the body of
+products that a design matrix produces, in place of those of the
+functions on their interval. The function is called from the body of
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 when `at` is supplied, so this case never reaches a method.
 
@@ -40,12 +40,12 @@ on both margins.
 
 ## Details
 
-Missing points are dropped **before** the basis is evaluated. A basis
-may reject a vector that is entirely missing, with a message that would
-name the wrong argument here, so `at` with no usable point signals the
-error `'at' has no usable points.` instead. For a basis of several
-variables `at` is coerced to a matrix and rows with any missing entry
-are dropped whole.
+Missing points are dropped before the basis is evaluated. A basis may
+reject a vector that is entirely missing, with a message that would name
+the wrong argument here, so `at` with no usable point signals the error
+`'at' has no usable points.` instead. For a basis of several variables
+`at` is coerced to a matrix and rows with any missing entry are dropped
+whole.
 
 The result is symmetrized as `(G + t(G))/2` before it is returned, and
 given

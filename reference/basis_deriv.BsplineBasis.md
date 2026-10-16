@@ -41,7 +41,7 @@ three, and `order = 4` is exactly zero everywhere. A missing point gives
 a missing row at every order.
 
 The derivative of order \\m\\ is a step function, discontinuous at each
-interior knot, and the value returned at a knot is the one the
+interior knot, and the value returned at a knot is the one that the
 recurrence gives there. That matters for a Gram matrix, which is why
 [`basis_gram.BsplineBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.BsplineBasis.md)
 integrates knot interval by knot interval and never across one.

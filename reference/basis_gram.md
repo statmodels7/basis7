@@ -6,8 +6,8 @@ the basis functions, \$\$G\_{ij} = \int\_{\ell}^{u}
 u\]\\ the basis interval. It is the matrix of a roughness penalty:
 \\\beta^\top G_2 \beta\\ is exactly \\\int (f'')^2\\ for the function
 \\f\\ described by the coefficients. The shipped families compute it
-exactly, by formulas or by a quadrature exact for their integrands, so
-no quadrature error enters a penalized fit.
+exactly, by formulas or by a quadrature exact for their integrands, so a
+penalized fit is free of quadrature error.
 
 ## Usage
 
@@ -24,10 +24,12 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 
 - order:
 
-  What the inner products are taken of. A single non-negative whole
-  number, default `0`, giving the inner products of the basis functions
-  themselves; `2` is the usual roughness penalty; one entry per variable
-  for a basis of several. A
+  The derivative order or the operator applied to the basis functions
+  before their inner products are taken. The order is a single
+  non-negative whole number, with default `0`, which gives the inner
+  products of the basis functions themselves; `2` gives the usual
+  roughness penalty, and a basis of several variables takes one entry
+  per variable. A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
   instead gives \\\int (Lb)(Lb)^\top\\, the roughness matrix of that
   operator, and routes to
@@ -40,14 +42,14 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
   columns. When given, the inner products are taken against the
   empirical measure of those points and divided by their number. Missing
-  values are dropped before evaluation, and an error is signalled if no
-  usable point is left.
+  values are dropped before evaluation, and an error is signalled if the
+  remaining set of points is empty.
 
 - weight:
 
   An optional function of one numeric vector returning one non-negative
-  value per point, a density to weight the integral by. A basis of
-  several variables is rejected, and so is a function returning the
+  value per point, a density with which to weight the integral. A basis
+  of several variables is rejected, and so is a function returning the
   wrong length, an `NA` or a negative value.
 
 - ...:
@@ -61,14 +63,14 @@ basis_gram(basis, order = 0L, at = NULL, weight = NULL, ...)
 
 A symmetric numeric matrix of `basis@dimension` rows and columns, with
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md)
-on both margins. Positive semidefinite, and singular for `order >= 1`
-when the span of the basis contains the constant.
+on both margins. The matrix is positive semidefinite, and it is singular
+for `order >= 1` when the span of the basis contains the constant.
 
 ## Definition and properties
 
 The Gram matrix is an inner product of basis functions, so it depends
-only on the basis and the interval. It identifies which combinations of
-coefficients are rough; how strongly to shrink them is decided
+only on the basis and the interval. It defines which combinations of
+coefficients are rough; the amount of shrinkage applied to them is set
 separately, by the routine that fits the model.
 
 It is symmetric and positive semidefinite by construction. At
@@ -87,30 +89,31 @@ whole period).
 
 `at` replaces it with the empirical measure of the points given,
 \\B^{(d)\top} B^{(d)} / n\\. That is the matrix produced by a design
-matrix, and the one to diagonalize against when the construction should
-depend on where the data lie;
+matrix, and the matrix against which to diagonalize when the
+construction should depend on where the data lie;
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md)
 uses it.
 
 `weight` takes a weighted Lebesgue measure \\\int B B^\top w\\, by
 composite Gauss-Legendre over 50 panels of 12 nodes. A weight is an
 arbitrary function, so the quadrature is always run, and for a spline it
-is approximate where the derivative has kinks at knots that the panels
-do not line up with. At most one of `at` and `weight` may be given.
+is approximate where the derivative has kinks at knots that do not
+coincide with the panel breaks. At most one of `at` and `weight` may be
+given.
 
 ## Handling of the arguments
 
 For a whole `order`, `at` and `weight` are handled in the body of the
 generic, before dispatch, so a method receives neither and returns the
 plain Lebesgue matrix. A method must still carry both names in its
-signature, S7 requiring a method's formals to contain the generic's. For
-an operator `order` both are passed to
+signature, because S7 requires a method's formals to contain the
+generic's. For an operator `order` both are passed to
 [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md).
 
 ## See also
 
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md),
-whose columns it takes the inner products of;
+which supplies the columns whose inner products it takes;
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
 which makes the `order = 0` matrix the identity;
 [`dr_basis()`](https://statmodels7.github.io/basis7/reference/dr_basis.md),
@@ -121,7 +124,8 @@ which diagonalizes one against the other.
 ``` r
 b <- fourier_basis(dimension = 5)
 
-# Diagonal at order 0, the Fourier functions being orthogonal.
+# The matrix is diagonal at order 0, because the Fourier functions are
+# orthogonal.
 round(basis_gram(b), 6)
 #>       const sin1 cos1 sin2 cos2
 #> const     1  0.0  0.0  0.0  0.0
@@ -148,8 +152,9 @@ c(quadratic_form = drop(t(beta) %*% basis_gram(p, order = 2) %*% beta),
 #> quadratic_form     quadrature 
 #>         807.84         807.84 
 
-# Singular from order 1 up: order d leaves exactly d zero eigenvalues,
-# the polynomials of degree below d differentiating away.
+# The matrix is singular from order 1 up: order d leaves exactly d zero
+# eigenvalues, because the polynomials of degree below d differentiate to
+# zero.
 bs <- bspline_basis(dimension = 8)
 vapply(0:3, function(d) {
   ev <- eigen(basis_gram(bs, order = d), only.values = TRUE)$values
@@ -157,7 +162,8 @@ vapply(0:3, function(d) {
 }, integer(1))
 #> [1] 0 1 2 3
 
-# Against the empirical measure of a sample instead of the interval.
+# The matrix can be taken against the empirical measure of a sample
+# instead of the interval.
 set.seed(1)
 round(basis_gram(b, at = runif(2000)), 3)
 #>        const   sin1   cos1   sin2   cos2
@@ -167,7 +173,7 @@ round(basis_gram(b, at = runif(2000)), 3)
 #> sin2  -0.021  0.010  0.031  0.503 -0.010
 #> cos2   0.011  0.010  0.009 -0.010  0.497
 
-# And against a weighted Lebesgue measure.
+# It can also be taken against a weighted Lebesgue measure.
 round(basis_gram(b, weight = function(x) dbeta(x, 2, 5)), 4)
 #>         const    sin1    cos1   sin2    cos2
 #> const  1.0000  0.5999 -0.0670 0.1095 -0.1467

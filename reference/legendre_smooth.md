@@ -1,10 +1,11 @@
 # A Legendre Smoother
 
-The orthogonal polynomial smoother: `k` shifted Legendre polynomials
-over an interval, penalized by the integrated squared derivative of
-order `order`, rotated to the Demmler-Reinsch coordinates. It is a
-global basis where a B-spline is local: every function is supported on
-the whole interval, so a feature at one end moves the fit at the other.
+Returns the orthogonal polynomial smoother, which consists of `k`
+shifted Legendre polynomials over an interval, penalized by the
+integrated squared derivative of order `order` and rotated to the
+Demmler-Reinsch coordinates. It is a global basis where a B-spline is
+local: every function is supported on the whole interval, so a feature
+at one end moves the fit at the other.
 
 ## Usage
 
@@ -44,8 +45,8 @@ legendre_smooth(
   contracts: a constant for `m = 1`, a straight line for 2, a parabola
   for 3, and the functions of
   [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-  for any operator. Its order is at most `k - 1`, the highest degree the
-  basis carries.
+  for any operator. Its order is at most `k - 1`, the highest degree
+  that the basis carries.
 
 - measure:
 
@@ -108,6 +109,6 @@ out$names
 
 # 'order' may not exceed what the basis can differentiate away.
 try(legendre_smooth(k = 3, order = 4))
-#> Error : 'order' (4) exceeds the highest degree the basis carries (2): the
+#> Error : 'order' (4) exceeds the highest degree that the basis carries (2): the
 #>   derivative of that order is zero, so the penalty would be the zero matrix.
 ```

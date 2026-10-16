@@ -1,8 +1,8 @@
 # Constraint and Free Columns of a Smoother
 
-Returns the directions a smoother constrains its block against, and the
-ones `null_space = "keep"` restores as free columns. Both are evaluated
-at the covariate, one column per direction.
+Returns the directions against which a smoother constrains its block,
+and the ones that `null_space = "keep"` restores as free columns. Both
+are evaluated at the covariate, one column per direction.
 
 ## Usage
 
@@ -40,10 +40,11 @@ smoother_span_apply(sm, params, newx, ...)
 
 `smoother_span()` returns a list with elements `constraint`, a numeric
 matrix of one column per direction removed; `free`, a numeric matrix of
-one column per direction restored, with zero columns where none is; and
-`params`, which `smoother_span_apply()` needs to rebuild `free` at new
-values. For a penalty that is not a derivative operator the list also
-has `free_names`, the names of the columns of `free`.
+one column per direction restored, with zero columns when the set of
+restored directions is empty; and `params`, which
+`smoother_span_apply()` needs to rebuild `free` at new values. For a
+penalty that is not a derivative operator the list also has
+`free_names`, the names of the columns of `free`.
 `smoother_span_apply()` returns that matrix at `newx`.
 
 ## The basis and the penalty together
@@ -51,10 +52,10 @@ has `free_names`, the names of the columns of `free`.
 The null space is a property of the basis and the penalty together. The
 second-derivative Gram matrix of a cubic B-spline has the polynomials of
 degree below 2 in its null space and the order-3 matrix the polynomials
-of degree below 3, while a Fourier basis has the constant alone at every
-order, the basis containing no linear function. The null space therefore
-belongs to the smoother, which carries both, and a family declares it by
-registering a method here.
+of degree below 3, while a Fourier basis has only the constant at every
+order because the basis contains no linear function. The null space
+therefore belongs to the smoother, which carries both, and a family
+declares it by registering a method here.
 
 ## The default method of the polynomial families
 
@@ -69,8 +70,8 @@ and to the constant over the observed covariate, then standardized. The
 first is `(x - mean(x)) / sd(x)`, so at `order = 2` there is exactly one
 and it is the standardized covariate.
 
-Directions of the constraint **beyond** the null space are removed and
-not restored. Returning them as free columns would put a parametric term
+Directions of the constraint beyond the null space are removed and not
+restored. Returning them as free columns would put a parametric term
 inside the smooth instead of in the formula, where a reader sees it.
 
 ## See also
@@ -93,7 +94,8 @@ round(c(mean = mean(sp$free), sd = sd(sp$free), cor = cor(sp$free, x)), 12)
 #> mean   sd  cor 
 #>    0    1    1 
 
-# reapplied at new values rather than rebuilt
+# smoother_span_apply() reapplies the restored column at new values
+# without rebuilding it.
 i <- c(2L, 20L, 55L)
 max(abs(smoother_span_apply(bspline_smooth(k = 8), sp$params, x[i]) -
         sp$free[i, , drop = FALSE]))

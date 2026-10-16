@@ -15,7 +15,7 @@ in front of it."><meta property="og:image" content="https://statmodels7.github.i
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -66,7 +66,7 @@ in front of it.</p>
 
 
 <dt id="arg-op">op<a class="anchor" aria-label="anchor" href="#arg-op"></a></dt>
-<dd><p>A <a href="LinearOperator.html">LinearOperator</a>, with its period resolved.</p></dd>
+<dd><p>A <a href="LinearOperator.html">LinearOperator</a> whose period is resolved.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -82,9 +82,10 @@ smoother does not fix it.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Restoring anything else gives a block whose columns are not all periodic,
 and a fit on it no longer takes the same value at the two ends of the
-interval, the property for which a Fourier basis is chosen. The check is
-made on the null space of the operator, read analytically, and not on the
-rank of the assembled penalty, which depends on the tolerance.</p>
+interval, the property for which a Fourier basis is chosen. The function
+checks the null space of the operator, which it reads analytically, and
+does not check the rank of the assembled penalty, which depends on the
+tolerance.</p>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

@@ -1,7 +1,7 @@
 # Apply an Operator to a Basis
 
 Evaluates \\Lb(x)\\, the operator applied to every function of a basis:
-the matrix whose Gram matrix is the roughness the penalty measures.
+the matrix whose Gram matrix is the roughness that the penalty measures.
 
 ## Usage
 
@@ -17,13 +17,13 @@ operator_eval(basis, x, op)
 
 - x:
 
-  The points to evaluate at.
+  The points at which the basis is evaluated.
 
 - op:
 
   A
-  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved.
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  whose period is resolved.
 
 ## Value
 

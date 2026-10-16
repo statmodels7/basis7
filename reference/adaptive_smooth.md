@@ -1,8 +1,8 @@
 # An Adaptive Smoother
 
-A difference penalty whose weight varies along the covariate, so that a
-function may be smoothed hard where it is quiet and left free where it
-is not. Where
+Returns a smoother with a difference penalty whose weight varies along
+the covariate, so that a function may be smoothed hard where it is quiet
+and left free where it is not. Where
 [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md)
 penalizes every difference alike under one smoothing parameter, this
 family carries `m` of them, and the data determine how the roughness is
@@ -39,15 +39,16 @@ adaptive_smooth(
 
 - diff:
 
-  The order of difference the penalty takes. The fit contracts to a
+  The order of difference that the penalty takes. The fit contracts to a
   polynomial of degree `diff - 1`.
 
 - m:
 
   The number of weight components, and so the number of smoothing
-  parameters. mgcv calls it `m` as well, and takes the same default. Two
-  gives one weight rising and one falling across the index; more give a
-  finer profile at the price of a smoothing parameter each.
+  parameters. In mgcv the same argument is also named `m`, with the same
+  default. A value of two gives one rising weight and one falling weight
+  across the index, and larger values give a finer profile, since each
+  additional component adds one smoothing parameter.
 
 - constrain:
 
@@ -120,15 +121,16 @@ only where the data require it.
 On a function whose roughness varies along the covariate the adaptive
 penalty smooths the quiet stretches more strongly than a P-spline with
 one smoothing parameter, and follows the noise less there. On a function
-of constant roughness its additional smoothing parameters have nothing
-to adapt to, and the fit is slightly worse than the P-spline fit.
+of constant roughness its additional smoothing parameters have no
+variation in roughness to which they can adapt, and the fit is slightly
+worse than the P-spline fit.
 
 The differences are taken in the Eilers-Marx coordinates of
 [`pspline_smooth()`](https://statmodels7.github.io/basis7/reference/pspline_smooth.md),
 as in the adaptive P-spline of mgcv's `bs = "ad"`. At equal smoothing
 parameters the two sums are the same P-spline penalty; the weight
-functions differ, mgcv building them from a different basis over the
-index, so the two fits are close and not identical.
+functions differ because mgcv builds them from a different basis over
+the index, so the two fits are close and not identical.
 
 ## The coordinates
 

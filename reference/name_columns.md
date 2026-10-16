@@ -27,7 +27,7 @@ name_columns(m, basis)
 
 ## Value
 
-`m`, with its column names set and its contents untouched.
+`m`, whose column names are set and whose contents are unchanged.
 
 ## Details
 

@@ -23,7 +23,7 @@ own."><meta property="og:image" content="https://statmodels7.github.io/basis7/lo
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,7 +78,7 @@ own.</p>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>A numeric vector of evaluation points. Not range-checked here.</p></dd>
+<dd><p>A numeric vector of evaluation points. The range is not checked here.</p></dd>
 
 
 <dt id="arg-d">d<a class="anchor" aria-label="anchor" href="#arg-d"></a></dt>
@@ -95,8 +95,8 @@ columns, no dimnames, sine and cosine interleaved by frequency.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>At <code>d = -1</code> the identity gives an antiderivative that differs from the
 one defined by <code><a href="basis_int.html">basis_int()</a></code> by a constant in each column; the caller
-subtracts the row at the lower endpoint. Columns are interleaved sine-then-cosine per frequency, matching
-<code><a href="basis_colnames.FourierBasis.html">basis_colnames.FourierBasis()</a></code>.</p>
+subtracts the row at the lower endpoint. Columns are interleaved
+sine-then-cosine per frequency, matching <code><a href="basis_colnames.FourierBasis.html">basis_colnames.FourierBasis()</a></code>.</p>
 <p>At <code>n_pairs == 0</code> the result is a <code>length(x)</code> by 0 matrix, and the loop is
 skipped.</p>
     </div>

@@ -1,6 +1,6 @@
 # The Operator Written Out
 
-Assembles the string [`print()`](https://rdrr.io/r/base/print.html)
+Assembles the string that [`print()`](https://rdrr.io/r/base/print.html)
 shows, dropping the terms whose weight is zero and writing the leading
 term without a coefficient.
 

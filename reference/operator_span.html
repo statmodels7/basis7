@@ -11,7 +11,7 @@ space, and the free columns are all of it except the constant."><meta property="
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,7 +56,7 @@ space, and the free columns are all of it except the constant.</p>
 
 
 <dl><dt id="arg-op">op<a class="anchor" aria-label="anchor" href="#arg-op"></a></dt>
-<dd><p>A <a href="LinearOperator.html">LinearOperator</a>, with its period resolved.</p></dd>
+<dd><p>A <a href="LinearOperator.html">LinearOperator</a> whose period is resolved.</p></dd>
 
 
 <dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
@@ -72,17 +72,17 @@ described on the page of <code><a href="smoother_span.html">smoother_span()</a><
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The rule is that of the polynomial families, read for an arbitrary
 operator. The penalized part is made orthogonal to every
-direction the penalty does not see, because a direction that is neither
-penalized nor constrained is one the pencil cannot separate; and the
-constant is not restored, a model carrying an intercept already spanning
-it.</p>
+direction that the penalty does not see, because a direction that is
+neither penalized nor constrained is one that the pencil cannot separate;
+and the constant is not restored, because a model that carries an
+intercept already spans it.</p>
 <p>Each free column is divided by its root mean square over the covariate and
-is <strong>not centered</strong>. Scaling by a positive constant is what a badly scaled
-column such as \(t^3\) over \([0, 365]\) needs, and it preserves every
-property the function has; centering does not. A periodic family restores
-sines and cosines here, and subtracting a constant from a sine gives a
-column that is no longer periodic, which is the property the basis was
-chosen for.</p>
+is not centered. A badly scaled column such as \(t^3\) over
+\([0, 365]\) needs scaling by a positive constant, which preserves every
+property that the function has, whereas centering does not. A periodic
+family restores sines and cosines here, and subtracting a constant from a
+sine gives a column that is no longer periodic, which is the property for
+which the basis was chosen.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

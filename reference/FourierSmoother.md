@@ -1,8 +1,8 @@
 # The Fourier Smoother Class
 
-The class
+The class that
 [`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
-returns: a Fourier basis with a roughness penalty and the
+returns combines a Fourier basis with a roughness penalty and the
 Demmler-Reinsch reparametrization. It has no `degree` and no
 `constrain`, which have no meaning for a periodic family.
 
@@ -64,8 +64,8 @@ FourierSmoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:

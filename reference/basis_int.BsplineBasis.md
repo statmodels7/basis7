@@ -4,9 +4,9 @@ Returns \\\int\_{\ell}^{x} B_j(t)\\\mathrm{d}t\\ for every function,
 exactly, from
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html)
 with `integral = TRUE`. That function anchors its integral at the lower
-boundary knot, which is the same convention
+boundary knot, which is the same convention that
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-states, so no correction is applied here.
+defines, so this method applies no correction.
 
 ## Arguments
 

@@ -1,17 +1,17 @@
 # A Cyclic Smoother
 
-The local periodic smoother: `k` B-spline functions over one period,
-constrained so that the fit and its first `degree - 1` derivatives take
-the same value at the two ends of the interval, penalized by the
-integrated squared derivative of order `order` and rotated to the
-Demmler-Reinsch coordinates. It is to
-[`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
-what
+The local periodic smoother consists of `k` B-spline functions over one
+period, constrained so that the fit and its first `degree - 1`
+derivatives take the same value at the two ends of the interval,
+penalized by the integrated squared derivative of order `order` and
+rotated to the Demmler-Reinsch coordinates. As
 [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
-is to
-[`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md):
-a local basis where the other is global, so a feature at one point of
-the cycle leaves the rest of it alone.
+is local where
+[`legendre_smooth()`](https://statmodels7.github.io/basis7/reference/legendre_smooth.md)
+is global, this smoother is local where
+[`fourier_smooth()`](https://statmodels7.github.io/basis7/reference/fourier_smooth.md)
+is global, so a feature at one point of the cycle leaves the rest of it
+alone.
 
 ## Usage
 
@@ -34,7 +34,7 @@ cyclic_smooth(
 - k:
 
   The number of periodic functions, a whole number of at least 3. The
-  block carries `k - 1` columns, the constant being removed.
+  block carries `k - 1` columns because the constant is removed.
 
 - degree:
 
@@ -132,9 +132,9 @@ space of the roughness matrix of a derivative penalty is the constant at
 every order, instead of a space growing with the order.
 
 The constant is removed, so a model carrying an intercept spans the
-level and the smooth carries the shape, and no free column is restored:
-a linear column is not periodic. A block therefore carries `k - 1`
-columns.
+level and the smooth carries the shape. The construction restores no
+free column, because a linear column is not periodic. A block therefore
+carries `k - 1` columns.
 
 ## The interval is the period
 
@@ -164,7 +164,7 @@ dim(out$X)
 # the block takes the same value at the two ends of the period
 ends <- smoother_apply(sm, out$blueprint, c(0, 365))
 max(abs(ends[1, ] - ends[2, ]))
-#> [1] 0
+#> [1] 1.110223e-16
 
 # 'order' may not exceed the degree.
 try(cyclic_smooth(k = 10, degree = 3, order = 4))

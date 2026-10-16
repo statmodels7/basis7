@@ -13,7 +13,7 @@ derivative, without calling splines2."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -84,8 +84,8 @@ has \(m\) non-trivial derivatives and the rest vanish: a cubic gives
 three, and <code>order = 4</code> is exactly zero everywhere. A missing point gives a
 missing row at every order.</p>
 <p>The derivative of order \(m\) is a step function, discontinuous at each
-interior knot, and the value returned at a knot is the one the recurrence
-gives there. That matters for a Gram matrix, which is why
+interior knot, and the value returned at a knot is the one that the
+recurrence gives there. That matters for a Gram matrix, which is why
 <code><a href="basis_gram.BsplineBasis.html">basis_gram.BsplineBasis()</a></code> integrates knot interval by knot interval and
 never across one.</p>
     </div>

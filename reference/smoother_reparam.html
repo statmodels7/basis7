@@ -11,7 +11,7 @@ reapplies."><meta property="og:image" content="https://statmodels7.github.io/bas
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -78,13 +78,13 @@ reapplies.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A list of <code>S</code>, the penalty on the reparametrized block, and
-<code>basis</code>, the object whose evaluation <strong>is</strong> that block and which
+<code>basis</code>, the object whose evaluation is that block and which
 <code><a href="smoother_apply.html">smoother_apply()</a></code> evaluates at new values.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The three routes differ in what the coefficients mean, and the fit they
-express is the same span in each.</p>
+    <p>The three routes differ in what the coefficients mean, and the fit that
+they express is the same span in each.</p>
 <dl><dt><code>"dr"</code></dt>
 <dd><p><code><a href="dr_basis.html">dr_basis()</a></code> diagonalizes the pencil of the empirical Gram
 matrix against the roughness matrix, so the columns are orthogonal
@@ -94,7 +94,7 @@ diagonal map and not under a general one, so the rotation makes a
 sparse or heavy-tailed prior on a smooth computationally feasible.</p></dd>
 
 <dt><code>"none"</code></dt>
-<dd><p>The constrained basis as it stands, with the penalty the
+<dd><p>The constrained basis as it stands; its penalty is the
 congruence of the roughness matrix by the transform of the constraint.
 The coefficients are those of the constrained basis, one fewer than
 the basis functions for each direction removed.</p></dd>
@@ -102,10 +102,10 @@ the basis functions for each direction removed.</p></dd>
 <dt><code>"orthonorm"</code></dt>
 <dd><p>The constrained basis rotated so that it satisfies
 \(X'X = I\) over the observed covariate. The orthonormality is
-against the <strong>empirical</strong> measure, which makes the design
+against the empirical measure, which makes the design
 orthonormal; <code><a href="orthonorm_basis.html">orthonorm_basis()</a></code> orthonormalizes against the
 \(L^2\) inner product instead and remains available as an operation
-on a basis. It is the <strong>reparametrized part</strong> that is orthonormal:
+on a basis. The reparametrized part of the block is orthonormal:
 with <code>null_space = "keep"</code> a free column is prepended afterwards and
 the whole block is then not orthonormal, while <code>null_space = "drop"</code>
 gives \(X'X = I\) for the block itself, up to rounding.</p></dd>

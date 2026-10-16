@@ -3,7 +3,7 @@
 Returns the parent's `order`-th derivative multiplied by the transform,
 \\\tilde{B}^{(d)}(x) = B^{(d)}(x)\\T\\. Differentiation is linear and
 \\T\\ does not depend on `x`, so the same matrix serves at every order
-and no derivative of the transformation itself enters.
+and the transformation itself is not differentiated.
 
 ## Arguments
 

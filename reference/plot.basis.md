@@ -4,7 +4,7 @@ Draws all `@dimension` functions of a basis on one panel, over an
 equally spaced grid covering the whole interval. `order` selects what is
 drawn: the functions themselves, a derivative of any order, or the
 integral anchored at the lower endpoint. One line is drawn per basis
-function, with no legend and with `@basis_name` as the title.
+function. The plot has no legend, and its title is `@basis_name`.
 
 ## Arguments
 
@@ -24,7 +24,7 @@ function, with no legend and with `@basis_name` as the title.
 - n:
 
   The number of grid points, default `200`. A basis with many knots or a
-  high frequency needs more, 200 points leaving a curve visibly
+  high frequency needs more, because 200 points leave a curve visibly
   polygonal there.
 
 - ...:
@@ -46,13 +46,13 @@ endpoints included, and the curves are whichever of
 [`basis_deriv()`](https://statmodels7.github.io/basis7/reference/basis_deriv.md)
 or
 [`basis_int()`](https://statmodels7.github.io/basis7/reference/basis_int.md)
-`order` names. The vertical axis is labeled to match: \\B(x)\\ at order
-`0`, \\B'(x)\\ at order `1`, \\B^{(k)}(x)\\ above that, and \\\int
-B(t)\\\mathrm{d}t\\ for the integral.
+is the one that `order` names. The vertical axis is labeled to match:
+\\B(x)\\ at order `0`, \\B'(x)\\ at order `1`, \\B^{(k)}(x)\\ above
+that, and \\\int B(t)\\\mathrm{d}t\\ for the integral.
 
-The curves are distinguished only by the colors
-[`matplot()`](https://rdrr.io/r/graphics/matplot.html) cycles through.
-The plot carries no legend, and the names of the columns are those of
+The curves are distinguished only by the colors through which
+[`matplot()`](https://rdrr.io/r/graphics/matplot.html) cycles. The plot
+carries no legend, and the names of the columns are those of
 [`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
 
 ## Graphical arguments
@@ -78,8 +78,8 @@ a surface over a rectangle; a margin can be plotted instead, which is
 ## Orders above the smoothness of the family
 
 An order above the smoothness of the family is accepted and draws a flat
-line at zero, the fourth derivative of a piecewise cubic being zero away
-from the knots.
+line at zero, because the fourth derivative of a piecewise cubic is zero
+away from the knots.
 
 ## See also
 
@@ -96,7 +96,8 @@ for the object's summary.
 ``` r
 b <- bspline_basis(dimension = 6)
 
-# The six cubic B-splines, their first derivative, and their integrals.
+# The three panels show the six cubic B-splines, their first derivative,
+# and their integrals.
 plot(b)
 
 plot(b, order = 1)
@@ -104,17 +105,17 @@ plot(b, order = 1)
 plot(b, order = -1)
 
 
-# Every curve in the third panel starts at zero, which is what anchoring
-# the integral at the lower endpoint means.
+# Every curve in the third panel starts at zero, because the integral is
+# anchored at the lower endpoint.
 basis_int(b, 0)
 #>      bs1 bs2 bs3 bs4 bs5 bs6
 #> [1,]   0   0   0   0   0   0
 
-# Graphical arguments the method does not set itself reach matplot().
+# Graphical arguments that the method does not set itself reach matplot().
 plot(b, col = "grey40", lwd = 2)
 
 
-# The five arguments the method sets by default may be replaced.
+# The five arguments that the method sets by default may be replaced.
 plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
 
 plot(b, type = "p", pch = 16, cex = 0.4)

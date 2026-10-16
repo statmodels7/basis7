@@ -38,26 +38,26 @@ fd_reference(f, x, lower, upper)
 
 A list of two matrices of the same shape as `f(x)`: `value`, the first
 derivative estimated at the full step, and `uncertainty`, four times the
-gap between that estimate and the one at half the step. An entry where
-either estimate is `NA` gets an infinite uncertainty, so the comparison
+gap between that estimate and the one at half the step. The uncertainty
+is infinite at an entry where either estimate is `NA`, so the comparison
 there is unconstrained.
 
 ## Details
 
 A central difference is valid only where the function has the
-derivatives the stencil assumes. At a knot the third derivative of a
-cubic spline jumps, so a stencil that straddles the knot returns a
+derivatives that the stencil assumes. At a knot the third derivative of
+a cubic spline jumps, so a stencil that straddles the knot returns a
 number of the order of the jump and not of the truncation error, and
 comparing an exact value against it would report a failure of the
 reference as one of the basis.
 
-The estimate is therefore recomputed with the step halved. At a smooth
-point the two estimates differ by about three quarters of the truncation
-error of the first, so four times the gap bounds that error; at a knot
-the gap is large. The bound becomes the allowance of the comparison,
-point by point. The two estimates are compared with each other and not
-against a denominator floored at one, since near a kink both are small
-and still differ by a factor.
+The estimate is therefore recomputed at half the step. At a smooth point
+the two estimates differ by about three quarters of the truncation error
+of the first, so four times the gap bounds that error; at a knot the gap
+is large. The bound becomes the allowance of the comparison, point by
+point. The two estimates are compared with each other and not against a
+denominator floored at one, since near a kink both are small and still
+differ by a factor.
 
 ## See also
 

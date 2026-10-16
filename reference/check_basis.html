@@ -13,7 +13,7 @@ likeliest mistake."><meta property="og:image" content="https://statmodels7.githu
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -63,10 +63,11 @@ likeliest mistake.</p>
 
 
 <dt id="arg-n">n<a class="anchor" aria-label="anchor" href="#arg-n"></a></dt>
-<dd><p>The number of points to test at, default <code>41</code>. They are equally
-spaced across the interval with five percent trimmed off each end,
+<dd><p>The number of points at which to test, default <code>41</code>. They are
+equally spaced across the interval after trimming five percent off each end,
 because a one-sided stencil at an endpoint carries a larger error that
-would read as a failure of the basis. Passed through <code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code>.</p></dd>
+would read as a failure of the basis. The value is passed through
+<code><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer()</a></code>.</p></dd>
 
 
 <dt id="arg-orders">orders<a class="anchor" aria-label="anchor" href="#arg-orders"></a></dt>
@@ -77,9 +78,9 @@ a chain of lower-order differences. Each order costs one pass.</p></dd>
 
 <dt id="arg-tol">tol<a class="anchor" aria-label="anchor" href="#arg-tol"></a></dt>
 <dd><p>The relative tolerance for the derivative and integral checks,
-default <code>1e-6</code>. Relative to the values themselves, with the denominator
-taken from them; see <code><a href="rel_close.html">rel_close()</a></code>. The Gram comparison uses
-<code>1e-6</code> regardless.</p></dd>
+default <code>1e-6</code>. The tolerance is relative to the values themselves, and
+the denominator is taken from them; see <code><a href="rel_close.html">rel_close()</a></code>. The Gram
+comparison uses <code>1e-6</code> regardless.</p></dd>
 
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
@@ -92,7 +93,7 @@ returned invisibly either way.</p></dd>
     <p>Invisibly, a named logical vector of length 6, in the order
 <code>shape</code>, <code>deriv</code>, <code>integral</code>, <code>partition</code>, <code>gram</code>, <code>missing</code>, with <code>NA</code>
 for a check that was not run. It carries the attribute <code>"numerical"</code>, the
-named logical vector <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> returns.</p>
+named logical vector that <code><a href="basis_is_numerical.html">basis_is_numerical()</a></code> returns.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -107,19 +108,19 @@ named logical vector <code><a href="basis_is_numerical.html">basis_is_numerical(
 property and
 \(G_{jl} = \int \varphi_j \varphi_l \,\mathrm{d}\mu = G_{lj}\) with
 \(G \succeq 0\) for the Gram matrix.</p>
-<p>The checks are:</p><ol><li><p><strong>shape</strong>: the evaluation returns a matrix of the declared size and
+<p>The checks are:</p><ol><li><p>shape: the evaluation returns a matrix of the declared size and
 column names for a vector, and of one row for a single point, and the
 first derivative returns a matrix of the declared size;</p></li>
-<li><p><strong>derivatives</strong>: each analytic order agrees with one numerical
+<li><p>derivatives: each analytic order agrees with one numerical
 differentiation of the order below it;</p></li>
-<li><p><strong>integral</strong>: it differentiates back to the basis and is exactly zero
+<li><p>integral: it differentiates back to the basis and is exactly zero
 at the lower endpoint; for a basis of several variables only the zero
 at the lower corner is checked;</p></li>
-<li><p><strong>partition of unity</strong>: the rows sum to one, for the families
+<li><p>partition of unity: the rows sum to one, for the families
 that have that property;</p></li>
-<li><p><strong>Gram</strong>: symmetric, positive semidefinite, and equal to an
+<li><p>Gram: symmetric, positive semidefinite, and equal to an
 independent quadrature;</p></li>
-<li><p><strong>missing values</strong>: a missing evaluation point gives a missing
+<li><p>missing values: a missing evaluation point gives a missing
 row and nothing else.</p></li>
 </ol></div>
     <div class="section level2">
@@ -129,14 +130,14 @@ numerical reference would repeat the same arithmetic, and the two would
 agree however wrong the basis is. The <code>deriv</code> and <code>integral</code> checks are
 therefore not run in that case: they report <code>NA</code> and print <code>[numerical]</code>.</p>
 <p>The <code>gram</code> check always runs. The independent quadrature is 401 panels of
-7 nodes, a rule no basis in the package uses for its own result, so a
-family whose own Gram matrix is a quadrature is still compared against
-different arithmetic. When the Gram matrix is numerical, each entry is
-allowed, besides the relative tolerance, four times the difference
-between the package's own fallback (<code><a href="numerical_gram.html">numerical_gram()</a></code> at its defaults)
-and the finer rule: a quadrature that is correct but limited by the kinks
-of a basis passes, and a matrix that is wrong by more than the quadrature
-error fails. The <code>shape</code> and <code>missing</code> checks do not depend on the
+7 nodes, a rule that the bases in the package never use for their own
+results, so a family whose own Gram matrix is a quadrature is still
+compared against different arithmetic. When the Gram matrix is numerical,
+each entry is allowed, besides the relative tolerance, four times the
+difference between the package's own fallback (<code><a href="numerical_gram.html">numerical_gram()</a></code> at its
+defaults) and the finer rule: a quadrature that is correct but limited by
+the kinks of a basis passes, and a matrix that is wrong by more than the
+quadrature error fails. The <code>shape</code> and <code>missing</code> checks do not depend on the
 fallback and always run.</p>
 <p><code>partition</code> is <code>NA</code> and prints <code>[not claimed]</code> for a family that is not a
 partition of unity. The printout distinguishes this from <code>[numerical]</code>,
@@ -144,7 +145,7 @@ which marks a value that was not verified.</p>
     </div>
     <div class="section level2">
     <h2 id="the-error-of-the-reference">The error of the reference<a class="anchor" aria-label="anchor" href="#the-error-of-the-reference"></a></h2>
-    <p>A central difference assumes derivatives the function may not have. At a
+    <p>A central difference assumes derivatives that the function may not have. At a
 knot a spline's third derivative jumps, and a stencil straddling it returns
 a number of the order of the jump, which compared against an exact value
 reads as a failure of the basis. Each reference is therefore computed
@@ -162,8 +163,9 @@ to develop one.</p></div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># The shipped families pass every check that applies to them; a Fourier</span></span></span>
-<span class="r-in"><span><span class="co"># basis is not a partition of unity and does not claim to be one.</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># The shipped families pass every check that applies to them; the</span></span></span>
+<span class="r-in"><span><span class="co"># partition-of-unity check is not applied to a Fourier basis, which is not a</span></span></span>
+<span class="r-in"><span><span class="co"># partition of unity.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu">check_basis</span><span class="op">(</span><span class="fu"><a href="bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">6</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> check_basis: bspline (6 functions)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   shape       shapes and column names                        [PASSED]</span>

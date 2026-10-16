@@ -1,8 +1,8 @@
 # The Adaptive Smoother Class
 
-The class
+The class that
 [`adaptive_smooth()`](https://statmodels7.github.io/basis7/reference/adaptive_smooth.md)
-returns: a B-spline basis whose difference penalty carries a weight that
+returns combines a B-spline basis with a difference penalty whose weight
 varies along the covariate, so that one stretch may be smoothed harder
 than another. It adds `degree`, `diff` and `m` to the properties of
 [smoother](https://statmodels7.github.io/basis7/reference/smoother.md).
@@ -67,8 +67,8 @@ AdaptiveSmoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:
@@ -104,12 +104,12 @@ AdaptiveSmoother(
 
 - diff:
 
-  The order of difference the penalty takes.
+  The order of difference that the penalty takes.
 
 - m:
 
-  The number of components the weight profile is built from, which is
-  also the number of smoothing parameters.
+  The number of components from which the weight profile is built, which
+  is also the number of smoothing parameters.
 
 ## Value
 

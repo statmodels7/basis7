@@ -1,7 +1,7 @@
 # Call splines2 for a B-Spline Design Matrix
 
-The single point at which this package talks to splines2. It assembles
-the knot arguments from `basis@basis_params`, calls
+This function is the only place at which the package calls splines2. It
+assembles the knot arguments from `basis@basis_params`, calls
 [`splines2::bSpline()`](https://wwenjie.org/splines2/reference/bSpline.html)
 once, and returns a plain matrix, so the argument names and the return
 class of splines2 stay inside this function.
@@ -35,13 +35,13 @@ bspline_design(basis, x, derivs = 0L, integral = FALSE)
 - integral:
 
   `TRUE` to return the integral anchored at the lower boundary knot
-  instead of the functions. Default `FALSE`.
+  instead of the functions. The default is `FALSE`.
 
 ## Value
 
-A numeric matrix with `length(x)` rows and `basis@dimension` columns, of
-class `matrix` alone, with no dimnames and none of the attributes
-splines2 attaches. Callers add the column names through
+A numeric matrix with `length(x)` rows and `basis@dimension` columns.
+Its only class is `matrix`, it has no dimnames, and it carries no
+attribute that splines2 attaches. Callers add the column names through
 [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md).
 
 ## Details
@@ -49,7 +49,7 @@ splines2 attaches. Callers add the column names through
 `intercept = TRUE` is passed always, so all `dimension` functions come
 back; splines2 would otherwise drop the first.
 
-The object splines2 returns is of class `BSpline` and carries
+The object that splines2 returns is of class `BSpline` and carries
 attributes, among them `x`, `knots`, `degree` and `intercept`.
 Rebuilding it as `matrix(as.numeric(out), ...)` strips all of them,
 since they would survive arithmetic and reappear on a matrix that they
@@ -57,8 +57,8 @@ no longer describe. The dimensions are taken from `length(x)` and
 `basis@dimension`. An empty `x`, which splines2 rejects, gives a matrix
 of no rows.
 
-`derivs` and `integral` are mutually exclusive in practice, each caller
-setting at most one.
+`derivs` and `integral` are mutually exclusive in practice, because each
+caller sets at most one of them.
 
 ## See also
 

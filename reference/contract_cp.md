@@ -1,9 +1,9 @@
 # Contract a Tensor Product Basis Against Factor Matrices
 
-The canonical polyadic contraction. With \\\Gamma_j\\ of size \\K_j
-\times F\\, the coefficient array is a sum of \\F\\ outer products and
-the value is \\\sum_f \prod_j B_j(x_j)^\top \gamma\_{j,f}\\. Neither the
-design matrix nor the coefficient array appears anywhere.
+Computes the canonical polyadic contraction. With \\\Gamma_j\\ of size
+\\K_j \times F\\, the coefficient array is a sum of \\F\\ outer products
+and the value is \\\sum_f \prod_j B_j(x_j)^\top \gamma\_{j,f}\\. The
+computation forms neither the design matrix nor the coefficient array.
 
 ## Usage
 

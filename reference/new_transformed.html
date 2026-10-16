@@ -13,7 +13,7 @@ and dr_basis() all build their result through it."><meta property="og:image" con
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,8 +73,8 @@ parent's own name, so the name nests even where the matrices collapse.</p></dd>
 
 
 <dt id="arg-prefix">prefix<a class="anchor" aria-label="anchor" href="#arg-prefix"></a></dt>
-<dd><p>The two-letter prefix its column names are numbered under:
-<code>"on"</code>, <code>"cn"</code> or <code>"dr"</code>.</p></dd>
+<dd><p>The two-letter prefix under which its column names are
+numbered: <code>"on"</code>, <code>"cn"</code> or <code>"dr"</code>.</p></dd>
 
 
 <dt id="arg-params">params<a class="anchor" aria-label="anchor" href="#arg-params"></a></dt>
@@ -91,15 +91,15 @@ parent's own name, so the name nests even where the matrices collapse.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>When <code>basis</code> is itself a <code>TransformedBasis</code>, the result holds
 <code>basis@transform %*% transform</code> and the original's parent. The dimension of
-the result is <code>ncol(transform)</code>, and its interval is the parent's, a linear
-map of the functions leaving the domain alone.</p>
+the result is <code>ncol(transform)</code>, and its interval is the parent's, because a
+linear map of the functions leaves the domain unchanged.</p>
 <p>The function itself checks nothing. The validator of <a href="TransformedBasis.html">TransformedBasis</a>
 rejects a <code>transform</code> whose row count differs from the parent's dimension
 when the object is built.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><a href="TransformedBasis.html">TransformedBasis</a>, the class it builds.</p></div>
+    <div class="dont-index"><p><a href="TransformedBasis.html">TransformedBasis</a>, the class that it builds.</p></div>
     </div>
 
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

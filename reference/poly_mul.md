@@ -1,8 +1,8 @@
 # Multiply Two Polynomials Given by Their Coefficients
 
-Convolves two coefficient vectors written in increasing degree, which is
-what composing two differential operators does to their characteristic
-polynomials.
+Convolves two coefficient vectors written in increasing degree. The
+convolution multiplies the two polynomials, as composing two
+differential operators multiplies their characteristic polynomials.
 
 ## Usage
 

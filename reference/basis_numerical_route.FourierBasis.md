@@ -32,7 +32,7 @@ names the route in use.
 
 ## Value
 
-The named logical vector
+The named logical vector that
 [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
 describes, with `basis_gram` `TRUE` for a basis whose period is not the
 interval width.
@@ -42,4 +42,4 @@ interval width.
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
 for the two branches, and
 [`basis_numerical_route.basis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.basis.md)
-for the default this starts from.
+for the default from which this starts.

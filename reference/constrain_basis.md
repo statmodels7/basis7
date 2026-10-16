@@ -1,9 +1,9 @@
 # Restrict a Basis to a Linear Constraint
 
 Returns a basis whose functions are exactly those of the parent
-satisfying \\C\beta = 0\\, with the dimension reduced by the rank of
-\\C\\. This is how a basis that carries its own constant is made to sit
-beside an intercept, and how a smooth term is made identifiable.
+satisfying \\C\beta = 0\\, and whose dimension is reduced by the rank of
+\\C\\. The restriction lets a basis that carries its own constant sit
+beside an intercept and makes a smooth term identifiable.
 
 ## Usage
 
@@ -47,8 +47,8 @@ spans precisely the admissible functions, and rescaling or reordering
 the rows of \\C\\ changes nothing about the space produced.
 
 The rank is counted as the number of singular values above
-`tol * max(d)`, and the result has `basis@dimension - rank` columns,
-with the rank recorded in `basis_params$constraint_rank`.
+`tol * max(d)`, and the result has `basis@dimension - rank` columns. The
+rank is recorded in `basis_params$constraint_rank`.
 
 ## Writing the constraint
 
@@ -83,15 +83,15 @@ which applies a constraint and a rotation together.
 b <- bspline_basis(dimension = 6)
 x <- seq(0, 1, length.out = 200)
 
-# Sum to zero over a grid: the usual identifiability constraint, which
-# removes the constant a B-spline basis carries.
+# The sum-to-zero constraint over a grid is the usual identifiability
+# constraint, and it removes the constant that a B-spline basis carries.
 cs <- constrain_basis(b, colSums(basis_eval(b, x)))
 cs@dimension
 #> [1] 5
 cs@basis_params$constraint_rank
 #> [1] 1
 max(abs(colSums(basis_eval(cs, x))))
-#> [1] 1.915655e-14
+#> [1] 2.034527e-14
 
 # Two constraints take two columns: sum to zero and orthogonal to x.
 C <- rbind(colSums(basis_eval(b, x)), colSums(basis_eval(b, x) * x))

@@ -28,7 +28,7 @@
 
     <a class="navbar-brand me-2" href="index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,8 +64,8 @@
 <img src="logo.png" class="logo" alt=""><h1 id="basis7-">basis7 <a class="anchor" aria-label="anchor" href="#basis7-"></a>
 </h1>
 </div>
-<p>Many R packages that fit smooth terms carry their own basis code, written inside the routine that needs it and providing only what its author needed. A cubic B-spline is a fixed mathematical object, and it can be written once with the quantities a modeling routine needs already computed.</p>
-<p><a href="https://statmodels7.github.io/basis7/">basis7</a> makes a basis an object that can be <strong>evaluated, differentiated to any order, integrated, and used to compute its inner products</strong>. The last of these is the Gram matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>d</mi></msub><mo>=</mo><mo>∫</mo><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mi>⊤</mi></mrow></msup></mrow><annotation encoding="application/x-tex">G_d = \int B^{(d)} B^{(d)\top}</annotation></semantics></math>, the matrix that a roughness penalty integrates; for the shipped families it is computed exactly, in closed form or by a quadrature that is exact for the integrand. On top of the bases the package builds smoothers, which pair a basis with a penalty given by a linear differential operator.</p>
+<p>Many R packages that fit smooth terms carry their own basis code, written inside the routine that needs it and providing only what its author needed. A cubic B-spline is a fixed mathematical object, and it can be written once with the quantities that a modeling routine needs already computed.</p>
+<p><a href="https://statmodels7.github.io/basis7/">basis7</a> makes a basis an object that can be evaluated, differentiated to any order, integrated, and used to compute its inner products. The last of these is the Gram matrix <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>G</mi><mi>d</mi></msub><mo>=</mo><mo>∫</mo><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mi>⊤</mi></mrow></msup></mrow><annotation encoding="application/x-tex">G_d = \int B^{(d)} B^{(d)\top}</annotation></semantics></math>, the matrix that a roughness penalty integrates; for the shipped families it is computed exactly, in closed form or by a quadrature that is exact for the integrand. On top of the bases the package builds smoothers, which pair a basis with a penalty given by a linear differential operator.</p>
 <p>It is the basis layer of <a href="https://statmodels7.github.io" class="external-link">statmodels7</a>, an S7 toolkit for statistical modeling, alongside <a href="https://statmodels7.github.io/linkfunctions7/" class="external-link">linkfunctions7</a>, <a href="https://statmodels7.github.io/distributions7/" class="external-link">distributions7</a> and <a href="https://statmodels7.github.io/optimizers7/" class="external-link">optimizers7</a>.</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -73,7 +73,7 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># install.packages("pak")</span></span>
 <span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"statmodels7/basis7"</span><span class="op">)</span></span></code></pre></div>
-<p>Or the whole toolkit at once, which also installs the other packages of the toolkit:</p>
+<p>The following command installs the whole toolkit at once, including the other packages of the toolkit:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">pak</span><span class="fu">::</span><span class="fu"><a href="https://pak.r-lib.org/reference/pak.html" class="external-link">pak</a></span><span class="op">(</span><span class="st">"statmodels7/statmodels7"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -116,7 +116,7 @@
 <div class="section level2">
 <h2 id="the-integral-is-anchored">The integral is anchored<a class="anchor" aria-label="anchor" href="#the-integral-is-anchored"></a>
 </h2>
-<p>Its value at the lower endpoint is exactly zero, for every basis. Any antiderivative would satisfy a differentiation check, so with the constant left free two bases could disagree while both looked correct.</p>
+<p>Its value at the lower endpoint is exactly zero, for every basis. Any antiderivative would satisfy a differentiation check, so if the constant is left free, two bases could disagree while both looked correct.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="reference/basis_int.html">basis_int</a></span><span class="op">(</span><span class="fu"><a href="reference/fourier_basis.html">fourier_basis</a></span><span class="op">(</span>lower <span class="op">=</span> <span class="op">-</span><span class="fl">1</span>, upper <span class="op">=</span> <span class="fl">3</span>, dimension <span class="op">=</span> <span class="fl">5</span><span class="op">)</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      const sin1 cos1 sin2 cos2</span></span>
@@ -204,7 +204,7 @@
 <span>  <span class="fu"><a href="reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="fu"><a href="reference/fourier_basis.html">fourier_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>The design matrix, on the other hand, grows as the product of the marginal dimensions, which makes interactions expensive. <code><a href="reference/basis_contract.html">basis_contract()</a></code> computes the values described by the coefficients from the marginal evaluations alone. Given the coefficients as factor matrices, the cost is linear in the number of variables instead of exponential:</p>
+<p>The design matrix, on the other hand, grows as the product of the marginal dimensions, which makes interactions expensive. <code><a href="reference/basis_contract.html">basis_contract()</a></code> computes the values described by the coefficients using only the marginal evaluations. If the coefficients are given as factor matrices, the cost is linear in the number of variables instead of exponential:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">big</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/tensor_basis.html">tensor_basis</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="fu"><a href="reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">10</span><span class="op">)</span><span class="op">)</span>, <span class="fl">6</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">big</span><span class="op">@</span><span class="va">dimension</span> <span class="co"># the design matrix would have this many columns</span></span>
@@ -246,7 +246,7 @@
 <div class="section level2">
 <h2 id="validating-a-basis">Validating a basis<a class="anchor" aria-label="anchor" href="#validating-a-basis"></a>
 </h2>
-<p><code><a href="reference/check_basis.html">check_basis()</a></code> runs six numerical checks: the shapes and column names, the derivatives against finite differences, the integral differentiating back and vanishing at the lower endpoint, the partition of unity where the family claims it, the Gram matrix against an independent quadrature, and missing values traveling through.</p>
+<p><code><a href="reference/check_basis.html">check_basis()</a></code> runs six numerical checks: the shapes and column names, the derivatives against finite differences, the integral differentiating back and vanishing at the lower endpoint, the partition of unity where the family declares it, the Gram matrix against an independent quadrature, and missing values traveling through.</p>
 <p>For a derivative or an integral that came from a fallback the check is not run and the row prints <code>[numerical]</code>, because comparing it with a numerical reference would repeat the same arithmetic. A Gram matrix that came from a fallback is compared with a finer quadrature, at the accuracy of a quadrature.</p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="reference/check_basis.html">check_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span><span class="op">)</span></span>

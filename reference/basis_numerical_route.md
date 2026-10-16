@@ -56,9 +56,9 @@ default method reports the wrapper's own methods.
 
 ## Writing one
 
-A method takes the default through
+A method calls the default through
 [`S7::super()`](https://rconsortium.github.io/S7/reference/super.html)
-and sets the entries decided by its own branching:
+and then sets the entries that depend on its own branching:
 
     S7::method(basis_numerical_route, MyBasis) <- function(basis, ...) {
       out <- basis_numerical_route(S7::super(basis, basis7::basis))
@@ -77,7 +77,7 @@ would require naming the package inside itself.
 ## See also
 
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md),
-the predicate consumers call;
+the predicate that consumers call;
 [`route_by_owner()`](https://statmodels7.github.io/basis7/reference/route_by_owner.md)
 for the default computation; and
 [`basis_numerical_route.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.FourierBasis.md)

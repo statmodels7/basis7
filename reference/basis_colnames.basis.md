@@ -23,10 +23,10 @@ A character vector of length `basis@dimension`.
 
 ## Details
 
-Two characters tell the families apart in a coefficient table without
-making the names long. The names are not distinct across bases: a model
-that combines two B-spline blocks has `bs1` twice, unless the code that
-assembles the design distinguishes them.
+Two characters suffice to distinguish the families in a coefficient
+table and keep the names short. The names are not distinct across bases:
+a model that combines two B-spline blocks has `bs1` twice, unless the
+code that assembles the design distinguishes them.
 
 ## See also
 

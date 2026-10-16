@@ -11,7 +11,7 @@ a degree below order - 1 is rejected."><meta property="og:image" content="https:
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -42,7 +42,7 @@ a degree below order - 1 is rejected."><meta property="og:image" content="https:
 
     <div class="ref-description section level2">
     <p>Validates <code>constrain</code> for a family whose null space is the polynomials of
-degree below <code>order</code>. The constraint must <strong>contain</strong> that null space, so
+degree below <code>order</code>. The constraint must contain that null space, so
 a degree below <code>order - 1</code> is rejected.</p>
     </div>
 
@@ -75,7 +75,7 @@ penalized nor identified, and <code><a href="dr_basis.html">dr_basis()</a></code
 <code>order = 3</code> and a constraint spanning only the constant and the linear
 function, the quadratic direction is left free and unpenalized. The error
 is reported here, at the constructor.</p>
-<p>Constraining <strong>beyond</strong> the null space is admitted. It makes the block
+<p>Constraining beyond the null space is admitted. It makes the block
 orthogonal, over the observed covariate, to the polynomials up to degree
 <code>constrain</code>, which avoids collinearity with a parametric term of that
 degree written in the formula. The cost is one dimension per degree.</p>

@@ -22,8 +22,8 @@ check_periodic_null(sm, op, x)
 - op:
 
   A
-  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md),
-  with its period resolved.
+  [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)
+  whose period is resolved.
 
 - x:
 
@@ -39,6 +39,6 @@ check_periodic_null(sm, op, x)
 Restoring anything else gives a block whose columns are not all
 periodic, and a fit on it no longer takes the same value at the two ends
 of the interval, the property for which a Fourier basis is chosen. The
-check is made on the null space of the operator, read analytically, and
-not on the rank of the assembled penalty, which depends on the
-tolerance.
+function checks the null space of the operator, which it reads
+analytically, and does not check the rank of the assembled penalty,
+which depends on the tolerance.

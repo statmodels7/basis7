@@ -2,10 +2,10 @@
 
 Returns the definite integral of every basis function from the lower
 endpoint of the basis interval up to each evaluation point, as a matrix
-of the same shape
+of the same shape that
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md)
-returns. Times a coefficient vector it gives the antiderivative of the
-fitted function that vanishes at the lower endpoint.
+returns. Multiplied by a coefficient vector, it gives the antiderivative
+of the fitted function that vanishes at the lower endpoint.
 
 ## Usage
 
@@ -56,9 +56,9 @@ the whole interval is the row at `basis@upper`, and the integral over
 
 The value at `basis@lower` is exactly zero, for every basis and every
 column, and every implementation is required to satisfy this. Any
-antiderivative satisfies the differentiation check, so with the constant
-of integration left free two bases could disagree while both being
-correct, and a sum of them would be wrong without any sign of it.
+antiderivative satisfies the differentiation check. If the constant of
+integration were free, two bases could disagree although both are
+correct, and a sum of them would be wrong with no sign of the error.
 
 ## A basis of several variables
 
@@ -68,12 +68,13 @@ one iterated integral per variable, so on two variables column \\j\\ is
 
 ## The numerical fallback
 
-A subclass registering no method gets the one on the abstract
-[basis](https://statmodels7.github.io/basis7/reference/basis.md) class:
-a Gauss-Legendre rule of `nodes = 12` nodes by default on each segment
-between consecutive sorted evaluation points, starting at the lower
-endpoint, with the segment integrals accumulated. The rule is exact for
-a polynomial integrand of degree up to `2 * nodes - 1` on each segment.
+If a subclass does not register a method, the method on the abstract
+[basis](https://statmodels7.github.io/basis7/reference/basis.md) class
+applies. It uses a Gauss-Legendre rule of `nodes = 12` nodes by default
+on each segment between consecutive sorted evaluation points, starting
+at the lower endpoint, and accumulates the segment integrals. The rule
+is exact for a polynomial integrand of degree up to `2 * nodes - 1` on
+each segment.
 
 ## See also
 
@@ -89,7 +90,7 @@ for integrals of products of basis functions.
 ``` r
 b <- fourier_basis(dimension = 5)
 
-# Zero at the lower endpoint, by the convention above.
+# The integral is zero at the lower endpoint, by the convention above.
 basis_int(b, b@lower)
 #>      const sin1 cos1 sin2 cos2
 #> [1,]     0    0    0    0    0
@@ -107,7 +108,7 @@ fd <- (basis_int(bs, x + h) - basis_int(bs, x - h)) / (2 * h)
 max(abs(fd - basis_eval(bs, x)))
 #> [1] 1.532541e-11
 
-# The integral of a fitted curve, and the integral over a subinterval.
+# Integrate a fitted curve over the whole interval and over a subinterval.
 beta <- c(0.2, 1.1, -0.4, 0.8, 0.1, -0.6)
 drop(basis_int(bs, 1) %*% beta)
 #> [1] 0.2666667

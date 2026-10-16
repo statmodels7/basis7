@@ -1,8 +1,8 @@
 # Evaluate Every Marginal at Its Own Column
 
-Returns a list of the margins' design matrices, each evaluated at its
-own column of the points, and each differentiated or integrated as
-`order` and `integral` specify. The first step of
+Returns a list of the margins' design matrices. Each matrix is evaluated
+at its own column of the points and is differentiated or integrated as
+`order` and `integral` specify. It is the first step of
 [`tensor_design()`](https://statmodels7.github.io/basis7/reference/tensor_design.md).
 
 ## Usage

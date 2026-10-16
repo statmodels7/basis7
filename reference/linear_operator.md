@@ -1,9 +1,9 @@
 # A Linear Differential Operator From Its Weights
 
 The general form: `linear_operator(w)` is \\L x = w_0 x + w_1 Dx +
-\cdots + w\_{m-1} D^{m-1} x + D^m x\\, with the leading coefficient 1
-and `w` given in increasing order of differentiation. It is the vector
-`fda::vec2Lfd()` takes.
+\cdots + w\_{m-1} D^{m-1} x + D^m x\\, where the leading coefficient is
+1 and `w` is given in increasing order of differentiation. It is the
+vector that `fda::vec2Lfd()` takes.
 
 ## Usage
 
@@ -38,8 +38,8 @@ Where they apply,
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
 and
 [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
-are preferable: they record what the operator is for, and the last two
-carry a period that can be resolved from the interval of a smoother,
+are preferable: they record the purpose of the operator, and the last
+two carry a period that can be resolved from the interval of a smoother,
 which a bare weight vector cannot.
 
 ## See also
@@ -54,19 +54,19 @@ for the null space.
 ## Examples
 
 ``` r
-# the harmonic acceleration operator written out, as in fda
+# This is the harmonic acceleration operator written out, as in fda.
 nu2 <- (2 * pi / 365)^2
 linear_operator(c(0, nu2, 0))
 #> <linear differential operator>  order 3
 #>   L x = 0.0002963 Dx + D^3 x
 #>   null space: 1, sin(0.0172142 t), cos(0.0172142 t)
 
-# and it is the same operator harmonic_operator() builds
+# and it is the same operator that harmonic_operator() builds
 all.equal(operator_weights(linear_operator(c(0, nu2, 0))),
           operator_weights(harmonic_operator(365)))
 #> [1] TRUE
 
-# exponential growth left unpenalized: L x = Dx - r x
+# This operator leaves exponential growth unpenalized: L x = Dx - r x.
 operator_null(linear_operator(-0.5))
 #>        label rate freq degree part
 #> 1 exp(0.5 t)  0.5    0      0     

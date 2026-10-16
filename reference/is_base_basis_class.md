@@ -2,10 +2,9 @@
 
 Reports whether an S7 class is the abstract
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) class.
-That is how
 [`basis_is_numerical()`](https://statmodels7.github.io/basis7/reference/basis_is_numerical.md)
-tells a method registered on the base class, which is a numerical
-fallback, from one a subclass supplied.
+uses this test to distinguish a method registered on the base class,
+which is a numerical fallback, from a method that a subclass supplied.
 
 ## Usage
 
@@ -26,8 +25,8 @@ A single `TRUE` or `FALSE`.
 
 ## Details
 
-Identity is tried first, being the usual case and costing nothing, and
-the name and package are compared when it fails. The second test is
+Identity is tried first, because it is the usual case and costs nothing,
+and the name and package are compared when it fails. The second test is
 needed because [`identical()`](https://rdrr.io/r/base/identical.html)
 can return `FALSE` for a class re-created from the same definition,
 which happens when the code of a package is evaluated instead of loaded,

@@ -25,7 +25,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -69,21 +69,21 @@
 
     
     
-<p>The package ships three families of bases, and any other basis can be
-added by subclassing. This vignette adds one that the package does not
-ship, and shows what the package provides for it at each step.</p>
+<p>The package ships several families of bases, and any other basis can
+be added by subclassing. This vignette adds one that the package does
+not ship, and shows what the package provides for it at each step.</p>
 <div class="section level2">
 <h2 id="the-minimum">The minimum<a class="anchor" aria-label="anchor" href="#the-minimum"></a>
 </h2>
 <p>A new basis is a subclass of <code>basis</code> and a method for
-<code><a href="../reference/basis_eval.html">basis_eval()</a></code>. Nothing else is required.</p>
+<code><a href="../reference/basis_eval.html">basis_eval()</a></code>, and these two are all that is required.</p>
 <p>Take a basis of Gaussian bumps,
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">exp</mi><mo>⁡</mo></mrow><mo stretchy="false" form="prefix">{</mo><mi>−</mi><mo stretchy="false" form="prefix">(</mo><mi>x</mi><mo>−</mo><msub><mi>c</mi><mi>j</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mn>2</mn></msup><mi>/</mi><mn>2</mn><msup><mi>s</mi><mn>2</mn></msup><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\exp\{-(x - c_j)^2 / 2s^2\}</annotation></semantics></math>
 at equally spaced centers
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>c</mi><mi>j</mi></msub><annotation encoding="application/x-tex">c_j</annotation></semantics></math>.
-They are not orthogonal, not a partition of unity, and have no compact
-support, so nothing about them is inherited from the families already
-here.</p>
+They are not orthogonal, they are not a partition of unity, and they
+have no compact support, so they do not inherit any property from the
+families already here.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Bumps</span> <span class="op">&lt;-</span> <span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/new_class.html" class="external-link">new_class</a></span><span class="op">(</span><span class="st">"Bumps"</span>, parent <span class="op">=</span> <span class="va">basis</span><span class="op">)</span></span>
 <span></span>
@@ -163,9 +163,9 @@ interval, where the basis is not defined.</p>
 <span><span class="co">#&gt; [1] 4.801691e-09</span></span></code></pre></div>
 <p>The integral is anchored: its value at the lower endpoint is exactly
 zero, for every basis. Any antiderivative satisfies a differentiation
-check, so with the constant left free two bases could disagree while
-both looked correct, and a sum of them would be wrong without any sign
-of it.</p>
+check, so if the constant were free two bases could disagree while both
+looked correct, and a sum of them would be wrong without any sign of
+it.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/basis_int.html">basis_int</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">b</span><span class="op">@</span><span class="va">lower</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      bu1 bu2 bu3 bu4 bu5 bu6</span></span>
@@ -174,9 +174,9 @@ of it.</p>
 <div class="section level2">
 <h2 id="adding-a-closed-form">Adding a closed form<a class="anchor" aria-label="anchor" href="#adding-a-closed-form"></a>
 </h2>
-<p>A closed form registered later takes over through dispatch, with no
-change to calling code. Here is the derivative of this family, from the
-Hermite polynomials:</p>
+<p>When a closed form is registered later, dispatch selects it and the
+calling code does not change. Here is the derivative of this family,
+from the Hermite polynomials:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">S7</span><span class="fu">::</span><span class="fu"><a href="https://rconsortium.github.io/S7/reference/method.html" class="external-link">method</a></span><span class="op">(</span><span class="va">basis_deriv</span>, <span class="va">Bumps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">basis</span>, <span class="va">x</span>, <span class="va">order</span> <span class="op">=</span> <span class="fl">1L</span>, <span class="va">...</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">p</span> <span class="op">&lt;-</span> <span class="va">basis</span><span class="op">@</span><span class="va">basis_params</span></span>
@@ -206,7 +206,7 @@ derivative or an integral that came from a fallback the check is not run
 and the row prints <code>[numerical]</code>, because comparing a finite
 difference against a finite difference repeats the same arithmetic, and
 the two agree however wrong the basis is. A Gram matrix that came from a
-fallback is compared with a finer quadrature, each entry being allowed
+fallback is compared with a finer quadrature, and each entry is allowed
 four times the error of the package’s own quadrature.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/invisible.html" class="external-link">invisible</a></span><span class="op">(</span><span class="fu"><a href="../reference/check_basis.html">check_basis</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span><span class="op">)</span></span>
@@ -246,11 +246,11 @@ derivative that is wrong by five percent still fails:</p>
 </h2>
 <p><code><a href="../reference/basis_gram.html">basis_gram()</a></code> returns
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>∫</mo><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo></mrow></msup><msup><mi>B</mi><mrow><mo stretchy="false" form="prefix">(</mo><mi>d</mi><mo stretchy="false" form="postfix">)</mo><mi>⊤</mi></mrow></msup></mrow><annotation encoding="application/x-tex">\int B^{(d)} B^{(d)\top}</annotation></semantics></math>,
-which is what a roughness penalty integrates:
+the matrix used in a roughness penalty, since
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>β</mi><mi>⊤</mi></msup><msub><mi>G</mi><mi>d</mi></msub><mi>β</mi></mrow><annotation encoding="application/x-tex">\beta^\top G_d \beta</annotation></semantics></math>
 is the integral of the squared
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>-th
-derivative of the function the coefficients describe.</p>
+derivative of the function that the coefficients describe.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Normal.html" class="external-link">rnorm</a></span><span class="op">(</span><span class="va">b</span><span class="op">@</span><span class="va">dimension</span><span class="op">)</span></span>
 <span><span class="va">f2</span> <span class="op">&lt;-</span> <span class="kw">function</span><span class="op">(</span><span class="va">t</span><span class="op">)</span> <span class="op">(</span><span class="fu"><a href="../reference/basis_deriv.html">basis_deriv</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">t</span>, order <span class="op">=</span> <span class="fl">2</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="va">beta</span><span class="op">)</span><span class="op">^</span><span class="fl">2</span></span>
@@ -317,7 +317,7 @@ passes its exactness on.</p>
 empirical inner product and the penalty at once, and is empirically
 orthogonal to a constant and to
 <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.
-It works on any basis, this one included:</p>
+It works on any basis, including this one:</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">xd</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/sort.html" class="external-link">sort</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="fl">300</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">d</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dr_basis.html">dr_basis</a></span><span class="op">(</span><span class="va">b</span>, <span class="va">xd</span><span class="op">)</span></span>
@@ -328,7 +328,7 @@ It works on any basis, this one included:</p>
 <span>  orthogonal_to_1_and_x <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html" class="external-link">max</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html" class="external-link">abs</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/crossprod.html" class="external-link">crossprod</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">cbind</a></span><span class="op">(</span><span class="fl">1</span>, <span class="va">xd</span><span class="op">)</span>, <span class="va">z</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span></span>
 <span><span class="co">#&gt;          off_diagonal orthogonal_to_1_and_x </span></span>
-<span><span class="co">#&gt;          1.125910e-13          7.593925e-14</span></span></code></pre></div>
+<span><span class="co">#&gt;          7.815970e-14          1.501022e-13</span></span></code></pre></div>
 <p>Transforms compose by multiplying their matrices instead of nesting,
 so a chain of them costs one matrix product per evaluation however long
 it is. The parent of a transformed transformed basis is therefore the
@@ -363,9 +363,9 @@ the box grow with every variable:</p>
 <span>  <span class="fu"><a href="../reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="va">b</span><span class="op">)</span>, <span class="fu"><a href="../reference/basis_gram.html">basis_gram</a></span><span class="op">(</span><span class="fu"><a href="../reference/bspline_basis.html">bspline_basis</a></span><span class="op">(</span>dimension <span class="op">=</span> <span class="fl">5</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p>What does not stay cheap is the design matrix, whose columns are the
-product of the marginal dimensions. <code><a href="../reference/basis_contract.html">basis_contract()</a></code>
-computes the values the coefficients describe without forming it.
+<p>The design matrix does not stay cheap, because its number of columns
+is the product of the marginal dimensions. <code><a href="../reference/basis_contract.html">basis_contract()</a></code>
+computes the values that the coefficients describe without forming it.
 Coefficients come as an array, whose dimensions line up with the
 marginals:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
@@ -374,8 +374,8 @@ marginals:</p>
 <span>  <span class="fu"><a href="../reference/basis_eval.html">basis_eval</a></span><span class="op">(</span><span class="va">tb</span>, <span class="va">xy</span><span class="op">)</span> <span class="op"><a href="https://rdrr.io/r/base/matmult.html" class="external-link">%*%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/aperm.html" class="external-link">aperm</a></span><span class="op">(</span><span class="va">cf</span><span class="op">)</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
 <p>or as factor matrices, one per marginal with a shared number of
-columns, in which case neither the design matrix nor the coefficient
-array is ever formed and the cost is linear in the number of
+columns, in which case the function does not form the design matrix or
+the coefficient array, and the cost is linear in the number of
 variables:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gam</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
@@ -391,19 +391,18 @@ evaluates the contraction for given factors.</p>
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
 <ul>
-<li>
-<strong>Minimum to define a basis:</strong> a subclass of
+<li>The minimum needed to define a basis is a subclass of
 <code>basis</code> and a <code><a href="../reference/basis_eval.html">basis_eval()</a></code> method whose columns
 are named by <code><a href="../reference/basis_colnames.html">basis_colnames()</a></code>.</li>
-<li>From the evaluation alone come the derivatives, the integral and the
-Gram matrix, and <code><a href="../reference/basis_is_numerical.html">basis_is_numerical()</a></code> reports which are
-numerical.</li>
-<li>Closed forms can be registered one at a time; each takes over
-through dispatch.</li>
+<li>The evaluation alone suffices to obtain the derivatives, the
+integral and the Gram matrix, and <code><a href="../reference/basis_is_numerical.html">basis_is_numerical()</a></code>
+reports which of them are numerical.</li>
+<li>Closed forms can be registered one at a time, and dispatch selects
+each of them as soon as it is registered.</li>
 <li>
-<code><a href="../reference/check_basis.html">check_basis()</a></code> verifies what can be verified, and marks
-the derivatives and the integral that come from a fallback as
-<code>[numerical]</code>.</li>
+<code><a href="../reference/check_basis.html">check_basis()</a></code> marks the derivatives and the integral
+that come from a fallback as <code>[numerical]</code>, because it cannot
+verify them, and checks the rest.</li>
 <li>Every transform of a basis is one linear map, and it keeps the
 parent’s exactness.</li>
 <li>A product of bases is a basis of several variables; its Gram matrix

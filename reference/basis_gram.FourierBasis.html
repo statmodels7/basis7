@@ -11,7 +11,7 @@ the orthogonality fails and the method computes a quadrature instead."><meta pro
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -62,8 +62,8 @@ default <code>0</code>.</p></dd>
 
 <dt id="arg-at-weight">at, weight<a class="anchor" aria-label="anchor" href="#arg-at-weight"></a></dt>
 <dd><p>Handled in the body of <code><a href="basis_gram.html">basis_gram()</a></code> before dispatch, so
-they never arrive here. Named only because S7 requires a method's formals
-to contain the generic's.</p></dd>
+they never arrive here. They are named only because S7 requires a
+method's formals to contain the generic's.</p></dd>
 
 
 <dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
@@ -75,15 +75,15 @@ where <code>panels</code> and <code>nodes</code> control the quadrature. On the 
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A symmetric numeric matrix of <code>basis@dimension</code> rows and columns,
-with column names <code>const</code>, <code>sin1</code>, and so on. Diagonal when the interval
-is one whole period, full otherwise; singular for any <code>order &gt;= 1</code>, the
-constant differentiating away.</p>
+with column names <code>const</code>, <code>sin1</code>, and so on. The matrix is diagonal when
+the interval is one whole period and full otherwise, and it is singular
+for any <code>order &gt;= 1</code>, because the constant vanishes under differentiation.</p>
     </div>
     <div class="section level2">
     <h2 id="the-closed-form">The closed form<a class="anchor" aria-label="anchor" href="#the-closed-form"></a></h2>
     <p>Over a whole period the trigonometric functions are mutually orthogonal,
-and stay orthogonal after differentiation, a derivative only shifting the
-phase and rescaling. The order-\(d\) matrix is therefore diagonal, with</p>
+and stay orthogonal after differentiation, because a derivative only shifts
+the phase and rescales. The order-\(d\) matrix is therefore diagonal, with</p>
 <p>$$G_{00} = \omega \ (d = 0), \quad 0 \ (d \ge 1), \qquad
   G_{jj} = \frac{\omega}{2}\left(\frac{2\pi j}{\omega}\right)^{2d}$$</p>
 <p>for both members of pair \(j\). At <code>dimension = 7</code> on \([0, 1]\) the

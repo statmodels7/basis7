@@ -2,7 +2,7 @@
 
 ## Bases
 
-The families the package ships. Each holds all its functions, and
+The families that the package ships. Each holds all its functions, and
 restricting one is a separate step.
 
 - [`bspline_basis()`](https://statmodels7.github.io/basis7/reference/bspline_basis.md)
@@ -29,8 +29,8 @@ share one class.
 
 ## Smoothers
 
-A smoother carries the four choices a penalized smooth is made of (the
-basis, the penalty, the treatment of the null space and the
+A smoother carries the four choices of which a penalized smooth is made
+(the basis, the penalty, the treatment of the null space and the
 reparametrization) as one object, because the null space is a property
 of the basis and the penalty together. Built at the covariate, it
 returns the design block and the penalty matrix.
@@ -89,7 +89,7 @@ from the marginal evaluations without forming the product.
 
 What a penalty measures. A smoother’s `order` takes one of these in
 place of a whole number, and the operator carries its own null space:
-the functions a maximal penalty leaves untouched.
+the functions that a maximal penalty leaves untouched.
 
 - [`deriv_operator()`](https://statmodels7.github.io/basis7/reference/deriv_operator.md)
   : The Derivative Operator
@@ -114,7 +114,8 @@ the functions a maximal penalty leaves untouched.
 
 ## The interface
 
-The generics every basis has methods for. A subclass must implement only
+The generics for which every basis has methods. A subclass must
+implement only
 [`basis_eval()`](https://statmodels7.github.io/basis7/reference/basis_eval.md).
 The base class supplies numerical methods for the derivatives, the
 integral and the Gram matrices, and default column names.
@@ -154,9 +155,9 @@ integral and the Gram matrices, and default column names.
 
 ## Internals
 
-The methods registered on the generics and the numerical machinery the
-fallbacks are built from, documented for anyone writing a basis of their
-own. Apart from
+The methods registered on the generics and the numerical machinery from
+which the fallbacks are built, documented for anyone writing a basis of
+their own. Apart from
 [`smoother_gram()`](https://statmodels7.github.io/basis7/reference/smoother_gram.md),
 the functions listed here are not exported and are reached with
 `basis7:::`.
@@ -207,7 +208,7 @@ the functions listed here are not exported and are reached with
   [`replace_coord()`](https://statmodels7.github.io/basis7/reference/coord.md)
   : One Coordinate of the Evaluation Points
 - [`check_basis_args()`](https://statmodels7.github.io/basis7/reference/check_basis_args.md)
-  : Validate the Arguments Every Basis Constructor Takes
+  : Validate the Arguments That Every Basis Constructor Takes
 - [`check_eval_points()`](https://statmodels7.github.io/basis7/reference/check_eval_points.md)
   : Validate Evaluation Points Against a Basis
 - [`check_order()`](https://statmodels7.github.io/basis7/reference/check_order.md)
@@ -243,7 +244,7 @@ the functions listed here are not exported and are reached with
 - [`smoother_reparam()`](https://statmodels7.github.io/basis7/reference/smoother_reparam.md)
   : The Coordinates of the Coefficients of a Smoother
 - [`over_penalty()`](https://statmodels7.github.io/basis7/reference/over_penalty.md)
-  : One Operation on a Penalty, However Many Components It Has
+  : One Operation on a Penalty with Any Number of Components
 - [`name_columns()`](https://statmodels7.github.io/basis7/reference/name_columns.md)
   : Name the Columns of a Basis Matrix
 - [`basis_partitions_unity()`](https://statmodels7.github.io/basis7/reference/basis_partitions_unity.md)

@@ -1,6 +1,6 @@
 # Assemble the Null-Space Table
 
-Builds the data frame
+Builds the data frame that
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
 returns, writing the label of each function from its rate, frequency and
 power of \\t\\.

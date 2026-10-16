@@ -13,7 +13,7 @@ same on every platform."><meta property="og:image" content="https://statmodels7.
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,8 +79,8 @@ finite, or is not positive definite to <code>tol</code>.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>On a matrix with an exactly zero eigenvalue the pivot that should be zero
 comes out positive or negative according to rounding, so <code><a href="https://rdrr.io/r/base/chol.html" class="external-link">base::chol()</a></code>
-succeeds on some platforms and fails on others. A construction that relied
-on <code><a href="https://rdrr.io/r/base/chol.html" class="external-link">chol()</a></code> to decide whether a Gram matrix or a penalty is usable would
+succeeds on some platforms and fails on others. A construction that used
+<code><a href="https://rdrr.io/r/base/chol.html" class="external-link">chol()</a></code> to test whether a Gram matrix or a penalty is usable would
 therefore give different results on different platforms.</p>
 <p>Comparing the smallest eigenvalue with the largest depends only on the
 matrix and gives the same result everywhere. The eigendecomposition costs

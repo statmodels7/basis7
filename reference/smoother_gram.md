@@ -1,9 +1,9 @@
 # The Roughness Matrix of a Smoother
 
-The Gram matrix of the derivative of order `sm@order`, integrated
-against the measure of the smoother: the length measure on the interval
-for `"lebesgue"`, the empirical measure of the covariate for
-`"empirical"`, and the density a function gives otherwise.
+Returns the Gram matrix of the derivative of order `sm@order`,
+integrated against the measure of the smoother: the length measure on
+the interval for `"lebesgue"`, the empirical measure of the covariate
+for `"empirical"`, and the density that a function gives otherwise.
 
 ## Usage
 
@@ -50,7 +50,7 @@ under another.
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md),
 which calls it, and
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md),
-the generic it reads.
+the generic that it reads.
 
 ## Examples
 

@@ -4,8 +4,8 @@ Evaluates \\P_0, \ldots, P\_{K-1}\\ at the given points by the
 three-term recurrence \$\$(n+1) P\_{n+1}(t) = (2n+1)\\ t\\ P_n(t) - n\\
 P\_{n-1}(t),\$\$ after shifting the points from \\\[\ell, u\]\\ onto
 \\\[-1, 1\]\\ by \\t = 2(x - \ell)/(u - \ell) - 1\\. The recurrence is
-stable on that interval, every \\\|P_n\| \le 1\\ there, so no rescaling
-is needed at any dimension.
+stable on that interval because \\\|P_n\| \le 1\\ there for every \\n\\,
+so the recurrence can run without rescaling at any dimension.
 
 ## Arguments
 

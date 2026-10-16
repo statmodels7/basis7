@@ -1,9 +1,9 @@
 # One Coordinate of the Evaluation Points
 
-A matched pair for reading and writing one variable of a set of
-evaluation points. `coord(x, j)` returns the `j`th variable;
-`replace_coord(x, j, z)` returns the points with that variable replaced
-by `z` and the others left alone.
+`coord()` and `replace_coord()` are a matched pair that reads and writes
+one variable of a set of evaluation points. `coord(x, j)` returns the
+`j`th variable; `replace_coord(x, j, z)` returns the points in which
+that variable is replaced by `z` and the others are unchanged.
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
 uses them to sweep one coordinate at a time when the basis takes
 several.
@@ -25,8 +25,8 @@ replace_coord(x, j, z)
 
 - j:
 
-  The coordinate to read or write, a column index. Ignored when `x` is a
-  vector.
+  The coordinate to read or write, a column index. The argument is
+  ignored when `x` is a vector.
 
 - z:
 
@@ -47,14 +47,14 @@ returns `x` and `replace_coord()` returns `z`, so the caller writes one
 loop over `seq_len(basis_nvar(basis))` with no branch for the univariate
 case.
 
-Neither function validates its arguments. An index `j` outside the
-columns of `x` gives R's subscript error. A `z` of the wrong length is
-recycled into a matrix only when its length divides the number of rows,
-and is returned as it is for a vector `x`.
+`coord()` and `replace_coord()` do not validate their arguments. An
+index `j` outside the columns of `x` gives R's subscript error. A `z` of
+the wrong length is recycled into a matrix only when its length divides
+the number of rows, and is returned as it is for a vector `x`.
 
 ## See also
 
 [`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
 their only caller, and
 [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-for the count they loop over.
+for the count over which they loop.

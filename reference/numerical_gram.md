@@ -1,14 +1,14 @@
 # Gram Matrix by Composite Quadrature
 
 Computes the inner products of the order-`order` derivatives by
-Gauss-Legendre on equal subintervals. Shared by
+Gauss-Legendre on equal subintervals. The function is shared by
 [`basis_gram.basis()`](https://statmodels7.github.io/basis7/reference/basis_gram.basis.md),
 by
 [`basis_gram.FourierBasis()`](https://statmodels7.github.io/basis7/reference/basis_gram.FourierBasis.md)
 when the period is not the interval width, and by
-[`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md)
-as the independent reference it compares a family's own Gram matrix
-against.
+[`check_basis()`](https://statmodels7.github.io/basis7/reference/check_basis.md),
+which uses it as the independent reference against which it compares a
+family's own Gram matrix.
 
 ## Usage
 
@@ -56,11 +56,11 @@ whatever the integrand does. It is then symmetrized as `(G + t(G))/2`.
 ## Several variables
 
 The rule is a product over the box: the nodes are the product grid of
-the marginal rules and the weights their products. Each coordinate gets
-`max(2, ceiling(panels^(1/d)))` panels, so the total node count stays
-near `panels * nodes^d` and does not grow as `panels^d`. At the defaults
-on two variables that is 8 panels of 12 nodes per coordinate, 9216
-points.
+the marginal rules and the weights their products. The rule uses
+`max(2, ceiling(panels^(1/d)))` panels for each coordinate, so the total
+node count stays near `panels * nodes^d` and does not grow as
+`panels^d`. At the defaults on two variables, the rule has 8 panels of
+12 nodes per coordinate, which gives 9216 points.
 
 ## Accuracy
 

@@ -3,10 +3,10 @@
 Returns the basis that simultaneously diagonalizes the empirical inner
 product at the given points and a penalty, and is empirically orthogonal
 to a constant and to `x`. Its columns are ordered from the smoothest to
-the wiggliest, each carrying a known share of the empirical variance, so
-a penalized fit against it is a shrinkage of independent coordinates and
-the linear part of the effect is separated from the nonlinear part
-exactly.
+the wiggliest, and each of them carries a known share of the empirical
+variance, so a penalized fit against it is a shrinkage of independent
+coordinates and the linear part of the effect is separated from the
+nonlinear part exactly.
 
 ## Usage
 
@@ -23,10 +23,11 @@ dr_basis(basis, x, penalty = NULL, constraints = NULL, scale = TRUE)
 
 - x:
 
-  The points the empirical inner product is taken at, normally the
-  observed covariate. A numeric vector inside the basis interval, with
-  no missing values. The construction depends on where they lie, so a
-  basis built for one sample is not the basis for another.
+  The points at which the empirical inner product is taken, normally the
+  observed covariate. It must be a numeric vector inside the basis
+  interval, with no missing values. The construction depends on where
+  they lie, so a basis built for one sample is not the basis for
+  another.
 
 - penalty:
 
@@ -39,9 +40,9 @@ dr_basis(basis, x, penalty = NULL, constraints = NULL, scale = TRUE)
 - constraints:
 
   A matrix with one row per constraint and one column per element of
-  `x`, whose row space the result is made empirically orthogonal to.
-  `NULL`, the default, uses `t(cbind(1, x))`, which is the separation of
-  a linear from a nonlinear effect.
+  `x`. The result is made empirically orthogonal to the row space of
+  this matrix. `NULL`, the default, uses `t(cbind(1, x))`, which is the
+  separation of a linear from a nonlinear effect.
 
 - scale:
 
@@ -53,24 +54,24 @@ dr_basis(basis, x, penalty = NULL, constraints = NULL, scale = TRUE)
 An object of class
 [TransformedBasis](https://statmodels7.github.io/basis7/reference/TransformedBasis.md)
 of dimension `basis@dimension - rank(C)`, with `basis_name`
-`dr(<parent>)`, column names `dr1`, `dr2`, and so on ordered from
-smoothest to wiggliest, and `basis_params` holding `empirical_variance`
+`dr(<parent>)` and column names `dr1`, `dr2`, and so on ordered from
+smoothest to wiggliest, where `basis_params` holds `empirical_variance`
 and `constraint_rank`.
 
 ## The construction
 
-Three steps. The constraint matrix \\C = (\mathbf{1}, x)^\top B\\ is
-formed and the basis restricted to its null space \\V_0\\, which makes
-the remaining functions empirically orthogonal to a constant and to
-\\x\\. The pencil \\(V_0^\top (B^\top B/n) V_0,\\ V_0^\top P V_0)\\ is
-then diagonalized, and the transform is \\T = V_0 A\\.
+The constraint matrix \\C = (\mathbf{1}, x)^\top B\\ is formed and the
+basis restricted to its null space \\V_0\\, which makes the remaining
+functions empirically orthogonal to a constant and to \\x\\. The pencil
+\\(V_0^\top (B^\top B/n) V_0,\\ V_0^\top P V_0)\\ is then diagonalized,
+and the transform is \\T = V_0 A\\.
 
 The resulting design matrix \\Z = B T\\ then has \\Z^\top Z\\ diagonal
 and satisfies \\(\mathbf{1}, x)^\top Z = 0\\, both up to rounding.
 
 ## What `scale` does to the penalty
 
-\\T^\top P T\\ is **proportional to** the identity, and equal to it only
+\\T^\top P T\\ is proportional to the identity, and equal to it only
 when `scale = FALSE`. With `scale = TRUE`, the default, \\T\\ is divided
 by \\\sqrt{\sum_j \lambda_j}\\, so \\T^\top P T\\ is \\(\sum_j
 \lambda_j)^{-1} I\\ and `tr(Z'Z/n)` is 1. At `scale = FALSE` \\T^\top P
@@ -82,22 +83,22 @@ that needs the penalty to be exactly \\I\\ passes `scale = FALSE`.
 
 `basis_params$empirical_variance` holds the eigenvalues, normalized to
 sum to one when `scale = TRUE`. They equal `diag(Z'Z/n)` up to rounding,
-and are the share of empirical variance each column carries, falling
-from the smoothest column to the wiggliest.
+and are the share of empirical variance that each column carries,
+falling from the smoothest column to the wiggliest.
 
 ## Cost and properties
 
 It factorizes only a \\q \times K\\ matrix and a \\(K-q) \times (K-q)\\
-one, never anything of the size of the sample. It tolerates a
+one, never anything of the size of the sample. It accepts a
 rank-deficient \\B\\, which equally spaced knots produce when the data
 leave `degree + 1` or more consecutive knot spans of a B-spline empty,
-the matrix inverted being the penalty. The transform is kept, so
-prediction at new points is the parent's evaluation multiplied by it, as
-for any other transformed basis.
+because the matrix that is inverted is the penalty. The transform is
+kept, so prediction at new points is the parent's evaluation multiplied
+by it, as for any other transformed basis.
 
-The orthogonality \\(\mathbf{1}, x)^\top Z = 0\\ is what separates a
-linear from a nonlinear effect: a reparametrization without it estimates
-the sum of the two correctly and the split between them with bias.
+The orthogonality \\(\mathbf{1}, x)^\top Z = 0\\ separates a linear from
+a nonlinear effect: a reparametrization without it estimates the sum of
+the two correctly and the split between them with bias.
 
 ## Errors
 
@@ -115,7 +116,7 @@ smoothing. *Numerische Mathematik* **24**, 375-382.
 ## See also
 
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md),
-which does its first step alone;
+which performs only the first step;
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md),
 which supplies the default penalty;
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md)
@@ -136,9 +137,9 @@ z <- basis_eval(d, x)
 
 # Z'Z is diagonal, and Z is orthogonal to a constant and to x.
 max(abs(crossprod(z)[upper.tri(crossprod(z))]))
-#> [1] 9.114426e-14
+#> [1] 8.650707e-14
 max(abs(crossprod(cbind(1, x), z)))
-#> [1] 1.953993e-14
+#> [1] 4.751755e-14
 
 # The columns run from smoothest to wiggliest, and the recorded shares of
 # empirical variance are the diagonal of Z'Z/n.
@@ -146,7 +147,7 @@ round(d@basis_params$empirical_variance, 6)
 #>  [1] 0.833632 0.115301 0.030148 0.011133 0.004913 0.002493 0.001384 0.000875
 #>  [9] 0.000077 0.000044
 max(abs(d@basis_params$empirical_variance - diag(crossprod(z)) / length(x)))
-#> [1] 6.661338e-16
+#> [1] 2.498002e-16
 
 # Scaled, the penalty is a multiple of the identity and the trace is one.
 P <- basis_gram(bspline_basis(dimension = 12), order = 2)
@@ -158,5 +159,5 @@ sum(diag(crossprod(z))) / length(x)
 # Unscaled, the penalty is the identity instead.
 du <- dr_basis(bspline_basis(dimension = 12), x, scale = FALSE)
 max(abs(crossprod(du@transform, P %*% du@transform) - diag(du@dimension)))
-#> [1] 2.975398e-14
+#> [1] 3.308465e-14
 ```

@@ -18,7 +18,7 @@ coordinates, and a further line records the factory.
 
 ## Value
 
-`x`, invisibly. Called for the printing.
+`x`, invisibly. The method is called for the printing.
 
 ## Examples
 

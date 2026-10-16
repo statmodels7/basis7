@@ -25,7 +25,7 @@ handles the wrappers itself.
 
 ## Value
 
-The named logical vector
+The named logical vector that
 [`basis_numerical_route()`](https://statmodels7.github.io/basis7/reference/basis_numerical_route.md)
 describes.
 

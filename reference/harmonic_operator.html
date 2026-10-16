@@ -5,13 +5,13 @@ $$L x = D \prod_{i=1}^{h} \left(D^2 + (i\nu)^2\right) x,
 whose null space is the constant together with the first \(h\)
 harmonics of the period \(T\). At harmonics = 1 it is the harmonic
 acceleration operator \(L x = \nu^2 Dx + D^3 x\) of Ramsay and
-Silverman, which is what fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds."><meta property="og:description" content="The operator for periodic data,
+Silverman, and fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds the same operator."><meta property="og:description" content="The operator for periodic data,
 $$L x = D \prod_{i=1}^{h} \left(D^2 + (i\nu)^2\right) x,
   \qquad \nu = \frac{2\pi}{T},$$
 whose null space is the constant together with the first \(h\)
 harmonics of the period \(T\). At harmonics = 1 it is the harmonic
 acceleration operator \(L x = \nu^2 Dx + D^3 x\) of Ramsay and
-Silverman, which is what fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
+Silverman, and fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds the same operator."><meta property="og:image" content="https://statmodels7.github.io/basis7/logo.png"></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -19,7 +19,7 @@ Silverman, which is what fda::vec2Lfd(c(0, (2*pi/T)^2, 0)) builds."><meta proper
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,7 +55,7 @@ $$L x = D \prod_{i=1}^{h} \left(D^2 + (i\nu)^2\right) x,
 whose null space is the constant together with the first \(h\)
 harmonics of the period \(T\). At <code>harmonics = 1</code> it is the harmonic
 acceleration operator \(L x = \nu^2 Dx + D^3 x\) of Ramsay and
-Silverman, which is what <code>fda::vec2Lfd(c(0, (2*pi/T)^2, 0))</code> builds.</p>
+Silverman, and <code>fda::vec2Lfd(c(0, (2*pi/T)^2, 0))</code> builds the same operator.</p>
     </div>
 
     <div class="section level2">
@@ -73,8 +73,8 @@ take the width of the smoother's interval.</p></dd>
 
 
 <dt id="arg-harmonics">harmonics<a class="anchor" aria-label="anchor" href="#arg-harmonics"></a></dt>
-<dd><p>How many harmonics the penalty leaves unpenalized, a
-whole number of at least 1. The order of the operator is
+<dd><p>The number of harmonics that the penalty leaves
+unpenalized, a whole number of at least 1. The order of the operator is
 <code>2 * harmonics + 1</code> and the null space has that dimension.</p></dd>
 
 </dl></div>
@@ -97,10 +97,10 @@ operator keeps it and is a sinusoid.</p>
     <h2 id="the-period">The period<a class="anchor" aria-label="anchor" href="#the-period"></a></h2>
     <p><code>period</code> is \(T\), the length of one cycle, in the units of the
 covariate: 365 for a day of the year, 12 for a month, 24 for an hour.
-It is <strong>not</strong> \(\nu = 2\pi/T\), which some of the literature also calls
-omega. <code>NULL</code> leaves it to be resolved from the interval of whichever
-smoother the operator is given to, which is what <code><a href="fourier_smooth.html">fourier_smooth()</a></code> does
-by default; <code><a href="operator_resolve.html">operator_resolve()</a></code> fills it in. For an unresolved operator
+It is not \(\nu = 2\pi/T\), which some of the literature also calls
+omega. With <code>NULL</code>, the period is resolved from the interval of the
+smoother to which the operator is given, as <code><a href="fourier_smooth.html">fourier_smooth()</a></code> does by
+default; <code><a href="operator_resolve.html">operator_resolve()</a></code> fills it in. For an unresolved operator
 <code><a href="operator_weights.html">operator_weights()</a></code> returns <code>NA</code> and <code><a href="operator_null.html">operator_null()</a></code> signals an
 error.</p>
     </div>
@@ -112,7 +112,7 @@ second edition. Springer, chapter 5.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="fourier_smooth.html">fourier_smooth()</a></code>, whose default it is; <code><a href="deriv_operator.html">deriv_operator()</a></code> for
-the non-periodic one; <code><a href="operator_null.html">operator_null()</a></code> for the space it leaves.</p></div>
+the non-periodic one; <code><a href="operator_null.html">operator_null()</a></code> for the space that it leaves.</p></div>
     </div>
 
     <div class="section level2">
@@ -129,7 +129,7 @@ the non-periodic one; <code><a href="operator_null.html">operator_null()</a></co
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2 sin(0.0172142 t)    0 0.01721421      0  sin</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3 cos(0.0172142 t)    0 0.01721421      0  cos</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># two harmonics left free instead of one</span></span></span>
+<span class="r-in"><span><span class="co"># This operator leaves two harmonics free instead of one.</span></span></span>
 <span class="r-in"><span><span class="fu">harmonic_operator</span><span class="op">(</span><span class="fl">365</span>, harmonics <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;linear differential operator&gt;  order 5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   L x = 3.512e-07 Dx + 0.001482 D^3 x + D^5 x</span>

@@ -1,9 +1,9 @@
 # The Null-Space Functions Evaluated
 
-The design matrix of the functions
+Returns the design matrix of the functions that
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
-lists, evaluated at `x`: one column per function, in the order that
-table gives them.
+lists, evaluated at `x`, with one column per function in the order of
+that table.
 
 ## Usage
 
@@ -20,7 +20,7 @@ operator_null_design(op, x)
 
 - x:
 
-  The points to evaluate at, a numeric vector.
+  The points at which the functions are evaluated, a numeric vector.
 
 ## Value
 
@@ -44,7 +44,7 @@ formed. The operators built by
 [`harmonic_operator()`](https://statmodels7.github.io/basis7/reference/harmonic_operator.md)
 and
 [`oscillator_operator()`](https://statmodels7.github.io/basis7/reference/oscillator_operator.md)
-have only roots on the imaginary axis, zero included, and this
+have only roots on the imaginary axis, including zero, and this
 difficulty does not arise.
 
 ## See also
@@ -64,7 +64,7 @@ round(operator_null_design(harmonic_operator(365), x), 4)
 #> [4,] 1               -1                0
 #> [5,] 1                0                1
 
-# the constant and t, the null space of the second derivative
+# The null space of the second derivative holds the constant and t.
 operator_null_design(deriv_operator(2), 1:5)
 #>      1 t
 #> [1,] 1 1

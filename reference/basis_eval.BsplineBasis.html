@@ -13,7 +13,7 @@ to rounding."><meta property="og:image" content="https://statmodels7.github.io/b
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,9 +74,10 @@ columns, with column names <code>bs1</code>, <code>bs2</code>, and so on.</p>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The call goes through <code><a href="bspline_design.html">bspline_design()</a></code> with <code>intercept = TRUE</code>, so all
-<code>dimension</code> functions are returned and none is dropped for
-identifiability. The result is stripped of the attributes and of the
-<code>BSpline</code> class that <span class="pkg">splines2</span> attaches, leaving a plain matrix.</p>
+<code>dimension</code> functions are returned, including the one that <span class="pkg">splines2</span>
+would otherwise drop for identifiability. The result is stripped of the
+attributes and of the <code>BSpline</code> class that <span class="pkg">splines2</span> attaches, leaving
+a plain matrix.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

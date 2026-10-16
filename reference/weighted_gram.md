@@ -2,7 +2,7 @@
 
 Computes \\\int_a^b B^{(d)}(t)\\ B^{(d)}(t)^\top w(t)\\\mathrm{d}t\\ by
 composite Gauss-Legendre. A weight is an arbitrary function, so the
-quadrature is always run. Called from the body of
+quadrature is always run. The function is called from the body of
 [`basis_gram()`](https://statmodels7.github.io/basis7/reference/basis_gram.md)
 when `weight` is supplied.
 
@@ -56,11 +56,11 @@ folded into the quadrature weights and the matrix formed as a
 crossproduct of \\\sqrt{w_i}\\B^{(d)}(t_i)\\, which keeps the result
 positive semidefinite whatever the weight does.
 
-For a spline the accuracy is limited by the kinks of the derivative at
-knots that the panel breaks do not line up with; `panels` is raised when
-a derivative is not smooth.
+For a spline, kinks of the derivative at knots that do not coincide with
+the panel breaks limit the accuracy, so `panels` should be raised when a
+derivative is not smooth.
 
-A basis of several variables is rejected, the rule being
+A basis of several variables is rejected, because the rule is
 one-dimensional.
 
 ## See also

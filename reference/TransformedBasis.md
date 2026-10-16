@@ -1,10 +1,10 @@
 # Linearly Transformed Basis
 
-The S7 class of bases obtained from another by a fixed linear map of its
-functions, \\\tilde{B}(x) = B(x)\\T\\. It carries the parent and the
-matrix, and it is itself a basis, so every generic applies to a
-constrained or rotated basis and code that receives it works in the same
-way as for the parent. Constructed by
+`TransformedBasis` is the S7 class of bases obtained from another by a
+fixed linear map of its functions, \\\tilde{B}(x) = B(x)\\T\\. It
+carries the parent and the matrix, and it is itself a basis, so every
+generic applies to a constrained or rotated basis and code that receives
+it works in the same way as for the parent. It is constructed by
 [`orthonorm_basis()`](https://statmodels7.github.io/basis7/reference/orthonorm_basis.md),
 [`constrain_basis()`](https://statmodels7.github.io/basis7/reference/constrain_basis.md)
 or
@@ -41,11 +41,11 @@ TransformedBasis(
 
 - lower, upper:
 
-  The endpoints of the interval the basis lives on, or one endpoint per
-  variable for a basis of several. Both finite, of the same length, and
-  `lower[j] < upper[j]` for every `j`. Their length is what
+  The endpoints of the interval on which the basis lives, or one
+  endpoint per variable for a basis of several. Both must be finite and
+  of the same length, and `lower[j] < upper[j]` must hold for every `j`.
   [`basis_nvar()`](https://statmodels7.github.io/basis7/reference/basis_nvar.md)
-  reports.
+  returns their length.
 
 - basis_params:
 
@@ -59,8 +59,8 @@ TransformedBasis(
 - parent_basis:
 
   The basis being transformed, any object inheriting from
-  [basis](https://statmodels7.github.io/basis7/reference/basis.md). Kept
-  whole, so that it can still be evaluated and inspected.
+  [basis](https://statmodels7.github.io/basis7/reference/basis.md). It
+  is kept whole, so that it can still be evaluated and inspected.
 
 - transform:
 

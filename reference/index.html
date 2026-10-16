@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.15.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -37,7 +37,7 @@
     <div class="section level2">
       <h2 id="bases">Bases<a class="anchor" aria-label="anchor" href="#bases"></a></h2>
 
-      <div class="section-desc"><p>The families the package ships. Each holds all its functions, and restricting one is a separate step.</p></div>
+      <div class="section-desc"><p>The families that the package ships. Each holds all its functions, and restricting one is a separate step.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -104,7 +104,7 @@
       </dl></div><div class="section level2">
       <h2 id="smoothers">Smoothers<a class="anchor" aria-label="anchor" href="#smoothers"></a></h2>
 
-      <div class="section-desc"><p>A smoother carries the four choices a penalized smooth is made of (the basis, the penalty, the treatment of the null space and the reparametrization) as one object, because the null space is a property of the basis and the penalty together. Built at the covariate, it returns the design block and the penalty matrix.</p></div>
+      <div class="section-desc"><p>A smoother carries the four choices of which a penalized smooth is made (the basis, the penalty, the treatment of the null space and the reparametrization) as one object, because the null space is a property of the basis and the penalty together. Built at the covariate, it returns the design block and the penalty matrix.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -269,7 +269,7 @@
       </dl></div><div class="section level2">
       <h2 id="differential-operators">Differential operators<a class="anchor" aria-label="anchor" href="#differential-operators"></a></h2>
 
-      <div class="section-desc"><p>What a penalty measures. A smoother’s <code>order</code> takes one of these in place of a whole number, and the operator carries its own null space: the functions a maximal penalty leaves untouched.</p></div>
+      <div class="section-desc"><p>What a penalty measures. A smoother’s <code>order</code> takes one of these in place of a whole number, and the operator carries its own null space: the functions that a maximal penalty leaves untouched.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -348,7 +348,7 @@
       </dl></div><div class="section level2">
       <h2 id="the-interface">The interface<a class="anchor" aria-label="anchor" href="#the-interface"></a></h2>
 
-      <div class="section-desc"><p>The generics every basis has methods for. A subclass must implement only <code><a href="../reference/basis_eval.html">basis_eval()</a></code>. The base class supplies numerical methods for the derivatives, the integral and the Gram matrices, and default column names.</p></div>
+      <div class="section-desc"><p>The generics for which every basis has methods. A subclass must implement only <code><a href="../reference/basis_eval.html">basis_eval()</a></code>. The base class supplies numerical methods for the derivatives, the integral and the Gram matrices, and default column names.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -466,7 +466,7 @@
       </dl></div><div class="section level2">
       <h2 id="internals">Internals<a class="anchor" aria-label="anchor" href="#internals"></a></h2>
 
-      <div class="section-desc"><p>The methods registered on the generics and the numerical machinery the fallbacks are built from, documented for anyone writing a basis of their own. Apart from <code><a href="../reference/smoother_gram.html">smoother_gram()</a></code>, the functions listed here are not exported and are reached with <code>basis7:::</code>.</p></div>
+      <div class="section-desc"><p>The methods registered on the generics and the numerical machinery from which the fallbacks are built, documented for anyone writing a basis of their own. Apart from <code><a href="../reference/smoother_gram.html">smoother_gram()</a></code>, the functions listed here are not exported and are reached with <code>basis7:::</code>.</p></div>
 
       <dl></dl></div><div class="section level2">
 
@@ -632,7 +632,7 @@
           <code><a href="check_basis_args.html">check_basis_args()</a></code>
 
         </dt>
-        <dd>Validate the Arguments Every Basis Constructor Takes</dd>
+        <dd>Validate the Arguments That Every Basis Constructor Takes</dd>
 
         <dt>
 
@@ -758,7 +758,7 @@
           <code><a href="over_penalty.html">over_penalty()</a></code>
 
         </dt>
-        <dd>One Operation on a Penalty, However Many Components It Has</dd>
+        <dd>One Operation on a Penalty with Any Number of Components</dd>
 
         <dt>
 

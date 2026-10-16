@@ -3,15 +3,15 @@
 A smoother is a recipe for a penalized smooth. It carries the four
 choices that make up a smooth, which a single basis does not determine:
 
-1.  which functions span the space, the **basis**;
+1.  which functions span the space, the basis;
 
-2.  what counts as roughness, the **penalty**;
+2.  what counts as roughness, the penalty;
 
 3.  which directions the penalty leaves unpenalized and what happens to
-    them, the **null space**;
+    them, the null space;
 
 4.  in which coordinates the coefficients are expressed, the
-    **reparametrization**.
+    reparametrization.
 
 It is a recipe and not a built object because the third and fourth
 choices need the data: the Demmler-Reinsch rotation diagonalizes the
@@ -80,8 +80,8 @@ smoother(
 - constrain:
 
   The directions to which the smooth is made orthogonal, or `NULL` for
-  the null space of the penalty. The form it takes belongs to the
-  family, a periodic basis having no reading for "polynomials up to
+  the null space of the penalty. The form that it takes belongs to the
+  family, because a periodic basis has no reading for "polynomials up to
   degree c".
 
 - null_space:
@@ -121,12 +121,12 @@ returns an object inheriting from it.
 ## One object for the basis and the penalty
 
 The basis and the penalty cannot be chosen independently. The null space
-is a property of the **pair**: the second-derivative Gram matrix of a
-cubic B-spline has a two-dimensional null space, that of a Fourier basis
-is one-dimensional at every order because the basis contains no linear
+is a property of the pair: the second-derivative Gram matrix of a cubic
+B-spline has a two-dimensional null space, that of a Fourier basis is
+one-dimensional at every order because the basis contains no linear
 function, and the Gram matrix of a B-spline of degree \\d\\ at an order
-above \\d\\ is identically zero, which penalizes nothing. With a basis
-and a penalty passed separately, that compatibility would have to be
+above \\d\\ is identically zero, which penalizes nothing. If a basis and
+a penalty were passed separately, that compatibility would have to be
 checked at every call site. A smoother is one object, so each
 constructor validates its own arguments.
 
@@ -135,11 +135,12 @@ constructor validates its own arguments.
 `penalty` replaces the roughness matrix with a penalty built by a
 factory of the coefficient count:
 `bspline_smooth(penalty = penalties7::lasso_penalty)`. It is a factory
-and not a built penalty because how many coefficients a smooth has is
-settled by the data, the constraint and the null space moving with them.
+and not a built penalty because the number of coefficients of a smooth
+is settled by the data, and the constraint and the null space move with
+the data.
 
-A smoother **stores the function and never calls it**. Of the toolkit,
-this package imports numericals7 only, so it cannot name penalties7 and
+A smoother stores the function and never calls it. Of the toolkit, this
+package imports numericals7 only, so it cannot name penalties7 and
 cannot test whether the function returns a penalty;
 [`check_penalty()`](https://statmodels7.github.io/basis7/reference/check_penalty.md)
 checks only that it is a function with at least one argument. The layer
@@ -151,11 +152,10 @@ The construction is unaffected.
 returns the roughness matrix in `S` whether or not a factory is given,
 because the reparametrization reads that matrix: it orders the
 coordinates from the smoothest to the most wiggly and makes the penalty
-on them the identity, and that ordering is what gives a penalty of
-another shape its meaning. `unpenalized` counts the leading columns that
-the roughness leaves free, which a caller building a separable penalty
-needs, since such a penalty has no zero row with which to leave a column
-unpenalized.
+on them the identity, and this ordering gives a penalty of another shape
+its meaning. `unpenalized` counts the leading columns that the roughness
+leaves free, which a caller building a separable penalty needs, since
+such a penalty has no zero row with which to leave a column unpenalized.
 
 `smoother` is abstract: construct one through a family, of which
 [`bspline_smooth()`](https://statmodels7.github.io/basis7/reference/bspline_smooth.md)
@@ -168,7 +168,7 @@ for the B-spline family,
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
 for what a smoother produces at data,
 [basis](https://statmodels7.github.io/basis7/reference/basis.md) for the
-object a smoother builds on.
+object on which a smoother builds.
 
 ## Examples
 
