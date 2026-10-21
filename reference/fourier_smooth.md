@@ -173,7 +173,7 @@ dim(out$X)
 b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
 ends <- smoother_apply(sm, out$blueprint, c(0, 1)) %*% b
 format(diff(as.vector(ends)), digits = 3)
-#> [1] "-1.11e-16"
+#> [1] "-2.78e-16"
 
 # A strong penalty leaves the fundamental. If the null space is kept, the
 # fundamental is free, and the heavily penalized fit is a pure sinusoid.
