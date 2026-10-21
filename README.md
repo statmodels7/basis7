@@ -30,10 +30,10 @@ the integrand. On top of the bases the package builds smoothers, which
 pair a basis with a penalty given by a linear differential operator.
 
 It is the basis layer of [statmodels7](https://statmodels7.github.io),
-an S7 toolkit for statistical modeling, alongside
-[linkfunctions7](https://statmodels7.github.io/linkfunctions7/),
-[distributions7](https://statmodels7.github.io/distributions7/) and
-[optimizers7](https://statmodels7.github.io/optimizers7/).
+an S7 toolkit for statistical modeling. It is built on
+[numericals7](https://statmodels7.github.io/numericals7/), and
+[modelterms7](https://statmodels7.github.io/modelterms7/) builds its
+smooth terms on these bases.
 
 ## Installation
 
@@ -311,6 +311,12 @@ invisible(check_basis(bumps))
 
 ## Related
 
+- [numericals7](https://statmodels7.github.io/numericals7/): the
+  numerical layer of the toolkit, which basis7 imports
+- [penalties7](https://statmodels7.github.io/penalties7/): penalties as
+  objects with exact derivatives
+- [modelterms7](https://statmodels7.github.io/modelterms7/): model terms
+  as objects, including the smooth terms built on these bases
 - [linkfunctions7](https://statmodels7.github.io/linkfunctions7/): link
   functions with exact derivatives to fifth order
 - [distributions7](https://statmodels7.github.io/distributions7/):

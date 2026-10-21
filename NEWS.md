@@ -1,3 +1,10 @@
+# basis7 0.15.2
+
+* The package description says that a basis returns its design matrix,
+  where it said that it "answers" with it. The README names numericals7,
+  on which the package is built, and modelterms7, which builds its smooth
+  terms on these bases, among the related packages.
+
 # basis7 0.15.1
 
 * Documentation and messages: relative clauses without a relative pronoun,

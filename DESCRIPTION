@@ -1,11 +1,11 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.15.1
+Version: 0.15.2
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Basis expansions as objects, built on the S7 object-oriented
-    system. A basis carries an interval and a number of functions, and answers
-    with its design matrix at any points, its derivative of any order, its
+    system. A basis carries an interval and a number of functions, and returns
+    its design matrix at any points, its derivative of any order, its
     integral anchored at the lower endpoint, and the Gram matrix of any
     derivative against a chosen measure, which is the matrix of a roughness
     penalty. B-spline, Fourier and orthogonal polynomial families ship with
