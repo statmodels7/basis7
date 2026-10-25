@@ -91,7 +91,7 @@ cs@dimension
 cs@basis_params$constraint_rank
 #> [1] 1
 max(abs(colSums(basis_eval(cs, x))))
-#> [1] 1.915655e-14
+#> [1] 2.034527e-14
 
 # Two constraints take two columns: sum to zero and orthogonal to x.
 C <- rbind(colSums(basis_eval(b, x)), colSums(basis_eval(b, x) * x))
