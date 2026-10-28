@@ -7,14 +7,14 @@ are evaluated at the covariate, one column per direction.
 ## Usage
 
 ``` r
-smoother_span(sm, x, ...)
+smoother_span(smoother, x, ...)
 
-smoother_span_apply(sm, params, newx, ...)
+smoother_span_apply(smoother, params, newx, ...)
 ```
 
 ## Arguments
 
-- sm:
+- smoother:
 
   A
   [smoother](https://statmodels7.github.io/basis7/reference/smoother.md).

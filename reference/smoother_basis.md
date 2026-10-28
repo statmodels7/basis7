@@ -11,12 +11,12 @@ instead of rewriting
 ## Usage
 
 ``` r
-smoother_basis(sm, x, ...)
+smoother_basis(smoother, x, ...)
 ```
 
 ## Arguments
 
-- sm:
+- smoother:
 
   A
   [smoother](https://statmodels7.github.io/basis7/reference/smoother.md).
@@ -33,7 +33,7 @@ smoother_basis(sm, x, ...)
 ## Value
 
 A [basis](https://statmodels7.github.io/basis7/reference/basis.md) of
-`sm@dimension` functions.
+`smoother@dimension` functions.
 
 ## See also
 

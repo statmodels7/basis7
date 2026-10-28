@@ -1,5 +1,21 @@
 # Changelog
 
+## basis7 0.17.0
+
+- Renamed for readability: the argument `sm` of the `smoother_*()`
+  generics is `smoother`, and the argument `op` of
+  [`basis_operator_gram()`](https://statmodels7.github.io/basis7/reference/basis_operator_gram.md)
+  and the `operator_*()` functions is `operator`. Requires numericals7
+  0.25.0.
+
+## basis7 0.16.0
+
+- The element `blueprint` of the result of
+  [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md)
+  is renamed `build_info`, and so is the argument of
+  [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
+  that receives it.
+
 ## basis7 0.15.2
 
 - The package description says that a basis returns its design matrix,

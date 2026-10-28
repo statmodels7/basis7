@@ -13,7 +13,7 @@ one.
 ## Usage
 
 ``` r
-basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
+basis_operator_gram(basis, operator, at = NULL, weight = NULL, ...)
 ```
 
 ## Arguments
@@ -22,7 +22,7 @@ basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
 
   A [basis](https://statmodels7.github.io/basis7/reference/basis.md).
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)

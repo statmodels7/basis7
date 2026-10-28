@@ -16,7 +16,7 @@ column is \\w_0^2 T\\.
 
   A [basis](https://statmodels7.github.io/basis7/reference/basis.md).
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md)

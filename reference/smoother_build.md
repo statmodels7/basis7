@@ -10,12 +10,12 @@ a penalized smooth, as in \\(X'X + \lambda S)^{-1} X'y\\.
 ## Usage
 
 ``` r
-smoother_build(sm, x, ...)
+smoother_build(smoother, x, ...)
 ```
 
 ## Arguments
 
-- sm:
+- smoother:
 
   A
   [smoother](https://statmodels7.github.io/basis7/reference/smoother.md),
@@ -51,7 +51,7 @@ A list of five elements:
   The number of leading columns that the penalty does not cover, as an
   integer.
 
-- `blueprint`:
+- `build_info`:
 
   What
   [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
@@ -68,7 +68,7 @@ belong to whichever model layer places the smooth in a formula. The
 column names that the family gives its own coordinates are returned
 separately in `names`.
 
-The transform is computed on `x` and recorded in `blueprint`, so a
+The transform is computed on `x` and recorded in `build_info`, so a
 prediction at new values reapplies it through
 [`smoother_apply()`](https://statmodels7.github.io/basis7/reference/smoother_apply.md)
 rather than rebuilding it. Rebuilding would give a basis over a
@@ -89,7 +89,7 @@ set.seed(1)
 x <- sort(runif(150, 0, 1))
 out <- smoother_build(bspline_smooth(k = 10), x)
 vapply(out, function(e) class(e)[1], character(1))
-#>           X           S unpenalized   blueprint       names 
+#>           X           S unpenalized  build_info       names 
 #>    "matrix"    "matrix"   "integer"      "list" "character" 
 dim(out$X)
 #> [1] 150   9

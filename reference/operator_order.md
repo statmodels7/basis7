@@ -6,12 +6,12 @@ dimension of its null space and the length of its weight vector.
 ## Usage
 
 ``` r
-operator_order(op)
+operator_order(operator)
 ```
 
 ## Arguments
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md).

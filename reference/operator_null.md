@@ -8,12 +8,12 @@ choosing an operator.
 ## Usage
 
 ``` r
-operator_null(op, tol = 1e-06)
+operator_null(operator, tol = 1e-06)
 ```
 
 ## Arguments
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md).

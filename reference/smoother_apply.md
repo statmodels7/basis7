@@ -9,21 +9,21 @@ recomputed at `newx`; only the functions are evaluated there.
 ## Usage
 
 ``` r
-smoother_apply(sm, blueprint, newx, ...)
+smoother_apply(smoother, build_info, newx, ...)
 ```
 
 ## Arguments
 
-- sm:
+- smoother:
 
   A
   [smoother](https://statmodels7.github.io/basis7/reference/smoother.md),
   the one passed to
   [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md).
 
-- blueprint:
+- build_info:
 
-  The `blueprint` element of that call's result.
+  The `build_info` element of that call's result.
 
 - newx:
 
@@ -36,12 +36,12 @@ smoother_apply(sm, blueprint, newx, ...)
 ## Value
 
 A numeric matrix of `length(newx)` rows and as many columns as the block
-from which the blueprint came, with no dimnames.
+from which the `build_info` came, with no dimnames.
 
 ## See also
 
 [`smoother_build()`](https://statmodels7.github.io/basis7/reference/smoother_build.md),
-which records the blueprint.
+which records the `build_info`.
 
 ## Examples
 
@@ -53,6 +53,6 @@ out <- smoother_build(sm, x)
 
 # Reapplied at a subset, the rows are the rows of the original block.
 i <- c(3, 40, 91)
-max(abs(smoother_apply(sm, out$blueprint, x[i]) - out$X[i, ]))
+max(abs(smoother_apply(sm, out$build_info, x[i]) - out$X[i, ]))
 #> [1] 0
 ```

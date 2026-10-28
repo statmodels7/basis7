@@ -1,12 +1,12 @@
 # basis7: An S7 Framework for Basis Expansions
 
 Basis expansions as objects, built on the S7 object-oriented system. A
-basis carries an interval and a number of functions, and answers with
-its design matrix at any points, its derivative of any order, its
-integral anchored at the lower endpoint, and the Gram matrix of any
-derivative against a chosen measure, which is the matrix of a roughness
-penalty. B-spline, Fourier and orthogonal polynomial families ship with
-exact formulas; one wrapper orthonormalizes a basis, imposes linear
+basis carries an interval and a number of functions, and returns its
+design matrix at any points, its derivative of any order, its integral
+anchored at the lower endpoint, and the Gram matrix of any derivative
+against a chosen measure, which is the matrix of a roughness penalty.
+B-spline, Fourier and orthogonal polynomial families ship with exact
+formulas; one wrapper orthonormalizes a basis, imposes linear
 constraints or rotates it to the Demmler-Reinsch form, and a tensor
 product builds a basis of several variables. A smoother carries the
 basis, the roughness penalty, the null space and the reparametrization

@@ -8,12 +8,12 @@ that table.
 ## Usage
 
 ``` r
-operator_null_design(op, x)
+operator_null_design(operator, x)
 ```
 
 ## Arguments
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md).
@@ -24,8 +24,8 @@ operator_null_design(op, x)
 
 ## Value
 
-A numeric matrix of `length(x)` rows and `operator_order(op)` columns,
-with the labels of
+A numeric matrix of `length(x)` rows and `operator_order(operator)`
+columns, with the labels of
 [`operator_null()`](https://statmodels7.github.io/basis7/reference/operator_null.md)
 as column names.
 

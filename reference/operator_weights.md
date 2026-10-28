@@ -7,20 +7,20 @@ coefficient is 1 and is not among them.
 ## Usage
 
 ``` r
-operator_weights(op)
+operator_weights(operator)
 ```
 
 ## Arguments
 
-- op:
+- operator:
 
   A
   [LinearOperator](https://statmodels7.github.io/basis7/reference/LinearOperator.md).
 
 ## Value
 
-A numeric vector of `operator_order(op)` entries, or `NA` of that length
-where the operator's period has not been resolved.
+A numeric vector of `operator_order(operator)` entries, or `NA` of that
+length where the operator's period has not been resolved.
 
 ## See also
 

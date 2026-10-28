@@ -171,7 +171,7 @@ dim(out$X)
 
 # The fit is periodic, which is the property for which the basis was chosen.
 b <- solve(crossprod(out$X) + 0.01 * out$S, crossprod(out$X, y))
-ends <- smoother_apply(sm, out$blueprint, c(0, 1)) %*% b
+ends <- smoother_apply(sm, out$build_info, c(0, 1)) %*% b
 format(diff(as.vector(ends)), digits = 3)
 #> [1] "-1.11e-16"
 

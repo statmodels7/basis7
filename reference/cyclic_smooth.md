@@ -162,7 +162,7 @@ dim(out$X)
 #> [1] 200   9
 
 # the block takes the same value at the two ends of the period
-ends <- smoother_apply(sm, out$blueprint, c(0, 365))
+ends <- smoother_apply(sm, out$build_info, c(0, 365))
 max(abs(ends[1, ] - ends[2, ]))
 #> [1] 1.110223e-16
 

@@ -1,6 +1,6 @@
 # The Roughness Matrix of a Smoother
 
-Returns the Gram matrix of the derivative of order `sm@order`,
+Returns the Gram matrix of the derivative of order `smoother@order`,
 integrated against the measure of the smoother: the length measure on
 the interval for `"lebesgue"`, the empirical measure of the covariate
 for `"empirical"`, and the density that a function gives otherwise.
@@ -8,12 +8,12 @@ for `"empirical"`, and the density that a function gives otherwise.
 ## Usage
 
 ``` r
-smoother_gram(sm, b, x, ...)
+smoother_gram(smoother, b, x, ...)
 ```
 
 ## Arguments
 
-- sm:
+- smoother:
 
   A
   [smoother](https://statmodels7.github.io/basis7/reference/smoother.md).
