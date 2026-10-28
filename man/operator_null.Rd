@@ -4,10 +4,10 @@
 \alias{operator_null}
 \title{The Null Space of a Differential Operator}
 \usage{
-operator_null(op, tol = 1e-06)
+operator_null(operator, tol = 1e-06)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}.}
+\item{operator}{A \link{LinearOperator}.}
 
 \item{tol}{The tolerance at which two roots count as one, relative to the
 size of the roots, a positive number.}

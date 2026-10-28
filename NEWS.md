@@ -1,3 +1,9 @@
+# basis7 0.17.0
+
+* Renamed for readability: the argument `sm` of the `smoother_*()` generics
+  is `smoother`, and the argument `op` of `basis_operator_gram()` and the
+  `operator_*()` functions is `operator`. Requires numericals7 0.25.0.
+
 # basis7 0.16.0
 
 * The element `blueprint` of the result of `smoother_build()` is renamed

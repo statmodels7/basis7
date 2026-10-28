@@ -458,7 +458,7 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 #' is zero whenever \eqn{w_0 = 0}, as for [harmonic_operator()].
 #'
 #' @param basis A [basis].
-#' @param op A [LinearOperator] whose period is resolved.
+#' @param operator A [LinearOperator] whose period is resolved.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
 #' @param weight A density with respect to which the integral is taken, or
 #'   `NULL`.
@@ -486,15 +486,15 @@ S7::method(basis_gram, FourierBasis) <- function(basis, order = 0L, at = NULL,
 #'                                        panels = 200L)
 #' max(abs(g - gn)) / max(abs(g))
 #' @keywords internal
-S7::method(basis_operator_gram, FourierBasis) <- function(basis, op, at = NULL,
+S7::method(basis_operator_gram, FourierBasis) <- function(basis, operator, at = NULL,
                                                           weight = NULL, ...) {
-  check_operator(op)
+  check_operator(operator)
   p <- basis@basis_params
   if (!p$full_period || !is.null(at) || !is.null(weight)) {
-    return(numerical_operator_gram(basis, op, at = at, weight = weight, ...))
+    return(numerical_operator_gram(basis, operator, at = at, weight = weight, ...))
   }
   reject_quadrature(...)
-  w <- operator_weights(op)
+  w <- operator_weights(operator)
   m <- length(w)
   period <- p$omega
   j <- seq_len(p$n_pairs)

@@ -78,7 +78,7 @@ NULL
 #' @keywords internal
 numerical_deriv_matrix <- function(f, x, order, lower, upper, step_scale = 1) {
   off <- numericals7::fd_offsets(order)
-  reach <- off$reach
+  reach <- off$half_width
 
   # the step is numericals7's, like the nodes and the weights below: written
   # out here it would be a second copy of a rule that has one home
@@ -525,9 +525,9 @@ numerical_gram <- function(basis, order = 0L, panels = 50L, nodes = 12L) {
 
 #' @name basis_operator_gram
 #' @keywords internal
-S7::method(basis_operator_gram, basis) <- function(basis, op, at = NULL,
+S7::method(basis_operator_gram, basis) <- function(basis, operator, at = NULL,
                                                    weight = NULL, ...) {
-  numerical_operator_gram(basis, op, at = at, weight = weight, ...)
+  numerical_operator_gram(basis, operator, at = at, weight = weight, ...)
 }
 
 

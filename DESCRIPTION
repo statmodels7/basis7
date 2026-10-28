@@ -1,6 +1,6 @@
 Package: basis7
 Title: An S7 Framework for Basis Expansions
-Version: 0.16.0
+Version: 0.17.0
 Authors@R:
     person("Giovanni", "Tinervia", , "giovannitinervia9@gmail.com", role = c("aut", "cre"))
 Description: Basis expansions as objects, built on the S7 object-oriented
@@ -26,7 +26,7 @@ BugReports: https://github.com/statmodels7/basis7/issues
 Depends:
     R (>= 4.1.0)
 Imports:
-    numericals7 (>= 0.2.0),
+    numericals7 (>= 0.25.0),
     graphics,
     S7,
     splines,

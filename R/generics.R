@@ -440,7 +440,7 @@ basis_gram <- S7::new_generic(
 #' [basis_operator_gram.FourierBasis()].
 #'
 #' @param basis A [basis].
-#' @param op A [LinearOperator] whose period is resolved. An operator whose
+#' @param operator A [LinearOperator] whose period is resolved. An operator whose
 #'   period is still `NULL` signals an error.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
 #' @param weight A density with respect to which to integrate, or `NULL`.
@@ -458,9 +458,9 @@ basis_gram <- S7::new_generic(
 #' @export
 basis_operator_gram <- S7::new_generic(
   "basis_operator_gram", "basis",
-  function(basis, op, at = NULL, weight = NULL, ...) {
-    check_operator(op)
-    if (!operator_resolved(op)) {
+  function(basis, operator, at = NULL, weight = NULL, ...) {
+    check_operator(operator)
+    if (!operator_resolved(operator)) {
       stop(paste0(
         "the operator's period is NULL, so its weights are not determined",
         " yet.\n  Give 'period', or call operator_resolve() with the",

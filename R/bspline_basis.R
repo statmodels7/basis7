@@ -442,7 +442,7 @@ S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
 #' see [operator_null()].
 #'
 #' @param basis A [basis].
-#' @param op A [LinearOperator] whose period is resolved.
+#' @param operator A [LinearOperator] whose period is resolved.
 #' @param at The covariate values, for the empirical measure, or `NULL`.
 #' @param weight A density with respect to which the integral is taken, or
 #'   `NULL`.
@@ -461,11 +461,11 @@ S7::method(basis_gram, BsplineBasis) <- function(basis, order = 0L, at = NULL,
 #' # an operator of order 5 on a cubic spline signals an error
 #' try(basis_gram(b, order = harmonic_operator(1, harmonics = 2)))
 #' @keywords internal
-S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
+S7::method(basis_operator_gram, BsplineBasis) <- function(basis, operator, at = NULL,
                                                           weight = NULL, ...) {
-  check_operator(op)
+  check_operator(operator)
   degree <- basis@basis_params$degree
-  m <- operator_order(op)
+  m <- operator_order(operator)
   if (m > degree) {
     stop(sprintf(paste0(
       "the operator has order %d and the spline has degree %d, so D^%d of",
@@ -475,12 +475,12 @@ S7::method(basis_operator_gram, BsplineBasis) <- function(basis, op, at = NULL,
     ), m, degree, m, m), call. = FALSE)
   }
   if (!is.null(at) || !is.null(weight)) {
-    return(numerical_operator_gram(basis, op, at = at, weight = weight, ...))
+    return(numerical_operator_gram(basis, operator, at = at, weight = weight, ...))
   }
   reject_quadrature(...)
   breaks <- unique(c(basis@lower, basis@basis_params$knots, basis@upper))
   r <- quad_rule(breaks, n = degree + 1L)
-  lb <- operator_eval(basis, r$nodes, op)
+  lb <- operator_eval(basis, r$nodes, operator)
   g <- crossprod(sqrt(r$weights) * lb)
   g <- (g + t(g)) / 2
   nm <- basis_colnames(basis)

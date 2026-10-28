@@ -246,18 +246,18 @@ check_periodic_size <- function(op, k) {
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, FourierSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
+S7::method(smoother_basis, FourierSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
   fourier_basis(
     lower = int[[1L]], upper = int[[2L]],
-    dimension = sm@dimension, omega = sm@omega
+    dimension = smoother@dimension, omega = smoother@omega
   )
 }
 
 #' @name smoother_span
 #' @keywords internal
-S7::method(smoother_span, FourierSmoother) <- function(sm, x, ...) {
-  op <- smoother_operator(sm, x)
+S7::method(smoother_span, FourierSmoother) <- function(smoother, x, ...) {
+  op <- smoother_operator(smoother, x)
   if (is_deriv_operator(op)) {
     # THE CONSTANT AT EVERY ORDER, and nothing restored. A periodic basis
     # contains no linear function, so a derivative penalty's null space does
@@ -270,7 +270,7 @@ S7::method(smoother_span, FourierSmoother) <- function(sm, x, ...) {
       params = list(steps = list())
     ))
   }
-  check_periodic_null(sm, op, x)
+  check_periodic_null(smoother, op, x)
   sp <- operator_span(op, x)
   # the constant is removed even where the operator penalizes it, as
   # oscillator_operator() does: the basis contains it, and a model carrying
@@ -453,9 +453,9 @@ legendre_smooth <- function(k = 8, order = 2, measure = "lebesgue",
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, LegendreSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
-  poly_basis(lower = int[[1L]], upper = int[[2L]], dimension = sm@dimension)
+S7::method(smoother_basis, LegendreSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
+  poly_basis(lower = int[[1L]], upper = int[[2L]], dimension = smoother@dimension)
 }
 
 
@@ -637,30 +637,30 @@ cyclic_smooth <- function(k = 10, degree = 3, order = 2,
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, CyclicSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
+S7::method(smoother_basis, CyclicSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
   parent <- bspline_basis(
     lower = int[[1L]], upper = int[[2L]],
-    dimension = sm@dimension + sm@degree, degree = sm@degree
+    dimension = smoother@dimension + smoother@degree, degree = smoother@degree
   )
-  out <- constrain_basis(parent, periodic_constraint(parent, sm@degree))
+  out <- constrain_basis(parent, periodic_constraint(parent, smoother@degree))
   # THE DIMENSION IS ASSERTED rather than assumed. constrain_basis() removes
   # one direction per unit of rank, so a constraint that lost rank would
   # return a basis wider than the caller asked for, silently, and the whole
   # block with it.
-  if (out@dimension != sm@dimension) {
+  if (out@dimension != smoother@dimension) {
     stop(sprintf(paste0(
       "the periodicity constraint has rank %d where %d was expected, so the",
       "\n  basis would carry %d functions instead of the %d requested."
-    ), parent@dimension - out@dimension, sm@degree,
-    out@dimension, sm@dimension), call. = FALSE)
+    ), parent@dimension - out@dimension, smoother@degree,
+    out@dimension, smoother@dimension), call. = FALSE)
   }
   out
 }
 
 #' @name smoother_span
 #' @keywords internal
-S7::method(smoother_span, CyclicSmoother) <- function(sm, x, ...) {
+S7::method(smoother_span, CyclicSmoother) <- function(smoother, x, ...) {
   # THE CONSTANT AT EVERY ORDER, and nothing restored -- the same reading as
   # fourier_smooth()'s, and for the same reason: a non-constant periodic
   # function is never a polynomial, so the null space does not grow with the
@@ -880,24 +880,24 @@ pspline_smooth <- function(k = 20, degree = 3, diff = 2, constrain = NULL,
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, PsplineSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
+S7::method(smoother_basis, PsplineSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
   bspline_basis(
     lower = int[[1L]], upper = int[[2L]],
-    dimension = sm@dimension, degree = sm@degree
+    dimension = smoother@dimension, degree = smoother@degree
   )
 }
 
 #' @name smoother_gram
 #' @keywords internal
-S7::method(smoother_gram, PsplineSmoother) <- function(sm, b, x, ...) {
+S7::method(smoother_gram, PsplineSmoother) <- function(smoother, b, x, ...) {
   # THE ROUGHNESS MATRIX IS NOT A GRAM MATRIX HERE. It is a functional of
   # the coefficients rather than of the functions, so nothing is integrated.
   # The differences are taken on the coefficients of the Eilers-Marx basis,
   # whose knots are equally spaced beyond the interval as well as inside it,
   # and carried onto the clamped basis the package evaluates. The two bases
   # span the same splines, so only the coordinates of the penalty change.
-  d <- base::diff(diag(1, b@dimension), differences = sm@diff) %*%
+  d <- base::diff(diag(1, b@dimension), differences = smoother@diff) %*%
     pspline_map(b)
   out <- crossprod(d)
   nm <- basis_colnames(b)
@@ -1219,23 +1219,23 @@ adaptive_smooth <- function(k = 40, degree = 3, diff = 2, m = 5,
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, AdaptiveSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
+S7::method(smoother_basis, AdaptiveSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
   bspline_basis(
     lower = int[[1L]], upper = int[[2L]],
-    dimension = sm@dimension, degree = sm@degree
+    dimension = smoother@dimension, degree = smoother@degree
   )
 }
 
 #' @name smoother_gram
 #' @keywords internal
-S7::method(smoother_gram, AdaptiveSmoother) <- function(sm, b, x, ...) {
+S7::method(smoother_gram, AdaptiveSmoother) <- function(smoother, b, x, ...) {
   # ONE COMPONENT PER SMOOTHING PARAMETER. Nothing is integrated here either:
   # the penalty is a functional of the coefficients, and the basis enters
   # only through its dimension.
   # the differences are taken in the Eilers-Marx coordinates, as for
   # pspline_smooth(), so that equal smoothing parameters give its penalty
-  d <- base::diff(diag(1, b@dimension), differences = sm@diff) %*%
+  d <- base::diff(diag(1, b@dimension), differences = smoother@diff) %*%
     pspline_map(b)
   # THE WEIGHT PROFILE IS A SPLINE OVER THE COEFFICIENT INDEX, built over the
   # index's own range, so any affine relabelling of the index gives the same
@@ -1245,12 +1245,12 @@ S7::method(smoother_gram, AdaptiveSmoother) <- function(sm, b, x, ...) {
   # case, cbind(1, index), is not.
   idx <- seq_len(nrow(d))
   v <- basis_eval(
-    bspline_basis(min(idx), max(idx), dimension = sm@m,
-                  degree = min(3L, sm@m - 1L)),
+    bspline_basis(min(idx), max(idx), dimension = smoother@m,
+                  degree = min(3L, smoother@m - 1L)),
     idx
   )
   nm <- basis_colnames(b)
-  lapply(seq_len(sm@m), function(i) {
+  lapply(seq_len(smoother@m), function(i) {
     out <- crossprod(d, as.numeric(v[, i]) * d)
     out <- (out + t(out)) / 2
     dimnames(out) <- list(nm, nm)

@@ -4,10 +4,10 @@
 \alias{smoother_basis}
 \title{The Basis of a Smoother}
 \usage{
-smoother_basis(sm, x, ...)
+smoother_basis(smoother, x, ...)
 }
 \arguments{
-\item{sm}{A \link{smoother}.}
+\item{smoother}{A \link{smoother}.}
 
 \item{x}{The covariate, a numeric vector. A family whose interval is not
 fixed on the object reads it from these values.}
@@ -15,7 +15,7 @@ fixed on the object reads it from these values.}
 \item{...}{Passed to methods.}
 }
 \value{
-A \link{basis} of \code{sm@dimension} functions.
+A \link{basis} of \code{smoother@dimension} functions.
 }
 \description{
 Returns the \link{basis} in which a smoother expands the covariate, before any

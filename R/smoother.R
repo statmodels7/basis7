@@ -399,12 +399,12 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
 #' that differs between families, so a family is added by registering a
 #' method here instead of rewriting [smoother_build()].
 #'
-#' @param sm A [smoother].
+#' @param smoother A [smoother].
 #' @param x The covariate, a numeric vector. A family whose interval is not
 #'   fixed on the object reads it from these values.
 #' @param ... Passed to methods.
 #'
-#' @return A [basis] of `sm@dimension` functions.
+#' @return A [basis] of `smoother@dimension` functions.
 #'
 #' @seealso [smoother_build()], which calls it.
 #'
@@ -420,17 +420,17 @@ bspline_smooth <- function(k = 10, degree = 3, order = 2,
 #' c(lower = bf@lower, upper = bf@upper)
 #' @export
 smoother_basis <- S7::new_generic(
-  "smoother_basis", "sm",
-  function(sm, x, ...) S7::S7_dispatch()
+  "smoother_basis", "smoother",
+  function(smoother, x, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_basis
 #' @keywords internal
-S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
-  int <- smoother_interval(sm, x)
+S7::method(smoother_basis, BsplineSmoother) <- function(smoother, x, ...) {
+  int <- smoother_interval(smoother, x)
   bspline_basis(
     lower = int[[1L]], upper = int[[2L]],
-    dimension = sm@dimension, degree = sm@degree
+    dimension = smoother@dimension, degree = smoother@degree
   )
 }
 
@@ -471,7 +471,7 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #' restored. Returning them as free columns would put a parametric term
 #' inside the smooth instead of in the formula, where a reader sees it.
 #'
-#' @param sm A [smoother].
+#' @param smoother A [smoother].
 #' @param x The covariate, a numeric vector.
 #' @param params For `smoother_span_apply()`, the `params` element of the
 #'   `smoother_span()` result.
@@ -505,24 +505,24 @@ S7::method(smoother_basis, BsplineSmoother) <- function(sm, x, ...) {
 #'         sp$free[i, , drop = FALSE]))
 #' @export
 smoother_span <- S7::new_generic(
-  "smoother_span", "sm",
-  function(sm, x, ...) S7::S7_dispatch()
+  "smoother_span", "smoother",
+  function(smoother, x, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_span
 #' @keywords internal
-S7::method(smoother_span, smoother) <- function(sm, x, ...) {
-  op <- smoother_operator(sm, x)
+S7::method(smoother_span, smoother) <- function(smoother, x, ...) {
+  op <- smoother_operator(smoother, x)
   if (is_deriv_operator(op)) {
     m <- operator_order(op)
-    ncon <- if (is.null(sm@constrain)) m else sm@constrain + 1L
+    ncon <- if (is.null(smoother@constrain)) m else smoother@constrain + 1L
     # the raw powers, which at order 2 are cbind(1, x): the constraint
     # dr_basis() builds for itself when it is given none
     cons <- outer(x, seq.int(0L, ncon - 1L), "^")
     free <- poly_free(x, m - 1L)
     return(list(constraint = cons, free = free$free, params = free$params))
   }
-  if (!is.null(sm@constrain)) {
+  if (!is.null(smoother@constrain)) {
     stop(paste0(
       "'constrain' names the polynomials up to a degree, and this operator's",
       " null\n  space is not the polynomials. Removing both would be two",
@@ -591,13 +591,13 @@ operator_span <- function(op, x) {
 #' @name smoother_span
 #' @export
 smoother_span_apply <- S7::new_generic(
-  "smoother_span_apply", "sm",
-  function(sm, params, newx, ...) S7::S7_dispatch()
+  "smoother_span_apply", "smoother",
+  function(smoother, params, newx, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_span
 #' @keywords internal
-S7::method(smoother_span_apply, smoother) <- function(sm, params, newx, ...) {
+S7::method(smoother_span_apply, smoother) <- function(smoother, params, newx, ...) {
   # THE PARAMS SAY WHICH SHAPE THEY ARE, rather than the smoother's class
   # saying it: one family builds both, according to the operator it carries,
   # so a test on the class would answer for the wrong one.
@@ -743,7 +743,7 @@ poly_free_apply <- function(params, newx) {
 #' The Roughness Matrix of a Smoother
 #'
 #' @description
-#' Returns the Gram matrix of the derivative of order `sm@order`, integrated
+#' Returns the Gram matrix of the derivative of order `smoother@order`, integrated
 #' against the measure of the smoother: the length measure on the interval for
 #' `"lebesgue"`, the empirical measure of the covariate for `"empirical"`,
 #' and the density that a function gives otherwise.
@@ -753,7 +753,7 @@ poly_free_apply <- function(params, newx) {
 #' different matrices, and a fit under one measure differs from a fit under
 #' another.
 #'
-#' @param sm A [smoother].
+#' @param smoother A [smoother].
 #' @param b The basis returned by [smoother_basis()].
 #' @param x The covariate, for the empirical measure.
 #' @param ... Passed to methods.
@@ -779,19 +779,19 @@ poly_free_apply <- function(params, newx) {
 #'           as.vector(smoother_gram(sme, smoother_basis(sme, x), x))), 3)
 #' @export
 smoother_gram <- S7::new_generic(
-  "smoother_gram", "sm",
-  function(sm, b, x, ...) S7::S7_dispatch()
+  "smoother_gram", "smoother",
+  function(smoother, b, x, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_gram
 #' @keywords internal
-S7::method(smoother_gram, smoother) <- function(sm, b, x, ...) {
-  op <- smoother_operator(sm, x)
+S7::method(smoother_gram, smoother) <- function(smoother, b, x, ...) {
+  op <- smoother_operator(smoother, x)
   # AN OPERATOR IS PASSED AS 'order' AND SO IS A NUMBER: basis_gram() routes
   # on which it was given, so the three measures are written once here and
   # not twice.
   ord <- if (is_deriv_operator(op)) operator_order(op) else op
-  ms <- sm@measure
+  ms <- smoother@measure
   if (is.function(ms)) return(basis_gram(b, order = ord, weight = ms))
   if (identical(ms, "empirical")) {
     return(basis_gram(b, order = ord, at = x))
@@ -846,7 +846,7 @@ smoother_operator <- function(sm, x) {
 #' interval and a rotation of a different Gram matrix, which is a different
 #' function of the covariate.
 #'
-#' @param sm A [smoother], such as one from [bspline_smooth()].
+#' @param smoother A [smoother], such as one from [bspline_smooth()].
 #' @param x The covariate, a numeric vector with no missing values.
 #' @param ... Passed to methods.
 #'
@@ -884,26 +884,26 @@ smoother_operator <- function(sm, x) {
 #' round(diag(out$S), 6)
 #' @export
 smoother_build <- S7::new_generic(
-  "smoother_build", "sm",
-  function(sm, x, ...) S7::S7_dispatch()
+  "smoother_build", "smoother",
+  function(smoother, x, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_build
 #' @keywords internal
-S7::method(smoother_build, smoother) <- function(sm, x, ...) {
-  check_available(sm)
+S7::method(smoother_build, smoother) <- function(smoother, x, ...) {
+  check_available(smoother)
   x <- check_smoother_x(x)
-  b <- smoother_basis(sm, x)
-  sp <- smoother_span(sm, x)
+  b <- smoother_basis(smoother, x)
+  sp <- smoother_span(smoother, x)
 
   # The Demmler-Reinsch rotation diagonalizes the pencil of the empirical
   # Gram matrix against the roughness matrix, so the penalty on what
   # survives the constraint is the identity. Both arguments are what
   # dr_basis() builds for itself at order 2 with no constraint, which is
   # what keeps the default construction the one the toolkit has always run.
-  g <- smoother_gram(sm, b, x)
+  g <- smoother_gram(smoother, b, x)
   cons <- sp$constraint
-  rp <- smoother_reparam(sm, b, x, g, cons)
+  rp <- smoother_reparam(smoother, b, x, g, cons)
   # evaluated from the basis object smoother_apply() will evaluate, so the
   # two are the same arithmetic rather than the same formula
   z <- basis_eval(rp$basis, x)
@@ -912,7 +912,7 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
   free <- sp$free
   nfree <- ncol(free)
 
-  if (sm@null_space %in% c("keep", "shrink") && nfree > 0L) {
+  if (smoother@null_space %in% c("keep", "shrink") && nfree > 0L) {
     z <- cbind(free, z)
     # THE SPAN NAMES ITS OWN COLUMNS where it has names to give. A
     # polynomial null space has none of its own and takes free_names()'s
@@ -924,7 +924,7 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
     # zero, so a strongly penalized fit contracts to nothing and the term
     # can leave the model. See shrink_weight() for the number and where it
     # comes from.
-    w <- if (identical(sm@null_space, "shrink")) shrink_weight() else 0
+    w <- if (identical(smoother@null_space, "shrink")) shrink_weight() else 0
     border <- function(P) rbind(
       cbind(diag(w, nfree), matrix(0, nfree, ncol(P))),
       cbind(matrix(0, ncol(P), nfree), P)
@@ -961,7 +961,7 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
     # matrix rather than from the branch that built it, so the two cannot
     # disagree; cumprod stops at the first column that is penalized.
     unpenalized = as.integer(sum(cumprod(colSums(abs(s_tot)) == 0))),
-    build_info = list(kind = sm@reparam, basis = rp$basis, nfree = nfree,
+    build_info = list(kind = smoother@reparam, basis = rp$basis, nfree = nfree,
                      span = sp$params),
     names = nm
   )
@@ -1144,7 +1144,7 @@ over_penalty <- function(s, f) {
 #' computed on the original data and are not recomputed at `newx`; only the
 #' functions are evaluated there.
 #'
-#' @param sm A [smoother], the one passed to [smoother_build()].
+#' @param smoother A [smoother], the one passed to [smoother_build()].
 #' @param build_info The `build_info` element of that call's result.
 #' @param newx The new covariate values, a numeric vector.
 #' @param ... Passed to methods.
@@ -1165,13 +1165,13 @@ over_penalty <- function(s, f) {
 #' max(abs(smoother_apply(sm, out$build_info, x[i]) - out$X[i, ]))
 #' @export
 smoother_apply <- S7::new_generic(
-  "smoother_apply", "sm",
-  function(sm, build_info, newx, ...) S7::S7_dispatch()
+  "smoother_apply", "smoother",
+  function(smoother, build_info, newx, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_apply
 #' @keywords internal
-S7::method(smoother_apply, smoother) <- function(sm, build_info, newx, ...) {
+S7::method(smoother_apply, smoother) <- function(smoother, build_info, newx, ...) {
   if (!is.list(build_info) || is.null(build_info$kind)) {
     stop("'build_info' must be the build_info element of smoother_build().",
       call. = FALSE
@@ -1180,7 +1180,7 @@ S7::method(smoother_apply, smoother) <- function(sm, build_info, newx, ...) {
   newx <- check_smoother_x(newx)
   z <- basis_eval(build_info$basis, newx)
   if (build_info$nfree > 0L) {
-    free <- smoother_span_apply(sm, build_info$span, newx)
+    free <- smoother_span_apply(smoother, build_info$span, newx)
     z <- cbind(free[, seq_len(build_info$nfree), drop = FALSE], z)
   }
   dimnames(z) <- NULL

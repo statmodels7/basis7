@@ -4,16 +4,16 @@
 \alias{operator_null_design}
 \title{The Null-Space Functions Evaluated}
 \usage{
-operator_null_design(op, x)
+operator_null_design(operator, x)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}.}
+\item{operator}{A \link{LinearOperator}.}
 
 \item{x}{The points at which the functions are evaluated, a numeric
 vector.}
 }
 \value{
-A numeric matrix of \code{length(x)} rows and \code{operator_order(op)}
+A numeric matrix of \code{length(x)} rows and \code{operator_order(operator)}
 columns, with the labels of \code{\link[=operator_null]{operator_null()}} as column names.
 }
 \description{

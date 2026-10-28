@@ -6,7 +6,7 @@
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator} whose period is resolved.}
+\item{operator}{A \link{LinearOperator} whose period is resolved.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
 

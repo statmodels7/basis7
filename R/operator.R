@@ -469,7 +469,7 @@ S7::method(`*`, list(LinearOperator, LinearOperator)) <- function(e1, e2) {
 #' Returns the highest derivative that the operator takes, which is the
 #' dimension of its null space and the length of its weight vector.
 #'
-#' @param op A [LinearOperator].
+#' @param operator A [LinearOperator].
 #'
 #' @return A single integer.
 #'
@@ -480,9 +480,9 @@ S7::method(`*`, list(LinearOperator, LinearOperator)) <- function(e1, e2) {
 #'   harmonic = operator_order(harmonic_operator(365)),
 #'   two_harmonics = operator_order(harmonic_operator(365, harmonics = 2)))
 #' @export
-operator_order <- function(op) {
-  check_operator(op)
-  length(op@weights)
+operator_order <- function(operator) {
+  check_operator(operator)
+  length(operator@weights)
 }
 
 
@@ -493,9 +493,9 @@ operator_order <- function(op) {
 #' \eqn{L x = \sum_j w_j D^j x + D^m x}, in increasing order of
 #' differentiation. The leading coefficient is 1 and is not among them.
 #'
-#' @param op A [LinearOperator].
+#' @param operator A [LinearOperator].
 #'
-#' @return A numeric vector of `operator_order(op)` entries, or `NA` of that
+#' @return A numeric vector of `operator_order(operator)` entries, or `NA` of that
 #'   length where the operator's period has not been resolved.
 #'
 #' @seealso [operator_resolve()], which fills in a period.
@@ -504,9 +504,9 @@ operator_order <- function(op) {
 #' round(operator_weights(harmonic_operator(365)), 8)
 #' operator_weights(deriv_operator(3))
 #' @export
-operator_weights <- function(op) {
-  check_operator(op)
-  op@weights
+operator_weights <- function(operator) {
+  check_operator(operator)
+  operator@weights
 }
 
 
@@ -534,7 +534,7 @@ operator_resolved <- function(op) !anyNA(op@weights)
 #' penalty, so that `fourier_smooth(lower = 0, upper = 365)` penalizes on a
 #' cycle of 365 and the period does not have to be written twice.
 #'
-#' @param op A [LinearOperator].
+#' @param operator A [LinearOperator].
 #' @param lower,upper The interval, two numbers.
 #'
 #' @return An S7 object of class [LinearOperator], with numeric weights.
@@ -548,10 +548,10 @@ operator_resolved <- function(op) !anyNA(op@weights)
 #' # an operator given a period keeps it, whatever the interval is
 #' round(operator_weights(operator_resolve(harmonic_operator(12), 0, 365)), 8)
 #' @export
-operator_resolve <- function(op, lower, upper) {
-  check_operator(op)
-  if (operator_resolved(op)) return(op)
-  p <- op@operator_params
+operator_resolve <- function(operator, lower, upper) {
+  check_operator(operator)
+  if (operator_resolved(operator)) return(operator)
+  p <- operator@operator_params
   if (!p$kind %in% c("harmonic", "oscillator")) {
     stop("only a periodic operator carries a period to resolve.",
       call. = FALSE
@@ -597,7 +597,7 @@ operator_resolve <- function(op, lower, upper) {
 #' operator is three-dimensional in both cases. Whether a basis can carry
 #' those functions is a separate question, settled in [smoother_build()].
 #'
-#' @param op A [LinearOperator].
+#' @param operator A [LinearOperator].
 #' @param tol The tolerance at which two roots count as one, relative to the
 #'   size of the roots, a positive number.
 #'
@@ -625,18 +625,18 @@ operator_resolve <- function(op, lower, upper) {
 #' # the dimension is always the order
 #' nrow(operator_null(harmonic_operator(365, harmonics = 3)))
 #' @export
-operator_null <- function(op, tol = 1e-6) {
-  check_operator(op)
-  if (!operator_resolved(op)) {
+operator_null <- function(operator, tol = 1e-6) {
+  check_operator(operator)
+  if (!operator_resolved(operator)) {
     stop(paste0(
       "the operator's period is NULL, so its null space is not determined",
       " yet.\n  Give 'period', or call operator_resolve() with the",
       " interval."
     ), call. = FALSE)
   }
-  w <- op@weights
+  w <- operator@weights
   m <- length(w)
-  if (identical(op@operator_params$kind, "deriv")) {
+  if (identical(operator@operator_params$kind, "deriv")) {
     # EXACT, and not a root-finding problem: the characteristic polynomial
     # is r^m, so the null space is the polynomials of degree below m.
     return(null_frame(rate = rep(0, m), freq = rep(0, m),
@@ -771,11 +771,11 @@ null_frame <- function(rate, freq, degree, part = rep("", length(rate))) {
 #' [oscillator_operator()] have only roots on the imaginary axis, including
 #' zero, and this difficulty does not arise.
 #'
-#' @param op A [LinearOperator].
+#' @param operator A [LinearOperator].
 #' @param x The points at which the functions are evaluated, a numeric
 #'   vector.
 #'
-#' @return A numeric matrix of `length(x)` rows and `operator_order(op)`
+#' @return A numeric matrix of `length(x)` rows and `operator_order(operator)`
 #'   columns, with the labels of [operator_null()] as column names.
 #'
 #' @seealso [operator_null()] for what the columns are.
@@ -787,8 +787,8 @@ null_frame <- function(rate, freq, degree, part = rep("", length(rate))) {
 #' # The null space of the second derivative holds the constant and t.
 #' operator_null_design(deriv_operator(2), 1:5)
 #' @export
-operator_null_design <- function(op, x) {
-  nl <- operator_null(op)
+operator_null_design <- function(operator, x) {
+  nl <- operator_null(operator)
   if (!is.numeric(x)) stop("'x' must be numeric.", call. = FALSE)
   out <- vapply(seq_len(nrow(nl)), function(i) {
     v <- exp(nl$rate[[i]] * x) * x^nl$degree[[i]]

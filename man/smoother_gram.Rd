@@ -4,10 +4,10 @@
 \alias{smoother_gram}
 \title{The Roughness Matrix of a Smoother}
 \usage{
-smoother_gram(sm, b, x, ...)
+smoother_gram(smoother, b, x, ...)
 }
 \arguments{
-\item{sm}{A \link{smoother}.}
+\item{smoother}{A \link{smoother}.}
 
 \item{b}{The basis returned by \code{\link[=smoother_basis]{smoother_basis()}}.}
 
@@ -21,7 +21,7 @@ list of them where the family's roughness is a sum of components with a
 smoothing parameter each, as \code{\link[=adaptive_smooth]{adaptive_smooth()}}'s is.
 }
 \description{
-Returns the Gram matrix of the derivative of order \code{sm@order}, integrated
+Returns the Gram matrix of the derivative of order \code{smoother@order}, integrated
 against the measure of the smoother: the length measure on the interval for
 \code{"lebesgue"}, the empirical measure of the covariate for \code{"empirical"},
 and the density that a function gives otherwise.

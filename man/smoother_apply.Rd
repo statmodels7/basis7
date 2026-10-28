@@ -4,10 +4,10 @@
 \alias{smoother_apply}
 \title{A Smoother's Block at New Values}
 \usage{
-smoother_apply(sm, build_info, newx, ...)
+smoother_apply(smoother, build_info, newx, ...)
 }
 \arguments{
-\item{sm}{A \link{smoother}, the one passed to \code{\link[=smoother_build]{smoother_build()}}.}
+\item{smoother}{A \link{smoother}, the one passed to \code{\link[=smoother_build]{smoother_build()}}.}
 
 \item{build_info}{The \code{build_info} element of that call's result.}
 

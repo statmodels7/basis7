@@ -4,10 +4,10 @@
 \alias{smoother_build}
 \title{Build a Smoother at Data}
 \usage{
-smoother_build(sm, x, ...)
+smoother_build(smoother, x, ...)
 }
 \arguments{
-\item{sm}{A \link{smoother}, such as one from \code{\link[=bspline_smooth]{bspline_smooth()}}.}
+\item{smoother}{A \link{smoother}, such as one from \code{\link[=bspline_smooth]{bspline_smooth()}}.}
 
 \item{x}{The covariate, a numeric vector with no missing values.}
 

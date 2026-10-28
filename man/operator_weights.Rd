@@ -4,13 +4,13 @@
 \alias{operator_weights}
 \title{The Weights of a Differential Operator}
 \usage{
-operator_weights(op)
+operator_weights(operator)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}.}
+\item{operator}{A \link{LinearOperator}.}
 }
 \value{
-A numeric vector of \code{operator_order(op)} entries, or \code{NA} of that
+A numeric vector of \code{operator_order(operator)} entries, or \code{NA} of that
 length where the operator's period has not been resolved.
 }
 \description{

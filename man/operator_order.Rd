@@ -4,10 +4,10 @@
 \alias{operator_order}
 \title{The Order of a Differential Operator}
 \usage{
-operator_order(op)
+operator_order(operator)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}.}
+\item{operator}{A \link{LinearOperator}.}
 }
 \value{
 A single integer.

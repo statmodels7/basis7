@@ -5,12 +5,12 @@
 \alias{smoother_span_apply}
 \title{Constraint and Free Columns of a Smoother}
 \usage{
-smoother_span(sm, x, ...)
+smoother_span(smoother, x, ...)
 
-smoother_span_apply(sm, params, newx, ...)
+smoother_span_apply(smoother, params, newx, ...)
 }
 \arguments{
-\item{sm}{A \link{smoother}.}
+\item{smoother}{A \link{smoother}.}
 
 \item{x}{The covariate, a numeric vector.}
 

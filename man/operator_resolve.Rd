@@ -4,10 +4,10 @@
 \alias{operator_resolve}
 \title{Fill In an Operator's Period From an Interval}
 \usage{
-operator_resolve(op, lower, upper)
+operator_resolve(operator, lower, upper)
 }
 \arguments{
-\item{op}{A \link{LinearOperator}.}
+\item{operator}{A \link{LinearOperator}.}
 
 \item{lower, upper}{The interval, two numbers.}
 }

@@ -4,12 +4,12 @@
 \alias{basis_operator_gram}
 \title{The Roughness Matrix of a Differential Operator}
 \usage{
-basis_operator_gram(basis, op, at = NULL, weight = NULL, ...)
+basis_operator_gram(basis, operator, at = NULL, weight = NULL, ...)
 }
 \arguments{
 \item{basis}{A \link{basis}.}
 
-\item{op}{A \link{LinearOperator} whose period is resolved. An operator whose
+\item{operator}{A \link{LinearOperator} whose period is resolved. An operator whose
 period is still \code{NULL} signals an error.}
 
 \item{at}{The covariate values, for the empirical measure, or \code{NULL}.}
