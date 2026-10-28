@@ -23,7 +23,7 @@ whose roughness is a sum of components carrying a smoothing
 parameter each (\code{\link[=adaptive_smooth]{adaptive_smooth()}}), a list of such matrices.}
 \item{\code{unpenalized}}{The number of leading columns that the penalty
 does not cover, as an integer.}
-\item{\code{blueprint}}{What \code{\link[=smoother_apply]{smoother_apply()}} needs to reapply the
+\item{\code{build_info}}{What \code{\link[=smoother_apply]{smoother_apply()}} needs to reapply the
 construction at new values.}
 \item{\code{names}}{One name per column of \code{X}.}
 }
@@ -41,7 +41,7 @@ belong to whichever model layer places the smooth in a formula. The
 column names that the family gives its own coordinates are returned separately
 in \code{names}.
 
-The transform is computed on \code{x} and recorded in \code{blueprint}, so a
+The transform is computed on \code{x} and recorded in \code{build_info}, so a
 prediction at new values reapplies it through \code{\link[=smoother_apply]{smoother_apply()}} rather
 than rebuilding it. Rebuilding would give a basis over a different
 interval and a rotation of a different Gram matrix, which is a different

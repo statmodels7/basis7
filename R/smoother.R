@@ -840,7 +840,7 @@ smoother_operator <- function(sm, x) {
 #' column names that the family gives its own coordinates are returned separately
 #' in `names`.
 #'
-#' The transform is computed on `x` and recorded in `blueprint`, so a
+#' The transform is computed on `x` and recorded in `build_info`, so a
 #' prediction at new values reapplies it through [smoother_apply()] rather
 #' than rebuilding it. Rebuilding would give a basis over a different
 #' interval and a rotation of a different Gram matrix, which is a different
@@ -859,7 +859,7 @@ smoother_operator <- function(sm, x) {
 #'       parameter each ([adaptive_smooth()]), a list of such matrices.}
 #'     \item{`unpenalized`}{The number of leading columns that the penalty
 #'       does not cover, as an integer.}
-#'     \item{`blueprint`}{What [smoother_apply()] needs to reapply the
+#'     \item{`build_info`}{What [smoother_apply()] needs to reapply the
 #'       construction at new values.}
 #'     \item{`names`}{One name per column of `X`.}
 #'   }
@@ -961,7 +961,7 @@ S7::method(smoother_build, smoother) <- function(sm, x, ...) {
     # matrix rather than from the branch that built it, so the two cannot
     # disagree; cumprod stops at the first column that is penalized.
     unpenalized = as.integer(sum(cumprod(colSums(abs(s_tot)) == 0))),
-    blueprint = list(kind = sm@reparam, basis = rp$basis, nfree = nfree,
+    build_info = list(kind = sm@reparam, basis = rp$basis, nfree = nfree,
                      span = sp$params),
     names = nm
   )
@@ -1145,14 +1145,14 @@ over_penalty <- function(s, f) {
 #' functions are evaluated there.
 #'
 #' @param sm A [smoother], the one passed to [smoother_build()].
-#' @param blueprint The `blueprint` element of that call's result.
+#' @param build_info The `build_info` element of that call's result.
 #' @param newx The new covariate values, a numeric vector.
 #' @param ... Passed to methods.
 #'
 #' @return A numeric matrix of `length(newx)` rows and as many columns as the
-#'   block from which the blueprint came, with no dimnames.
+#'   block from which the `build_info` came, with no dimnames.
 #'
-#' @seealso [smoother_build()], which records the blueprint.
+#' @seealso [smoother_build()], which records the `build_info`.
 #'
 #' @examples
 #' set.seed(1)
@@ -1162,26 +1162,26 @@ over_penalty <- function(s, f) {
 #'
 #' # Reapplied at a subset, the rows are the rows of the original block.
 #' i <- c(3, 40, 91)
-#' max(abs(smoother_apply(sm, out$blueprint, x[i]) - out$X[i, ]))
+#' max(abs(smoother_apply(sm, out$build_info, x[i]) - out$X[i, ]))
 #' @export
 smoother_apply <- S7::new_generic(
   "smoother_apply", "sm",
-  function(sm, blueprint, newx, ...) S7::S7_dispatch()
+  function(sm, build_info, newx, ...) S7::S7_dispatch()
 )
 
 #' @name smoother_apply
 #' @keywords internal
-S7::method(smoother_apply, smoother) <- function(sm, blueprint, newx, ...) {
-  if (!is.list(blueprint) || is.null(blueprint$kind)) {
-    stop("'blueprint' must be the blueprint element of smoother_build().",
+S7::method(smoother_apply, smoother) <- function(sm, build_info, newx, ...) {
+  if (!is.list(build_info) || is.null(build_info$kind)) {
+    stop("'build_info' must be the build_info element of smoother_build().",
       call. = FALSE
     )
   }
   newx <- check_smoother_x(newx)
-  z <- basis_eval(blueprint$basis, newx)
-  if (blueprint$nfree > 0L) {
-    free <- smoother_span_apply(sm, blueprint$span, newx)
-    z <- cbind(free[, seq_len(blueprint$nfree), drop = FALSE], z)
+  z <- basis_eval(build_info$basis, newx)
+  if (build_info$nfree > 0L) {
+    free <- smoother_span_apply(sm, build_info$span, newx)
+    z <- cbind(free[, seq_len(build_info$nfree), drop = FALSE], z)
   }
   dimnames(z) <- NULL
   z

@@ -1,3 +1,8 @@
+# basis7 0.16.0
+
+* The element `blueprint` of the result of `smoother_build()` is renamed
+  `build_info`, and so is the argument of `smoother_apply()` that receives it.
+
 # basis7 0.15.2
 
 * The package description says that a basis returns its design matrix,

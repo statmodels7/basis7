@@ -90,7 +90,7 @@ test_that("a P-spline block is reapplied and not rebuilt", {
   sm <- pspline_smooth(k = 18, lower = -1, upper = 3)
   out <- smoother_build(sm, x)
   rows <- c(1L, 20L, 95L, 200L)
-  expect_reapplied(smoother_apply(sm, out$blueprint, x[rows]),
+  expect_reapplied(smoother_apply(sm, out$build_info, x[rows]),
                    out$X[rows, , drop = FALSE])
 })
 

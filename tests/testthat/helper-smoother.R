@@ -1,6 +1,6 @@
 # Helpers for the smoother tests.
 
-# The rows a blueprint reapplies, against the rows of the block they came
+# The rows a `build_info` reapplies, against the rows of the block they came
 # from.
 #
 # NOT AN IDENTITY, and the reason is measured rather than assumed. Both

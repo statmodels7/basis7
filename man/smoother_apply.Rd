@@ -4,12 +4,12 @@
 \alias{smoother_apply}
 \title{A Smoother's Block at New Values}
 \usage{
-smoother_apply(sm, blueprint, newx, ...)
+smoother_apply(sm, build_info, newx, ...)
 }
 \arguments{
 \item{sm}{A \link{smoother}, the one passed to \code{\link[=smoother_build]{smoother_build()}}.}
 
-\item{blueprint}{The \code{blueprint} element of that call's result.}
+\item{build_info}{The \code{build_info} element of that call's result.}
 
 \item{newx}{The new covariate values, a numeric vector.}
 
@@ -17,7 +17,7 @@ smoother_apply(sm, blueprint, newx, ...)
 }
 \value{
 A numeric matrix of \code{length(newx)} rows and as many columns as the
-block from which the blueprint came, with no dimnames.
+block from which the \code{build_info} came, with no dimnames.
 }
 \description{
 Evaluates the construction recorded by \code{\link[=smoother_build]{smoother_build()}} at new covariate
@@ -33,9 +33,9 @@ out <- smoother_build(sm, x)
 
 # Reapplied at a subset, the rows are the rows of the original block.
 i <- c(3, 40, 91)
-max(abs(smoother_apply(sm, out$blueprint, x[i]) - out$X[i, ]))
+max(abs(smoother_apply(sm, out$build_info, x[i]) - out$X[i, ]))
 }
 \seealso{
-\code{\link[=smoother_build]{smoother_build()}}, which records the blueprint.
+\code{\link[=smoother_build]{smoother_build()}}, which records the \code{build_info}.
 }
 \keyword{internal}

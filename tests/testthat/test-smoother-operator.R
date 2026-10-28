@@ -129,7 +129,7 @@ test_that("every column stays periodic under either penalty", {
     fourier_smooth(k = 9, order = 2, lower = 0, upper = 1)
   )) {
     o <- smoother_build(sm, x)
-    ends <- smoother_apply(sm, o$blueprint, c(0, 1))
+    ends <- smoother_apply(sm, o$build_info, c(0, 1))
     expect_lt(max(abs(ends[1L, ] - ends[2L, ])), 1e-12)
   }
 })
@@ -143,7 +143,7 @@ test_that("the block is reapplied at new values and not rebuilt", {
   )) {
     o <- smoother_build(sm, x)
     i <- c(3L, 44L, 180L, 299L)
-    expect_equal(smoother_apply(sm, o$blueprint, x[i]), o$X[i, , drop = FALSE],
+    expect_equal(smoother_apply(sm, o$build_info, x[i]), o$X[i, , drop = FALSE],
                  tolerance = 1e-12, ignore_attr = TRUE)
   }
 })

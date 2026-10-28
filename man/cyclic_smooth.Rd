@@ -120,7 +120,7 @@ out <- smoother_build(sm, doy)
 dim(out$X)
 
 # the block takes the same value at the two ends of the period
-ends <- smoother_apply(sm, out$blueprint, c(0, 365))
+ends <- smoother_apply(sm, out$build_info, c(0, 365))
 max(abs(ends[1, ] - ends[2, ]))
 
 # 'order' may not exceed the degree.

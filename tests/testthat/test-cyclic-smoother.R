@@ -34,14 +34,14 @@ test_that("the block and a fit on it are periodic in every derivative", {
 
   # and so does the BLOCK the reparametrization produces
   out <- smoother_build(sm, x)
-  ends <- smoother_apply(sm, out$blueprint, c(0, 365))
+  ends <- smoother_apply(sm, out$build_info, c(0, 365))
   expect_lt(max(abs(ends[1L, ] - ends[2L, ])), 1e-10)
 
   # CONTROL: an ordinary B-spline of the same k does not, by a margin of
   # the size of the block itself
   nb <- bspline_smooth(k = 12, lower = 0, upper = 365)
   ob <- smoother_build(nb, x)
-  oe <- smoother_apply(nb, ob$blueprint, c(0, 365))
+  oe <- smoother_apply(nb, ob$build_info, c(0, 365))
   expect_gt(max(abs(oe[1L, ] - oe[2L, ])), 0.1)
 })
 
@@ -100,7 +100,7 @@ test_that("a cyclic block is reapplied and not rebuilt", {
   sm <- cyclic_smooth(k = 11, lower = -2, upper = 5)
   out <- smoother_build(sm, x)
   rows <- c(1L, 7L, 60L, 199L, 250L)
-  expect_reapplied(smoother_apply(sm, out$blueprint, x[rows]),
+  expect_reapplied(smoother_apply(sm, out$build_info, x[rows]),
                    out$X[rows, , drop = FALSE])
 })
 

@@ -66,7 +66,7 @@ test_that("the free columns are reapplied and not rebuilt", {
   sm <- bspline_smooth(k = 15, degree = 5, order = 3)
   o <- smoother_build(sm, x)
   i <- c(5L, 44L, 200L)
-  expect_reapplied(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
+  expect_reapplied(smoother_apply(sm, o$build_info, x[i]), o$X[i, ])
 })
 
 test_that("the reapplied check refuses a rebuilt basis", {
@@ -99,7 +99,7 @@ test_that("the reapplied check refuses a rebuilt basis", {
 
 test_that("smoother_apply reaches no part of the construction", {
   # THE ROUTING HALF, WHICH A TOLERANCE CANNOT CARRY. The test above says
-  # the numbers agree; this says the route is the stored blueprint, and a
+  # the numbers agree; this says the route is the stored `build_info`, and a
   # rebuild that happened to land close would pass the first and must not
   # pass this. Both halves together are what the identity used to assert
   # before a BLAS's shape-dependence made the identity unavailable.
@@ -115,7 +115,7 @@ test_that("smoother_apply reaches no part of the construction", {
     smoother_gram = function(...) stop("reached the Gram", call. = FALSE),
     smoother_reparam = function(...) stop("reached the reparam", call. = FALSE)
   )
-  expect_no_error(smoother_apply(sm, o$blueprint, x[c(5L, 44L, 200L)]))
+  expect_no_error(smoother_apply(sm, o$build_info, x[c(5L, 44L, 200L)]))
 
   # AND THE MOCK IS PROVEN LIVE, or the assertion above passes vacuously
   # whether or not the bindings were ever replaced
@@ -186,7 +186,7 @@ test_that("a Fourier smoother is periodic, which is what it is for", {
   expect_identical(od$names, paste0("z", 1:8))
 
   # EVERY COLUMN is periodic, hence so is any fit built on them
-  ends <- smoother_apply(sm, o$blueprint, c(0, 1))
+  ends <- smoother_apply(sm, o$build_info, c(0, 1))
   expect_lt(max(abs(ends[1L, ] - ends[2L, ])), 1e-12)
   b <- pfit(o$X, o$S, y, 0.01)
   expect_lt(abs(diff(as.vector(ends %*% b))), 1e-12)

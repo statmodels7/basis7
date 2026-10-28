@@ -124,7 +124,7 @@ test_that("the block is reapplied at new values rather than rebuilt", {
     sm <- adaptive_smooth(k = 25, m = 4, reparam = rp)
     out <- smoother_build(sm, x)
     i <- c(2L, 37L, 111L, 200L)
-    expect_reapplied(smoother_apply(sm, out$blueprint, x[i]), out$X[i, ])
+    expect_reapplied(smoother_apply(sm, out$build_info, x[i]), out$X[i, ])
   }
 })
 

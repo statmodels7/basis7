@@ -105,12 +105,12 @@ test_that("smoother_apply reapplies the transform and does not rebuild it", {
   i <- c(3L, 17L, 40L, 91L, 150L, 233L)
 
   # REAPPLIED, the rows are the rows of the block, exactly
-  expect_reapplied(smoother_apply(sm, out$blueprint, x[i]), out$X[i, ])
+  expect_reapplied(smoother_apply(sm, out$build_info, x[i]), out$X[i, ])
 
   # REBUILT on the same rows, they are NOT: the interval is the range of
   # the subset and the rotation diagonalizes a different Gram matrix, so a
   # rebuild is a different function of the covariate. This is the reason
-  # the blueprint exists.
+  # the `build_info` exists.
   rebuilt <- smoother_build(sm, x[i])$X
   expect_gt(max(abs(rebuilt - out$X[i, ])), 1e-3)
 })
@@ -128,7 +128,7 @@ test_that("a fixed interval is used, and an unfixed one is read from the data", 
   # a fixed interval is what a prediction outside the observed range needs
   sm <- bspline_smooth(k = 8, lower = -5, upper = 5)
   out <- smoother_build(sm, x)
-  expect_silent(smoother_apply(sm, out$blueprint, c(-4.5, 4.5)))
+  expect_silent(smoother_apply(sm, out$build_info, c(-4.5, 4.5)))
 })
 
 test_that("the covariate is checked", {
@@ -137,7 +137,7 @@ test_that("the covariate is checked", {
   expect_error(smoother_build(sm, c(1, NA, 2)), "missing values")
   expect_error(smoother_build(sm, c(1, Inf, 2)), "finite")
   out <- smoother_build(sm, x)
-  expect_error(smoother_apply(sm, list(), x), "blueprint element")
+  expect_error(smoother_apply(sm, list(), x), "build_info element")
 })
 
 test_that("a setting this version does not build is rejected, not ignored", {

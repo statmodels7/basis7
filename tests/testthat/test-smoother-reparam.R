@@ -40,7 +40,7 @@ test_that("every family builds at every coordinate system", {
       # and the block is reapplied at new values, which is where a
       # transform recorded against the wrong parent would show
       i <- c(4L, 77L, 200L)
-      expect_equal(smoother_apply(fams[[nm]](rp), o$blueprint, xx[i]),
+      expect_equal(smoother_apply(fams[[nm]](rp), o$build_info, xx[i]),
                    o$X[i, , drop = FALSE], tolerance = 1e-10,
                    ignore_attr = TRUE)
       n_built <- n_built + 1L
@@ -59,7 +59,7 @@ test_that("a periodic family keeps its periodicity at every reparam", {
     for (sm in list(fourier_smooth(k = 11, lower = 0, upper = 1, reparam = rp),
                     cyclic_smooth(k = 12, lower = 0, upper = 1, reparam = rp))) {
       o <- smoother_build(sm, xx)
-      ends <- smoother_apply(sm, o$blueprint, c(0, 1))
+      ends <- smoother_apply(sm, o$build_info, c(0, 1))
       expect_lt(max(abs(ends[1L, ] - ends[2L, ])), 1e-8)
     }
   }
@@ -113,7 +113,7 @@ test_that("every coordinate system is reapplied, not rebuilt", {
   for (r in c("dr", "none", "orthonorm")) {
     sm <- bspline_smooth(k = 12, reparam = r)
     o <- smoother_build(sm, x)
-    expect_reapplied(smoother_apply(sm, o$blueprint, x[i]), o$X[i, ])
+    expect_reapplied(smoother_apply(sm, o$build_info, x[i]), o$X[i, ])
   }
 })
 
@@ -165,5 +165,5 @@ test_that("the axes compose", {
   expect_identical(ncol(o$X), 14L)
   expect_identical(o$unpenalized, 0L)
   expect_identical(diag(o$S)[1:2], c(0.1, 0.1))
-  expect_reapplied(smoother_apply(sm, o$blueprint, x[1:5]), o$X[1:5, ])
+  expect_reapplied(smoother_apply(sm, o$build_info, x[1:5]), o$X[1:5, ])
 })
