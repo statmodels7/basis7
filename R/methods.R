@@ -131,7 +131,7 @@ S7::method(print, basis) <- function(x, ...) {
 #' spaced grid covering the whole interval. `order` selects what is drawn: the
 #' functions themselves, a derivative of any order, or the integral anchored
 #' at the lower endpoint. One line is drawn per basis function. The plot has
-#' no legend, and its title is `@basis_name`.
+#' no legend, and its title names the basis and the number of its functions.
 #'
 #' @details
 #' # What is drawn
@@ -156,7 +156,8 @@ S7::method(print, basis) <- function(x, ...) {
 #' argument, such as `col`, `lwd`, `xlim` or `add`, is passed unchanged.
 #'
 #' The defaults are `type = "l"`, `lty = 1`, `xlab = "x"`, `main` the basis's
-#' `@basis_name`, and `ylab` the expression matching `order`.
+#' `@basis_name` followed by the number of its functions, and `ylab` the
+#' expression matching `order`.
 #'
 #' # Only one variable
 #'
@@ -250,8 +251,12 @@ S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
   # naming one of them in the call to matplot() alongside a value in `...`
   # matches the same formal twice and throws before anything is drawn.
   dots <- list(...)
+  # the curves cycle through a few colors, so the title says what each
+  # curve is rather than a legend with one entry per function
   defaults <- list(
-    type = "l", lty = 1, xlab = "x", ylab = ylab, main = x@basis_name
+    type = "l", lty = 1, xlab = "x", ylab = ylab,
+    main = sprintf("%s basis: one curve for each of its %d functions",
+                   x@basis_name, ncol(y))
   )
   keep <- setdiff(names(defaults), names(dots))
   do.call(graphics::matplot, c(list(grid, y), dots, defaults[keep]))

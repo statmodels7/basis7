@@ -190,7 +190,9 @@ test_that("overriding nothing draws exactly the picture it drew before", {
   grDevices::dev.off()
 
   grDevices::pdf(f2)
-  plot(b, type = "l", lty = 1, xlab = "x", main = b@basis_name)
+  plot(b, type = "l", lty = 1, xlab = "x",
+       main = sprintf("%s basis: one curve for each of its %d functions",
+                      b@basis_name, b@dimension))
   grDevices::dev.off()
 
   expect_identical(readBin(f1, "raw", 1e6L), readBin(f2, "raw", 1e6L))

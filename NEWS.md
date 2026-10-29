@@ -1,3 +1,9 @@
+# basis7 0.17.1
+
+* The default title of `plot()` on a basis names the basis and the number of
+  its functions ("bspline basis: one curve for each of its 8 functions"),
+  since the colors of the curves repeat and the plot has no legend.
+
 # basis7 0.17.0
 
 * Renamed for readability: the argument `sm` of the `smoother_*()` generics

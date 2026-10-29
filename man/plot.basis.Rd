@@ -28,7 +28,7 @@ Draws all \verb{@dimension} functions of a basis on one panel, over an equally
 spaced grid covering the whole interval. \code{order} selects what is drawn: the
 functions themselves, a derivative of any order, or the integral anchored
 at the lower endpoint. One line is drawn per basis function. The plot has
-no legend, and its title is \verb{@basis_name}.
+no legend, and its title names the basis and the number of its functions.
 }
 \section{What is drawn}{
 The grid is \code{n} equally spaced points from \verb{@lower} to \verb{@upper}, endpoints
@@ -51,7 +51,8 @@ panel and \code{plot(b, type = "p", pch = 16)} draws points. Every other
 argument, such as \code{col}, \code{lwd}, \code{xlim} or \code{add}, is passed unchanged.
 
 The defaults are \code{type = "l"}, \code{lty = 1}, \code{xlab = "x"}, \code{main} the basis's
-\verb{@basis_name}, and \code{ylab} the expression matching \code{order}.
+\verb{@basis_name} followed by the number of its functions, and \code{ylab} the
+expression matching \code{order}.
 }
 
 \section{Only one variable}{
