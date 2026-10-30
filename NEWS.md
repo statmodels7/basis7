@@ -1,3 +1,13 @@
+# basis7 0.18.0
+
+* The graph of a basis is drawn with ggplot2, which is suggested.
+  `autoplot()` returns the graph and `plot()` prints it and returns it
+  invisibly, where it returned the basis. Each function has its own colour,
+  and the graph has no legend. The title names the basis and the number of
+  its functions. The graphical arguments that `plot()` passed to
+  `graphics::matplot()` are removed: the returned object is modified
+  instead. `graphics` is no longer imported.
+
 # basis7 0.17.1
 
 * The default title of `plot()` on a basis names the basis and the number of

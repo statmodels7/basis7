@@ -2,11 +2,12 @@
 % Please edit documentation in R/methods.R
 \name{plot.basis}
 \alias{plot.basis}
+\alias{autoplot_basis}
 \title{Plot a Basis}
+\usage{
+autoplot_basis(object, order = 0L, n = 200L, ...)
+}
 \arguments{
-\item{x}{A basis object of one variable, of any class inheriting from
-\link{basis}. A basis of several variables signals an error.}
-
 \item{order}{What to draw. \code{0}, the default, draws the basis functions; a
 positive whole number draws that derivative; \code{-1} draws the integral from
 the lower endpoint. Any other value signals an error, including a
@@ -16,19 +17,23 @@ fraction, a value below \code{-1} and a vector of length other than one.}
 knots or a high frequency needs more, because 200 points leave a curve
 visibly polygonal there.}
 
-\item{...}{Passed to \code{\link[graphics:matplot]{graphics::matplot()}}. A value given for \code{type},
-\code{lty}, \code{xlab}, \code{ylab} or \code{main} replaces the method's default; see the
-section above for the defaults.}
+\item{...}{Unused; an argument passed here signals an error.}
+
+\item{x, object}{A basis object of one variable, of any class inheriting
+from \link{basis}. A basis of several variables signals an error.}
 }
 \value{
-\code{x}, invisibly. Called for the plot.
+\code{autoplot()} returns a ggplot2 object; \code{plot()} prints the same
+object and returns it invisibly.
 }
 \description{
-Draws all \verb{@dimension} functions of a basis on one panel, over an equally
-spaced grid covering the whole interval. \code{order} selects what is drawn: the
-functions themselves, a derivative of any order, or the integral anchored
-at the lower endpoint. One line is drawn per basis function. The plot has
-no legend, and its title names the basis and the number of its functions.
+\code{autoplot()} returns a graph of all \verb{@dimension} functions of a basis on
+one panel, over an equally spaced grid covering the whole interval, and
+\code{plot()} prints that graph. \code{order} selects what is drawn: the functions
+themselves, a derivative of any order, or the integral anchored at the
+lower endpoint. One line is drawn per basis function, each in its own
+colour. The graph has no legend, and its title names the basis and the
+number of its functions.
 }
 \section{What is drawn}{
 The grid is \code{n} equally spaced points from \verb{@lower} to \verb{@upper}, endpoints
@@ -38,21 +43,10 @@ to match:
 \eqn{B(x)} at order \code{0}, \eqn{B'(x)} at order \code{1}, \eqn{B^{(k)}(x)} above
 that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
 
-The curves are distinguished only by the colors through which \code{matplot()}
-cycles. The plot carries no legend, and the names of the columns are
-those of \code{\link[=basis_colnames]{basis_colnames()}}.
-}
-
-\section{Graphical arguments}{
-Every graphical argument reaches \code{matplot()}. The method sets defaults for
-\code{type}, \code{lty}, \code{xlab}, \code{ylab} and \code{main}, and a value given for any of the
-five replaces the default, so \code{plot(b, main = "my title")} retitles the
-panel and \code{plot(b, type = "p", pch = 16)} draws points. Every other
-argument, such as \code{col}, \code{lwd}, \code{xlim} or \code{add}, is passed unchanged.
-
-The defaults are \code{type = "l"}, \code{lty = 1}, \code{xlab = "x"}, \code{main} the basis's
-\verb{@basis_name} followed by the number of its functions, and \code{ylab} the
-expression matching \code{order}.
+The graph is drawn with \pkg{ggplot2}, which is suggested; the methods
+signal an error that names it when it is not installed. The title, the
+labels of the axes and the colours are changed on the returned object, for
+instance with \code{+ ggplot2::labs(title = "my title")}.
 }
 
 \section{Only one variable}{
@@ -68,27 +62,26 @@ away from the knots.
 }
 
 \examples{
+\dontshow{if (requireNamespace("ggplot2", quietly = TRUE)) withAutoprint(\{ # examplesIf}
 b <- bspline_basis(dimension = 6)
 
-# The three panels show the six cubic B-splines, their first derivative,
+# The three graphs show the six cubic B-splines, their first derivative,
 # and their integrals.
 plot(b)
 plot(b, order = 1)
 plot(b, order = -1)
 
-# Every curve in the third panel starts at zero, because the integral is
+# Every curve in the third graph starts at zero, because the integral is
 # anchored at the lower endpoint.
 basis_int(b, 0)
 
-# Graphical arguments that the method does not set itself reach matplot().
-plot(b, col = "grey40", lwd = 2)
-
-# The five arguments that the method sets by default may be replaced.
-plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
-plot(b, type = "p", pch = 16, cex = 0.4)
+# The returned graph is modified like any other ggplot2 object.
+p <- plot(b)
+p + ggplot2::labs(title = "six cubic B-splines on [0, 1]")
 
 # A Fourier basis at a high frequency needs a finer grid than the default.
 plot(fourier_basis(dimension = 21), n = 1000)
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[=basis_eval]{basis_eval()}}, \code{\link[=basis_deriv]{basis_deriv()}} and \code{\link[=basis_int]{basis_int()}} for the numbers

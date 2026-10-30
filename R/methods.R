@@ -1,4 +1,4 @@
-#' @include generics.R
+#' @include generics.R ggplot.R
 NULL
 
 
@@ -127,11 +127,13 @@ S7::method(print, basis) <- function(x, ...) {
 #' @name plot.basis
 #'
 #' @description
-#' Draws all `@dimension` functions of a basis on one panel, over an equally
-#' spaced grid covering the whole interval. `order` selects what is drawn: the
-#' functions themselves, a derivative of any order, or the integral anchored
-#' at the lower endpoint. One line is drawn per basis function. The plot has
-#' no legend, and its title names the basis and the number of its functions.
+#' `autoplot()` returns a graph of all `@dimension` functions of a basis on
+#' one panel, over an equally spaced grid covering the whole interval, and
+#' `plot()` prints that graph. `order` selects what is drawn: the functions
+#' themselves, a derivative of any order, or the integral anchored at the
+#' lower endpoint. One line is drawn per basis function, each in its own
+#' colour. The graph has no legend, and its title names the basis and the
+#' number of its functions.
 #'
 #' @details
 #' # What is drawn
@@ -143,21 +145,10 @@ S7::method(print, basis) <- function(x, ...) {
 #' \eqn{B(x)} at order `0`, \eqn{B'(x)} at order `1`, \eqn{B^{(k)}(x)} above
 #' that, and \eqn{\int B(t)\,\mathrm{d}t} for the integral.
 #'
-#' The curves are distinguished only by the colors through which `matplot()`
-#' cycles. The plot carries no legend, and the names of the columns are
-#' those of [basis_colnames()].
-#'
-#' # Graphical arguments
-#'
-#' Every graphical argument reaches `matplot()`. The method sets defaults for
-#' `type`, `lty`, `xlab`, `ylab` and `main`, and a value given for any of the
-#' five replaces the default, so `plot(b, main = "my title")` retitles the
-#' panel and `plot(b, type = "p", pch = 16)` draws points. Every other
-#' argument, such as `col`, `lwd`, `xlim` or `add`, is passed unchanged.
-#'
-#' The defaults are `type = "l"`, `lty = 1`, `xlab = "x"`, `main` the basis's
-#' `@basis_name` followed by the number of its functions, and `ylab` the
-#' expression matching `order`.
+#' The graph is drawn with \pkg{ggplot2}, which is suggested; the methods
+#' signal an error that names it when it is not installed. The title, the
+#' labels of the axes and the colours are changed on the returned object, for
+#' instance with `+ ggplot2::labs(title = "my title")`.
 #'
 #' # Only one variable
 #'
@@ -171,8 +162,8 @@ S7::method(print, basis) <- function(x, ...) {
 #' line at zero, because the fourth derivative of a piecewise cubic is zero
 #' away from the knots.
 #'
-#' @param x A basis object of one variable, of any class inheriting from
-#'   [basis]. A basis of several variables signals an error.
+#' @param x,object A basis object of one variable, of any class inheriting
+#'   from [basis]. A basis of several variables signals an error.
 #' @param order What to draw. `0`, the default, draws the basis functions; a
 #'   positive whole number draws that derivative; `-1` draws the integral from
 #'   the lower endpoint. Any other value signals an error, including a
@@ -180,39 +171,47 @@ S7::method(print, basis) <- function(x, ...) {
 #' @param n The number of grid points, default `200`. A basis with many
 #'   knots or a high frequency needs more, because 200 points leave a curve
 #'   visibly polygonal there.
-#' @param ... Passed to [graphics::matplot()]. A value given for `type`,
-#'   `lty`, `xlab`, `ylab` or `main` replaces the method's default; see the
-#'   section above for the defaults.
+#' @param ... Unused; an argument passed here signals an error.
 #'
-#' @return `x`, invisibly. Called for the plot.
+#' @return `autoplot()` returns a ggplot2 object; `plot()` prints the same
+#'   object and returns it invisibly.
 #'
 #' @seealso [basis_eval()], [basis_deriv()] and [basis_int()] for the numbers
 #'   behind the three cases of `order`, and [print.basis()] for the object's
 #'   summary.
 #'
-#' @examples
+#' @examplesIf requireNamespace("ggplot2", quietly = TRUE)
 #' b <- bspline_basis(dimension = 6)
 #'
-#' # The three panels show the six cubic B-splines, their first derivative,
+#' # The three graphs show the six cubic B-splines, their first derivative,
 #' # and their integrals.
 #' plot(b)
 #' plot(b, order = 1)
 #' plot(b, order = -1)
 #'
-#' # Every curve in the third panel starts at zero, because the integral is
+#' # Every curve in the third graph starts at zero, because the integral is
 #' # anchored at the lower endpoint.
 #' basis_int(b, 0)
 #'
-#' # Graphical arguments that the method does not set itself reach matplot().
-#' plot(b, col = "grey40", lwd = 2)
-#'
-#' # The five arguments that the method sets by default may be replaced.
-#' plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
-#' plot(b, type = "p", pch = 16, cex = 0.4)
+#' # The returned graph is modified like any other ggplot2 object.
+#' p <- plot(b)
+#' p + ggplot2::labs(title = "six cubic B-splines on [0, 1]")
 #'
 #' # A Fourier basis at a high frequency needs a finer grid than the default.
 #' plot(fourier_basis(dimension = 21), n = 1000)
 S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
+  p <- autoplot_basis(x, order = order, n = n, ...)
+  print(p)
+  invisible(p)
+}
+
+#' @rdname plot.basis
+autoplot_basis <- function(object, order = 0L, n = 200L, ...) {
+  if (...length()) {
+    stop("The graph of a basis takes no further arguments; modify the ",
+         "returned object instead.", call. = FALSE)
+  }
+  x <- object
   if (basis_nvar(x) > 1L) {
     stop(
       "plot() draws a basis of one variable. A product of several has no ",
@@ -227,6 +226,7 @@ S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
       call. = FALSE
     )
   }
+  need_ggplot()
   order <- as.integer(order)
 
   grid <- seq(x@lower, x@upper, length.out = n)
@@ -240,25 +240,21 @@ S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
     "-1" = expression(integral(B(t) * dt)),
     "0" = expression(B(x)),
     "1" = expression(B * minute * (x)),
-    # an expression and not the call bquote() returns, which do.call() below
-    # would evaluate
     as.expression(bquote(B^(.(order)) * (x)))
   )
 
-  old <- graphics::par(mar = c(4.5, 5, 3, 1))
-  on.exit(graphics::par(old))
-  # The five the method chooses are defaults rather than fixed arguments:
-  # naming one of them in the call to matplot() alongside a value in `...`
-  # matches the same formal twice and throws before anything is drawn.
-  dots <- list(...)
-  # the curves cycle through a few colors, so the title says what each
-  # curve is rather than a legend with one entry per function
-  defaults <- list(
-    type = "l", lty = 1, xlab = "x", ylab = ylab,
-    main = sprintf("%s basis: one curve for each of its %d functions",
-                   x@basis_name, ncol(y))
-  )
-  keep <- setdiff(names(defaults), names(dots))
-  do.call(graphics::matplot, c(list(grid, y), dots, defaults[keep]))
-  invisible(x)
+  fn <- basis_colnames(x)
+  d <- data.frame(x = rep(grid, ncol(y)), y = as.vector(y),
+                  fn = factor(rep(fn, each = n), levels = fn))
+  .data <- ggplot2::.data
+  ggplot2::ggplot(d, ggplot2::aes(x = .data$x, y = .data$y,
+                                  colour = .data$fn)) +
+    ggplot2::geom_line(linewidth = 0.8) +
+    ggplot2::labs(title = sprintf("%s basis, %d functions", x@basis_name,
+                                  ncol(y)),
+                  x = "x", y = ylab, colour = NULL) +
+    ggplot2::theme_bw() +
+    ggplot2::theme(legend.position = "none")
 }
+
+S7::method(autoplot, basis) <- autoplot_basis

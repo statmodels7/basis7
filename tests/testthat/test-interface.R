@@ -125,75 +125,40 @@ test_that("print reports the family, the interval and what is numerical", {
 })
 
 
-test_that("plot draws without error for every order it accepts", {
+test_that("plot draws every order it accepts and returns the graph", {
+  skip_if_not_installed("ggplot2")
   b <- bspline_basis(dimension = 6)
-  f <- tempfile(fileext = ".pdf")
-  grDevices::pdf(f)
-  on.exit({
-    grDevices::dev.off()
-    unlink(f)
-  })
-  expect_silent(plot(b))
-  expect_silent(plot(b, order = 1))
-  expect_silent(plot(b, order = -1))
-  # the label of an order above one is built by bquote(), whose call
-  # do.call() evaluated: "object 'B' not found"
-  expect_silent(plot(b, order = 2))
-  expect_silent(plot(b, order = 4))
-  expect_error(plot(b, order = -2), "must be -1")
-})
-
-test_that("every graphical argument reaches matplot", {
-  # The method chooses type, lty, xlab, ylab and main; a value given for any
-  # of them replaces the choice rather than matching the same formal twice.
-  b <- bspline_basis(dimension = 6)
-  f <- tempfile(fileext = ".pdf")
-  grDevices::pdf(f)
-  on.exit({
-    grDevices::dev.off()
-    unlink(f)
-  })
-
-  # the five the method sets itself
-  expect_silent(plot(b, main = "a title"))
-  expect_silent(plot(b, xlab = "u"))
-  expect_silent(plot(b, ylab = "v"))
-  expect_silent(plot(b, type = "p"))
-  expect_silent(plot(b, lty = 2))
-
-  # the ones it never set, which worked before and still do
-  for (a in list(list(col = "grey40"), list(lwd = 2), list(pch = 16),
-                 list(cex = 0.5), list(xlim = c(0, 1)), list(ylim = c(-1, 2)),
-                 list(bty = "n"), list(las = 1), list(axes = TRUE))) {
-    expect_silent(do.call(plot, c(list(b), a)))
+  grDevices::pdf(NULL)
+  on.exit(grDevices::dev.off())
+  for (k in c(-1, 0, 1, 2, 4)) {
+    p <- plot(b, order = k)
+    expect_s3_class(p, "ggplot")
+    # the label of an order above one is built by bquote()
+    expect_no_error(ggplot2::ggplot_build(p))
   }
-
-  # several at once, beside the method's own arguments
-  expect_silent(plot(b, order = 1, main = "d", ylab = "y", type = "p",
-                     pch = 3))
-  expect_silent(plot(b, order = -1, col = 2:4))
-
-  # and the refusals are untouched
+  expect_error(plot(b, order = -2), "must be -1")
   expect_error(plot(b, order = 1.5), "must be -1")
 })
 
-test_that("overriding nothing draws exactly the picture it drew before", {
-  # The control for the change: passing the method's own defaults explicitly
-  # must give the same device output as passing none of them.
+test_that("the graph of a basis draws its functions and names them", {
+  skip_if_not_installed("ggplot2")
   b <- bspline_basis(dimension = 6)
-  f1 <- tempfile(fileext = ".pdf")
-  f2 <- tempfile(fileext = ".pdf")
-  on.exit(unlink(c(f1, f2)))
+  p <- ggplot2::autoplot(b, order = 1, n = 50)
+  # one curve per function, the derivative on the grid
+  grid <- seq(b@lower, b@upper, length.out = 50)
+  expect_equal(p$data$y, as.vector(basis_deriv(b, grid, order = 1)))
+  expect_identical(levels(p$data$fn), basis_colnames(b))
+  expect_identical(p$labels$title, "bspline basis, 6 functions")
+  # one colour per function and no legend
+  expect_identical(p$theme$legend.position, "none")
+  # the integral is anchored at the lower endpoint
+  q <- ggplot2::autoplot(b, order = -1)
+  expect_equal(q$data$y[q$data$x == b@lower], rep(0, 6))
+})
 
-  grDevices::pdf(f1)
-  plot(b)
-  grDevices::dev.off()
-
-  grDevices::pdf(f2)
-  plot(b, type = "l", lty = 1, xlab = "x",
-       main = sprintf("%s basis: one curve for each of its %d functions",
-                      b@basis_name, b@dimension))
-  grDevices::dev.off()
-
-  expect_identical(readBin(f1, "raw", 1e6L), readBin(f2, "raw", 1e6L))
+test_that("the graph of a basis rejects what it cannot draw", {
+  skip_if_not_installed("ggplot2")
+  b <- bspline_basis(dimension = 6)
+  expect_error(plot(b, main = "a title"), "no further arguments")
+  expect_error(plot(b, legend = FALSE), "no further arguments")
 })
