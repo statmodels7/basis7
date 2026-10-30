@@ -5,9 +5,14 @@
 \alias{autoplot_basis}
 \title{Plot a Basis}
 \usage{
+\method{plot}{basis}(x, order = 0L, n = 200L, ...)
+
 autoplot_basis(object, order = 0L, n = 200L, ...)
 }
 \arguments{
+\item{x, object}{A basis object of one variable, of any class inheriting
+from \link{basis}. A basis of several variables signals an error.}
+
 \item{order}{What to draw. \code{0}, the default, draws the basis functions; a
 positive whole number draws that derivative; \code{-1} draws the integral from
 the lower endpoint. Any other value signals an error, including a
@@ -18,9 +23,6 @@ knots or a high frequency needs more, because 200 points leave a curve
 visibly polygonal there.}
 
 \item{...}{Unused; an argument passed here signals an error.}
-
-\item{x, object}{A basis object of one variable, of any class inheriting
-from \link{basis}. A basis of several variables signals an error.}
 }
 \value{
 \code{autoplot()} returns a ggplot2 object; \code{plot()} prints the same

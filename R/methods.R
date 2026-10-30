@@ -199,11 +199,13 @@ S7::method(print, basis) <- function(x, ...) {
 #'
 #' # A Fourier basis at a high frequency needs a finer grid than the default.
 #' plot(fourier_basis(dimension = 21), n = 1000)
-S7::method(plot, basis) <- function(x, order = 0L, n = 200L, ...) {
+#' @export
+plot.basis <- function(x, order = 0L, n = 200L, ...) {
   p <- autoplot_basis(x, order = order, n = n, ...)
   print(p)
   invisible(p)
 }
+S7::method(plot, basis) <- plot.basis
 
 #' @rdname plot.basis
 autoplot_basis <- function(object, order = 0L, n = 200L, ...) {
