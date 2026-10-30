@@ -82,13 +82,24 @@ round(basis_int(b, 0.4), 4)
 
 ``` r
 
-par(mfrow = c(1, 3))
 plot(b)
-plot(b, order = 1)
-plot(b, order = -1)
 ```
 
 ![](reference/figures/README-basis-plot-1.png)
+
+``` r
+
+plot(b, order = 1)
+```
+
+![](reference/figures/README-basis-plot-2.png)
+
+``` r
+
+plot(b, order = -1)
+```
+
+![](reference/figures/README-basis-plot-3.png)
 
 ## The integral is anchored
 

@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">basis7</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.17.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.18.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -35,6 +35,14 @@
       <small>Source: <a href="https://github.com/statmodels7/basis7/blob/master/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.18.0" id="basis7-0180">basis7 0.18.0<a class="anchor" aria-label="anchor" href="#basis7-0180"></a></h2>
+<ul><li>The graph of a basis is drawn with ggplot2, which is suggested. <code><a href="../reference/autoplot.html">autoplot()</a></code> returns the graph and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> prints it and returns it invisibly, where it returned the basis. Each function has its own colour, and the graph has no legend. The title names the basis and the number of its functions. The graphical arguments that <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> passed to <code><a href="https://rdrr.io/r/graphics/matplot.html" class="external-link">graphics::matplot()</a></code> are removed: the returned object is modified instead. <code>graphics</code> is no longer imported.</li>
+</ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="0.17.1" id="basis7-0171">basis7 0.17.1<a class="anchor" aria-label="anchor" href="#basis7-0171"></a></h2>
+<ul><li>The default title of <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> on a basis names the basis and the number of its functions (“bspline basis: one curve for each of its 8 functions”), since the colors of the curves repeat and the plot has no legend.</li>
+</ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.17.0" id="basis7-0170">basis7 0.17.0<a class="anchor" aria-label="anchor" href="#basis7-0170"></a></h2>
 <ul><li>Renamed for readability: the argument <code>sm</code> of the <code>smoother_*()</code> generics is <code>smoother</code>, and the argument <code>op</code> of <code><a href="../reference/basis_operator_gram.html">basis_operator_gram()</a></code> and the <code>operator_*()</code> functions is <code>operator</code>. Requires numericals7 0.25.0.</li>

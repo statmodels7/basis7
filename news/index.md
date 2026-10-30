@@ -1,5 +1,27 @@
 # Changelog
 
+## basis7 0.18.0
+
+- The graph of a basis is drawn with ggplot2, which is suggested.
+  [`autoplot()`](https://statmodels7.github.io/basis7/reference/autoplot.md)
+  returns the graph and
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) prints it and
+  returns it invisibly, where it returned the basis. Each function has
+  its own colour, and the graph has no legend. The title names the basis
+  and the number of its functions. The graphical arguments that
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) passed to
+  [`graphics::matplot()`](https://rdrr.io/r/graphics/matplot.html) are
+  removed: the returned object is modified instead. `graphics` is no
+  longer imported.
+
+## basis7 0.17.1
+
+- The default title of
+  [`plot()`](https://rdrr.io/r/graphics/plot.default.html) on a basis
+  names the basis and the number of its functions (“bspline basis: one
+  curve for each of its 8 functions”), since the colors of the curves
+  repeat and the plot has no legend.
+
 ## basis7 0.17.0
 
 - Renamed for readability: the argument `sm` of the `smoother_*()`

@@ -1,14 +1,27 @@
 # Plot a Basis
 
-Draws all `@dimension` functions of a basis on one panel, over an
-equally spaced grid covering the whole interval. `order` selects what is
-drawn: the functions themselves, a derivative of any order, or the
-integral anchored at the lower endpoint. One line is drawn per basis
-function. The plot has no legend, and its title is `@basis_name`.
+[`autoplot()`](https://statmodels7.github.io/basis7/reference/autoplot.md)
+returns a graph of all `@dimension` functions of a basis on one panel,
+over an equally spaced grid covering the whole interval, and
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) prints that
+graph. `order` selects what is drawn: the functions themselves, a
+derivative of any order, or the integral anchored at the lower endpoint.
+One line is drawn per basis function, each in its own colour. The graph
+has no legend, and its title names the basis and the number of its
+functions.
+
+## Usage
+
+``` r
+# S3 method for class 'basis'
+plot(x, order = 0L, n = 200L, ...)
+
+autoplot_basis(object, order = 0L, n = 200L, ...)
+```
 
 ## Arguments
 
-- x:
+- x, object:
 
   A basis object of one variable, of any class inheriting from
   [basis](https://statmodels7.github.io/basis7/reference/basis.md). A
@@ -29,14 +42,14 @@ function. The plot has no legend, and its title is `@basis_name`.
 
 - ...:
 
-  Passed to
-  [`graphics::matplot()`](https://rdrr.io/r/graphics/matplot.html). A
-  value given for `type`, `lty`, `xlab`, `ylab` or `main` replaces the
-  method's default; see the section above for the defaults.
+  Unused; an argument passed here signals an error.
 
 ## Value
 
-`x`, invisibly. Called for the plot.
+[`autoplot()`](https://statmodels7.github.io/basis7/reference/autoplot.md)
+returns a ggplot2 object;
+[`plot()`](https://rdrr.io/r/graphics/plot.default.html) prints the same
+object and returns it invisibly.
 
 ## What is drawn
 
@@ -50,23 +63,10 @@ is the one that `order` names. The vertical axis is labeled to match:
 \\B(x)\\ at order `0`, \\B'(x)\\ at order `1`, \\B^{(k)}(x)\\ above
 that, and \\\int B(t)\\\mathrm{d}t\\ for the integral.
 
-The curves are distinguished only by the colors through which
-[`matplot()`](https://rdrr.io/r/graphics/matplot.html) cycles. The plot
-carries no legend, and the names of the columns are those of
-[`basis_colnames()`](https://statmodels7.github.io/basis7/reference/basis_colnames.md).
-
-## Graphical arguments
-
-Every graphical argument reaches
-[`matplot()`](https://rdrr.io/r/graphics/matplot.html). The method sets
-defaults for `type`, `lty`, `xlab`, `ylab` and `main`, and a value given
-for any of the five replaces the default, so
-`plot(b, main = "my title")` retitles the panel and
-`plot(b, type = "p", pch = 16)` draws points. Every other argument, such
-as `col`, `lwd`, `xlim` or `add`, is passed unchanged.
-
-The defaults are `type = "l"`, `lty = 1`, `xlab = "x"`, `main` the
-basis's `@basis_name`, and `ylab` the expression matching `order`.
+The graph is drawn with ggplot2, which is suggested; the methods signal
+an error that names it when it is not installed. The title, the labels
+of the axes and the colours are changed on the returned object, for
+instance with `+ ggplot2::labs(title = "my title")`.
 
 ## Only one variable
 
@@ -96,7 +96,7 @@ for the object's summary.
 ``` r
 b <- bspline_basis(dimension = 6)
 
-# The three panels show the six cubic B-splines, their first derivative,
+# The three graphs show the six cubic B-splines, their first derivative,
 # and their integrals.
 plot(b)
 
@@ -105,20 +105,16 @@ plot(b, order = 1)
 plot(b, order = -1)
 
 
-# Every curve in the third panel starts at zero, because the integral is
+# Every curve in the third graph starts at zero, because the integral is
 # anchored at the lower endpoint.
 basis_int(b, 0)
 #>      bs1 bs2 bs3 bs4 bs5 bs6
 #> [1,]   0   0   0   0   0   0
 
-# Graphical arguments that the method does not set itself reach matplot().
-plot(b, col = "grey40", lwd = 2)
+# The returned graph is modified like any other ggplot2 object.
+p <- plot(b)
 
-
-# The five arguments that the method sets by default may be replaced.
-plot(b, main = "six cubic B-splines on [0, 1]", ylab = "value")
-
-plot(b, type = "p", pch = 16, cex = 0.4)
+p + ggplot2::labs(title = "six cubic B-splines on [0, 1]")
 
 
 # A Fourier basis at a high frequency needs a finer grid than the default.

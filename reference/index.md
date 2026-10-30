@@ -164,7 +164,8 @@ the functions listed here are not exported and are reached with
 
 - [`print.basis`](https://statmodels7.github.io/basis7/reference/print.basis.md)
   : Print a Basis
-- [`plot.basis`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
+- [`plot(`*`<basis>`*`)`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
+  [`autoplot_basis()`](https://statmodels7.github.io/basis7/reference/plot.basis.md)
   : Plot a Basis
 - [`numerical_deriv_matrix()`](https://statmodels7.github.io/basis7/reference/numerical_deriv_matrix.md)
   : Numerically Differentiate a Matrix-Valued Function

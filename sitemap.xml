@@ -19,6 +19,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/TransformedBasis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/adaptive_smooth.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/as_operator.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/autoplot.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis7-package.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/basis_colnames.FourierBasis.html</loc></url>
@@ -114,6 +115,7 @@
 <url><loc>https://statmodels7.github.io/basis7/reference/linear_operator.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/marginal_designs.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/name_columns.html</loc></url>
+<url><loc>https://statmodels7.github.io/basis7/reference/need_ggplot.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/new_transformed.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/null-default.html</loc></url>
 <url><loc>https://statmodels7.github.io/basis7/reference/null_frame.html</loc></url>
